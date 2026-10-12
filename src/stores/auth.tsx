@@ -75,8 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const applySession = async (session: any): Promise<boolean> => {
     const user = session.user;
-    const meta = user.user_metadata || {};
-
+    // O perfil e o tenant são carregados exclusivamente do banco.
     // 1. Busca perfil real na tabela 'profiles'
     const { profile, isActive } = await fetchUserProfile(user.id);
 
