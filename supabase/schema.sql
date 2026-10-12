@@ -212,53 +212,9 @@ CREATE POLICY "audit_logs_isolation" ON public.audit_logs
     WITH CHECK (tenant_id = public.current_tenant_id());
 
 
--- Public quotes: access only through the random public_token, never through the internal ID.
+-- Public quote links use a random token and the public-orcamento Edge Function.
+-- Never grant anonymous direct table access to quotes.
 ALTER TABLE public.orcamentos ADD COLUMN IF NOT EXISTS public_token UUID NOT NULL DEFAULT gen_random_uuid();
 CREATE UNIQUE INDEX IF NOT EXISTS orcamentos_public_token_key ON public.orcamentos(public_token);
-
-CREATE OR REPLACE FUNCTION public.get_public_orcamento(p_token uuid)
-RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_temp AS $fn$
-  SELECT jsonb_build_object('id', o.id, 'servico_id', o.servico_id, 'itens', o.itens,
-    'valor_total', o.valor_total, 'data_validade', o.data_validade,
-    'observacoes_gerais', o.observacoes_gerais, 'status', o.status,
-    'tem_pdf_assinado', o.tem_pdf_assinado, 'assinado_por_nome', o.assinado_por_nome,
-    'assinado_em', o.assinado_em)
-  FROM public.orcamentos o WHERE o.public_token = p_token
-    AND (o.data_validade IS NULL OR o.data_validade >= now())
-    AND lower(o.status) IN ('pendente','enviado','visualizado','assinado') LIMIT 1
-$fn$;
-
-CREATE OR REPLACE FUNCTION public.assinar_orcamento_publico(p_token uuid, p_nome text)
-RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $fn$
-DECLARE v_orcamento public.orcamentos%rowtype;
-BEGIN
-  IF p_nome IS NULL OR length(trim(p_nome)) < 3 THEN RAISE EXCEPTION 'Informe o nome completo para registrar o aceite.'; END IF;
-  UPDATE public.orcamentos o SET status='Assinado', tem_pdf_assinado=true,
-    assinado_por_nome=left(trim(p_nome),160), assinado_em=now(), updated_at=now()
-  WHERE o.public_token=p_token AND (o.data_validade IS NULL OR o.data_validade >= now())
-    AND lower(o.status) IN ('pendente','enviado','visualizado') AND coalesce(o.tem_pdf_assinado,false)=false
-  RETURNING o.* INTO v_orcamento;
-  IF NOT FOUND THEN
-    SELECT o.* INTO v_orcamento FROM public.orcamentos o WHERE o.public_token=p_token
-      AND (o.data_validade IS NULL OR o.data_validade >= now()) AND lower(o.status)='assinado' LIMIT 1;
-    IF NOT FOUND THEN RAISE EXCEPTION 'Orçamento não encontrado, expirado ou indisponível.'; END IF;
-  ELSE
-    IF v_orcamento.servico_id IS NOT NULL THEN
-      UPDATE public.servicos SET status='Aprovado', updated_at=now()
-      WHERE id=v_orcamento.servico_id AND tenant_id=v_orcamento.tenant_id;
-    END IF;
-    INSERT INTO public.audit_logs (tenant_id, usuario_id, acao, tabela, registro_id, detalhes)
-    VALUES (v_orcamento.tenant_id, NULL, 'ASSINAR_PUBLICO', 'orcamentos', v_orcamento.id::text,
-      jsonb_build_object('nome',left(trim(p_nome),160),'canal','link_publico'));
-  END IF;
-  RETURN jsonb_build_object('id',v_orcamento.id,'servico_id',v_orcamento.servico_id,
-    'itens',v_orcamento.itens,'valor_total',v_orcamento.valor_total,'data_validade',v_orcamento.data_validade,
-    'observacoes_gerais',v_orcamento.observacoes_gerais,'status',v_orcamento.status,
-    'tem_pdf_assinado',v_orcamento.tem_pdf_assinado,'assinado_por_nome',v_orcamento.assinado_por_nome,
-    'assinado_em',v_orcamento.assinado_em);
-END;
-$fn$;
-REVOKE ALL ON FUNCTION public.get_public_orcamento(uuid) FROM public, authenticated, anon;
-REVOKE ALL ON FUNCTION public.assinar_orcamento_publico(uuid,text) FROM public, authenticated, anon;
-GRANT EXECUTE ON FUNCTION public.get_public_orcamento(uuid) TO anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.assinar_orcamento_publico(uuid,text) TO anon, authenticated;
+DROP FUNCTION IF EXISTS public.get_public_orcamento(uuid);
+DROP FUNCTION IF EXISTS public.assinar_orcamento_publico(uuid,text);
