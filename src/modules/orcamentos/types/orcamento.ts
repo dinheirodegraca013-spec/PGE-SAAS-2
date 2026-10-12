@@ -9,6 +9,8 @@ export interface ItemOrcamento {
 /** Espelha ERP.SaaS.Api.Dtos.OrcamentoResponseDto (backend). */
 export interface Orcamento {
   id: string;
+  /** Token aleatório usado somente no link público de aceite. */
+  publicToken?: string;
   servicoId: string;
   itens: ItemOrcamento[];
   valorTotal: number;
