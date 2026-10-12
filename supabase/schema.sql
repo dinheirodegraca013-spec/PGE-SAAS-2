@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS public.servicos (
     status TEXT NOT NULL DEFAULT 'EmAndamento',
     origem TEXT NOT NULL DEFAULT 'Manual',
     usuario_responsavel_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- 6. TABELA DE ORÇAMENTOS COMERCIAIS
@@ -76,10 +77,12 @@ CREATE TABLE IF NOT EXISTS public.orcamentos (
     data_validade TIMESTAMPTZ,
     observacoes_gerais TEXT,
     status TEXT NOT NULL DEFAULT 'Pendente',
+    public_token UUID NOT NULL DEFAULT gen_random_uuid(),
     tem_pdf_assinado BOOLEAN NOT NULL DEFAULT false,
     assinado_por_nome TEXT,
     assinado_em TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- 7. TABELA DE MENSAGENS E CONVERSAS WHATSAPP (whatsapp_mensagens)
@@ -112,6 +115,7 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
     tenant_id TEXT,
     usuario_id UUID,
+    actor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     acao TEXT NOT NULL,
     tabela TEXT NOT NULL,
     registro_id TEXT,
@@ -142,14 +146,10 @@ DECLARE
 BEGIN
     SELECT p.tenant_id INTO v_tenant_id
     FROM public.profiles p
-    WHERE p.id = auth.uid()
+    WHERE p.id = auth.uid() AND p.is_active = true
     LIMIT 1;
 
-    RETURN COALESCE(
-        v_tenant_id,
-        current_setting('request.jwt.claims', true)::jsonb -> 'user_metadata' ->> 'tenant_id',
-        auth.uid()::TEXT
-    );
+    RETURN v_tenant_id; -- Sem perfil ativo, não há tenant autorizado.
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
@@ -190,14 +190,8 @@ CREATE POLICY "servicos_isolation" ON public.servicos
 -- Políticas Orçamentos (Permite leitura/aceite público do link do orçamento enviado pelo WhatsApp)
 DROP POLICY IF EXISTS "orcamentos_isolation" ON public.orcamentos;
 CREATE POLICY "orcamentos_isolation" ON public.orcamentos
-    FOR ALL USING (
-        tenant_id = public.current_tenant_id()
-        OR auth.role() = 'anon'
-    )
-    WITH CHECK (
-        tenant_id = public.current_tenant_id()
-        OR auth.role() = 'anon'
-    );
+    FOR ALL USING (tenant_id = public.current_tenant_id())
+    WITH CHECK (tenant_id = public.current_tenant_id());
 
 -- Políticas WhatsApp Mensagens
 DROP POLICY IF EXISTS "whatsapp_mensagens_isolation" ON public.whatsapp_mensagens;
@@ -216,3 +210,55 @@ DROP POLICY IF EXISTS "audit_logs_isolation" ON public.audit_logs;
 CREATE POLICY "audit_logs_isolation" ON public.audit_logs
     FOR ALL USING (tenant_id = public.current_tenant_id())
     WITH CHECK (tenant_id = public.current_tenant_id());
+
+
+-- Public quotes: access only through the random public_token, never through the internal ID.
+ALTER TABLE public.orcamentos ADD COLUMN IF NOT EXISTS public_token UUID NOT NULL DEFAULT gen_random_uuid();
+CREATE UNIQUE INDEX IF NOT EXISTS orcamentos_public_token_key ON public.orcamentos(public_token);
+
+CREATE OR REPLACE FUNCTION public.get_public_orcamento(p_token uuid)
+RETURNS jsonb LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_temp AS $fn$
+  SELECT jsonb_build_object('id', o.id, 'servico_id', o.servico_id, 'itens', o.itens,
+    'valor_total', o.valor_total, 'data_validade', o.data_validade,
+    'observacoes_gerais', o.observacoes_gerais, 'status', o.status,
+    'tem_pdf_assinado', o.tem_pdf_assinado, 'assinado_por_nome', o.assinado_por_nome,
+    'assinado_em', o.assinado_em)
+  FROM public.orcamentos o WHERE o.public_token = p_token
+    AND (o.data_validade IS NULL OR o.data_validade >= now())
+    AND lower(o.status) IN ('pendente','enviado','visualizado','assinado') LIMIT 1
+$fn$;
+
+CREATE OR REPLACE FUNCTION public.assinar_orcamento_publico(p_token uuid, p_nome text)
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp AS $fn$
+DECLARE v_orcamento public.orcamentos%rowtype;
+BEGIN
+  IF p_nome IS NULL OR length(trim(p_nome)) < 3 THEN RAISE EXCEPTION 'Informe o nome completo para registrar o aceite.'; END IF;
+  UPDATE public.orcamentos o SET status='Assinado', tem_pdf_assinado=true,
+    assinado_por_nome=left(trim(p_nome),160), assinado_em=now(), updated_at=now()
+  WHERE o.public_token=p_token AND (o.data_validade IS NULL OR o.data_validade >= now())
+    AND lower(o.status) IN ('pendente','enviado','visualizado') AND coalesce(o.tem_pdf_assinado,false)=false
+  RETURNING o.* INTO v_orcamento;
+  IF NOT FOUND THEN
+    SELECT o.* INTO v_orcamento FROM public.orcamentos o WHERE o.public_token=p_token
+      AND (o.data_validade IS NULL OR o.data_validade >= now()) AND lower(o.status)='assinado' LIMIT 1;
+    IF NOT FOUND THEN RAISE EXCEPTION 'Orçamento não encontrado, expirado ou indisponível.'; END IF;
+  ELSE
+    IF v_orcamento.servico_id IS NOT NULL THEN
+      UPDATE public.servicos SET status='Aprovado', updated_at=now()
+      WHERE id=v_orcamento.servico_id AND tenant_id=v_orcamento.tenant_id;
+    END IF;
+    INSERT INTO public.audit_logs (tenant_id, usuario_id, acao, tabela, registro_id, detalhes)
+    VALUES (v_orcamento.tenant_id, NULL, 'ASSINAR_PUBLICO', 'orcamentos', v_orcamento.id::text,
+      jsonb_build_object('nome',left(trim(p_nome),160),'canal','link_publico'));
+  END IF;
+  RETURN jsonb_build_object('id',v_orcamento.id,'servico_id',v_orcamento.servico_id,
+    'itens',v_orcamento.itens,'valor_total',v_orcamento.valor_total,'data_validade',v_orcamento.data_validade,
+    'observacoes_gerais',v_orcamento.observacoes_gerais,'status',v_orcamento.status,
+    'tem_pdf_assinado',v_orcamento.tem_pdf_assinado,'assinado_por_nome',v_orcamento.assinado_por_nome,
+    'assinado_em',v_orcamento.assinado_em);
+END;
+$fn$;
+REVOKE ALL ON FUNCTION public.get_public_orcamento(uuid) FROM public, authenticated, anon;
+REVOKE ALL ON FUNCTION public.assinar_orcamento_publico(uuid,text) FROM public, authenticated, anon;
+GRANT EXECUTE ON FUNCTION public.get_public_orcamento(uuid) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.assinar_orcamento_publico(uuid,text) TO anon, authenticated;
