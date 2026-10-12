@@ -29,9 +29,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 function mapPlanoNome(planoNum: number | string | undefined): string {
-  if (planoNum === 2 || planoNum === '2' || planoNum === 'Empresarial') return 'Empresarial';
-  if (planoNum === 0 || planoNum === '0' || planoNum === 'Free') return 'Free';
-  return 'Standard';
+  const normalized = String(planoNum ?? '').trim().toLowerCase();
+  if (normalized === '2' || normalized === 'empresarial') return 'Empresarial';
+  if (normalized === '0' || normalized === 'free') return 'Free';
+  if (normalized === 'standard' || normalized === '1') return 'Standard';
+  return 'Free';
 }
 
 /**
@@ -41,27 +43,27 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('*, tenants(*)')
+      .select('id, tenant_id, nome_completo, email, papel, ativo, tenants(id, plano, ativo)')
       .eq('id', userId)
       .maybeSingle();
 
     if (error) {
-      console.warn('Aviso: Consulta a profiles retornou erro ou tabela com RLS restrito:', error.message);
-      return { profile: null, isActive: true };
+      console.error('Não foi possível validar o perfil no Supabase:', error.message);
+      return { profile: null, isActive: false };
     }
 
-    if (data) {
-      const isActive =
-        data.is_active !== false &&
-        data.ativo !== false &&
-        data.status !== 'inativo' &&
-        data.status !== 'inactive';
-      return { profile: data, isActive };
+    if (!data) {
+      console.error('Conta autenticada sem perfil associado. Acesso bloqueado.');
+      return { profile: null, isActive: false };
     }
+
+    const isActive = data.ativo === true && Boolean(data.tenant_id) &&
+      Boolean(data.papel) && data.tenants?.ativo !== false;
+    return { profile: data, isActive };
   } catch (err) {
-    console.warn('Exceção ao consultar tabela profiles:', err);
+    console.error('Exceção ao validar perfil no Supabase:', err);
+    return { profile: null, isActive: false };
   }
-  return { profile: null, isActive: true };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -78,34 +80,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 1. Busca perfil real na tabela 'profiles'
     const { profile, isActive } = await fetchUserProfile(user.id);
 
-    if (!isActive) {
+    if (!isActive || !profile?.tenant_id || !profile?.papel) {
       await supabase.auth.signOut();
       clearAuthState();
       return false;
     }
 
-    // 2. Extrai dados reais com prioridade para a tabela 'profiles' e 'tenants'
-    const tenantId =
-      profile?.tenant_id ||
-      profile?.tenants?.id ||
-      meta.tenant_id ||
-      meta.organization_id ||
-      user.id;
-
-    const nomeCompleto =
-      profile?.nome ||
-      profile?.full_name ||
-      profile?.nome_completo ||
-      meta.nome_completo ||
-      meta.full_name ||
-      user.email?.split('@')[0] ||
-      'Usuário';
-
-    const papel =
-      profile?.papel ||
-      profile?.role ||
-      meta.papel ||
-      'Usuario';
+    // Perfil e tenant vêm exclusivamente do banco, nunca de metadados editáveis pelo usuário.
+    const tenantId = profile.tenant_id;
+    const nomeCompleto = profile.nome_completo || user.email?.split('@')[0] || 'Usuário';
+    const papel = profile.papel;
 
     const plano = mapPlanoNome(
       profile?.tenants?.plano ||
@@ -277,7 +261,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Se a confirmação de e-mail estiver desabilitada, a sessão já existe
       if (data.session) {
-        await applySession(data.session);
+        const profileApplied = await applySession(data.session);
+        if (!profileApplied) {
+          return {
+            succeeded: false,
+            errors: ['O cadastro foi criado, mas o perfil/empresa ainda não pôde ser validado. Entre em contato com o suporte.'],
+          };
+        }
         return { succeeded: true, value: { confirmationRequired: false }, errors: [] };
       }
 
