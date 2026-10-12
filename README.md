@@ -1,45 +1,31 @@
-# ERP SaaS — Frontend (React + TypeScript)
+# ERP SaaS — Frontend (React + TypeScript + Supabase)
 
-Aplicação web (SPA) do ERP SaaS para marcenarias e prestadores de serviços, migrada para **React 19 + TypeScript + Vite + Tailwind CSS v4**.
+Aplicação web (SPA) do ERP SaaS para marcenarias e prestadores de serviços, construída em **React 19 + TypeScript + Vite + Tailwind CSS v4** com integração total ao **Supabase (Database & Auth)**.
 
-## Recursos Implementados e Portados
+## Integração com Supabase & Vercel
 
-- **Autenticação & Multi-tenancy**:
-  - Tela de login com validação e atalho para conta demo (`/login`)
-  - Tela de cadastro com escolha de planos (Free, Standard, Empresarial) e criação do tenant (`/cadastro`)
-  - Sessão persistida em `localStorage` com Bearer tokens
-  - Proteção de rotas com redirecionamento inteligente
+O projeto está configurado para operar com **Supabase Database e Supabase Auth** reais em produção:
 
-- **Painel Principal (Dashboard)**:
-  - Métricas dinâmicas: Projetos em andamento, orçamentos pendentes, conversas WhatsApp e total de clientes
-  - Ações rápidas para agilizar o fluxo operacional
+- **Autenticação Real**: `supabase.auth.signInWithPassword`, `signUp`, `signOut` e recuperação de senha por e-mail com persistência de sessão.
+- **Isolamento Multi-tenant (RLS)**: Cada organização acessa unicamente seus próprios registros através do campo `organization_id` e políticas de Row Level Security.
+- **Tabelas do Banco de Dados**:
+  - `clientes`: base central de contatos.
+  - `projetos`: projetos de marcenaria com ambientes e especificações em `jsonb`.
+  - `servicos`: atendimentos e escopos operacionais.
+  - `orcamentos`: propostas com itens, totais e suporte a aceite público por link.
+  - `whatsapp_conversas` & `whatsapp_config`: triagem de mensagens e chaves da Meta Cloud API.
 
-- **Gestão de Clientes (`/clientes`)**:
-  - Cadastro completo com Nome, CPF/CNPJ, Telefone/WhatsApp, E-mail e Observações
-  - Filtro e busca em tempo real por nome, contato ou e-mail
-  - Identificação visual de origem (Manual vs. WhatsApp)
+### Script de Criação das Tabelas e RLS
+O arquivo `supabase/schema.sql` contém todo o DDL necessário (tabelas, índices e políticas de Row Level Security). Execute-o diretamente no **SQL Editor** do painel do Supabase.
 
-- **Módulo de Móveis Planejados (`/projetos`)**:
-  - Acompanhamento de projetos por status (Orçamento, Medição Agendada, Aguardando Aprovação, Aprovado, Em Produção, Pronto, Entregue, etc.)
-  - Detalhe do projeto com discriminação de ambientes, medidas técnicas (L x A x P), materiais (MDF, MDP, Lacca) e valores
-  - Ação de envio do orçamento diretamente pelo WhatsApp do cliente
+### Variáveis de Ambiente na Vercel
+Cadastre no projeto da Vercel (ou em `.env.local`):
+```env
+VITE_SUPABASE_URL="https://seu-projeto.supabase.co"
+VITE_SUPABASE_ANON_KEY="sua-chave-publica-anon"
+```
 
-- **Atendimentos & Serviços (`/servicos`)**:
-  - Gestão de atendimentos em andamento originados por triagem ou manuais
-  - Edição de título, escopo detalhado e transição de status
-  - Criador de orçamentos com múltiplos itens dinâmicos, cálculo automático de totais e observações comerciais
-
-- **Proposta Comercial Pública & Aceite Eletrônico (`/orcamento/:id`)**:
-  - Página pública limpa acessível pelo cliente final via link enviado no WhatsApp
-  - Visualização completa da proposta e itens
-  - Aceite e assinatura eletrônica com registro de nome, data/hora e confirmação
-
-- **Integração WhatsApp Cloud API (`/whatsapp`)**:
-  - Triagem de conversas pendentes recebidas de clientes potenciais
-  - Aprovação com 1 clique (cria automaticamente o cliente e o serviço no ERP) ou opção de ignorar
-  - Painel de configuração da Meta Cloud API com Phone Number ID, Access Token, Token de verificação e cópia rápida da URL do webhook
-
-## Executando o Projeto
+## Como Executar Localmente
 
 ```bash
 npm install

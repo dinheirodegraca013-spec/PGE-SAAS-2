@@ -1,4 +1,3 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import {
   INITIAL_CLIENTES,
   INITIAL_PROJETOS,
@@ -15,6 +14,7 @@ import { Servico, StatusServico } from '@/modules/servicos/types/servico';
 import { Orcamento } from '@/modules/orcamentos/types/orcamento';
 import { ConversaPendente } from '@/modules/whatsapp/types/conversaPendente';
 import { WhatsAppConfiguracao } from '@/modules/whatsapp/types/whatsappConfig';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 const STORAGE_KEYS = {
   CLIENTES: 'erp-saas:clientes',
@@ -26,7 +26,21 @@ const STORAGE_KEYS = {
   AUTH: 'erp-saas:auth',
 };
 
-// Local storage helpers
+// Helper para obter o ID da organização do usuário atual
+export function getCurrentOrganizationId(): string {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.AUTH);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.usuario?.tenantId) return parsed.usuario.tenantId;
+    }
+  } catch {
+    // Ignore
+  }
+  return 'org_principal';
+}
+
+// Local storage helpers para fallback
 function getStored<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
@@ -44,11 +58,10 @@ function setStored<T>(key: string, value: T): void {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch (e) {
-    console.error('Failed to save to localStorage:', e);
+    console.error('Falha ao salvar no localStorage:', e);
   }
 }
 
-// Initialize mock database in browser localStorage
 export function initializeLocalStorageIfEmpty() {
   if (!localStorage.getItem(STORAGE_KEYS.CLIENTES)) {
     setStored(STORAGE_KEYS.CLIENTES, INITIAL_CLIENTES);
@@ -68,7 +81,7 @@ export function initializeLocalStorageIfEmpty() {
   if (!localStorage.getItem(STORAGE_KEYS.WHATSAPP_CONFIG)) {
     setStored(STORAGE_KEYS.WHATSAPP_CONFIG, INITIAL_WHATSAPP_CONFIG);
   }
-  if (!localStorage.getItem(STORAGE_KEYS.AUTH)) {
+  if (!localStorage.getItem(STORAGE_KEYS.AUTH) && !isSupabaseConfigured) {
     setStored(STORAGE_KEYS.AUTH, {
       accessToken: 'demo-jwt-token-access',
       refreshToken: 'demo-refresh-token',
@@ -79,7 +92,6 @@ export function initializeLocalStorageIfEmpty() {
 
 // Local mock database methods
 export const localDb = {
-  // Clientes
   getClientes: (): Cliente[] => getStored<Cliente[]>(STORAGE_KEYS.CLIENTES, INITIAL_CLIENTES),
   addCliente: (input: { nome: string; cpfCnpj?: string; email?: string; telefoneWhatsApp?: string; observacoes?: string; origem?: string }): Cliente => {
     const items = getStored<Cliente[]>(STORAGE_KEYS.CLIENTES, INITIAL_CLIENTES);
@@ -101,7 +113,6 @@ export const localDb = {
     return localDb.getClientes().find((c) => c.id === id);
   },
 
-  // Projetos
   getProjetos: (): ProjetoMovelPlanejado[] => getStored<ProjetoMovelPlanejado[]>(STORAGE_KEYS.PROJETOS, INITIAL_PROJETOS),
   getProjetoById: (id: string): ProjetoMovelPlanejado | undefined => {
     return localDb.getProjetos().find((p) => p.id === id);
@@ -122,7 +133,6 @@ export const localDb = {
     return item;
   },
 
-  // Serviços
   getServicos: (): Servico[] => getStored<Servico[]>(STORAGE_KEYS.SERVICOS, INITIAL_SERVICOS),
   getServicoById: (id: string): Servico | undefined => {
     return localDb.getServicos().find((s) => s.id === id);
@@ -152,7 +162,6 @@ export const localDb = {
     return item;
   },
 
-  // Orçamentos
   getOrcamentos: (): Orcamento[] => getStored<Orcamento[]>(STORAGE_KEYS.ORCAMENTOS, INITIAL_ORCAMENTOS),
   getOrcamentosPorServico: (servicoId: string): Orcamento[] => {
     return localDb.getOrcamentos().filter((o) => o.servicoId === servicoId);
@@ -179,10 +188,7 @@ export const localDb = {
     };
     items.unshift(novo);
     setStored(STORAGE_KEYS.ORCAMENTOS, items);
-
-    // Atualiza status do serviço correspondente
     localDb.updateServico(servicoId, { status: 'OrcamentoEnviado' });
-
     return novo;
   },
   assinarOrcamento: (id: string, nomeAssinante: string): boolean => {
@@ -194,15 +200,12 @@ export const localDb = {
       orc.assinadoPorNome = nomeAssinante;
       orc.assinadoEmUtc = new Date().toISOString();
       setStored(STORAGE_KEYS.ORCAMENTOS, items);
-
-      // Atualiza status do serviço
       localDb.updateServico(orc.servicoId, { status: 'Aprovado' });
       return true;
     }
     return false;
   },
 
-  // WhatsApp Conversas Pendentes
   getConversasPendentes: (status: string = 'Pendente'): ConversaPendente[] => {
     const items = getStored<ConversaPendente[]>(STORAGE_KEYS.CONVERSAS, INITIAL_CONVERSAS_PENDENTES);
     return items.filter((c) => c.status === status);
@@ -215,7 +218,6 @@ export const localDb = {
     conversa.status = 'Aprovada';
     setStored(STORAGE_KEYS.CONVERSAS, items);
 
-    // Cria cliente
     const nomeFinal = nome && nome.trim().length > 0 ? nome.trim() : `Contato WhatsApp ${conversa.telefoneOrigemE164}`;
     const cliente = localDb.addCliente({
       nome: nomeFinal,
@@ -224,7 +226,6 @@ export const localDb = {
       observacoes: conversa.ultimaMensagemTexto ? `Mensagem inicial: "${conversa.ultimaMensagemTexto}"` : undefined,
     });
 
-    // Abre serviço correspondente
     const servico = localDb.addServico({
       id: `srv-${Date.now()}`,
       clienteId: cliente.id,
@@ -247,7 +248,6 @@ export const localDb = {
     return true;
   },
 
-  // WhatsApp Configuração
   getWhatsAppConfig: (): WhatsAppConfiguracao => {
     return getStored<WhatsAppConfiguracao>(STORAGE_KEYS.WHATSAPP_CONFIG, INITIAL_WHATSAPP_CONFIG);
   },
@@ -267,91 +267,541 @@ export const localDb = {
   },
 };
 
-// Initialize right away
 initializeLocalStorageIfEmpty();
 
-/**
- * Instância central do Axios com proxy para backend real ou armazenamento inteligente offline.
- */
-const rawAxios = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  timeout: 3000,
-});
-
-// Interceptor para injetar Bearer token
-rawAxios.interceptors.request.use((config) => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.AUTH);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed.accessToken) {
-        config.headers.Authorization = `Bearer ${parsed.accessToken}`;
-      }
-    }
-  } catch {
-    // Ignore
-  }
-  return config;
-});
-
-/**
- * apiClient que faz chamadas à API real e transparentemente atende do localDb caso
- * a API C# não esteja em execução (conforme documentado no repositório original do GitHub).
- */
-export const apiClient = {
-  async get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    try {
-      if (import.meta.env.VITE_API_BASE_URL) {
-        return await rawAxios.get<T>(url, config);
-      }
-    } catch {
-      // Fallback para mock local
-    }
-
-    // Mock local handling
-    return handleMockGet<T>(url, config);
-  },
-
-  async post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    try {
-      if (import.meta.env.VITE_API_BASE_URL) {
-        return await rawAxios.post<T>(url, data, config);
-      }
-    } catch {
-      // Fallback para mock local
-    }
-
-    return handleMockPost<T>(url, data, config);
-  },
-
-  async put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    try {
-      if (import.meta.env.VITE_API_BASE_URL) {
-        return await rawAxios.put<T>(url, data, config);
-      }
-    } catch {
-      // Fallback para mock local
-    }
-
-    return handleMockPut<T>(url, data, config);
-  },
-};
-
-function createMockResponse<T>(data: T): AxiosResponse<T> {
+function createMockResponse<T>(data: T): { data: T; status: number } {
   return {
     data,
     status: 200,
-    statusText: 'OK',
-    headers: {},
-    config: { headers: {} } as any,
   };
 }
 
-function handleMockGet<T>(url: string, config?: AxiosRequestConfig): AxiosResponse<T> {
-  // Clientes
+// =========================================================================
+// Camada de API que conecta diretamente ao Supabase Database com RLS
+// =========================================================================
+
+export const apiClient = {
+  async get<T>(url: string, _config?: any): Promise<{ data: T; status: number }> {
+    const orgId = getCurrentOrganizationId();
+
+    if (isSupabaseConfigured) {
+      try {
+        // 1. Clientes
+        if (url === '/clientes') {
+          const { data, error } = await supabase
+            .from('clientes')
+            .select('*')
+            .eq('organization_id', orgId)
+            .order('created_at', { ascending: false });
+
+          if (!error && data) {
+            const clientes: Cliente[] = data.map((d: any) => ({
+              id: d.id,
+              nome: d.nome,
+              cpfCnpj: d.cpf_cnpj,
+              email: d.email,
+              telefoneWhatsApp: d.telefone_whatsapp,
+              observacoes: d.observacoes,
+              origem: d.origem,
+              createdAtUtc: d.created_at,
+            }));
+            return createMockResponse<T>({ succeeded: true, value: clientes, errors: [] } as any);
+          }
+        }
+
+        if (url.startsWith('/clientes/')) {
+          const id = url.replace('/clientes/', '');
+          const { data, error } = await supabase
+            .from('clientes')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+
+          if (!error && data) {
+            const cliente: Cliente = {
+              id: data.id,
+              nome: data.nome,
+              cpfCnpj: data.cpf_cnpj,
+              email: data.email,
+              telefoneWhatsApp: data.telefone_whatsapp,
+              observacoes: data.observacoes,
+              origem: data.origem,
+              createdAtUtc: data.created_at,
+            };
+            return createMockResponse<T>({ succeeded: true, value: cliente, errors: [] } as any);
+          }
+        }
+
+        // 2. Projetos Móveis Planejados
+        if (url === '/furniture/projetos') {
+          const { data, error } = await supabase
+            .from('projetos')
+            .select('*')
+            .eq('organization_id', orgId)
+            .order('created_at', { ascending: false });
+
+          if (!error && data) {
+            const items: ProjetoMovelPlanejado[] = data.map((d: any) => ({
+              id: d.id,
+              clienteId: d.cliente_id,
+              titulo: d.titulo,
+              status: d.status,
+              dataMedicaoAgendada: d.data_medicao_agendada,
+              dataPrevistaEntrega: d.data_prevista_entrega,
+              valorTotalOrcamento: Number(d.valor_total_orcamento) || 0,
+              observacoes: d.observacoes,
+              ambientes: Array.isArray(d.ambientes) ? d.ambientes : [],
+            }));
+            const paginated: PaginatedResult<ProjetoMovelPlanejado> = {
+              items,
+              totalCount: items.length,
+              pageNumber: 1,
+              pageSize: 50,
+            };
+            return createMockResponse<T>({ succeeded: true, value: paginated, errors: [] } as any);
+          }
+        }
+
+        if (url.startsWith('/furniture/projetos/')) {
+          const id = url.replace('/furniture/projetos/', '');
+          const { data, error } = await supabase
+            .from('projetos')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+
+          if (!error && data) {
+            const projeto: ProjetoMovelPlanejado = {
+              id: data.id,
+              clienteId: data.cliente_id,
+              titulo: data.titulo,
+              status: data.status,
+              dataMedicaoAgendada: data.data_medicao_agendada,
+              dataPrevistaEntrega: data.data_prevista_entrega,
+              valorTotalOrcamento: Number(data.valor_total_orcamento) || 0,
+              observacoes: data.observacoes,
+              ambientes: Array.isArray(data.ambientes) ? data.ambientes : [],
+            };
+            return createMockResponse<T>({ succeeded: true, value: projeto, errors: [] } as any);
+          }
+        }
+
+        // 3. Serviços
+        if (url === '/servicos') {
+          const { data, error } = await supabase
+            .from('servicos')
+            .select('*')
+            .eq('organization_id', orgId)
+            .order('created_at', { ascending: false });
+
+          if (!error && data) {
+            const servicos: Servico[] = data.map((d: any) => ({
+              id: d.id,
+              clienteId: d.cliente_id,
+              clienteNome: d.cliente_nome,
+              titulo: d.titulo,
+              escopo: d.escopo,
+              status: d.status,
+              origem: d.origem,
+              usuarioResponsavelId: d.usuario_responsavel_id,
+              createdAtUtc: d.created_at,
+            }));
+            return createMockResponse<T>({ succeeded: true, value: servicos, errors: [] } as any);
+          }
+        }
+
+        if (url.startsWith('/servicos/') && url.endsWith('/orcamentos')) {
+          const servicoId = url.replace('/servicos/', '').replace('/orcamentos', '');
+          const { data, error } = await supabase
+            .from('orcamentos')
+            .select('*')
+            .eq('servico_id', servicoId)
+            .order('created_at', { ascending: false });
+
+          if (!error && data) {
+            const orcamentos: Orcamento[] = data.map((d: any) => ({
+              id: d.id,
+              servicoId: d.servico_id,
+              itens: Array.isArray(d.itens) ? d.itens : [],
+              valorTotal: Number(d.valor_total) || 0,
+              dataValidade: d.data_validade,
+              observacoesGerais: d.observacoes_gerais,
+              status: d.status,
+              temPdfAssinado: Boolean(d.tem_pdf_assinado),
+              assinadoPorNome: d.assinado_por_nome,
+              assinadoEmUtc: d.assinado_em,
+            }));
+            return createMockResponse<T>({ succeeded: true, value: orcamentos, errors: [] } as any);
+          }
+        }
+
+        if (url.startsWith('/servicos/')) {
+          const id = url.replace('/servicos/', '');
+          const { data, error } = await supabase
+            .from('servicos')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+
+          if (!error && data) {
+            const servico: Servico = {
+              id: data.id,
+              clienteId: data.cliente_id,
+              clienteNome: data.cliente_nome,
+              titulo: data.titulo,
+              escopo: data.escopo,
+              status: data.status,
+              origem: data.origem,
+              usuarioResponsavelId: data.usuario_responsavel_id,
+              createdAtUtc: data.created_at,
+            };
+            return createMockResponse<T>({ succeeded: true, value: servico, errors: [] } as any);
+          }
+        }
+
+        // 4. Orçamento específico (Pode ser aberto publicamente via link)
+        if (url.startsWith('/orcamentos/')) {
+          const id = url.replace('/orcamentos/', '');
+          const { data, error } = await supabase
+            .from('orcamentos')
+            .select('*')
+            .eq('id', id)
+            .maybeSingle();
+
+          if (!error && data) {
+            const orcamento: Orcamento = {
+              id: data.id,
+              servicoId: data.servico_id,
+              itens: Array.isArray(data.itens) ? data.itens : [],
+              valorTotal: Number(data.valor_total) || 0,
+              dataValidade: data.data_validade,
+              observacoesGerais: data.observacoes_gerais,
+              status: data.status,
+              temPdfAssinado: Boolean(data.tem_pdf_assinado),
+              assinadoPorNome: data.assinado_por_nome,
+              assinadoEmUtc: data.assinado_em,
+            };
+            return createMockResponse<T>({ succeeded: true, value: orcamento, errors: [] } as any);
+          }
+        }
+
+        // 5. WhatsApp
+        if (url.startsWith('/whatsapp/conversas-pendentes')) {
+          const { data, error } = await supabase
+            .from('whatsapp_conversas')
+            .select('*')
+            .eq('organization_id', orgId)
+            .eq('status', 'Pendente')
+            .order('ultima_mensagem_em', { ascending: false });
+
+          if (!error && data) {
+            const conversas: ConversaPendente[] = data.map((d: any) => ({
+              id: d.id,
+              telefoneOrigemE164: d.telefone_origem_e164,
+              ultimaMensagemTexto: d.ultima_mensagem_texto,
+              primeiraMensagemEmUtc: d.primeira_mensagem_em,
+              ultimaMensagemEmUtc: d.ultima_mensagem_em,
+              quantidadeMensagens: d.quantidade_mensagens,
+              status: d.status,
+            }));
+            return createMockResponse<T>({ succeeded: true, value: conversas, errors: [] } as any);
+          }
+        }
+
+        if (url === '/whatsapp/configuracao') {
+          const { data, error } = await supabase
+            .from('whatsapp_config')
+            .select('*')
+            .eq('organization_id', orgId)
+            .maybeSingle();
+
+          if (!error && data) {
+            const maskedPhone = data.phone_number_id?.length > 4 ? `••••••••${data.phone_number_id.slice(-4)}` : data.phone_number_id;
+            const config: WhatsAppConfiguracao = {
+              configurado: Boolean(data.configurado),
+              numeroOrigem: data.numero_origem,
+              phoneNumberIdMascarado: maskedPhone,
+              businessAccountIdMascarado: data.business_account_id ? `••••••••${data.business_account_id.slice(-4)}` : undefined,
+              configuradoEmUtc: data.updated_at,
+              webhookUrl: window.location.origin + '/api/whatsapp/webhook',
+            };
+            return createMockResponse<T>({ succeeded: true, value: config, errors: [] } as any);
+          }
+        }
+      } catch (err) {
+        console.warn('Fallback para armazenamento local:', err);
+      }
+    }
+
+    // Fallback Mock Local
+    return handleMockGet<T>(url);
+  },
+
+  async post<T>(url: string, data?: any, _config?: any): Promise<{ data: T; status: number }> {
+    const orgId = getCurrentOrganizationId();
+
+    if (isSupabaseConfigured) {
+      try {
+        // Criar Cliente no Supabase
+        if (url === '/clientes') {
+          const { data: inserted, error } = await supabase
+            .from('clientes')
+            .insert({
+              organization_id: orgId,
+              nome: data.nome,
+              cpf_cnpj: data.cpfCnpj || null,
+              email: data.email || null,
+              telefone_whatsapp: data.telefoneWhatsApp || null,
+              observacoes: data.observacoes || null,
+              origem: data.origem || 'Manual',
+            })
+            .select()
+            .single();
+
+          if (!error && inserted) {
+            const cliente: Cliente = {
+              id: inserted.id,
+              nome: inserted.nome,
+              cpfCnpj: inserted.cpf_cnpj,
+              email: inserted.email,
+              telefoneWhatsApp: inserted.telefone_whatsapp,
+              observacoes: inserted.observacoes,
+              origem: inserted.origem,
+              createdAtUtc: inserted.created_at,
+            };
+            // Espelha no localDb
+            localDb.addCliente(data);
+            return createMockResponse<T>({ succeeded: true, value: cliente, errors: [] } as any);
+          }
+        }
+
+        // Criar Orçamento no Supabase
+        if (url.startsWith('/servicos/') && url.endsWith('/orcamentos')) {
+          const servicoId = url.replace('/servicos/', '').replace('/orcamentos', '');
+          const itensCalculados = (data.itens || []).map((it: any) => ({
+            ...it,
+            valorTotal: Number(it.quantidade) * Number(it.valorUnitario),
+          }));
+          const valorTotal = itensCalculados.reduce((s: number, i: any) => s + i.valorTotal, 0);
+
+          const { data: inserted, error } = await supabase
+            .from('orcamentos')
+            .insert({
+              organization_id: orgId,
+              servico_id: servicoId,
+              itens: itensCalculados,
+              valor_total: valorTotal,
+              data_validade: data.dataValidade || new Date(Date.now() + 15 * 86400000).toISOString(),
+              observacoes_gerais: data.observacoesGerais || null,
+              status: 'Pendente',
+              tem_pdf_assinado: false,
+            })
+            .select()
+            .single();
+
+          if (!error && inserted) {
+            // Atualiza status do serviço correspondente
+            await supabase
+              .from('servicos')
+              .update({ status: 'OrcamentoEnviado' })
+              .eq('id', servicoId);
+
+            const orcamento: Orcamento = {
+              id: inserted.id,
+              servicoId: inserted.servico_id,
+              itens: inserted.itens,
+              valorTotal: Number(inserted.valor_total),
+              dataValidade: inserted.data_validade,
+              observacoesGerais: inserted.observacoes_gerais,
+              status: inserted.status,
+              temPdfAssinado: inserted.tem_pdf_assinado,
+            };
+            return createMockResponse<T>({ succeeded: true, value: orcamento, errors: [] } as any);
+          }
+        }
+
+        // Assinar Orçamento (Público) no Supabase
+        if (url.startsWith('/orcamentos/') && url.endsWith('/assinar')) {
+          const id = url.replace('/orcamentos/', '').replace('/assinar', '');
+          const { data: updated, error } = await supabase
+            .from('orcamentos')
+            .update({
+              status: 'Assinado',
+              tem_pdf_assinado: true,
+              assinado_por_nome: data.nome,
+              assinado_em: new Date().toISOString(),
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+          if (!error && updated) {
+            // Avança status do serviço para Aprovado
+            if (updated.servico_id) {
+              await supabase
+                .from('servicos')
+                .update({ status: 'Aprovado' })
+                .eq('id', updated.servico_id);
+            }
+            localDb.assinarOrcamento(id, data.nome);
+            return createMockResponse<T>({ succeeded: true, errors: [] } as any);
+          }
+        }
+
+        // Aprovar Conversa do WhatsApp no Supabase
+        if (url.startsWith('/whatsapp/conversas-pendentes/') && url.endsWith('/aprovar')) {
+          const id = url.replace('/whatsapp/conversas-pendentes/', '').replace('/aprovar', '');
+          const { data: conv } = await supabase
+            .from('whatsapp_conversas')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+          if (conv) {
+            await supabase
+              .from('whatsapp_conversas')
+              .update({ status: 'Aprovada' })
+              .eq('id', id);
+
+            const nomeFinal = data?.nome?.trim() || `Contato WhatsApp ${conv.telefone_origem_e164}`;
+            const { data: novoCli } = await supabase
+              .from('clientes')
+              .insert({
+                organization_id: orgId,
+                nome: nomeFinal,
+                telefone_whatsapp: conv.telefone_origem_e164,
+                origem: 'WhatsApp',
+                observacoes: conv.ultima_mensagem_texto ? `Mensagem: "${conv.ultima_mensagem_texto}"` : null,
+              })
+              .select()
+              .single();
+
+            const { data: novoSrv } = await supabase
+              .from('servicos')
+              .insert({
+                organization_id: orgId,
+                cliente_id: novoCli?.id || null,
+                cliente_nome: nomeFinal,
+                titulo: 'Atendimento via WhatsApp',
+                escopo: conv.ultima_mensagem_texto || 'Contato iniciado via WhatsApp.',
+                status: 'EmAndamento',
+                origem: 'WhatsApp',
+              })
+              .select()
+              .single();
+
+            localDb.aprovarConversa(id, data?.nome);
+            return createMockResponse<T>({
+              succeeded: true,
+              value: { clienteId: novoCli?.id || '', servicoId: novoSrv?.id || '' },
+              errors: [],
+            } as any);
+          }
+        }
+
+        // Ignorar Conversa
+        if (url.startsWith('/whatsapp/conversas-pendentes/') && url.endsWith('/ignorar')) {
+          const id = url.replace('/whatsapp/conversas-pendentes/', '').replace('/ignorar', '');
+          await supabase
+            .from('whatsapp_conversas')
+            .update({ status: 'Ignorada' })
+            .eq('id', id);
+          localDb.ignorarConversa(id);
+          return createMockResponse<T>({ succeeded: true, errors: [] } as any);
+        }
+      } catch (err) {
+        console.warn('Fallback POST para mock local:', err);
+      }
+    }
+
+    return handleMockPost<T>(url, data);
+  },
+
+  async put<T>(url: string, data?: any, _config?: any): Promise<{ data: T; status: number }> {
+    const orgId = getCurrentOrganizationId();
+
+    if (isSupabaseConfigured) {
+      try {
+        // Atualizar Serviço no Supabase
+        if (url.startsWith('/servicos/')) {
+          const id = url.replace('/servicos/', '');
+          const updates: any = {};
+          if (data.titulo !== undefined) updates.titulo = data.titulo;
+          if (data.escopo !== undefined) updates.escopo = data.escopo;
+          if (data.status !== undefined) {
+            const keys = ['EmAndamento', 'EscopoDefinido', 'OrcamentoEnviado', 'Aprovado', 'Concluido', 'Cancelado'];
+            updates.status = typeof data.status === 'number' ? keys[data.status] || 'EmAndamento' : data.status;
+          }
+
+          const { data: updated, error } = await supabase
+            .from('servicos')
+            .update(updates)
+            .eq('id', id)
+            .select()
+            .single();
+
+          if (!error && updated) {
+            const servico: Servico = {
+              id: updated.id,
+              clienteId: updated.cliente_id,
+              clienteNome: updated.cliente_nome,
+              titulo: updated.titulo,
+              escopo: updated.escopo,
+              status: updated.status,
+              origem: updated.origem,
+              usuarioResponsavelId: updated.usuario_responsavel_id,
+              createdAtUtc: updated.created_at,
+            };
+            localDb.updateServico(id, data);
+            return createMockResponse<T>({ succeeded: true, value: servico, errors: [] } as any);
+          }
+        }
+
+        // Salvar Configuração WhatsApp no Supabase
+        if (url === '/whatsapp/configuracao') {
+          const { data: upserted, error } = await supabase
+            .from('whatsapp_config')
+            .upsert(
+              {
+                organization_id: orgId,
+                phone_number_id: data.phoneNumberId,
+                access_token: data.accessToken,
+                business_account_id: data.businessAccountId || null,
+                numero_origem: data.numeroOrigem || null,
+                webhook_verify_token: data.webhookVerifyToken,
+                configurado: true,
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: 'organization_id' },
+            )
+            .select()
+            .single();
+
+          if (!error && upserted) {
+            localDb.updateWhatsAppConfig(data);
+            const maskedPhone = upserted.phone_number_id?.length > 4 ? `••••••••${upserted.phone_number_id.slice(-4)}` : upserted.phone_number_id;
+            const config: WhatsAppConfiguracao = {
+              configurado: true,
+              numeroOrigem: upserted.numero_origem,
+              phoneNumberIdMascarado: maskedPhone,
+              businessAccountIdMascarado: upserted.business_account_id ? `••••••••${upserted.business_account_id.slice(-4)}` : undefined,
+              configuradoEmUtc: upserted.updated_at,
+              webhookUrl: window.location.origin + '/api/whatsapp/webhook',
+            };
+            return createMockResponse<T>({ succeeded: true, value: config, errors: [] } as any);
+          }
+        }
+      } catch (err) {
+        console.warn('Fallback PUT para mock local:', err);
+      }
+    }
+
+    return handleMockPut<T>(url, data);
+  },
+};
+
+// Handlers locais de mock
+function handleMockGet<T>(url: string): { data: T; status: number } {
   if (url === '/clientes') {
     const clientes = localDb.getClientes();
     return createMockResponse<T>({ succeeded: true, value: clientes, errors: [] } as any);
@@ -361,8 +811,6 @@ function handleMockGet<T>(url: string, config?: AxiosRequestConfig): AxiosRespon
     const cliente = localDb.getClienteById(id);
     return createMockResponse<T>({ succeeded: !!cliente, value: cliente, errors: cliente ? [] : ['Cliente não encontrado'] } as any);
   }
-
-  // Projetos
   if (url === '/furniture/projetos') {
     const items = localDb.getProjetos();
     const result: PaginatedResult<ProjetoMovelPlanejado> = {
@@ -378,8 +826,6 @@ function handleMockGet<T>(url: string, config?: AxiosRequestConfig): AxiosRespon
     const projeto = localDb.getProjetoById(id);
     return createMockResponse<T>({ succeeded: !!projeto, value: projeto, errors: projeto ? [] : ['Projeto não encontrado'] } as any);
   }
-
-  // Serviços
   if (url === '/servicos') {
     const servicos = localDb.getServicos();
     return createMockResponse<T>({ succeeded: true, value: servicos, errors: [] } as any);
@@ -394,15 +840,11 @@ function handleMockGet<T>(url: string, config?: AxiosRequestConfig): AxiosRespon
     const servico = localDb.getServicoById(id);
     return createMockResponse<T>({ succeeded: !!servico, value: servico, errors: servico ? [] : ['Serviço não encontrado'] } as any);
   }
-
-  // Orçamentos
   if (url.startsWith('/orcamentos/')) {
     const id = url.replace('/orcamentos/', '');
     const orcamento = localDb.getOrcamentoById(id);
     return createMockResponse<T>({ succeeded: !!orcamento, value: orcamento, errors: orcamento ? [] : ['Orçamento não encontrado'] } as any);
   }
-
-  // WhatsApp
   if (url.startsWith('/whatsapp/conversas-pendentes')) {
     const conversas = localDb.getConversasPendentes();
     return createMockResponse<T>({ succeeded: true, value: conversas, errors: [] } as any);
@@ -411,12 +853,10 @@ function handleMockGet<T>(url: string, config?: AxiosRequestConfig): AxiosRespon
     const config = localDb.getWhatsAppConfig();
     return createMockResponse<T>({ succeeded: true, value: config, errors: [] } as any);
   }
-
   return createMockResponse<T>({ succeeded: true, value: null, errors: [] } as any);
 }
 
-function handleMockPost<T>(url: string, data?: any, _config?: AxiosRequestConfig): AxiosResponse<T> {
-  // Auth Login
+function handleMockPost<T>(url: string, data?: any): { data: T; status: number } {
   if (url === '/auth/login') {
     const email = data?.email || 'admin@exemplo.com';
     const user: any = {
@@ -434,8 +874,6 @@ function handleMockPost<T>(url: string, data?: any, _config?: AxiosRequestConfig
     };
     return createMockResponse<T>({ succeeded: true, value: user, errors: [] } as any);
   }
-
-  // Auth Register
   if (url === '/auth/register') {
     const user: any = {
       accessToken: 'jwt-access-token-' + Date.now(),
@@ -452,28 +890,20 @@ function handleMockPost<T>(url: string, data?: any, _config?: AxiosRequestConfig
     };
     return createMockResponse<T>({ succeeded: true, value: user, errors: [] } as any);
   }
-
-  // Clientes
   if (url === '/clientes') {
     const cliente = localDb.addCliente(data);
     return createMockResponse<T>({ succeeded: true, value: cliente, errors: [] } as any);
   }
-
-  // Orçamentos
   if (url.startsWith('/servicos/') && url.endsWith('/orcamentos')) {
     const servicoId = url.replace('/servicos/', '').replace('/orcamentos', '');
     const orcamento = localDb.addOrcamento(servicoId, data.itens, data.observacoesGerais);
     return createMockResponse<T>({ succeeded: true, value: orcamento, errors: [] } as any);
   }
-
-  // Assinar orçamento
   if (url.startsWith('/orcamentos/') && url.endsWith('/assinar')) {
     const id = url.replace('/orcamentos/', '').replace('/assinar', '');
     const success = localDb.assinarOrcamento(id, data?.nome || 'Cliente');
     return createMockResponse<T>({ succeeded: success, errors: success ? [] : ['Erro ao assinar'] } as any);
   }
-
-  // WhatsApp
   if (url.startsWith('/whatsapp/conversas-pendentes/') && url.endsWith('/aprovar')) {
     const id = url.replace('/whatsapp/conversas-pendentes/', '').replace('/aprovar', '');
     const res = localDb.aprovarConversa(id, data?.nome);
@@ -484,29 +914,18 @@ function handleMockPost<T>(url: string, data?: any, _config?: AxiosRequestConfig
     const res = localDb.ignorarConversa(id);
     return createMockResponse<T>({ succeeded: res, errors: res ? [] : ['Erro ao ignorar'] } as any);
   }
-  if (url === '/whatsapp/enviar-texto') {
-    return createMockResponse<T>({ succeeded: true, errors: [] } as any);
-  }
-  if (url.includes('/enviar-orcamento-whatsapp')) {
-    return createMockResponse<T>({ succeeded: true, errors: [] } as any);
-  }
-
   return createMockResponse<T>({ succeeded: true, errors: [] } as any);
 }
 
-function handleMockPut<T>(url: string, data?: any, _config?: AxiosRequestConfig): AxiosResponse<T> {
-  // Atualizar Serviço
+function handleMockPut<T>(url: string, data?: any): { data: T; status: number } {
   if (url.startsWith('/servicos/')) {
     const id = url.replace('/servicos/', '');
     const updated = localDb.updateServico(id, data);
     return createMockResponse<T>({ succeeded: !!updated, value: updated, errors: updated ? [] : ['Serviço não encontrado'] } as any);
   }
-
-  // WhatsApp Configuração
   if (url === '/whatsapp/configuracao') {
     const config = localDb.updateWhatsAppConfig(data);
     return createMockResponse<T>({ succeeded: true, value: config, errors: [] } as any);
   }
-
   return createMockResponse<T>({ succeeded: true, errors: [] } as any);
 }
