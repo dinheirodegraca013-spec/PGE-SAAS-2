@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseAnonKey, supabaseUrl, isSupabaseConfigured } from '@/lib/supabase';
 import { apiClient } from '@/services/api/client';
 import type { ApiResult } from '@/types/api';
 import type { AssinarOrcamentoInput, CriarOrcamentoInput, Orcamento } from '../types/orcamento';
@@ -19,6 +19,28 @@ function mapPublicOrcamento(data: any): Orcamento {
   };
 }
 
+async function publicQuoteRequest(token: string, method: 'GET' | 'POST', body?: unknown) {
+  if (!isSupabaseConfigured) {
+    return { ok: false, data: { error: 'Supabase não está configurado.' } };
+  }
+
+  const url = new URL(`${supabaseUrl.replace(/\/+$/, '')}/functions/v1/public-orcamento`);
+  if (method === 'GET') url.searchParams.set('token', token);
+
+  const response = await fetch(url.toString(), {
+    method,
+    headers: {
+      apikey: supabaseAnonKey,
+      Authorization: `Bearer ${supabaseAnonKey}`,
+      'Content-Type': 'application/json',
+    },
+    ...(method === 'POST' ? { body: JSON.stringify({ ...(body as object || {}), token }) } : {}),
+  });
+
+  const data = await response.json().catch(() => ({ error: 'Resposta inválida do serviço de orçamento.' }));
+  return { ok: response.ok, data };
+}
+
 export const orcamentosService = {
   async criar(servicoId: string, input: CriarOrcamentoInput): Promise<ApiResult<Orcamento>> {
     const response = await apiClient.post<ApiResult<Orcamento>>(`/servicos/${servicoId}/orcamentos`, input);
@@ -36,25 +58,30 @@ export const orcamentosService = {
     return response.data;
   },
 
-  /** Consulta pública limitada aos campos do orçamento usando token aleatório. */
+  /** Consulta pública limitada aos campos do orçamento via Edge Function e token aleatório. */
   async obterPublicoPorToken(token: string): Promise<ApiResult<Orcamento>> {
-    const { data, error } = await supabase.rpc('get_public_orcamento', { p_token: token });
-    if (error || !data) {
-      return { succeeded: false, errors: [error?.message || 'Orçamento não encontrado, expirado ou indisponível.'] };
+    try {
+      const response = await publicQuoteRequest(token, 'GET');
+      if (!response.ok || !response.data?.quote) {
+        return { succeeded: false, errors: [response.data?.error || 'Orçamento não encontrado, expirado ou indisponível.'] };
+      }
+      return { succeeded: true, value: mapPublicOrcamento(response.data.quote), errors: [] };
+    } catch {
+      return { succeeded: false, errors: ['Não foi possível conectar ao serviço de orçamento.'] };
     }
-    return { succeeded: true, value: mapPublicOrcamento(data), errors: [] };
   },
 
   /** Registra aceite público somente para o token específico do orçamento. */
   async assinarPublico(token: string, input: AssinarOrcamentoInput): Promise<ApiResult<void>> {
-    const { error } = await supabase.rpc('assinar_orcamento_publico', {
-      p_token: token,
-      p_nome: input.nome.trim(),
-    });
-    if (error) {
-      return { succeeded: false, errors: [error.message || 'Não foi possível registrar o aceite.'] };
+    try {
+      const response = await publicQuoteRequest(token, 'POST', { nome: input.nome.trim() });
+      if (!response.ok) {
+        return { succeeded: false, errors: [response.data?.error || 'Não foi possível registrar o aceite.'] };
+      }
+      return { succeeded: true, errors: [] };
+    } catch {
+      return { succeeded: false, errors: ['Não foi possível conectar ao serviço de orçamento.'] };
     }
-    return { succeeded: true, errors: [] };
   },
 
   /** URL pública que deve ser compartilhada com o cliente; nunca usar o ID interno. */
