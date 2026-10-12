@@ -255,6 +255,7 @@ export const apiClient = {
 
         const orcamentos: Orcamento[] = (data || []).map((d: any) => ({
           id: d.id,
+          publicToken: d.public_token || undefined,
           servicoId: d.servico_id,
           itens: Array.isArray(d.itens) ? d.itens : [],
           valorTotal: Number(d.valor_total) || 0,
@@ -309,6 +310,7 @@ export const apiClient = {
 
         const orcamento: Orcamento = {
           id: data.id,
+          publicToken: data.public_token || undefined,
           servicoId: data.servico_id || '',
           itens: Array.isArray(data.itens) ? data.itens : [],
           valorTotal: Number(data.valor_total) || 0,
@@ -562,6 +564,7 @@ export const apiClient = {
 
         const orcamento: Orcamento = {
           id: inserted.id,
+          publicToken: inserted.public_token || undefined,
           servicoId: inserted.servico_id,
           itens: inserted.itens,
           valorTotal: Number(inserted.valor_total),
