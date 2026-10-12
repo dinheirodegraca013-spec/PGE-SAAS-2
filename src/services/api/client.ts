@@ -351,7 +351,7 @@ export const apiClient = {
           primeiraMensagemEmUtc: d.created_at || new Date().toISOString(),
           ultimaMensagemEmUtc: d.created_at || new Date().toISOString(),
           quantidadeMensagens: d.quantidade_mensagens || 1,
-          status: d.status || 'Pendente',
+          status: d.status === 'pendente' ? 'Pendente' : (d.status || 'Pendente'),
         }));
 
         return createSuccessResult(conversas);
@@ -451,6 +451,7 @@ export const apiClient = {
         const payload: any = {
           cliente_id: data.clienteId,
           cliente_nome: data.clienteNome,
+          nome: data.titulo || 'Serviço',
           titulo: data.titulo || null,
           escopo: data.escopo || null,
           status: 'EmAndamento',
@@ -489,6 +490,7 @@ export const apiClient = {
       if (url === '/furniture/projetos') {
         const payload: any = {
           cliente_id: data.clienteId,
+          nome: data.titulo || 'Projeto de Marcenaria',
           titulo: data.titulo,
           status: String(data.status ?? 0),
           valor_total_orcamento: data.valorTotalOrcamento || 0,
@@ -711,7 +713,10 @@ export const apiClient = {
       if (url.startsWith('/servicos/')) {
         const id = url.replace('/servicos/', '');
         const updates: any = {};
-        if (data.titulo !== undefined) updates.titulo = data.titulo;
+        if (data.titulo !== undefined) {
+          updates.titulo = data.titulo;
+          updates.nome = data.titulo || 'Serviço';
+        }
         if (data.escopo !== undefined) updates.escopo = data.escopo;
         if (data.status !== undefined) {
           const keys = ['EmAndamento', 'EscopoDefinido', 'OrcamentoEnviado', 'Aprovado', 'Concluido', 'Cancelado'];
@@ -752,7 +757,10 @@ export const apiClient = {
         const id = url.replace('/furniture/projetos/', '');
         const updates: any = {};
         if (data.status !== undefined) updates.status = String(Number(data.status));
-        if (data.titulo !== undefined) updates.titulo = data.titulo;
+        if (data.titulo !== undefined) {
+          updates.titulo = data.titulo;
+          updates.nome = data.titulo || 'Projeto de Marcenaria';
+        }
         if (data.observacoes !== undefined) updates.observacoes = data.observacoes;
 
         let { data: updated, error } = await supabase
