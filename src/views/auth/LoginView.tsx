@@ -73,6 +73,13 @@ export default function LoginView() {
           <p className="mt-1 text-sm text-slate-500">Gestão para marcenarias e prestadores de serviços</p>
         </div>
 
+        {searchParams.get('confirmacao') === 'sucesso' && (
+          <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800" role="status">
+            <p className="font-semibold">E-mail confirmado!</p>
+            <p className="mt-1">Sua confirmação foi recebida. Entre com seu e-mail e senha para continuar.</p>
+          </div>
+        )}
+
         {modoRecuperacao ? (
           <div className="card space-y-4 p-6 shadow-sm">
             <div className="flex items-center gap-2">
