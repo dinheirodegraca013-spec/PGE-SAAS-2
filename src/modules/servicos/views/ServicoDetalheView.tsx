@@ -8,6 +8,10 @@ import type { Servico } from '../types/servico';
 import { orcamentosService } from '@/modules/orcamentos/services/orcamentos.service';
 import type { Orcamento, ItemOrcamentoInput } from '@/modules/orcamentos/types/orcamento';
 
+function orcamentoServiceUrl(token?: string): string {
+  return token ? `/orcamento/${encodeURIComponent(token)}` : '/servicos';
+}
+
 export default function ServicoDetalheView() {
   const { id } = useParams<{ id: string }>();
   const servicoId = id || '';
@@ -396,7 +400,7 @@ export default function ServicoDetalheView() {
 
                 <div className="flex items-center gap-3">
                   <Link
-                    to={`/orcamento/${orcamento.id}`}
+                    to={orcamentoServiceUrl(orcamento.publicToken)}
                     target="_blank"
                     className="btn-secondary text-xs gap-1.5 py-1.5 px-3"
                   >
