@@ -12,12 +12,12 @@ language sql
 stable
 security definer
 set search_path = ''
-as $
+as $fn$
   select p.tenant_id
   from public.profiles p
   where p.id = (select auth.uid()) and p.ativo = true
   limit 1
-$;
+$fn$;
 
 create or replace function private.current_user_role()
 returns text
@@ -25,12 +25,12 @@ language sql
 stable
 security definer
 set search_path = ''
-as $
+as $fn$
   select p.papel
   from public.profiles p
   where p.id = (select auth.uid()) and p.ativo = true
   limit 1
-$;
+$fn$;
 
 revoke all on function private.current_tenant_id() from public, anon, authenticated;
 revoke all on function private.current_user_role() from public, anon, authenticated;
