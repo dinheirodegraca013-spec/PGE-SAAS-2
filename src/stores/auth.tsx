@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { ApiResult, UsuarioAutenticado } from '@/types/api';
-import { INITIAL_USER } from '@/services/api/mockData';
 
 export interface RegisterPayload {
   razaoSocial: string;
@@ -19,70 +18,108 @@ interface AuthContextType {
   refreshToken: string | null;
   usuario: UsuarioAutenticado | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   isLiveSupabase: boolean;
   login: (email: string, senha: string) => Promise<ApiResult<void>>;
-  register: (payload: RegisterPayload) => Promise<ApiResult<void>>;
+  register: (payload: RegisterPayload) => Promise<ApiResult<{ confirmationRequired?: boolean }>>;
   recuperarSenha: (email: string) => Promise<ApiResult<void>>;
   logout: () => Promise<void>;
-  loginAsDemo: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-function mapPlanoNome(planoNum: number | string): string {
+function mapPlanoNome(planoNum: number | string | undefined): string {
   if (planoNum === 2 || planoNum === '2' || planoNum === 'Empresarial') return 'Empresarial';
   if (planoNum === 0 || planoNum === '0' || planoNum === 'Free') return 'Free';
   return 'Standard';
+}
+
+/**
+ * Consulta a tabela real 'profiles' e o relacionamento com 'tenants' no Supabase.
+ */
+async function fetchUserProfile(userId: string): Promise<{ profile: any; isActive: boolean }> {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*, tenants(*)')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Aviso: Consulta a profiles retornou erro ou tabela com RLS restrito:', error.message);
+      return { profile: null, isActive: true };
+    }
+
+    if (data) {
+      const isActive =
+        data.is_active !== false &&
+        data.ativo !== false &&
+        data.status !== 'inativo' &&
+        data.status !== 'inactive';
+      return { profile: data, isActive };
+    }
+  } catch (err) {
+    console.warn('Exceção ao consultar tabela profiles:', err);
+  }
+  return { profile: null, isActive: true };
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [usuario, setUsuario] = useState<UsuarioAutenticado | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLiveSupabase] = useState<boolean>(isSupabaseConfigured);
 
-  useEffect(() => {
-    if (isSupabaseConfigured) {
-      // 1. Busca sessão inicial do Supabase Auth
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          applySupabaseSession(session);
-        } else {
-          // Tenta restaurar do cache local se houver
-          restoreFromLocalStorage();
-        }
-      });
-
-      // 2. Escuta mudanças de autenticação em tempo real
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session?.user) {
-          applySupabaseSession(session);
-        } else {
-          clearAuthState();
-        }
-      });
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    } else {
-      restoreFromLocalStorage();
-    }
-  }, []);
-
-  const applySupabaseSession = (session: any) => {
+  const applySession = async (session: any): Promise<boolean> => {
     const user = session.user;
     const meta = user.user_metadata || {};
 
+    // 1. Busca perfil real na tabela 'profiles'
+    const { profile, isActive } = await fetchUserProfile(user.id);
+
+    if (!isActive) {
+      await supabase.auth.signOut();
+      clearAuthState();
+      return false;
+    }
+
+    // 2. Extrai dados reais com prioridade para a tabela 'profiles' e 'tenants'
+    const tenantId =
+      profile?.tenant_id ||
+      profile?.tenants?.id ||
+      meta.tenant_id ||
+      meta.organization_id ||
+      user.id;
+
+    const nomeCompleto =
+      profile?.nome ||
+      profile?.full_name ||
+      profile?.nome_completo ||
+      meta.nome_completo ||
+      meta.full_name ||
+      user.email?.split('@')[0] ||
+      'Usuário';
+
+    const papel =
+      profile?.papel ||
+      profile?.role ||
+      meta.papel ||
+      'Usuario';
+
+    const plano = mapPlanoNome(
+      profile?.tenants?.plano ||
+      profile?.plano ||
+      meta.plano
+    );
+
     const authUser: UsuarioAutenticado = {
       usuarioId: user.id,
-      tenantId: meta.organization_id || meta.tenant_id || user.id,
-      nomeCompleto: meta.nome_completo || meta.full_name || user.email?.split('@')[0] || 'Usuário',
+      tenantId,
+      nomeCompleto,
       email: user.email || '',
-      papel: meta.papel || 'AdministradorTenant',
-      plano: mapPlanoNome(meta.plano),
+      papel,
+      plano,
     };
 
     setAccessToken(session.access_token);
@@ -97,31 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         usuario: authUser,
       }),
     );
-  };
 
-  const restoreFromLocalStorage = () => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setAccessToken(parsed.accessToken);
-        setRefreshToken(parsed.refreshToken);
-        setUsuario(parsed.usuario);
-      } catch {
-        localStorage.removeItem(STORAGE_KEY);
-      }
-    } else if (!isSupabaseConfigured) {
-      // Modo demonstração quando não houver Supabase configurado
-      const defaultState = {
-        accessToken: 'demo-jwt-token-access',
-        refreshToken: 'demo-refresh-token',
-        usuario: INITIAL_USER,
-      };
-      setAccessToken(defaultState.accessToken);
-      setRefreshToken(defaultState.refreshToken);
-      setUsuario(defaultState.usuario);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState));
-    }
+    return true;
   };
 
   const clearAuthState = () => {
@@ -131,167 +145,189 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(STORAGE_KEY);
   };
 
-  const login = async (email: string, senha: string): Promise<ApiResult<void>> => {
-    if (isSupabaseConfigured) {
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password: senha,
-        });
+  useEffect(() => {
+    let mounted = true;
 
-        if (error) {
-          return { succeeded: false, errors: [error.message || 'Credenciais inválidas.'] };
+    async function initAuth() {
+      setIsLoading(true);
+
+      if (isSupabaseConfigured) {
+        try {
+          // Obtém a sessão atual diretamente do Supabase Auth
+          const { data: { session }, error } = await supabase.auth.getSession();
+
+          if (error) {
+            console.error('Erro ao verificar sessão Supabase:', error.message);
+            clearAuthState();
+          } else if (session?.user && mounted) {
+            const ok = await applySession(session);
+            if (!ok) {
+              console.warn('Usuário inativo ou sessão inválida.');
+            }
+          } else {
+            clearAuthState();
+          }
+        } catch (err) {
+          console.error('Falha ao restaurar sessão Supabase:', err);
+          clearAuthState();
         }
+      } else {
+        // Se Supabase não estiver configurado no ambiente, não autentica ficticiamente
+        clearAuthState();
+      }
 
-        if (data.session) {
-          applySupabaseSession(data.session);
-          return { succeeded: true, errors: [] };
-        }
-
-        return { succeeded: false, errors: ['Não foi possível iniciar a sessão.'] };
-      } catch (err: any) {
-        return { succeeded: false, errors: [err.message || 'Erro ao conectar ao Supabase Auth.'] };
+      if (mounted) {
+        setIsLoading(false);
       }
     }
 
-    // Fallback de demonstração offline
-    const demoUser: UsuarioAutenticado = {
-      usuarioId: 'usr-' + Date.now(),
-      tenantId: 'tnt-01',
-      nomeCompleto: email.split('@')[0].toUpperCase(),
-      email: email,
-      papel: 'AdministradorTenant',
-      plano: 'Standard',
-    };
-    const token = 'jwt-token-' + Date.now();
-    setAccessToken(token);
-    setRefreshToken('refresh-token');
-    setUsuario(demoUser);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        accessToken: token,
-        refreshToken: 'refresh-token',
-        usuario: demoUser,
-      }),
-    );
-    return { succeeded: true, errors: [] };
-  };
+    initAuth();
 
-  const register = async (payload: RegisterPayload): Promise<ApiResult<void>> => {
-    const planoNome = mapPlanoNome(payload.plano);
+    // Listener de eventos do Supabase Auth (Login, Logout, Renovação de Token)
+    let authListener: { subscription: { unsubscribe: () => void } } | null = null;
 
     if (isSupabaseConfigured) {
-      try {
-        // Gera um ID de organização único para o novo tenant
-        const orgId = 'org_' + Math.random().toString(36).substring(2, 10);
+      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (!mounted) return;
 
-        const { data, error } = await supabase.auth.signUp({
-          email: payload.email.trim(),
-          password: payload.senha,
-          options: {
-            data: {
-              nome_completo: payload.nomeCompleto.trim(),
-              razao_social: payload.razaoSocial.trim(),
-              nome_fantasia: payload.nomeFantasia?.trim() || null,
-              organization_id: orgId,
-              tenant_id: orgId,
-              plano: planoNome,
-              papel: 'AdministradorTenant',
-            },
-          },
-        });
-
-        if (error) {
-          return { succeeded: false, errors: [error.message || 'Falha ao registrar usuário.'] };
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          if (session?.user) {
+            await applySession(session);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          clearAuthState();
         }
+      });
+      authListener = data;
+    }
 
-        // Se a confirmação por e-mail estiver desativada no Supabase, a sessão já vem preenchida
-        if (data.session) {
-          applySupabaseSession(data.session);
-          return { succeeded: true, errors: [] };
-        }
+    return () => {
+      mounted = false;
+      if (authListener) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, []);
 
-        // Se exigir confirmação de e-mail
-        if (data.user && !data.session) {
+  const login = async (email: string, senha: string): Promise<ApiResult<void>> => {
+    if (!isSupabaseConfigured) {
+      return {
+        succeeded: false,
+        errors: ['Configuração do Supabase ausente. Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY.'],
+      };
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: senha,
+      });
+
+      if (error) {
+        return {
+          succeeded: false,
+          errors: [error.message === 'Invalid login credentials' ? 'E-mail ou senha incorretos.' : error.message],
+        };
+      }
+
+      if (data.session) {
+        const ok = await applySession(data.session);
+        if (!ok) {
           return {
-            succeeded: true,
-            errors: [],
+            succeeded: false,
+            errors: ['Sua conta está inativa. Entre em contato com o suporte ou administrador.'],
           };
         }
-
         return { succeeded: true, errors: [] };
-      } catch (err: any) {
-        return { succeeded: false, errors: [err.message || 'Erro ao comunicar com Supabase.'] };
       }
+
+      return { succeeded: false, errors: ['Não foi possível autenticar o usuário.'] };
+    } catch (err: any) {
+      return { succeeded: false, errors: [err.message || 'Erro inesperado ao conectar ao Supabase Auth.'] };
+    }
+  };
+
+  const register = async (payload: RegisterPayload): Promise<ApiResult<{ confirmationRequired?: boolean }>> => {
+    if (!isSupabaseConfigured) {
+      return {
+        succeeded: false,
+        errors: ['Configuração do Supabase ausente no servidor.'],
+      };
     }
 
-    // Fallback de demonstração
-    const demoUser: UsuarioAutenticado = {
-      usuarioId: 'usr-' + Date.now(),
-      tenantId: 'org_' + Date.now(),
-      nomeCompleto: payload.nomeCompleto,
-      email: payload.email,
-      papel: 'AdministradorTenant',
-      plano: planoNome,
-    };
-    const token = 'jwt-token-' + Date.now();
-    setAccessToken(token);
-    setRefreshToken('refresh-token');
-    setUsuario(demoUser);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        accessToken: token,
-        refreshToken: 'refresh-token',
-        usuario: demoUser,
-      }),
-    );
-    return { succeeded: true, errors: [] };
+    const planoNome = mapPlanoNome(payload.plano);
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: payload.email.trim(),
+        password: payload.senha,
+        options: {
+          data: {
+            nome_completo: payload.nomeCompleto.trim(),
+            razao_social: payload.razaoSocial.trim(),
+            nome_fantasia: payload.nomeFantasia?.trim() || null,
+            plano: planoNome,
+          },
+        },
+      });
+
+      if (error) {
+        return { succeeded: false, errors: [error.message || 'Erro ao realizar cadastro no Supabase.'] };
+      }
+
+      // Se a confirmação de e-mail estiver desabilitada, a sessão já existe
+      if (data.session) {
+        await applySession(data.session);
+        return { succeeded: true, value: { confirmationRequired: false }, errors: [] };
+      }
+
+      // Se exigir confirmação de e-mail
+      if (data.user && !data.session) {
+        return {
+          succeeded: true,
+          value: { confirmationRequired: true },
+          errors: [],
+        };
+      }
+
+      return { succeeded: true, errors: [] };
+    } catch (err: any) {
+      return { succeeded: false, errors: [err.message || 'Falha ao processar cadastro no Supabase.'] };
+    }
   };
 
   const recuperarSenha = async (email: string): Promise<ApiResult<void>> => {
-    if (isSupabaseConfigured) {
-      try {
-        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${window.location.origin}/login`,
-        });
-        if (error) {
-          return { succeeded: false, errors: [error.message] };
-        }
-        return { succeeded: true, errors: [] };
-      } catch (err: any) {
-        return { succeeded: false, errors: [err.message] };
-      }
+    if (!isSupabaseConfigured) {
+      return {
+        succeeded: false,
+        errors: ['Supabase não configurado.'],
+      };
     }
-    return { succeeded: true, errors: [] };
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${window.location.origin}/login`,
+      });
+
+      if (error) {
+        return { succeeded: false, errors: [error.message || 'Erro ao enviar e-mail de recuperação.'] };
+      }
+
+      return { succeeded: true, errors: [] };
+    } catch (err: any) {
+      return { succeeded: false, errors: [err.message || 'Falha na recuperação de senha.'] };
+    }
   };
 
   const logout = async () => {
     if (isSupabaseConfigured) {
       try {
         await supabase.auth.signOut();
-      } catch {
-        // Continua para limpar o estado local
+      } catch (err) {
+        console.error('Erro ao efetuar signOut no Supabase:', err);
       }
     }
     clearAuthState();
-  };
-
-  const loginAsDemo = () => {
-    const demoUser = INITIAL_USER;
-    const token = 'demo-jwt-token-access';
-    setAccessToken(token);
-    setRefreshToken('demo-refresh-token');
-    setUsuario(demoUser);
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        accessToken: token,
-        refreshToken: 'demo-refresh-token',
-        usuario: demoUser,
-      }),
-    );
   };
 
   return (
@@ -300,13 +336,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         accessToken,
         refreshToken,
         usuario,
-        isAuthenticated: !!accessToken,
+        isAuthenticated: !!accessToken && !!usuario,
+        isLoading,
         isLiveSupabase,
         login,
         register,
         recuperarSenha,
         logout,
-        loginAsDemo,
       }}
     >
       {children}
@@ -317,7 +353,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuthStore() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuthStore must be used within an AuthProvider');
+    throw new Error('useAuthStore deve ser utilizado dentro de um AuthProvider');
   }
   return context;
 }

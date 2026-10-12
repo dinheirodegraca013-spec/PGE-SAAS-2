@@ -19,6 +19,7 @@ export default function RegisterView() {
 
   const [erroServidor, setErroServidor] = useState<string | null>(null);
   const [estaEnviando, setEstaEnviando] = useState(false);
+  const [sucessoConfirmacao, setSucessoConfirmacao] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +61,11 @@ export default function RegisterView() {
         return;
       }
 
+      if (resultado.value?.confirmationRequired) {
+        setSucessoConfirmacao(true);
+        return;
+      }
+
       navigate('/');
     } finally {
       setEstaEnviando(false);
@@ -77,7 +83,23 @@ export default function RegisterView() {
           <p className="mt-1 text-sm text-slate-500">Comece a usar o ERP SaaS na sua marcenaria</p>
         </div>
 
-        <form className="card space-y-6 p-6 sm:p-8" onSubmit={handleSubmit} noValidate>
+        {sucessoConfirmacao ? (
+          <div className="card space-y-4 p-8 text-center shadow-sm">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+              <Check className="h-8 w-8" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900">Verifique seu e-mail</h2>
+            <p className="text-sm text-slate-600 max-w-md mx-auto">
+              Enviamos um link de confirmação para <strong>{email}</strong>. Por favor, acerte o acesso pelo link para ativar sua conta no PGE SAAS 2.
+            </p>
+            <div className="pt-4">
+              <Link to="/login" className="btn-primary w-full max-w-xs mx-auto">
+                Ir para o Login
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <form className="card space-y-6 p-6 sm:p-8" onSubmit={handleSubmit} noValidate>
           {/* Dados da empresa */}
           <div>
             <h2 className="mb-3 text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
@@ -236,6 +258,7 @@ export default function RegisterView() {
             Nenhuma cobrança é realizada neste ambiente de demonstração e homologação.
           </p>
         </form>
+        )}
 
         <p className="mt-6 text-center text-sm text-slate-500">
           Já tem uma conta?{' '}

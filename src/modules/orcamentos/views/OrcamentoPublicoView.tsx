@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { CheckCircle2, FileText, Printer, Building2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { orcamentosService } from '../services/orcamentos.service';
 import type { Orcamento } from '../types/orcamento';
-import { localDb } from '@/services/api/client';
 
 export default function OrcamentoPublicoView() {
   const { id } = useParams<{ id: string }>();

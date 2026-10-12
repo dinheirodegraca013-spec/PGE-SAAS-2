@@ -61,11 +61,6 @@ export default function LoginView() {
     }
   };
 
-  const handleDemoLogin = () => {
-    auth.loginAsDemo();
-    const redirect = searchParams.get('redirect') || '/';
-    navigate(redirect);
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
@@ -190,24 +185,6 @@ export default function LoginView() {
 
             <button type="submit" className="btn-primary w-full cursor-pointer" disabled={estaEnviando}>
               {estaEnviando ? 'Entrando...' : 'Entrar'}
-            </button>
-
-            <div className="relative py-2">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-200" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-slate-400">ou acesso rápido</span>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              className="btn-secondary w-full gap-2 text-xs border-brand-200 text-brand-700 bg-brand-50/50 hover:bg-brand-50"
-              onClick={handleDemoLogin}
-            >
-              <Sparkles className="h-3.5 w-3.5 text-brand-600" />
-              Entrar como Administrador (Demonstração)
             </button>
           </form>
         )}

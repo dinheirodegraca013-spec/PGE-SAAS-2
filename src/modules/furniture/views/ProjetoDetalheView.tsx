@@ -5,7 +5,6 @@ import StatusProjetoBadge from '../components/StatusProjetoBadge';
 import { projetosService } from '../services/projetos.service';
 import { StatusProjeto, materialPadraoLabel, statusProjetoLabel } from '../types/projeto';
 import type { ProjetoMovelPlanejado } from '../types/projeto';
-import { localDb } from '@/services/api/client';
 
 export default function ProjetoDetalheView() {
   const { id } = useParams<{ id: string }>();
@@ -37,10 +36,14 @@ export default function ProjetoDetalheView() {
     carregarProjeto();
   }, [id]);
 
-  const handleMudarStatus = (novoStatus: StatusProjeto) => {
+  const handleMudarStatus = async (novoStatus: StatusProjeto) => {
     if (!id) return;
-    localDb.updateProjetoStatus(id, novoStatus);
-    carregarProjeto();
+    const res = await projetosService.atualizarStatus(id, novoStatus);
+    if (res.succeeded && res.value) {
+      setProjeto(res.value);
+    } else {
+      carregarProjeto();
+    }
   };
 
   const handleEnviarWhatsApp = async () => {

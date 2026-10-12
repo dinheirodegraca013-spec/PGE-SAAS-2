@@ -24,7 +24,7 @@ export default function SettingsView() {
           <div className="flex-1">
             <h3 className="text-sm font-bold text-slate-900">Dados da Organização / Tenant</h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Identificador único de isolamento (RLS organization_id): <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800 font-mono font-semibold">{auth.usuario?.tenantId}</code>
+              Identificador único de isolamento (RLS tenant_id / organization_id): <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800 font-mono font-semibold">{auth.usuario?.tenantId}</code>
             </p>
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">

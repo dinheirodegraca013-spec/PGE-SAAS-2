@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sofa, Plus, Calendar, ChevronRight } from 'lucide-react';
+import { Sofa, Plus, Calendar, ChevronRight, X } from 'lucide-react';
 import EmptyState from '@/components/shared/EmptyState';
 import StatusProjetoBadge from '../components/StatusProjetoBadge';
 import { projetosService } from '../services/projetos.service';
+import { clientesService } from '@/modules/clientes/services/clientes.service';
 import type { ProjetoMovelPlanejado } from '../types/projeto';
+import type { Cliente } from '@/modules/clientes/types/cliente';
 
 export default function ProjetosListView() {
   const navigate = useNavigate();
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+
+  // Modal Novo Projeto
+  const [modalAberto, setModalAberto] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+  const [erroModal, setErroModal] = useState<string | null>(null);
+  const [novoProjeto, setNovoProjeto] = useState({
+    titulo: '',
+    clienteId: '',
+    valorTotalOrcamento: 0,
+    observacoes: '',
+  });
 
   const carregarProjetos = async () => {
     setCarregando(true);
@@ -23,15 +37,65 @@ export default function ProjetosListView() {
         setErro(resultado.errors.join(' ') || 'Não foi possível carregar os projetos.');
       }
     } catch {
-      setErro('Backend ainda não disponível para esta listagem.');
+      setErro('Falha ao comunicar com o banco de dados.');
     } finally {
       setCarregando(false);
     }
   };
 
+  const carregarClientes = async () => {
+    try {
+      const res = await clientesService.listar();
+      if (res.succeeded && res.value) {
+        const lista = res.value;
+        setClientes(lista);
+        if (lista.length > 0) {
+          setNovoProjeto((prev) => ({ ...prev, clienteId: prev.clienteId || lista[0].id }));
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  };
+
   useEffect(() => {
     carregarProjetos();
+    carregarClientes();
   }, []);
+
+  const handleCriarProjeto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!novoProjeto.titulo.trim()) {
+      setErroModal('Informe o título do projeto.');
+      return;
+    }
+
+    setErroModal(null);
+    setSalvando(true);
+    try {
+      const res = await projetosService.criar({
+        titulo: novoProjeto.titulo.trim(),
+        clienteId: novoProjeto.clienteId || undefined,
+        valorTotalOrcamento: Number(novoProjeto.valorTotalOrcamento) || 0,
+        observacoes: novoProjeto.observacoes.trim() || undefined,
+        status: 0,
+        ambientes: [],
+      });
+
+      if (!res.succeeded) {
+        setErroModal(res.errors.join(' ') || 'Erro ao criar projeto.');
+        return;
+      }
+
+      setModalAberto(false);
+      setNovoProjeto({ titulo: '', clienteId: clientes[0]?.id || '', valorTotalOrcamento: 0, observacoes: '' });
+      await carregarProjetos();
+    } catch (err: any) {
+      setErroModal(err.message || 'Erro inesperado.');
+    } finally {
+      setSalvando(false);
+    }
+  };
 
   const formatarMoeda = (valor: number) => {
     return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -41,19 +105,17 @@ export default function ProjetosListView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">Projetos</h2>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900">Projetos de Marcenaria</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Projetos de móveis planejados em andamento e acompanhamento de produção.
+            Acompanhamento de produção, medições e execução no Supabase.
           </p>
         </div>
         <button
           type="button"
           className="btn-primary gap-2 self-start sm:self-auto cursor-pointer"
           onClick={() => {
-            // Quick mock add or redirect
-            if (projetos.length > 0) {
-              navigate(`/projetos/${projetos[0].id}`);
-            }
+            setModalAberto(true);
+            setErroModal(null);
           }}
         >
           <Plus className="h-4 w-4" />
@@ -61,13 +123,108 @@ export default function ProjetosListView() {
         </button>
       </div>
 
+      {/* Modal de Criação de Projeto */}
+      {modalAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
+          <div className="card w-full max-w-lg p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900">Novo Projeto de Marcenaria</h3>
+              <button
+                type="button"
+                className="text-slate-400 hover:text-slate-700"
+                onClick={() => setModalAberto(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCriarProjeto} className="space-y-4">
+              <div>
+                <label className="label-field text-xs">Título do Projeto *</label>
+                <input
+                  type="text"
+                  placeholder="Ex.: Cozinha Integrada & Closet"
+                  className="input-field text-xs"
+                  value={novoProjeto.titulo}
+                  onChange={(e) => setNovoProjeto({ ...novoProjeto, titulo: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="label-field text-xs">Cliente Vinculado</label>
+                <select
+                  className="input-field text-xs"
+                  value={novoProjeto.clienteId}
+                  onChange={(e) => setNovoProjeto({ ...novoProjeto, clienteId: e.target.value })}
+                >
+                  <option value="">Selecione um cliente (opcional)</option>
+                  {clientes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.nome} {c.telefoneWhatsApp ? `(${c.telefoneWhatsApp})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="label-field text-xs">Valor Estimado do Orçamento (R$)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  className="input-field text-xs"
+                  value={novoProjeto.valorTotalOrcamento || ''}
+                  onChange={(e) => setNovoProjeto({ ...novoProjeto, valorTotalOrcamento: parseFloat(e.target.value) || 0 })}
+                />
+              </div>
+
+              <div>
+                <label className="label-field text-xs">Observações / Especificações</label>
+                <textarea
+                  rows={3}
+                  placeholder="Materiais preferenciais, acabamentos e orientações técnicas..."
+                  className="input-field text-xs"
+                  value={novoProjeto.observacoes}
+                  onChange={(e) => setNovoProjeto({ ...novoProjeto, observacoes: e.target.value })}
+                />
+              </div>
+
+              {erroModal && <p className="text-xs text-red-600 font-medium">{erroModal}</p>}
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  className="btn-secondary text-xs"
+                  onClick={() => setModalAberto(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-primary text-xs" disabled={salvando}>
+                  {salvando ? 'Salvando...' : 'Criar Projeto'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {carregando ? (
-        <div className="card p-8 text-center text-sm text-slate-500">Carregando projetos...</div>
-      ) : erro || projetos.length === 0 ? (
+        <div className="card p-8 text-center text-sm text-slate-500">Carregando projetos de marcenaria...</div>
+      ) : erro ? (
+        <div className="card p-6 border-red-200 bg-red-50 text-red-700 text-sm">
+          <p className="font-semibold">Erro ao carregar projetos:</p>
+          <p className="mt-1">{erro}</p>
+          <button onClick={carregarProjetos} className="btn-secondary text-xs mt-3">
+            Tentar novamente
+          </button>
+        </div>
+      ) : projetos.length === 0 ? (
         <EmptyState
           icon={Sofa}
           title="Nenhum projeto encontrado"
-          description={erro ?? 'Cadastre o primeiro projeto para começar.'}
+          description="Cadastre o primeiro projeto de marcenaria para começar a acompanhar."
         />
       ) : (
         <div className="card overflow-hidden">

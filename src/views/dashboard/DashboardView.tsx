@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Sofa, FileText, MessageCircle, Users, ArrowUpRight, Plus, CheckCircle, Clock } from 'lucide-react';
+import { Sofa, FileText, MessageCircle, Users, ArrowUpRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
-import { localDb } from '@/services/api/client';
+import { clientesService } from '@/modules/clientes/services/clientes.service';
+import { projetosService } from '@/modules/furniture/services/projetos.service';
+import { servicosService } from '@/modules/servicos/services/servicos.service';
+import { conversasPendentesService } from '@/modules/whatsapp/services/conversasPendentes.service';
 import { StatusProjeto } from '@/modules/furniture/types/projeto';
 
 export default function DashboardView() {
   const auth = useAuthStore();
+  const [carregando, setCarregando] = useState(true);
   const [stats, setStats] = useState({
     projetosAndamento: 0,
     orcamentosPendentes: 0,
@@ -16,24 +20,72 @@ export default function DashboardView() {
   });
 
   useEffect(() => {
-    const projetos = localDb.getProjetos();
-    const orcamentos = localDb.getOrcamentos();
-    const conversas = localDb.getConversasPendentes();
-    const clientes = localDb.getClientes();
+    let mounted = true;
 
-    const emAndamento = projetos.filter(
-      (p) => p.status === StatusProjeto.EmProducao || p.status === StatusProjeto.Orcamento || p.status === StatusProjeto.Aprovado,
-    );
-    const pendentes = orcamentos.filter((o) => o.status === 'Pendente');
-    const valorProducao = emAndamento.reduce((sum, p) => sum + p.valorTotalOrcamento, 0);
+    async function carregarMetricas() {
+      setCarregando(true);
+      try {
+        const [resClientes, resProjetos, resServicos, resConversas] = await Promise.allSettled([
+          clientesService.listar(),
+          projetosService.listar(),
+          servicosService.listar(),
+          conversasPendentesService.listar('Pendente'),
+        ]);
 
-    setStats({
-      projetosAndamento: emAndamento.length,
-      orcamentosPendentes: pendentes.length,
-      conversasNaoLidas: conversas.length,
-      clientesTotal: clientes.length,
-      valorTotalEmProducao: valorProducao,
-    });
+        if (!mounted) return;
+
+        let clientesTotal = 0;
+        let projetosAndamento = 0;
+        let valorTotalEmProducao = 0;
+        let orcamentosPendentes = 0;
+        let conversasNaoLidas = 0;
+
+        if (resClientes.status === 'fulfilled' && resClientes.value.succeeded && resClientes.value.value) {
+          clientesTotal = resClientes.value.value.length;
+        }
+
+        if (resProjetos.status === 'fulfilled' && resProjetos.value.succeeded && resProjetos.value.value) {
+          const itens = resProjetos.value.value.items || [];
+          const emAndamento = itens.filter(
+            (p) =>
+              p.status === StatusProjeto.EmProducao ||
+              p.status === StatusProjeto.Orcamento ||
+              p.status === StatusProjeto.Aprovado,
+          );
+          projetosAndamento = emAndamento.length;
+          valorTotalEmProducao = emAndamento.reduce((sum, p) => sum + (p.valorTotalOrcamento || 0), 0);
+        }
+
+        if (resServicos.status === 'fulfilled' && resServicos.value.succeeded && resServicos.value.value) {
+          const servicos = resServicos.value.value || [];
+          orcamentosPendentes = servicos.filter(
+            (s) => s.status === 'OrcamentoEnviado' || s.status === 'EscopoDefinido',
+          ).length;
+        }
+
+        if (resConversas.status === 'fulfilled' && resConversas.value.succeeded && resConversas.value.value) {
+          conversasNaoLidas = resConversas.value.value.length;
+        }
+
+        setStats({
+          projetosAndamento,
+          orcamentosPendentes,
+          conversasNaoLidas,
+          clientesTotal,
+          valorTotalEmProducao,
+        });
+      } finally {
+        if (mounted) {
+          setCarregando(false);
+        }
+      }
+    }
+
+    carregarMetricas();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const formatarMoeda = (val: number) => {
@@ -61,7 +113,9 @@ export default function DashboardView() {
               <Sofa className="h-4 w-4" />
             </div>
           </div>
-          <p className="mt-3 text-3xl font-bold text-slate-900">{stats.projetosAndamento}</p>
+          <p className="mt-3 text-3xl font-bold text-slate-900">
+            {carregando ? '...' : stats.projetosAndamento}
+          </p>
           <p className="mt-1 text-xs text-slate-400">
             {formatarMoeda(stats.valorTotalEmProducao)} em carteira
           </p>
@@ -74,7 +128,9 @@ export default function DashboardView() {
               <FileText className="h-4 w-4" />
             </div>
           </div>
-          <p className="mt-3 text-3xl font-bold text-slate-900">{stats.orcamentosPendentes}</p>
+          <p className="mt-3 text-3xl font-bold text-slate-900">
+            {carregando ? '...' : stats.orcamentosPendentes}
+          </p>
           <p className="mt-1 text-xs text-amber-600 font-medium">Aguardando aceite do cliente</p>
         </Link>
 
@@ -85,7 +141,9 @@ export default function DashboardView() {
               <MessageCircle className="h-4 w-4" />
             </div>
           </div>
-          <p className="mt-3 text-3xl font-bold text-emerald-600">{stats.conversasNaoLidas}</p>
+          <p className="mt-3 text-3xl font-bold text-emerald-600">
+            {carregando ? '...' : stats.conversasNaoLidas}
+          </p>
           <p className="mt-1 text-xs text-emerald-700 font-medium">Para triagem e aprovação</p>
         </Link>
 
@@ -96,7 +154,9 @@ export default function DashboardView() {
               <Users className="h-4 w-4" />
             </div>
           </div>
-          <p className="mt-3 text-3xl font-bold text-slate-900">{stats.clientesTotal}</p>
+          <p className="mt-3 text-3xl font-bold text-slate-900">
+            {carregando ? '...' : stats.clientesTotal}
+          </p>
           <p className="mt-1 text-xs text-slate-400">Base compartilhada</p>
         </Link>
       </div>
@@ -119,19 +179,6 @@ export default function DashboardView() {
           </Link>
 
           <Link
-            to="/whatsapp"
-            className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:bg-slate-50 hover:border-slate-300 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
-                <MessageCircle className="h-4 w-4" />
-              </div>
-              <span className="text-sm font-semibold text-slate-800">Ver Mensagens WhatsApp</span>
-            </div>
-            <ArrowUpRight className="h-4 w-4 text-slate-400" />
-          </Link>
-
-          <Link
             to="/servicos"
             className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:bg-slate-50 hover:border-slate-300 transition-colors"
           >
@@ -139,7 +186,20 @@ export default function DashboardView() {
               <div className="rounded-lg bg-amber-50 p-2 text-amber-600">
                 <FileText className="h-4 w-4" />
               </div>
-              <span className="text-sm font-semibold text-slate-800">Criar Novo Orçamento</span>
+              <span className="text-sm font-semibold text-slate-800">Novo Atendimento / Orçamento</span>
+            </div>
+            <ArrowUpRight className="h-4 w-4 text-slate-400" />
+          </Link>
+
+          <Link
+            to="/projetos"
+            className="flex items-center justify-between rounded-xl border border-slate-200 p-4 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600">
+                <Sofa className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-semibold text-slate-800">Ver Projetos de Marcenaria</span>
             </div>
             <ArrowUpRight className="h-4 w-4 text-slate-400" />
           </Link>
