@@ -57,9 +57,10 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
       return { profile: null, isActive: false };
     }
 
+    const tenantRecord = Array.isArray(data.tenants) ? data.tenants[0] : data.tenants;
     const isActive = data.ativo === true && Boolean(data.tenant_id) &&
-      Boolean(data.papel) && data.tenants?.ativo !== false;
-    return { profile: data, isActive };
+      Boolean(data.papel) && tenantRecord?.ativo !== false;
+    return { profile: { ...data, tenants: tenantRecord }, isActive };
   } catch (err) {
     console.error('Exceção ao validar perfil no Supabase:', err);
     return { profile: null, isActive: false };
@@ -90,11 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const nomeCompleto = profile.nome_completo || user.email?.split('@')[0] || 'Usuário';
     const papel = profile.papel;
 
-    const plano = mapPlanoNome(
-      profile?.tenants?.plano ||
-      profile?.plano ||
-      meta.plano
-    );
+    const plano = mapPlanoNome(profile?.tenants?.plano);
 
     const authUser: UsuarioAutenticado = {
       usuarioId: user.id,
