@@ -242,6 +242,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: payload.email.trim(),
         password: payload.senha,
         options: {
+          // Após confirmar o e-mail, retornar ao domínio exato onde o cadastro foi iniciado.
+          emailRedirectTo: `${window.location.origin}/login?confirmacao=sucesso`,
           data: {
             nome_completo: payload.nomeCompleto.trim(),
             razao_social: payload.razaoSocial.trim(),
