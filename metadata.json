@@ -1,0 +1,6 @@
+{
+  "name": "ERP SaaS",
+  "description": "Sistema ERP SaaS para marcenarias e prestadores de serviços com gestão de clientes, projetos de móveis planejados, serviços, orçamentos públicos e integração WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
