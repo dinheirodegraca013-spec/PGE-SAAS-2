@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS public.servicos (
     status TEXT NOT NULL DEFAULT 'EmAndamento',
     origem TEXT NOT NULL DEFAULT 'Manual',
     usuario_responsavel_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- 6. TABELA DE ORÇAMENTOS COMERCIAIS
@@ -76,10 +77,12 @@ CREATE TABLE IF NOT EXISTS public.orcamentos (
     data_validade TIMESTAMPTZ,
     observacoes_gerais TEXT,
     status TEXT NOT NULL DEFAULT 'Pendente',
+    public_token UUID NOT NULL DEFAULT gen_random_uuid(),
     tem_pdf_assinado BOOLEAN NOT NULL DEFAULT false,
     assinado_por_nome TEXT,
     assinado_em TIMESTAMPTZ,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- 7. TABELA DE MENSAGENS E CONVERSAS WHATSAPP (whatsapp_mensagens)
@@ -112,6 +115,7 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
     tenant_id TEXT,
     usuario_id UUID,
+    actor_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     acao TEXT NOT NULL,
     tabela TEXT NOT NULL,
     registro_id TEXT,
@@ -142,14 +146,10 @@ DECLARE
 BEGIN
     SELECT p.tenant_id INTO v_tenant_id
     FROM public.profiles p
-    WHERE p.id = auth.uid()
+    WHERE p.id = auth.uid() AND p.is_active = true
     LIMIT 1;
 
-    RETURN COALESCE(
-        v_tenant_id,
-        current_setting('request.jwt.claims', true)::jsonb -> 'user_metadata' ->> 'tenant_id',
-        auth.uid()::TEXT
-    );
+    RETURN v_tenant_id; -- Sem perfil ativo, não há tenant autorizado.
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
@@ -190,14 +190,8 @@ CREATE POLICY "servicos_isolation" ON public.servicos
 -- Políticas Orçamentos (Permite leitura/aceite público do link do orçamento enviado pelo WhatsApp)
 DROP POLICY IF EXISTS "orcamentos_isolation" ON public.orcamentos;
 CREATE POLICY "orcamentos_isolation" ON public.orcamentos
-    FOR ALL USING (
-        tenant_id = public.current_tenant_id()
-        OR auth.role() = 'anon'
-    )
-    WITH CHECK (
-        tenant_id = public.current_tenant_id()
-        OR auth.role() = 'anon'
-    );
+    FOR ALL USING (tenant_id = public.current_tenant_id())
+    WITH CHECK (tenant_id = public.current_tenant_id());
 
 -- Políticas WhatsApp Mensagens
 DROP POLICY IF EXISTS "whatsapp_mensagens_isolation" ON public.whatsapp_mensagens;
@@ -216,3 +210,11 @@ DROP POLICY IF EXISTS "audit_logs_isolation" ON public.audit_logs;
 CREATE POLICY "audit_logs_isolation" ON public.audit_logs
     FOR ALL USING (tenant_id = public.current_tenant_id())
     WITH CHECK (tenant_id = public.current_tenant_id());
+
+
+-- Public quote links use a random token and the public-orcamento Edge Function.
+-- Never grant anonymous direct table access to quotes.
+ALTER TABLE public.orcamentos ADD COLUMN IF NOT EXISTS public_token UUID NOT NULL DEFAULT gen_random_uuid();
+CREATE UNIQUE INDEX IF NOT EXISTS orcamentos_public_token_key ON public.orcamentos(public_token);
+DROP FUNCTION IF EXISTS public.get_public_orcamento(uuid);
+DROP FUNCTION IF EXISTS public.assinar_orcamento_publico(uuid,text);

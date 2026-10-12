@@ -33,16 +33,22 @@ async function recordAuditLog(acao: string, tabela: string, registroId?: string,
   if (!isSupabaseConfigured) return;
   try {
     const tenantId = getCurrentTenantId();
-    await supabase.from('audit_logs').insert({
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user || !tenantId) {
+      console.warn('Auditoria não registrada: sessão ou tenant não validado.');
+      return;
+    }
+    const { error: auditError } = await supabase.from('audit_logs').insert({
       tenant_id: tenantId,
+      actor_id: user.id,
       acao,
       tabela,
       registro_id: registroId,
-      detalhes,
-      created_at: new Date().toISOString(),
+      detalhes: detalhes ?? {},
     });
-  } catch {
-    // Audit log é silencioso para não interromper a operação principal
+    if (auditError) console.error('Falha ao registrar auditoria:', auditError.message);
+  } catch (err) {
+    console.error('Exceção ao registrar auditoria:', err);
   }
 }
 
@@ -249,6 +255,7 @@ export const apiClient = {
 
         const orcamentos: Orcamento[] = (data || []).map((d: any) => ({
           id: d.id,
+          publicToken: d.public_token || undefined,
           servicoId: d.servico_id,
           itens: Array.isArray(d.itens) ? d.itens : [],
           valorTotal: Number(d.valor_total) || 0,
@@ -303,6 +310,7 @@ export const apiClient = {
 
         const orcamento: Orcamento = {
           id: data.id,
+          publicToken: data.public_token || undefined,
           servicoId: data.servico_id || '',
           itens: Array.isArray(data.itens) ? data.itens : [],
           valorTotal: Number(data.valor_total) || 0,
@@ -324,7 +332,7 @@ export const apiClient = {
         if (tenantId) query = query.eq('tenant_id', tenantId);
 
         let { data, error } = await query
-          .eq('status', 'Pendente')
+          .eq('status', 'pendente')
           .order('created_at', { ascending: false });
 
         if (error && error.code === '42P01') {
@@ -345,7 +353,7 @@ export const apiClient = {
           primeiraMensagemEmUtc: d.created_at || new Date().toISOString(),
           ultimaMensagemEmUtc: d.created_at || new Date().toISOString(),
           quantidadeMensagens: d.quantidade_mensagens || 1,
-          status: d.status || 'Pendente',
+          status: d.status === 'pendente' ? 'Pendente' : (d.status || 'Pendente'),
         }));
 
         return createSuccessResult(conversas);
@@ -353,7 +361,7 @@ export const apiClient = {
 
       // 6. WhatsApp Configuração (/whatsapp/configuracao)
       if (url === '/whatsapp/configuracao') {
-        let query = supabase.from('whatsapp_config').select('*');
+        let query = supabase.from('whatsapp_config').select('tenant_id, phone_number_id, business_account_id, numero_origem, configurado, created_at, updated_at');
         if (tenantId) query = query.eq('tenant_id', tenantId);
         const { data, error } = await query.maybeSingle();
 
@@ -445,6 +453,7 @@ export const apiClient = {
         const payload: any = {
           cliente_id: data.clienteId,
           cliente_nome: data.clienteNome,
+          nome: data.titulo || 'Serviço',
           titulo: data.titulo || null,
           escopo: data.escopo || null,
           status: 'EmAndamento',
@@ -483,8 +492,9 @@ export const apiClient = {
       if (url === '/furniture/projetos') {
         const payload: any = {
           cliente_id: data.clienteId,
+          nome: data.titulo || 'Projeto de Marcenaria',
           titulo: data.titulo,
-          status: data.status ?? 0,
+          status: String(data.status ?? 0),
           valor_total_orcamento: data.valorTotalOrcamento || 0,
           valor_total: data.valorTotalOrcamento || 0,
           observacoes: data.observacoes || null,
@@ -554,6 +564,7 @@ export const apiClient = {
 
         const orcamento: Orcamento = {
           id: inserted.id,
+          publicToken: inserted.public_token || undefined,
           servicoId: inserted.servico_id,
           itens: inserted.itens,
           valorTotal: Number(inserted.valor_total),
@@ -681,7 +692,9 @@ export const apiClient = {
 
       // Envio de orçamento via WhatsApp
       if (url.includes('/enviar-orcamento-whatsapp') || url === '/whatsapp/enviar-texto') {
-        return createSuccessResult(undefined);
+        return createErrorResult([
+          'O envio real pelo WhatsApp ainda não está conectado a um provedor/API. Nenhuma mensagem foi enviada.'
+        ], 501);
       }
 
       return createErrorResult([`Rota POST não reconhecida: ${url}`], 404);
@@ -703,7 +716,10 @@ export const apiClient = {
       if (url.startsWith('/servicos/')) {
         const id = url.replace('/servicos/', '');
         const updates: any = {};
-        if (data.titulo !== undefined) updates.titulo = data.titulo;
+        if (data.titulo !== undefined) {
+          updates.titulo = data.titulo;
+          updates.nome = data.titulo || 'Serviço';
+        }
         if (data.escopo !== undefined) updates.escopo = data.escopo;
         if (data.status !== undefined) {
           const keys = ['EmAndamento', 'EscopoDefinido', 'OrcamentoEnviado', 'Aprovado', 'Concluido', 'Cancelado'];
@@ -743,8 +759,11 @@ export const apiClient = {
       if (url.startsWith('/furniture/projetos/')) {
         const id = url.replace('/furniture/projetos/', '');
         const updates: any = {};
-        if (data.status !== undefined) updates.status = Number(data.status);
-        if (data.titulo !== undefined) updates.titulo = data.titulo;
+        if (data.status !== undefined) updates.status = String(Number(data.status));
+        if (data.titulo !== undefined) {
+          updates.titulo = data.titulo;
+          updates.nome = data.titulo || 'Projeto de Marcenaria';
+        }
         if (data.observacoes !== undefined) updates.observacoes = data.observacoes;
 
         let { data: updated, error } = await supabase
@@ -795,7 +814,7 @@ export const apiClient = {
         const { data: upserted, error } = await supabase
           .from('whatsapp_config')
           .upsert(payload, { onConflict: tenantId ? 'tenant_id' : undefined })
-          .select()
+          .select('tenant_id, phone_number_id, business_account_id, numero_origem, configurado, created_at, updated_at')
           .single();
 
         if (error) {
