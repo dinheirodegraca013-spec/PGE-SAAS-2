@@ -5,8 +5,8 @@ import { orcamentosService } from '../services/orcamentos.service';
 import type { Orcamento } from '../types/orcamento';
 
 export default function OrcamentoPublicoView() {
-  const { id } = useParams<{ id: string }>();
-  const orcamentoId = id || '';
+  const { token } = useParams<{ token: string }>();
+  const publicToken = token || '';
 
   const [orcamento, setOrcamento] = useState<Orcamento | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -16,10 +16,10 @@ export default function OrcamentoPublicoView() {
   const [aceito, setAceito] = useState(false);
 
   const carregar = async () => {
-    if (!orcamentoId) return;
+    if (!publicToken) { setCarregando(false); return; }
     setCarregando(true);
     try {
-      const res = await orcamentosService.obterPorId(orcamentoId);
+      const res = await orcamentosService.obterPublicoPorToken(publicToken);
       if (res.succeeded && res.value) {
         setOrcamento(res.value);
         if (res.value.status === 'Assinado' || res.value.temPdfAssinado) {
@@ -36,7 +36,7 @@ export default function OrcamentoPublicoView() {
 
   useEffect(() => {
     carregar();
-  }, [orcamentoId]);
+  }, [publicToken]);
 
   const assinar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +48,7 @@ export default function OrcamentoPublicoView() {
 
     setEnviando(true);
     try {
-      const resultado = await orcamentosService.assinar(orcamentoId, { nome: nome.trim() });
+      const resultado = await orcamentosService.assinarPublico(publicToken, { nome: nome.trim() });
       if (!resultado.succeeded) {
         setErro(resultado.errors.join(' ') || 'Não foi possível registrar o aceite.');
         return;
@@ -81,7 +81,7 @@ export default function OrcamentoPublicoView() {
           <AlertCircle className="mx-auto h-10 w-10 text-amber-500 mb-3" />
           <h2 className="text-lg font-bold text-slate-900">Orçamento não encontrado</h2>
           <p className="mt-1 text-sm text-slate-500">
-            O link pode estar expirado ou o código do orçamento ({orcamentoId}) não existe.
+            O link pode estar expirado ou o código do orçamento ({publicToken}) não existe.
           </p>
         </div>
       </div>
