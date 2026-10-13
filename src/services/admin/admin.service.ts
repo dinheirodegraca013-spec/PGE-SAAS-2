@@ -178,46 +178,13 @@ export const adminService = {
         .select('*')
         .order('ordem', { ascending: true });
 
-      if (error || !data || (data as any[]).length === 0) {
-        // Se a tabela ainda não tiver registros ou erro 42P01, retorna os planos padrão
+      if (error) {
+        return { succeeded: false, errors: [error.message] };
+      }
+      if (!data || (data as any[]).length === 0) {
         return {
-          succeeded: true,
-          value: [
-            {
-              id: 'plano-free',
-              nome: 'Free',
-              descricao: 'Para profissionais autônomos testarem os recursos básicos',
-              preco: 0,
-              periodicidade: 'mensal',
-              status: 'ativo',
-              recursos: ['Até 5 clientes', 'Gestão de atendimentos básica', 'Suporte comunitário'],
-              ordem: 0,
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: 'plano-standard',
-              nome: 'Standard',
-              descricao: 'Ideal para marcenarias e prestadores com equipe em crescimento',
-              preco: 89.9,
-              periodicidade: 'mensal',
-              status: 'ativo',
-              recursos: ['Clientes ilimitados', 'Módulo Projetos de Móveis Planejados', 'Orçamentos e Assinatura Digital', 'Suporte WhatsApp prioritário'],
-              ordem: 1,
-              createdAt: new Date().toISOString(),
-            },
-            {
-              id: 'plano-empresarial',
-              nome: 'Empresarial',
-              descricao: 'Solução completa para médias e grandes fábricas de móveis',
-              preco: 199.9,
-              periodicidade: 'mensal',
-              status: 'ativo',
-              recursos: ['Todos os recursos do Standard', 'Múltiplos usuários por empresa', 'Módulo WhatsApp Oficial (Cloud API)', 'Exportações e Relatórios Avançados'],
-              ordem: 2,
-              createdAt: new Date().toISOString(),
-            },
-          ],
-          errors: [],
+          succeeded: false,
+          errors: ['Nenhum plano real cadastrado no Supabase. Cadastre os planos antes de configurar links ou iniciar novas assinaturas.'],
         };
       }
 
@@ -353,6 +320,21 @@ export const adminService = {
     }
 
     try {
+      if (!link.planoId) {
+        return { succeeded: false, errors: ['Selecione um plano válido para este link de pagamento.'] };
+      }
+
+      const { data: planoExistente, error: planoError } = await supabase
+        .from('saas_planos')
+        .select('id')
+        .eq('id', link.planoId)
+        .maybeSingle();
+
+      if (planoError) return { succeeded: false, errors: [planoError.message] };
+      if (!planoExistente) {
+        return { succeeded: false, errors: ['O plano selecionado não existe mais no banco de dados. Atualize a lista de planos e tente novamente.'] };
+      }
+
       const payload: any = {
         plano_id: link.planoId,
         provedor: link.provedor || 'MercadoPago',
