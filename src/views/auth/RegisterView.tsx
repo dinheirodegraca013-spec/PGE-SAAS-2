@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
-import { planos } from './planos';
 import { TenantPlano } from '@/types/api';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import type { PlanoDefinicao } from './planos';
 
 export default function RegisterView() {
   const navigate = useNavigate();
@@ -15,11 +16,74 @@ export default function RegisterView() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [planos, setPlanos] = useState<PlanoDefinicao[]>([]);
+  const [carregandoPlanos, setCarregandoPlanos] = useState(true);
   const [plano, setPlano] = useState<number>(TenantPlano.Standard);
 
   const [erroServidor, setErroServidor] = useState<string | null>(null);
   const [estaEnviando, setEstaEnviando] = useState(false);
   const [sucessoConfirmacao, setSucessoConfirmacao] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    async function carregarPlanos() {
+      setCarregandoPlanos(true);
+      if (!isSupabaseConfigured) {
+        if (mounted) {
+          setErroServidor('Não foi possível carregar os planos. Tente novamente mais tarde.');
+          setCarregandoPlanos(false);
+        }
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('saas_planos')
+        .select('id, nome, descricao, preco, periodicidade, status, recursos, ordem')
+        .eq('status', 'ativo')
+        .order('ordem', { ascending: true });
+
+      if (!mounted) return;
+      if (error || !data || data.length === 0) {
+        setErroServidor('Os planos não estão disponíveis no momento. Entre em contato com o suporte.');
+        setPlanos([]);
+        setCarregandoPlanos(false);
+        return;
+      }
+
+      const planosBanco: PlanoDefinicao[] = data.map((p: any) => {
+        const nomeNormalizado = String(p.nome || '').trim().toLowerCase();
+        const valor = nomeNormalizado === 'free'
+          ? TenantPlano.Free
+          : nomeNormalizado === 'empresarial'
+            ? TenantPlano.Empresarial
+            : TenantPlano.Standard;
+        const preco = Number(p.preco || 0);
+        const periodicidade = p.periodicidade || 'mensal';
+        return {
+          valor,
+          nome: p.nome,
+          precoMensal: preco === 0
+            ? 'Gratuito'
+            : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(preco) + '/' + periodicidade,
+          descricao: p.descricao || '',
+          recursos: Array.isArray(p.recursos)
+            ? p.recursos.map((recurso: any) => typeof recurso === 'string' ? recurso : recurso?.nome || recurso?.label || '').filter(Boolean)
+            : [],
+          destaque: nomeNormalizado === 'standard',
+        };
+      });
+
+      setPlanos(planosBanco);
+      if (planosBanco.length > 0 && !planosBanco.some((p) => p.valor === plano)) {
+        setPlano(planosBanco[0].valor);
+      }
+      setErroServidor(null);
+      setCarregandoPlanos(false);
+    }
+
+    carregarPlanos();
+    return () => { mounted = false; };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -208,7 +272,11 @@ export default function RegisterView() {
               3. Escolha seu plano de assinatura
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              {planos.map((def) => {
+              {carregandoPlanos ? (
+                <p className="col-span-full py-6 text-center text-sm text-slate-500">Carregando planos disponíveis...</p>
+              ) : planos.length === 0 ? (
+                <p className="col-span-full rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">Nenhum plano disponível para cadastro neste momento.</p>
+              ) : planos.map((def) => {
                 const isSelected = plano === def.valor;
                 return (
                   <label
@@ -251,7 +319,7 @@ export default function RegisterView() {
 
           {erroServidor && <p className="text-xs text-red-600 font-medium">{erroServidor}</p>}
 
-          <button type="submit" className="btn-primary w-full cursor-pointer py-3 text-base" disabled={estaEnviando}>
+          <button type="submit" className="btn-primary w-full cursor-pointer py-3 text-base" disabled={estaEnviando || carregandoPlanos || planos.length === 0}>
             {estaEnviando ? 'Criando conta...' : 'Criar conta e entrar no ERP'}
           </button>
           <p className="text-center text-xs text-slate-400">
