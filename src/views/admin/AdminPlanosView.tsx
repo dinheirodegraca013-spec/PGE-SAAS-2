@@ -156,6 +156,33 @@ export default function AdminPlanosView() {
         </div>
       )}
 
+      {/* Ferramenta discreta para copiar os retornos do checkout no Mercado Pago */}
+      <details className="rounded-xl border border-slate-200 bg-white shadow-2xs">
+        <summary className="cursor-pointer select-none px-4 py-3 text-xs font-semibold text-slate-500 hover:text-slate-800">
+          Configuração avançada · URLs de retorno do Mercado Pago
+        </summary>
+        <div className="border-t border-slate-100 p-4 sm:p-5">
+          <p className="mb-4 max-w-3xl text-xs leading-5 text-slate-500">Copie a URL correspondente e cole no campo de retorno do checkout do Mercado Pago. Estas páginas ficam fora do menu público. O retorno não libera o plano automaticamente: a confirmação deve vir do Mercado Pago por webhook ou validação segura.</p>
+          <div className="space-y-3">
+            {[
+              { slug: 'free', nome: 'Free' },
+              { slug: 'standard', nome: 'Standard' },
+              { slug: 'empresarial', nome: 'Empresarial' },
+            ].map((item) => {
+              const url = `${window.location.origin}/pagamento/obrigado/${item.slug}`;
+              return (
+                <div key={item.slug} className="flex flex-col gap-2 rounded-lg border border-slate-100 bg-slate-50 p-3 sm:flex-row sm:items-center">
+                  <div className="w-28 shrink-0 text-xs font-semibold text-slate-700">{item.nome}</div>
+                  <code className="min-w-0 flex-1 break-all text-[11px] text-slate-600">{url}</code>
+                  <button type="button" onClick={async () => { try { await navigator.clipboard.writeText(url); alert(`Link do plano ${item.nome} copiado.`); } catch { window.prompt('Copie a URL de retorno:', url); } }} className="inline-flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Copiar link</button>
+                  <a href={url} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center justify-center px-2 py-2 text-xs font-semibold text-brand-600 hover:text-brand-700">Pré-visualizar</a>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </details>
+
       {/* Grid de Planos */}
       {carregando ? (
         <div className="p-12 text-center text-xs text-slate-400">Carregando planos...</div>
