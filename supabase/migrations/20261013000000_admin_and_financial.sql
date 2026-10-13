@@ -175,7 +175,7 @@ BEGIN
 
     RETURN NULL;
 END;
-$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se é SuperAdmin
 CREATE OR REPLACE FUNCTION private.is_saas_super_admin()
@@ -183,7 +183,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN (private.get_saas_user_internal_role(auth.uid()) = 'SuperAdmin');
 END;
-$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se tem acesso financeiro
 CREATE OR REPLACE FUNCTION private.is_saas_financeiro()
@@ -194,7 +194,7 @@ BEGIN
     v_role := private.get_saas_user_internal_role(auth.uid());
     RETURN (v_role IN ('SuperAdmin', 'SaaSFinanceiro'));
 END;
-$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se é qualquer usuário interno autorizado
 CREATE OR REPLACE FUNCTION private.is_saas_interno()
@@ -202,7 +202,7 @@ RETURNS BOOLEAN AS $$
 BEGIN
     RETURN (private.get_saas_user_internal_role(auth.uid()) IS NOT NULL);
 END;
-$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
+$$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS)
