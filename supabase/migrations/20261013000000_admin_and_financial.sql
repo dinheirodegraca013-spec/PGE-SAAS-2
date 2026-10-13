@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS private;
+GRANT USAGE ON SCHEMA private TO authenticated;
+
 -- =========================================================================
 -- PGE SAAS 2 — MIGRAÇÃO: DASHBOARD ADMINISTRATIVO & FINANCEIRO DO SAAS
 -- Versão: 20261013000000
@@ -48,7 +51,7 @@ CREATE TABLE IF NOT EXISTS public.saas_planos_links (
 -- 4. TABELA DE ASSINATURAS DAS EMPRESAS (TENANTS)
 CREATE TABLE IF NOT EXISTS public.saas_assinaturas (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
-    tenant_id TEXT NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     plano_id TEXT REFERENCES public.saas_planos(id) ON DELETE SET NULL,
     status TEXT NOT NULL DEFAULT 'ativa' CHECK (status IN ('ativa', 'pendente', 'suspensa', 'cancelada', 'vencida')),
     valor NUMERIC(12,2) NOT NULL DEFAULT 0.00,
@@ -64,7 +67,7 @@ CREATE TABLE IF NOT EXISTS public.saas_assinaturas (
 -- 5. TABELA DE COBRANÇAS / FATURAS EMITIDAS
 CREATE TABLE IF NOT EXISTS public.saas_cobrancas (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
-    tenant_id TEXT NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     assinatura_id TEXT REFERENCES public.saas_assinaturas(id) ON DELETE SET NULL,
     valor NUMERIC(12,2) NOT NULL,
     data_vencimento TIMESTAMPTZ NOT NULL,
@@ -81,7 +84,7 @@ CREATE TABLE IF NOT EXISTS public.saas_cobrancas (
 CREATE TABLE IF NOT EXISTS public.saas_pagamentos (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::TEXT,
     cobranca_id TEXT REFERENCES public.saas_cobrancas(id) ON DELETE SET NULL,
-    tenant_id TEXT NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+    tenant_id UUID NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
     assinatura_id TEXT REFERENCES public.saas_assinaturas(id) ON DELETE SET NULL,
     valor NUMERIC(12,2) NOT NULL,
     data_pagamento TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
@@ -125,6 +128,19 @@ CREATE TABLE IF NOT EXISTS public.saas_audit_logs (
     created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
 );
 
+-- Bootstrap seguro: concede SuperAdmin somente à conta proprietária já cadastrada.
+-- O papel fica separado de profiles, sem depender de um papel editável pelo cliente.
+INSERT INTO public.saas_usuarios_internos (user_id, email, nome, papel, ativo, permissoes)
+SELECT p.id, p.email, COALESCE(NULLIF(p.nome_completo, ''), split_part(p.email, '@', 1)),
+       'SuperAdmin', true,
+       '{"acesso_admin":true,"acesso_financeiro":true,"leitura_apenas":false}'::jsonb
+FROM public.profiles p
+WHERE lower(p.email) = lower('guicabanas13@gmail.com')
+  AND p.ativo IS TRUE
+ON CONFLICT (user_id) DO UPDATE
+SET papel = 'SuperAdmin', ativo = true,
+    permissoes = EXCLUDED.permissoes, updated_at = now();
+
 -- =========================================================================
 -- ÍNDICES DE PERFORMANCE
 -- =========================================================================
@@ -142,7 +158,7 @@ CREATE INDEX IF NOT EXISTS idx_saas_audit_logs_modulo ON public.saas_audit_logs(
 -- =========================================================================
 
 -- Retorna o papel interno de um usuário ou NULL
-CREATE OR REPLACE FUNCTION public.get_saas_user_internal_role(v_uid UUID)
+CREATE OR REPLACE FUNCTION private.get_saas_user_internal_role(v_uid UUID)
 RETURNS TEXT AS $$
 DECLARE
     v_role TEXT;
@@ -157,42 +173,36 @@ BEGIN
         RETURN v_role;
     END IF;
 
-    -- 2. Fallback: perfil com papel SuperAdmin
-    SELECT papel INTO v_role
-    FROM public.profiles
-    WHERE id = v_uid AND papel = 'SuperAdmin'
-    LIMIT 1;
-
-    RETURN v_role;
+    RETURN NULL;
 END;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se é SuperAdmin
-CREATE OR REPLACE FUNCTION public.is_saas_super_admin()
+CREATE OR REPLACE FUNCTION private.is_saas_super_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
-    RETURN (public.get_saas_user_internal_role(auth.uid()) = 'SuperAdmin');
+    RETURN (private.get_saas_user_internal_role(auth.uid()) = 'SuperAdmin');
 END;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se tem acesso financeiro
-CREATE OR REPLACE FUNCTION public.is_saas_financeiro()
+CREATE OR REPLACE FUNCTION private.is_saas_financeiro()
 RETURNS BOOLEAN AS $$
 DECLARE
     v_role TEXT;
 BEGIN
-    v_role := public.get_saas_user_internal_role(auth.uid());
+    v_role := private.get_saas_user_internal_role(auth.uid());
     RETURN (v_role IN ('SuperAdmin', 'SaaSFinanceiro'));
 END;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- Valida se é qualquer usuário interno autorizado
-CREATE OR REPLACE FUNCTION public.is_saas_interno()
+CREATE OR REPLACE FUNCTION private.is_saas_interno()
 RETURNS BOOLEAN AS $$
 BEGIN
-    RETURN (public.get_saas_user_internal_role(auth.uid()) IS NOT NULL);
+    RETURN (private.get_saas_user_internal_role(auth.uid()) IS NOT NULL);
 END;
-$$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
+$ LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = '';
 
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS)
@@ -209,70 +219,108 @@ ALTER TABLE public.saas_audit_logs ENABLE ROW LEVEL SECURITY;
 -- 1. Políticas saas_usuarios_internos: apenas SuperAdmin gerencia; outros internos apenas leem seu próprio perfil
 DROP POLICY IF EXISTS "saas_usuarios_internos_admin" ON public.saas_usuarios_internos;
 CREATE POLICY "saas_usuarios_internos_admin" ON public.saas_usuarios_internos
-    FOR ALL USING (public.is_saas_super_admin() OR user_id = auth.uid())
-    WITH CHECK (public.is_saas_super_admin());
+    FOR ALL USING (private.is_saas_super_admin() OR user_id = auth.uid())
+    WITH CHECK (private.is_saas_super_admin());
 
 -- 2. Políticas saas_planos: leitura pública/autenticada para checkout; escrita restrita a SuperAdmin
 DROP POLICY IF EXISTS "saas_planos_select" ON public.saas_planos;
 CREATE POLICY "saas_planos_select" ON public.saas_planos
-    FOR SELECT USING (true);
+    FOR SELECT TO anon, authenticated USING (status = 'ativo' OR private.is_saas_interno());
 
 DROP POLICY IF EXISTS "saas_planos_modify" ON public.saas_planos;
 CREATE POLICY "saas_planos_modify" ON public.saas_planos
-    FOR ALL USING (public.is_saas_super_admin())
-    WITH CHECK (public.is_saas_super_admin());
+    FOR ALL USING (private.is_saas_super_admin())
+    WITH CHECK (private.is_saas_super_admin());
 
 -- 3. Políticas saas_planos_links: leitura pública para links ativos; modificação por SuperAdmin/Financeiro
 DROP POLICY IF EXISTS "saas_planos_links_select" ON public.saas_planos_links;
 CREATE POLICY "saas_planos_links_select" ON public.saas_planos_links
-    FOR SELECT USING (status = 'ativo' OR public.is_saas_financeiro());
+    FOR SELECT USING (status = 'ativo' OR private.is_saas_financeiro());
 
 DROP POLICY IF EXISTS "saas_planos_links_modify" ON public.saas_planos_links;
 CREATE POLICY "saas_planos_links_modify" ON public.saas_planos_links
-    FOR ALL USING (public.is_saas_financeiro())
-    WITH CHECK (public.is_saas_financeiro());
+    FOR ALL USING (private.is_saas_financeiro())
+    WITH CHECK (private.is_saas_financeiro());
 
 -- 4. Políticas saas_assinaturas:
 -- Internos (Financeiro/SuperAdmin) veem e gerenciam todas
 -- Empresas clientes veem apenas a sua própria assinatura ativa
 DROP POLICY IF EXISTS "saas_assinaturas_policy" ON public.saas_assinaturas;
 CREATE POLICY "saas_assinaturas_policy" ON public.saas_assinaturas
-    FOR SELECT USING (public.is_saas_interno() OR tenant_id = public.current_tenant_id());
+    FOR SELECT USING (private.is_saas_interno() OR tenant_id = public.current_tenant_id());
 
 DROP POLICY IF EXISTS "saas_assinaturas_modify" ON public.saas_assinaturas;
 CREATE POLICY "saas_assinaturas_modify" ON public.saas_assinaturas
-    FOR ALL USING (public.is_saas_super_admin() OR public.is_saas_financeiro())
-    WITH CHECK (public.is_saas_super_admin() OR public.is_saas_financeiro());
+    FOR ALL USING (private.is_saas_super_admin() OR private.is_saas_financeiro())
+    WITH CHECK (private.is_saas_super_admin() OR private.is_saas_financeiro());
 
 -- 5. Políticas saas_cobrancas:
 -- Internos veem e gerenciam todas
 -- Clientes veem apenas suas próprias cobranças
 DROP POLICY IF EXISTS "saas_cobrancas_policy" ON public.saas_cobrancas;
 CREATE POLICY "saas_cobrancas_policy" ON public.saas_cobrancas
-    FOR SELECT USING (public.is_saas_financeiro() OR tenant_id = public.current_tenant_id());
+    FOR SELECT USING (private.is_saas_financeiro() OR tenant_id = public.current_tenant_id());
 
 DROP POLICY IF EXISTS "saas_cobrancas_modify" ON public.saas_cobrancas;
 CREATE POLICY "saas_cobrancas_modify" ON public.saas_cobrancas
-    FOR ALL USING (public.is_saas_financeiro())
-    WITH CHECK (public.is_saas_financeiro());
+    FOR ALL USING (private.is_saas_financeiro())
+    WITH CHECK (private.is_saas_financeiro());
 
 -- 6. Políticas saas_pagamentos: restrita estritamente a equipe financeira / SuperAdmin
 DROP POLICY IF EXISTS "saas_pagamentos_policy" ON public.saas_pagamentos;
 CREATE POLICY "saas_pagamentos_policy" ON public.saas_pagamentos
-    FOR ALL USING (public.is_saas_financeiro())
-    WITH CHECK (public.is_saas_financeiro());
+    FOR ALL USING (private.is_saas_financeiro())
+    WITH CHECK (private.is_saas_financeiro());
 
 -- 7. Políticas saas_gateway_configs: exclusivo SuperAdmin
 DROP POLICY IF EXISTS "saas_gateway_configs_policy" ON public.saas_gateway_configs;
 CREATE POLICY "saas_gateway_configs_policy" ON public.saas_gateway_configs
-    FOR ALL USING (public.is_saas_super_admin())
-    WITH CHECK (public.is_saas_super_admin());
+    FOR ALL USING (private.is_saas_super_admin())
+    WITH CHECK (private.is_saas_super_admin());
 
 -- 8. Políticas saas_audit_logs: internos podem ler; inserção aberta para registro seguro
 DROP POLICY IF EXISTS "saas_audit_logs_select" ON public.saas_audit_logs;
 CREATE POLICY "saas_audit_logs_select" ON public.saas_audit_logs
-    FOR SELECT USING (public.is_saas_interno());
+    FOR SELECT USING (private.is_saas_interno());
 
 DROP POLICY IF EXISTS "saas_audit_logs_insert" ON public.saas_audit_logs;
 CREATE POLICY "saas_audit_logs_insert" ON public.saas_audit_logs
-    FOR INSERT WITH CHECK (true);
+    FOR INSERT TO authenticated
+    WITH CHECK (private.is_saas_interno() AND usuario_id = auth.uid());
+
+-- Permissões do Data API; o RLS continua sendo a barreira de acesso.
+GRANT SELECT ON public.saas_planos, public.saas_planos_links TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON
+  public.saas_usuarios_internos, public.saas_planos, public.saas_planos_links,
+  public.saas_assinaturas, public.saas_cobrancas, public.saas_pagamentos,
+  public.saas_gateway_configs, public.saas_audit_logs TO authenticated;
+
+REVOKE ALL ON FUNCTION private.get_saas_user_internal_role(uuid) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.is_saas_super_admin() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION private.is_saas_financeiro() FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION private.is_saas_interno() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION private.is_saas_super_admin() TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_saas_financeiro() TO authenticated;
+GRANT EXECUTE ON FUNCTION private.is_saas_interno() TO authenticated;
+
+DROP POLICY IF EXISTS tenants_read_saas_internal ON public.tenants;
+CREATE POLICY tenants_read_saas_internal ON public.tenants
+    FOR SELECT TO authenticated USING (private.is_saas_interno());
+DROP POLICY IF EXISTS tenants_update_saas_admin ON public.tenants;
+CREATE POLICY tenants_update_saas_admin ON public.tenants
+    FOR UPDATE TO authenticated USING (private.is_saas_super_admin())
+    WITH CHECK (private.is_saas_super_admin());
+DROP POLICY IF EXISTS profiles_read_saas_admin ON public.profiles;
+CREATE POLICY profiles_read_saas_admin ON public.profiles
+    FOR SELECT TO authenticated USING (private.is_saas_super_admin());
+
+DROP POLICY IF EXISTS profiles_update_self_or_admin ON public.profiles;
+CREATE POLICY profiles_update_self_or_admin ON public.profiles
+    FOR UPDATE TO authenticated
+    USING (id = auth.uid() OR (tenant_id = private.current_tenant_id() AND private.current_user_role() = 'AdministradorTenant'))
+    WITH CHECK (
+      (id = auth.uid() AND tenant_id = private.current_tenant_id() AND papel = private.current_user_role())
+      OR (tenant_id = private.current_tenant_id() AND private.current_user_role() = 'AdministradorTenant')
+    );
+REVOKE UPDATE ON public.profiles FROM anon, authenticated;
+GRANT UPDATE (nome_completo, email, updated_at) ON public.profiles TO authenticated;
