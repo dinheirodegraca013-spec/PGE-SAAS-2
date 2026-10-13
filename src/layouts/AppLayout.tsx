@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, X, Shield } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
 import { navGroups } from './navigation';
 
@@ -134,6 +134,15 @@ export default function AppLayout() {
             <h1 className="text-sm font-medium text-slate-600">{currentTitle}</h1>
           </div>
           <div className="flex items-center gap-3">
+            {auth.isSaaSInterno && (
+              <NavLink
+                to="/admin"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition"
+              >
+                <Shield className="h-3.5 w-3.5 text-brand-400" />
+                Painel Administrativo
+              </NavLink>
+            )}
             <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               Modo Online

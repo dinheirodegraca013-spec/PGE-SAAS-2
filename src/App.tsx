@@ -7,6 +7,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuthStore } from './stores/auth';
 import AppLayout from './layouts/AppLayout';
+import AdminLayout from './layouts/AdminLayout';
+import AdminGuard from './components/auth/AdminGuard';
+import FinanceiroGuard from './components/auth/FinanceiroGuard';
+
+// Views do Painel do Cliente (Existentes - 100% preservadas)
 import DashboardView from './views/dashboard/DashboardView';
 import LoginView from './views/auth/LoginView';
 import RegisterView from './views/auth/RegisterView';
@@ -21,6 +26,19 @@ import WhatsAppConfiguracaoView from './modules/whatsapp/views/WhatsAppConfigura
 import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import NotFoundView from './views/NotFoundView';
+
+// Views dos Novos Painéis do SaaS (Super Admin & Financeiro)
+import AdminDashboardView from './views/admin/AdminDashboardView';
+import AdminEmpresasView from './views/admin/AdminEmpresasView';
+import AdminPlanosView from './views/admin/AdminPlanosView';
+import AdminAssinaturasView from './views/admin/AdminAssinaturasView';
+import AdminUsuariosView from './views/admin/AdminUsuariosView';
+import FinanceiroDashboardView from './views/admin/financeiro/FinanceiroDashboardView';
+import FinanceiroCobrancasView from './views/admin/financeiro/FinanceiroCobrancasView';
+import FinanceiroPagamentosView from './views/admin/financeiro/FinanceiroPagamentosView';
+import FinanceiroLinksView from './views/admin/financeiro/FinanceiroLinksView';
+import FinanceiroRelatoriosView from './views/admin/financeiro/FinanceiroRelatoriosView';
+import AcessoNegadoView from './views/admin/AcessoNegadoView';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const auth = useAuthStore();
@@ -85,10 +103,15 @@ export default function App() {
             }
           />
 
+          {/* Página de Acesso Restrito / Negado */}
+          <Route path="/acesso-negado" element={<AcessoNegadoView />} />
+
           {/* Página pública de aprovação de orçamento (aberta pelo cliente final) */}
           <Route path="/orcamento/:id" element={<OrcamentoPublicoView />} />
 
-          {/* Rotas Protegidas do ERP */}
+          {/* =============================================================== */}
+          {/* PAINEL DO CLIENTE (EXISTENTE - 100% PRESERVADO) */}
+          {/* =============================================================== */}
           <Route
             path="/"
             element={
@@ -109,7 +132,75 @@ export default function App() {
             <Route path="configuracoes" element={<SettingsView />} />
           </Route>
 
-          {/* 404 */}
+          {/* =============================================================== */}
+          {/* DASHBOARD ADMINISTRATIVO & FINANCEIRO DO SAAS */}
+          {/* =============================================================== */}
+          <Route
+            path="/admin"
+            element={
+              <AdminGuard>
+                <AdminLayout />
+              </AdminGuard>
+            }
+          >
+            {/* Administração Global (Super Admin / SaaSConsulta) */}
+            <Route index element={<AdminDashboardView />} />
+            <Route path="empresas" element={<AdminEmpresasView />} />
+            <Route path="planos" element={<AdminPlanosView />} />
+            <Route path="assinaturas" element={<AdminAssinaturasView />} />
+            <Route
+              path="usuarios"
+              element={
+                <AdminGuard requireSuperAdmin>
+                  <AdminUsuariosView />
+                </AdminGuard>
+              }
+            />
+
+            {/* Gestão Financeira (Super Admin / SaaSFinanceiro) */}
+            <Route
+              path="financeiro"
+              element={
+                <FinanceiroGuard>
+                  <FinanceiroDashboardView />
+                </FinanceiroGuard>
+              }
+            />
+            <Route
+              path="financeiro/cobrancas"
+              element={
+                <FinanceiroGuard>
+                  <FinanceiroCobrancasView />
+                </FinanceiroGuard>
+              }
+            />
+            <Route
+              path="financeiro/pagamentos"
+              element={
+                <FinanceiroGuard>
+                  <FinanceiroPagamentosView />
+                </FinanceiroGuard>
+              }
+            />
+            <Route
+              path="financeiro/links"
+              element={
+                <FinanceiroGuard>
+                  <FinanceiroLinksView />
+                </FinanceiroGuard>
+              }
+            />
+            <Route
+              path="financeiro/relatorios"
+              element={
+                <FinanceiroGuard>
+                  <FinanceiroRelatoriosView />
+                </FinanceiroGuard>
+              }
+            />
+          </Route>
+
+          {/* 404 Not Found */}
           <Route path="*" element={<NotFoundView />} />
         </Routes>
       </BrowserRouter>

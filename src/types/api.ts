@@ -53,6 +53,8 @@ export interface UsuarioAutenticado {
   papel: string;
   /** O backend serializa o enum TenantPlano como string (ex.: "Standard"), não como número. */
   plano: string;
+  /** Papel interno global do SaaS (SuperAdmin | SaaSFinanceiro | SaaSConsulta) independente do tenant */
+  papelInterno?: 'SuperAdmin' | 'SaaSFinanceiro' | 'SaaSConsulta' | null;
 }
 
 /** Paginação padrão usada em listagens da API. */
