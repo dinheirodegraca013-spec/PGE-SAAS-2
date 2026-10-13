@@ -108,6 +108,13 @@ export default function AdminPlanosView() {
     }
   };
 
+  const handleExcluirPlano = async (plano: SaaSPlano) => {
+    if (!window.confirm(`Excluir definitivamente o plano "${plano.nome}"? Essa ação não pode ser desfeita.`)) return;
+    const res = await adminService.excluirPlano(plano.id);
+    if (!res.succeeded) { alert(res.errors.join(' ')); return; }
+    await carregarPlanos();
+  };
+
   const formatarMoeda = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
   };
@@ -220,6 +227,7 @@ export default function AdminPlanosView() {
                   <Edit2 className="h-3.5 w-3.5 text-slate-400" />
                   Editar Plano
                 </button>
+                <button type="button" title="Excluir plano" aria-label="Excluir plano" onClick={() => handleExcluirPlano(plano)} className="inline-flex items-center justify-center rounded-lg p-2 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
                 <Link
                   to="/admin/financeiro/links"
                   className="text-xs font-semibold text-brand-600 hover:text-brand-700"
