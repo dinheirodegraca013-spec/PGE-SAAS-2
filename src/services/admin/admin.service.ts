@@ -375,7 +375,7 @@ export const adminService = {
     try {
       const { data, error } = await supabase
         .from('saas_assinaturas')
-        .select('*, tenants(razao_social, documento, plano), saas_planos(nome)')
+        .select('*, tenants(razao_social, plano), saas_planos(nome)')
         .order('created_at', { ascending: false });
 
       if (error && error.code !== '42P01') {
@@ -444,7 +444,7 @@ export const adminService = {
     try {
       const { data, error } = await supabase
         .from('saas_cobrancas')
-        .select('*, tenants(razao_social, documento)')
+        .select('*, tenants(razao_social)')
         .order('data_vencimento', { ascending: false });
 
       if (error && error.code !== '42P01') {
@@ -527,7 +527,7 @@ export const adminService = {
     try {
       const { data, error } = await supabase
         .from('saas_pagamentos')
-        .select('*, tenants(razao_social, documento)')
+        .select('*, tenants(razao_social)')
         .order('data_pagamento', { ascending: false });
 
       if (error && error.code !== '42P01') {
