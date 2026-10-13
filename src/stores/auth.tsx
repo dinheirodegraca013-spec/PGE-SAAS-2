@@ -14,6 +14,10 @@ export interface RegisterPayload {
 const STORAGE_KEY = 'erp-saas:auth';
 
 interface AuthContextType {
+  isSuperAdmin: boolean;
+  isSaaSFinanceiro: boolean;
+  isSaaSInterno: boolean;
+  isSaaSConsulta: boolean;
   accessToken: string | null;
   refreshToken: string | null;
   usuario: UsuarioAutenticado | null;
@@ -39,7 +43,7 @@ function mapPlanoNome(planoNum: number | string | undefined): string {
 /**
  * Consulta a tabela real 'profiles' e o relacionamento com 'tenants' no Supabase.
  */
-async function fetchUserProfile(userId: string): Promise<{ profile: any; isActive: boolean }> {
+async function fetchUserProfile(userId: string): Promise<{ profile: any; isActive: boolean; internalRole: 'SuperAdmin' | 'SaaSFinanceiro' | 'SaaSConsulta' | null }> {
   try {
     const { data, error } = await supabase
       .from('profiles')
@@ -49,21 +53,34 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
 
     if (error) {
       console.error('Não foi possível validar o perfil no Supabase:', error.message);
-      return { profile: null, isActive: false };
+      return { profile: null, isActive: false, internalRole: null };
     }
 
     if (!data) {
       console.error('Conta autenticada sem perfil associado. Acesso bloqueado.');
-      return { profile: null, isActive: false };
+      return { profile: null, isActive: false, internalRole: null };
     }
+
+    const { data: internalAccess, error: internalAccessError } = await supabase
+      .from('saas_usuarios_internos')
+      .select('papel, ativo')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (internalAccessError) {
+      console.warn('Acesso interno do SaaS não disponível para esta conta:', internalAccessError.message);
+    }
+    const internalRole = internalAccess?.ativo === true
+      ? (internalAccess.papel as 'SuperAdmin' | 'SaaSFinanceiro' | 'SaaSConsulta')
+      : null;
 
     const tenantRecord = Array.isArray(data.tenants) ? data.tenants[0] : data.tenants;
     const isActive = data.ativo === true && Boolean(data.tenant_id) &&
       Boolean(data.papel) && tenantRecord?.ativo !== false;
-    return { profile: { ...data, tenants: tenantRecord }, isActive };
+    return { profile: { ...data, tenants: tenantRecord }, isActive, internalRole };
   } catch (err) {
     console.error('Exceção ao validar perfil no Supabase:', err);
-    return { profile: null, isActive: false };
+    return { profile: null, isActive: false, internalRole: null };
   }
 }
 
@@ -78,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const user = session.user;
     // O perfil e o tenant são carregados exclusivamente do banco.
     // 1. Busca perfil real na tabela 'profiles'
-    const { profile, isActive } = await fetchUserProfile(user.id);
+    const { profile, isActive, internalRole } = await fetchUserProfile(user.id);
 
     if (!isActive || !profile?.tenant_id || !profile?.papel) {
       await supabase.auth.signOut();
@@ -100,6 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: user.email || '',
       papel,
       plano,
+      papelInterno: internalRole,
     };
 
     setAccessToken(session.access_token);
@@ -321,6 +339,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        isSuperAdmin: usuario?.papelInterno === 'SuperAdmin',
+        isSaaSFinanceiro: usuario?.papelInterno === 'SuperAdmin' || usuario?.papelInterno === 'SaaSFinanceiro',
+        isSaaSInterno: Boolean(usuario?.papelInterno),
+        isSaaSConsulta: usuario?.papelInterno === 'SaaSConsulta',
         accessToken,
         refreshToken,
         usuario,
