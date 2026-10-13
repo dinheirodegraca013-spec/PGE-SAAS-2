@@ -75,8 +75,30 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
       : null;
 
     const tenantRecord = Array.isArray(data.tenants) ? data.tenants[0] : data.tenants;
-    const isActive = data.ativo === true && Boolean(data.tenant_id) &&
+    let isActive = data.ativo === true && Boolean(data.tenant_id) &&
       Boolean(data.papel) && tenantRecord?.ativo !== false;
+
+    // Contas internas do SaaS não dependem da assinatura de um tenant.
+    // Clientes pagos só acessam o painel quando existe assinatura ativa no banco.
+    // O plano Free permanece liberado sem checkout.
+    const planoTenant = mapPlanoNome(tenantRecord?.plano);
+    if (isActive && !internalRole && planoTenant !== 'Free') {
+      const { data: assinaturaAtiva, error: assinaturaError } = await supabase
+        .from('saas_assinaturas')
+        .select('id')
+        .eq('tenant_id', data.tenant_id)
+        .eq('status', 'ativa')
+        .limit(1)
+        .maybeSingle();
+
+      if (assinaturaError) {
+        console.error('Não foi possível validar a assinatura do tenant:', assinaturaError.message);
+        isActive = false;
+      } else if (!assinaturaAtiva) {
+        isActive = false;
+      }
+    }
+
     return { profile: { ...data, tenants: tenantRecord }, isActive, internalRole };
   } catch (err) {
     console.error('Exceção ao validar perfil no Supabase:', err);
