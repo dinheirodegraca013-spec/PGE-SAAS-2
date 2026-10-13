@@ -90,7 +90,9 @@ export const adminService = {
           nomeFantasia: t.nome_fantasia || undefined,
           documento: t.documento || undefined,
           plano: t.plano || 'Standard',
-          status: (t.status || 'ativo') as any,
+          status: (t.ativo === false
+            ? (assinatura?.status === 'cancelada' ? 'cancelado' : 'suspenso')
+            : (assinatura?.status === 'cancelada' ? 'cancelado' : assinatura?.status === 'suspensa' ? 'suspenso' : 'ativo')) as any,
           createdAt: t.created_at,
           totalUsuarios: totalUsers,
           totalProjetos: 0,
@@ -116,7 +118,7 @@ export const adminService = {
     try {
       const { error } = await supabase
         .from('tenants')
-        .update({ status })
+        .update({ ativo: status === 'ativo' })
         .eq('id', tenantId);
 
       if (error) return { succeeded: false, errors: [error.message] };
