@@ -108,6 +108,23 @@ export const adminService = {
     }
   },
 
+  async excluirEmpresa(id: string): Promise<ApiResult<void>> {
+    if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
+    try {
+      const [{ count: users, error: usersError }, { count: subs, error: subsError }] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('tenant_id', id),
+        supabase.from('saas_assinaturas').select('id', { count: 'exact', head: true }).eq('tenant_id', id),
+      ]);
+      if (usersError) return { succeeded: false, errors: [usersError.message] };
+      if (subsError) return { succeeded: false, errors: [subsError.message] };
+      if ((users || 0) > 0 || (subs || 0) > 0) return { succeeded: false, errors: ['Não é possível excluir: a empresa possui usuários ou assinaturas vinculadas.'] };
+      const { error } = await supabase.from('tenants').delete().eq('id', id);
+      if (error) return { succeeded: false, errors: [error.message] };
+      await registrarSaaSAuditLog('Administracao', 'EXCLUIR_EMPRESA', id);
+      return { succeeded: true, errors: [] };
+    } catch (err: any) { return { succeeded: false, errors: [err.message || 'Erro ao excluir empresa.'] }; }
+  },
+
   async atualizarStatusEmpresa(
     tenantId: string,
     status: 'ativo' | 'suspenso' | 'cancelado',
@@ -220,6 +237,19 @@ export const adminService = {
     } catch (err: any) {
       return { succeeded: false, errors: [err.message] };
     }
+  },
+
+  async excluirPlano(id: string): Promise<ApiResult<void>> {
+    if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
+    try {
+      const { count, error: countError } = await supabase.from('saas_assinaturas').select('id', { count: 'exact', head: true }).eq('plano_id', id);
+      if (countError) return { succeeded: false, errors: [countError.message] };
+      if ((count || 0) > 0) return { succeeded: false, errors: ['Este plano está vinculado a assinaturas. Desative-o ou altere os vínculos antes de excluir.'] };
+      const { error } = await supabase.from('saas_planos').delete().eq('id', id);
+      if (error) return { succeeded: false, errors: [error.message] };
+      await registrarSaaSAuditLog('Planos', 'EXCLUIR_PLANO', id);
+      return { succeeded: true, errors: [] };
+    } catch (err: any) { return { succeeded: false, errors: [err.message || 'Erro ao excluir plano.'] }; }
   },
 
   async salvarPlano(plano: Partial<SaaSPlano>): Promise<ApiResult<SaaSPlano>> {
@@ -402,6 +432,19 @@ export const adminService = {
     } catch (err: any) {
       return { succeeded: false, errors: [err.message] };
     }
+  },
+
+  async excluirAssinatura(id: string): Promise<ApiResult<void>> {
+    if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
+    try {
+      const { count, error: paymentError } = await supabase.from('saas_pagamentos').select('id', { count: 'exact', head: true }).eq('assinatura_id', id);
+      if (paymentError) return { succeeded: false, errors: [paymentError.message] };
+      if ((count || 0) > 0) return { succeeded: false, errors: ['Esta assinatura possui pagamentos vinculados; cancele-a para preservar o histórico financeiro.'] };
+      const { error } = await supabase.from('saas_assinaturas').delete().eq('id', id);
+      if (error) return { succeeded: false, errors: [error.message] };
+      await registrarSaaSAuditLog('Assinaturas', 'EXCLUIR_ASSINATURA', id);
+      return { succeeded: true, errors: [] };
+    } catch (err: any) { return { succeeded: false, errors: [err.message || 'Erro ao excluir assinatura.'] }; }
   },
 
   async alterarStatusAssinatura(
@@ -786,6 +829,25 @@ export const adminService = {
     } catch (err: any) {
       return { succeeded: false, errors: [err.message] };
     }
+  },
+
+  async excluirUsuarioInterno(id: string): Promise<ApiResult<void>> {
+    if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
+    try {
+      const { data: target, error: targetError } = await supabase.from('saas_usuarios_internos').select('id,user_id,email,papel,ativo').eq('id', id).single();
+      if (targetError) return { succeeded: false, errors: [targetError.message] };
+      const current = getCurrentUserEmailAndId();
+      if (target.user_id === current.id || (target.email || '').toLowerCase() === (current.email || '').toLowerCase()) return { succeeded: false, errors: ['Por segurança, não é permitido excluir o próprio acesso por esta tela.'] };
+      if (target.papel === 'SuperAdmin' && target.ativo) {
+        const { count, error } = await supabase.from('saas_usuarios_internos').select('id', { count: 'exact', head: true }).eq('papel', 'SuperAdmin').eq('ativo', true);
+        if (error) return { succeeded: false, errors: [error.message] };
+        if ((count || 0) <= 1) return { succeeded: false, errors: ['Não é possível excluir o último Super Admin ativo.'] };
+      }
+      const { error } = await supabase.from('saas_usuarios_internos').delete().eq('id', id);
+      if (error) return { succeeded: false, errors: [error.message] };
+      await registrarSaaSAuditLog('Seguranca', 'EXCLUIR_USUARIO_INTERNO', id, { email: target.email, papel: target.papel });
+      return { succeeded: true, errors: [] };
+    } catch (err: any) { return { succeeded: false, errors: [err.message || 'Erro ao excluir usuário interno.'] }; }
   },
 
   async desativarUsuarioInterno(id: string): Promise<ApiResult<void>> {
