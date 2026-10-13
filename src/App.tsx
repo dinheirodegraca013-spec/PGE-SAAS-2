@@ -138,7 +138,7 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <AdminGuard>
+              <AdminGuard requireSuperAdmin>
                 <AdminLayout />
               </AdminGuard>
             }
@@ -198,6 +198,22 @@ export default function App() {
                 </FinanceiroGuard>
               }
             />
+          </Route>
+
+          {/* Painel financeiro com rota direta e permissões próprias */}
+          <Route
+            path="/financeiro"
+            element={
+              <FinanceiroGuard>
+                <AdminLayout />
+              </FinanceiroGuard>
+            }
+          >
+            <Route index element={<FinanceiroDashboardView />} />
+            <Route path="cobrancas" element={<FinanceiroCobrancasView />} />
+            <Route path="pagamentos" element={<FinanceiroPagamentosView />} />
+            <Route path="links" element={<FinanceiroLinksView />} />
+            <Route path="relatorios" element={<FinanceiroRelatoriosView />} />
           </Route>
 
           {/* 404 Not Found */}
