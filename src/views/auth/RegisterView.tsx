@@ -111,6 +111,46 @@ export default function RegisterView() {
     setErroServidor(null);
     setEstaEnviando(true);
     try {
+      // Resolve o plano e o checkout configurados pelo Super Admin antes de criar a conta.
+      const nomePlanoSelecionado = plano === TenantPlano.Free
+        ? 'free'
+        : plano === TenantPlano.Empresarial
+          ? 'empresarial'
+          : 'standard';
+
+      const { data: planoBanco, error: planoError } = await supabase
+        .from('saas_planos')
+        .select('id, nome, preco, periodicidade, status')
+        .eq('status', 'ativo')
+        .ilike('nome', nomePlanoSelecionado)
+        .maybeSingle();
+
+      if (planoError || !planoBanco) {
+        setErroServidor('Não foi possível validar o plano selecionado no banco. Atualize a página ou contate o suporte.');
+        return;
+      }
+
+      const isPlanoFree = String(planoBanco.nome).trim().toLowerCase() === 'free' || Number(planoBanco.preco) === 0;
+      let checkoutUrl: string | null = null;
+
+      if (!isPlanoFree) {
+        const periodicidade = planoBanco.periodicidade || 'mensal';
+        const { data: linkCheckout, error: linkError } = await supabase
+          .from('saas_planos_links')
+          .select('url_checkout')
+          .eq('plano_id', planoBanco.id)
+          .eq('status', 'ativo')
+          .eq('periodicidade', periodicidade)
+          .limit(1)
+          .maybeSingle();
+
+        if (linkError || !linkCheckout?.url_checkout || !String(linkCheckout.url_checkout).startsWith('https://')) {
+          setErroServidor('Este plano ainda não possui um link de pagamento ativo configurado pelo Super Admin para esta periodicidade.');
+          return;
+        }
+        checkoutUrl = linkCheckout.url_checkout;
+      }
+
       const resultado = await auth.register({
         razaoSocial: razaoSocial.trim(),
         nomeFantasia: nomeFantasia.trim() || undefined,
@@ -122,6 +162,12 @@ export default function RegisterView() {
 
       if (!resultado.succeeded) {
         setErroServidor(resultado.errors.join(' ') || 'Não foi possível criar a conta.');
+        return;
+      }
+
+      if (!isPlanoFree && checkoutUrl) {
+        // O checkout é externo; o acesso pago só deve ser liberado após confirmação do pagamento.
+        window.location.assign(checkoutUrl);
         return;
       }
 
