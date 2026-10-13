@@ -224,8 +224,10 @@ CREATE POLICY "saas_usuarios_internos_admin" ON public.saas_usuarios_internos
 
 -- 2. Políticas saas_planos: leitura pública/autenticada para checkout; escrita restrita a SuperAdmin
 DROP POLICY IF EXISTS "saas_planos_select" ON public.saas_planos;
-CREATE POLICY "saas_planos_select" ON public.saas_planos
-    FOR SELECT TO anon, authenticated USING (status = 'ativo' OR private.is_saas_interno());
+CREATE POLICY "saas_planos_select_public" ON public.saas_planos
+    FOR SELECT TO anon USING (status = 'ativo');
+CREATE POLICY "saas_planos_select_authenticated" ON public.saas_planos
+    FOR SELECT TO authenticated USING (status = 'ativo' OR private.is_saas_interno());
 
 DROP POLICY IF EXISTS "saas_planos_modify" ON public.saas_planos;
 CREATE POLICY "saas_planos_modify" ON public.saas_planos
@@ -234,8 +236,10 @@ CREATE POLICY "saas_planos_modify" ON public.saas_planos
 
 -- 3. Políticas saas_planos_links: leitura pública para links ativos; modificação por SuperAdmin/Financeiro
 DROP POLICY IF EXISTS "saas_planos_links_select" ON public.saas_planos_links;
-CREATE POLICY "saas_planos_links_select" ON public.saas_planos_links
-    FOR SELECT USING (status = 'ativo' OR private.is_saas_financeiro());
+CREATE POLICY "saas_planos_links_select_public" ON public.saas_planos_links
+    FOR SELECT TO anon USING (status = 'ativo');
+CREATE POLICY "saas_planos_links_select_authenticated" ON public.saas_planos_links
+    FOR SELECT TO authenticated USING (status = 'ativo' OR private.is_saas_financeiro());
 
 DROP POLICY IF EXISTS "saas_planos_links_modify" ON public.saas_planos_links;
 CREATE POLICY "saas_planos_links_modify" ON public.saas_planos_links
