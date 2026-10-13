@@ -25,6 +25,13 @@ export default function AdminUsuariosView() {
   const [papel, setPapel] = useState<SaaSPapelInterno>('SaaSFinanceiro');
   const [salvando, setSalvando] = useState(false);
 
+  const handleExcluir = async (user: SaaSUsuarioInterno) => {
+    if (!window.confirm(`Excluir o acesso interno de ${user.email}? Essa ação não pode ser desfeita.`)) return;
+    const res = await adminService.excluirUsuarioInterno(user.id);
+    if (!res.succeeded) { alert(res.errors.join(' ')); return; }
+    await carregarUsuarios();
+  };
+
   const carregarUsuarios = async () => {
     setCarregando(true);
     setErro(null);
@@ -225,6 +232,7 @@ export default function AdminUsuariosView() {
                       ) : (
                         <span className="text-[11px] text-slate-400">Revogado</span>
                       )}
+                      <button type="button" title="Excluir acesso" aria-label="Excluir acesso" onClick={() => handleExcluir(user)} className="ml-2 inline-flex items-center justify-center rounded p-2 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
                     </td>
                   </tr>
                 ))}
