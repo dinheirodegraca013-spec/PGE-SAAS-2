@@ -26,6 +26,7 @@ import WhatsAppConfiguracaoView from './modules/whatsapp/views/WhatsAppConfigura
 import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import NotFoundView from './views/NotFoundView';
+import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
 // Views dos Novos Painéis do SaaS (Super Admin & Financeiro)
 import AdminDashboardView from './views/admin/AdminDashboardView';
@@ -105,6 +106,12 @@ export default function App() {
 
           {/* Página de Acesso Restrito / Negado */}
           <Route path="/acesso-negado" element={<AcessoNegadoView />} />
+
+          {/* Retornos públicos do checkout Mercado Pago; URLs não aparecem na navegação */}
+          <Route path="/pagamento/obrigado/:plano" element={<PagamentoObrigadoView />} />
+          <Route path="/obrigado-free" element={<PagamentoObrigadoView />} />
+          <Route path="/obrigado-standard" element={<PagamentoObrigadoView />} />
+          <Route path="/obrigado-empresarial" element={<PagamentoObrigadoView />} />
 
           {/* Página pública de aprovação de orçamento (aberta pelo cliente final) */}
           <Route path="/orcamento/:id" element={<OrcamentoPublicoView />} />
