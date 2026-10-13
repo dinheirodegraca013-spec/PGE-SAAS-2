@@ -11,6 +11,7 @@ import {
   Users,
   RefreshCw,
   MoreVertical,
+  Trash2,
 } from 'lucide-react';
 import { adminService } from '@/services/admin/admin.service';
 import { SaaSEmpresaItem } from '@/types/admin';
@@ -86,6 +87,13 @@ export default function AdminEmpresasView() {
     } finally {
       setSalvandoStatus(false);
     }
+  };
+
+  const handleExcluirEmpresa = async (emp: SaaSEmpresaItem) => {
+    if (!window.confirm(`Excluir definitivamente a empresa "${emp.razaoSocial}"? Essa ação não pode ser desfeita.`)) return;
+    const res = await adminService.excluirEmpresa(emp.id);
+    if (!res.succeeded) { alert(res.errors.join(' ')); return; }
+    await carregarEmpresas();
   };
 
   const empresasFiltradas = empresas.filter((emp) => {
@@ -270,6 +278,7 @@ export default function AdminEmpresasView() {
                             Cancelar
                           </button>
                         )}
+                        <button type="button" title="Excluir empresa" aria-label="Excluir empresa" onClick={() => handleExcluirEmpresa(emp)} className="inline-flex items-center justify-center rounded p-2 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
