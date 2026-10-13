@@ -9,6 +9,7 @@ import {
   Clock,
   RefreshCw,
   MoreVertical,
+  Trash2,
 } from 'lucide-react';
 import { adminService } from '@/services/admin/admin.service';
 import { SaaSAssinatura } from '@/types/admin';
@@ -40,6 +41,13 @@ export default function AdminAssinaturasView() {
   useEffect(() => {
     carregarAssinaturas();
   }, []);
+
+  const handleExcluirAssinatura = async (ass: SaaSAssinatura) => {
+    if (!window.confirm(`Excluir definitivamente a assinatura de "${ass.tenantNome}"? Essa ação não pode ser desfeita.`)) return;
+    const res = await adminService.excluirAssinatura(ass.id);
+    if (!res.succeeded) { alert(res.errors.join(' ')); return; }
+    await carregarAssinaturas();
+  };
 
   const handleAlterarStatus = async (
     id: string,
@@ -228,6 +236,7 @@ export default function AdminAssinaturasView() {
                             Cancelar
                           </button>
                         )}
+                        <button type="button" title="Excluir assinatura" aria-label="Excluir assinatura" onClick={() => handleExcluirAssinatura(ass)} className="inline-flex items-center justify-center rounded p-2 text-red-600 hover:bg-red-50"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>
