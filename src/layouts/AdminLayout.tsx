@@ -42,11 +42,11 @@ export default function AdminLayout() {
   ];
 
   const financeiroNavItems: AdminNavItem[] = [
-    { label: 'Resumo Financeiro', path: '/admin/financeiro', icon: DollarSign, end: true },
-    { label: 'Faturas & Cobranças', path: '/admin/financeiro/cobrancas', icon: Receipt },
-    { label: 'Pagamentos & Conciliação', path: '/admin/financeiro/pagamentos', icon: CreditCard },
-    { label: 'Links de Pagamento', path: '/admin/financeiro/links', icon: LinkIcon },
-    { label: 'Relatórios & Exportação', path: '/admin/financeiro/relatorios', icon: FileSpreadsheet },
+    { label: 'Resumo Financeiro', path: '/financeiro', icon: DollarSign, end: true },
+    { label: 'Faturas & Cobranças', path: '/financeiro/cobrancas', icon: Receipt },
+    { label: 'Pagamentos & Conciliação', path: '/financeiro/pagamentos', icon: CreditCard },
+    { label: 'Links de Pagamento', path: '/financeiro/links', icon: LinkIcon },
+    { label: 'Relatórios & Exportação', path: '/financeiro/relatorios', icon: FileSpreadsheet },
   ];
 
   const handleLogout = async () => {
@@ -78,7 +78,7 @@ export default function AdminLayout() {
             </div>
             <div>
               <span className="block text-sm font-bold tracking-tight text-white">PGE SAAS 2</span>
-              <span className="block text-[11px] font-medium text-slate-400">Administração Global</span>
+              <span className="block text-[11px] font-medium text-slate-400">{auth.isSuperAdmin ? 'Administração Global' : 'Gestão Financeira'}</span>
             </div>
           </div>
           <button
@@ -92,7 +92,8 @@ export default function AdminLayout() {
 
         {/* Navigation Groups */}
         <div className="flex-1 overflow-y-auto px-4 py-5 space-y-6">
-          {/* Seção Administração */}
+          {/* Seção Administração: exclusiva do Super Admin */}
+          {auth.isSuperAdmin && (
           <div>
             <span className="px-3 text-[11px] font-bold tracking-wider uppercase text-slate-500">
               Administração do SaaS
@@ -120,6 +121,7 @@ export default function AdminLayout() {
                 ))}
             </nav>
           </div>
+          )}
 
           {/* Seção Financeiro */}
           {auth.isSaaSFinanceiro && (
