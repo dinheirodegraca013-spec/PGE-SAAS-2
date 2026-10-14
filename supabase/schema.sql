@@ -233,3 +233,10 @@ CREATE POLICY tenant_members_update_own_tenant ON public.tenants
     AND (SELECT private.current_user_role()) IN ('AdministradorTenant', 'SuperAdmin')
   );
 
+-- Foto de perfil e logo da empresa
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS logo_url TEXT;
+GRANT UPDATE (avatar_url) ON public.profiles TO authenticated;
+GRANT UPDATE (logo_url) ON public.tenants TO authenticated;
+
+

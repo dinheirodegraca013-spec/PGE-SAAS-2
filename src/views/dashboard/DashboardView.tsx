@@ -94,14 +94,51 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-6">
-      {/* Saudação */}
-      <div>
-        <h2 className="text-xl font-bold tracking-tight text-slate-900">
-          Olá, {auth.usuario?.nomeCompleto ?? 'usuário'} 👋
-        </h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Este é o painel inicial do seu ERP. Acompanhe os indicadores em tempo real de clientes, projetos, orçamentos e mensagens.
-        </p>
+      {/* Saudação e Indicador do Plano */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-xl font-bold tracking-tight text-slate-900">
+              Olá, {auth.usuario?.nomeCompleto ?? 'usuário'} 👋
+            </h2>
+            <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold ${
+              auth.usuario?.plano === 'Free'
+                ? 'bg-slate-100 text-slate-700 border border-slate-200'
+                : 'bg-brand-50 text-brand-700 border border-brand-200'
+            }`}>
+              Plano {auth.usuario?.plano || 'Free'}
+            </span>
+          </div>
+          <p className="mt-1 text-sm text-slate-500">
+            Acompanhe em tempo real os indicadores de clientes, projetos, orçamentos e mensagens.
+          </p>
+        </div>
+
+        {/* Card compacto de Limites do Plano Free */}
+        {auth.usuario?.plano === 'Free' && (
+          <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-xs text-slate-600 gap-4">
+                <span>Clientes no Free:</span>
+                <span className="font-bold text-slate-900">{stats.clientesTotal} / 10</span>
+              </div>
+              <div className="h-1.5 w-36 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    stats.clientesTotal >= 10 ? 'bg-rose-500' : stats.clientesTotal >= 8 ? 'bg-amber-500' : 'bg-brand-600'
+                  }`}
+                  style={{ width: `${Math.min(100, (stats.clientesTotal / 10) * 100)}%` }}
+                />
+              </div>
+            </div>
+            <Link
+              to="/configuracoes?tab=assinatura"
+              className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition whitespace-nowrap"
+            >
+              Mudar de Plano
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Cards de Métricas */}

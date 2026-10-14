@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Plus, Phone, Mail, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Users, Plus, Phone, Mail, Search, AlertCircle, Sparkles } from 'lucide-react';
+import { useAuthStore } from '@/stores/auth';
 import EmptyState from '@/components/shared/EmptyState';
 import { clientesService } from '../services/clientes.service';
 import type { Cliente, ClienteCreateInput } from '../types/cliente';
 
 export default function ClientesListView() {
+  const auth = useAuthStore();
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const isPlanoFree = auth.usuario?.plano === 'Free';
+  const limiteAtingido = isPlanoFree && clientes.length >= 10;
   const [carregandoLista, setCarregandoLista] = useState(true);
   const [erroLista, setErroLista] = useState<string | null>(null);
   const [busca, setBusca] = useState('');
@@ -50,6 +55,11 @@ export default function ClientesListView() {
       return;
     }
 
+    if (limiteAtingido) {
+      setErroFormulario('Limite atingido: O plano Free permite até 10 clientes cadastrados. Conheça outros planos para cadastrar clientes ilimitados.');
+      return;
+    }
+
     setErroFormulario(null);
     setEnviando(true);
     try {
@@ -89,6 +99,36 @@ export default function ClientesListView() {
 
   return (
     <div className="space-y-6">
+      {/* Alerta de Limite do Plano Free */}
+      {isPlanoFree && (
+        <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${
+          limiteAtingido ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-slate-200 bg-white text-slate-700'
+        } shadow-xs`}>
+          <div className="flex items-center gap-3">
+            <div className={`p-2 rounded-lg ${limiteAtingido ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'}`}>
+              <AlertCircle className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">
+                Plano Free: {clientes.length} de 10 clientes cadastrados
+              </p>
+              <p className="text-xs text-slate-500">
+                {limiteAtingido
+                  ? 'Você atingiu o limite de clientes do plano gratuito. Nenhum dado foi excluído.'
+                  : 'Seu plano gratuito permite cadastrar até 10 clientes.'}
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/configuracoes?tab=assinatura"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 transition self-start sm:self-auto"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+            Conhecer Outros Planos
+          </Link>
+        </div>
+      )}
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-slate-900">Clientes</h2>
@@ -99,7 +139,12 @@ export default function ClientesListView() {
         <button
           type="button"
           className="btn-primary gap-2 self-start sm:self-auto cursor-pointer"
-          onClick={() => setMostrarFormulario(!mostrarFormulario)}
+          onClick={() => {
+            if (limiteAtingido && !mostrarFormulario) {
+              setErroFormulario('Limite de 10 clientes do Plano Free atingido. Para cadastrar novos clientes, mude para o plano Standard ou Empresarial.');
+            }
+            setMostrarFormulario(!mostrarFormulario);
+          }}
         >
           <Plus className="h-4 w-4" />
           {mostrarFormulario ? 'Cancelar' : 'Novo cliente'}

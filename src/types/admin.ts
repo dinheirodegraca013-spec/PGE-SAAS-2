@@ -30,7 +30,7 @@ export interface SaaSPlano {
   status: 'ativo' | 'inativo';
   recursos: string[];
   ordem: number;
-  createdAt: string;
+  createdAt?: string;
   updatedAt?: string;
 }
 

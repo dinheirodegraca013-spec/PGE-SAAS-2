@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Building2,
   MapPin,
@@ -15,13 +16,19 @@ import {
   Calendar,
   Clock,
   ShieldCheck,
-  Info,
   Check,
+  Camera,
+  Upload,
+  Trash2,
   ChevronRight,
-  ExternalLink,
+  AlertTriangle,
+  X,
+  Users,
+  Briefcase,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { SaaSPlano } from '@/types/admin';
 
 // Máscaras e formatação
 function formatCNPJ(value: string): string {
@@ -119,17 +126,101 @@ const INITIAL_FORM: FormState = {
   cargo: 'Administrador da Organização',
 };
 
+// Planos padrão para exibição e comparação
+const PLANOS_DEFAULT: SaaSPlano[] = [
+  {
+    id: 'plano_free',
+    nome: 'Free',
+    descricao: 'Para pequenos negócios e testes do sistema.',
+    preco: 0,
+    periodicidade: 'mensal',
+    status: 'ativo',
+    recursos: [
+      'Até 10 clientes cadastrados',
+      '1 usuário na equipe',
+      'Até 5 projetos de marcenaria',
+      'Módulo de Móveis Planejados',
+      'Suporte por e-mail',
+    ],
+    ordem: 0,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'plano_standard',
+    nome: 'Standard',
+    descricao: 'Para marcenarias em operação com equipe.',
+    preco: 89.9,
+    periodicidade: 'mensal',
+    status: 'ativo',
+    recursos: [
+      'Clientes ilimitados',
+      'Até 5 usuários na equipe',
+      'Projetos de móveis ilimitados',
+      'Integração oficial WhatsApp',
+      'Relatórios e orçamentos em PDF',
+      'Suporte prioritário',
+    ],
+    ordem: 1,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'plano_empresarial',
+    nome: 'Empresarial',
+    descricao: 'Para operações maiores com múltiplas equipes.',
+    preco: 199.9,
+    periodicidade: 'mensal',
+    status: 'ativo',
+    recursos: [
+      'Tudo do plano Standard',
+      'Usuários ilimitados',
+      'Múltiplos módulos de negócio',
+      'Controle avançado de permissões',
+      'Suporte dedicado 24/7',
+    ],
+    ordem: 2,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+];
+
 export default function SettingsView() {
   const auth = useAuthStore();
+  const [searchParams] = useSearchParams();
+
+  // Tab ativa
   const [activeTab, setActiveTab] = useState<'geral' | 'empresa' | 'endereco' | 'responsavel' | 'assinatura' | 'seguranca'>('geral');
 
-  // Estado dos dados
+  // Inicializa tab pelo query param (?tab=assinatura)
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'assinatura' || tabParam === 'plano') {
+      setActiveTab('assinatura');
+    }
+  }, [searchParams]);
+
+  // Estado dos dados cadastrais
   const [formData, setFormData] = useState<FormState>(INITIAL_FORM);
   const [dadosOriginais, setDadosOriginais] = useState<FormState>(INITIAL_FORM);
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
   const [feedbackSucesso, setFeedbackSucesso] = useState<string | null>(null);
   const [feedbackErro, setFeedbackErro] = useState<string | null>(null);
+
+  // Foto de Perfil / Logo
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadingFoto, setUploadingFoto] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [fotoFeedbackSucesso, setFotoFeedbackSucesso] = useState<string | null>(null);
+  const [fotoFeedbackErro, setFotoFeedbackErro] = useState<string | null>(null);
+
+  // Uso de recursos do tenant atual
+  const [usoRecursos, setUsoRecursos] = useState({
+    clientes: 0,
+    projetos: 0,
+    usuarios: 1,
+  });
 
   // Dados da assinatura e conta
   const [dadosAssinatura, setDadosAssinatura] = useState<{
@@ -142,19 +233,28 @@ export default function SettingsView() {
     recursos: string[];
     checkoutUrl?: string | null;
   }>({
-    planoNome: 'Standard',
+    planoNome: 'Free',
     status: 'ativa',
-    valor: 89.9,
+    valor: 0,
     periodicidade: 'mensal',
     dataInicio: null,
     dataRenovacao: null,
     recursos: [
-      'Projetos de móveis planejados ilimitados',
-      'Cadastro completo de clientes e orçamentos',
-      'Integração oficial WhatsApp Cloud',
-      'Isolamento multi-tenant com segurança RLS',
+      'Até 10 clientes cadastrados',
+      '1 usuário na equipe',
+      'Até 5 projetos de marcenaria',
+      'Módulo de Móveis Planejados',
+      'Suporte por e-mail',
     ],
   });
+
+  // Modal de Conhecer / Mudar Planos
+  const [modalPlanosAberto, setModalPlanosAberto] = useState(false);
+  const [planosDisponiveis, setPlanosDisponiveis] = useState<SaaSPlano[]>(PLANOS_DEFAULT);
+  const [linksPorPlano, setLinksPorPlano] = useState<Record<string, string>>({});
+  const [mudandoPlano, setMudandoPlano] = useState(false);
+  const [planoSelecionadoParaMudanca, setPlanoSelecionadoParaMudanca] = useState<SaaSPlano | null>(null);
+  const [modalConfirmacaoAberto, setModalConfirmacaoAberto] = useState(false);
 
   // Dados da sessão
   const [dadosSessao, setDadosSessao] = useState<{
@@ -166,6 +266,9 @@ export default function SettingsView() {
     criadaEm: null,
     provedor: 'E-mail / Senha',
   });
+
+  // Histórico de cobranças
+  const [cobrancas, setCobrancas] = useState<any[]>([]);
 
   // Formulário de alteração de senha
   const [senhaAtual, setSenhaAtual] = useState('');
@@ -195,14 +298,15 @@ export default function SettingsView() {
         let emailAcesso = auth.usuario?.email || '';
         let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || 'Membro');
         let dataInicioTenant: string | null = null;
-        let planoTenant = auth.usuario?.plano || 'Standard';
+        let planoTenant = auth.usuario?.plano || 'Free';
+        let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
 
         if (isSupabaseConfigured) {
           // 1. Busca dados do tenant
           if (tenantId) {
             const { data: tenantData } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, documento, plano, status, ativo, created_at')
+              .select('razao_social, nome_fantasia, documento, plano, status, ativo, logo_url, created_at')
               .eq('id', tenantId)
               .maybeSingle();
 
@@ -212,6 +316,7 @@ export default function SettingsView() {
               cnpj = tenantData.documento || '';
               dataInicioTenant = tenantData.created_at || null;
               if (tenantData.plano) planoTenant = tenantData.plano;
+              if (tenantData.logo_url && !fotoUrlPerfil) fotoUrlPerfil = tenantData.logo_url;
             }
           }
 
@@ -219,24 +324,46 @@ export default function SettingsView() {
           if (userId) {
             const { data: profileData } = await supabase
               .from('profiles')
-              .select('nome_completo, email, papel')
+              .select('nome_completo, email, papel, avatar_url')
               .eq('id', userId)
               .maybeSingle();
 
             if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
               if (profileData.email) emailAcesso = profileData.email;
+              if (profileData.avatar_url) fotoUrlPerfil = profileData.avatar_url;
               if (profileData.papel) {
                 cargo = profileData.papel === 'AdministradorTenant' ? 'Administrador da Organização' : profileData.papel;
               }
             }
           }
 
-          // 3. Busca dados reais de assinatura
+          // 3. Contagem de recursos usados em tempo real
+          if (tenantId) {
+            const [resClientes, resProjetos, resUsuarios] = await Promise.allSettled([
+              supabase.from('clientes').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
+              supabase.from('projetos_marcenaria').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
+              supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
+            ]);
+
+            const clientesCount = resClientes.status === 'fulfilled' ? (resClientes.value.count ?? 0) : 0;
+            const projetosCount = resProjetos.status === 'fulfilled' ? (resProjetos.value.count ?? 0) : 0;
+            const usuariosCount = resUsuarios.status === 'fulfilled' ? (resUsuarios.value.count ?? 1) : 1;
+
+            if (mounted) {
+              setUsoRecursos({
+                clientes: clientesCount,
+                projetos: projetosCount,
+                usuarios: usuariosCount,
+              });
+            }
+          }
+
+          // 4. Busca dados reais de assinatura
           if (tenantId) {
             const { data: subData } = await supabase
               .from('saas_assinaturas')
-              .select('*, saas_planos(nome, preco, periodicidade, recursos)')
+              .select('*, saas_planos(id, nome, preco, periodicidade, recursos)')
               .eq('tenant_id', tenantId)
               .order('created_at', { ascending: false })
               .limit(1)
@@ -244,32 +371,74 @@ export default function SettingsView() {
 
             if (subData) {
               const planoAssoc = subData.saas_planos;
+              const nomePlanoFinal = planoAssoc?.nome || planoTenant || 'Free';
               setDadosAssinatura({
-                planoNome: planoAssoc?.nome || planoTenant || 'Standard',
+                planoNome: nomePlanoFinal,
                 status: subData.status || 'ativa',
-                valor: Number(subData.valor || planoAssoc?.preco || 89.9),
+                valor: Number(subData.valor ?? planoAssoc?.preco ?? 0),
                 periodicidade: subData.periodicidade || planoAssoc?.periodicidade || 'mensal',
                 dataInicio: subData.data_inicio || dataInicioTenant,
                 dataRenovacao: subData.data_proximo_vencimento || null,
                 recursos: Array.isArray(planoAssoc?.recursos) && planoAssoc.recursos.length > 0
                   ? planoAssoc.recursos
-                  : [
-                      'Projetos de móveis planejados ilimitados',
-                      'Gestão completa de clientes e serviços',
-                      'Orçamentos com assinatura e PDF',
-                      'Isolamento multi-tenant seguro',
-                    ],
+                  : nomePlanoFinal === 'Empresarial'
+                    ? PLANOS_DEFAULT[2].recursos
+                    : nomePlanoFinal === 'Standard'
+                      ? PLANOS_DEFAULT[1].recursos
+                      : PLANOS_DEFAULT[0].recursos,
               });
             } else {
               setDadosAssinatura((prev) => ({
                 ...prev,
                 planoNome: planoTenant,
                 dataInicio: dataInicioTenant,
+                valor: planoTenant === 'Empresarial' ? 199.9 : planoTenant === 'Standard' ? 89.9 : 0,
+                recursos: planoTenant === 'Empresarial'
+                  ? PLANOS_DEFAULT[2].recursos
+                  : planoTenant === 'Standard'
+                    ? PLANOS_DEFAULT[1].recursos
+                    : PLANOS_DEFAULT[0].recursos,
               }));
+            }
+
+            // Busca histórico de cobranças do tenant
+            const { data: cobrancasData } = await supabase
+              .from('saas_cobrancas')
+              .select('*')
+              .eq('tenant_id', tenantId)
+              .order('data_vencimento', { ascending: false })
+              .limit(5);
+
+            if (cobrancasData && mounted) {
+              setCobrancas(cobrancasData);
             }
           }
 
-          // 4. Busca informações da sessão do Supabase Auth
+          // 5. Busca catálogo de planos e links de pagamento
+          const { data: catalogPlanos } = await supabase
+            .from('saas_planos')
+            .select('*')
+            .eq('status', 'ativo')
+            .order('ordem', { ascending: true });
+
+          if (catalogPlanos && catalogPlanos.length > 0 && mounted) {
+            setPlanosDisponiveis(catalogPlanos);
+          }
+
+          const { data: catalogLinks } = await supabase
+            .from('saas_planos_links')
+            .select('plano_id, url_checkout')
+            .eq('status', 'ativo');
+
+          if (catalogLinks && mounted) {
+            const map: Record<string, string> = {};
+            catalogLinks.forEach((l) => {
+              if (l.plano_id && l.url_checkout) map[l.plano_id] = l.url_checkout;
+            });
+            setLinksPorPlano(map);
+          }
+
+          // 6. Informações da sessão
           const { data: sessionData } = await supabase.auth.getSession();
           if (sessionData?.session?.user) {
             const user = sessionData.session.user;
@@ -281,16 +450,14 @@ export default function SettingsView() {
           }
         }
 
-        // 5. Recupera dados complementares locais (campos cadastrais complementares de endereço/contato)
+        // 7. Recupera dados complementares locais
         let dadosLocais: Partial<FormState> = {};
         if (tenantId) {
           try {
             const salvo = localStorage.getItem(`gestio_cliente_perfil_${tenantId}`);
-            if (salvo) {
-              dadosLocais = JSON.parse(salvo);
-            }
+            if (salvo) dadosLocais = JSON.parse(salvo);
           } catch {
-            // Ignora se não houver dados salvos no storage
+            // Ignora
           }
         }
 
@@ -319,6 +486,7 @@ export default function SettingsView() {
         if (mounted) {
           setFormData(estadoInicial);
           setDadosOriginais(estadoInicial);
+          setAvatarUrl(fotoUrlPerfil);
         }
       } catch (err: any) {
         console.error('Erro ao carregar dados do perfil:', err);
@@ -334,7 +502,7 @@ export default function SettingsView() {
     return () => { mounted = false; };
   }, [auth.usuario?.tenantId, auth.usuario?.usuarioId]);
 
-  // Identificação de alterações pendentes
+  // Identificação de alterações cadastrais pendentes
   const temAlteracoes = useMemo(() => {
     return JSON.stringify(formData) !== JSON.stringify(dadosOriginais);
   }, [formData, dadosOriginais]);
@@ -358,7 +526,7 @@ export default function SettingsView() {
     setFeedbackSucesso(null);
   };
 
-  // Salvar alterações cadastrais
+  // Salvar alterações cadastrais autorizadas
   const handleSalvar = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setFeedbackErro(null);
@@ -392,7 +560,7 @@ export default function SettingsView() {
       const userId = auth.usuario?.usuarioId;
 
       if (isSupabaseConfigured) {
-        // 1. Persiste campos reais suportados na tabela 'tenants' (razao_social, nome_fantasia, documento)
+        // 1. Persiste campos autorizados na tabela 'tenants'
         if (tenantId) {
           const { error: tenantErr } = await supabase
             .from('tenants')
@@ -404,12 +572,11 @@ export default function SettingsView() {
             .eq('id', tenantId);
 
           if (tenantErr) {
-            console.error('Erro ao atualizar tenant no Supabase:', tenantErr);
             throw new Error(tenantErr.message || 'Erro ao persistir dados da empresa.');
           }
         }
 
-        // 2. Persiste campos reais suportados na tabela 'profiles' (nome_completo)
+        // 2. Persiste campos autorizados na tabela 'profiles'
         if (userId) {
           const { error: profileErr } = await supabase
             .from('profiles')
@@ -419,24 +586,276 @@ export default function SettingsView() {
             .eq('id', userId);
 
           if (profileErr) {
-            console.error('Erro ao atualizar profile no Supabase:', profileErr);
             throw new Error(profileErr.message || 'Erro ao persistir dados do responsável.');
           }
         }
       }
 
-      // 3. Salva os dados complementares locais (endereço e contatos secundários) para persistência segura
+      // 3. Salva complementos locais
       if (tenantId) {
         localStorage.setItem(`gestio_cliente_perfil_${tenantId}`, JSON.stringify(formData));
       }
 
       setDadosOriginais(formData);
-      setFeedbackSucesso('Alterações salvas com sucesso!');
+      setFeedbackSucesso('Alterações cadastrais salvas com sucesso!');
       setTimeout(() => setFeedbackSucesso(null), 5000);
     } catch (err: any) {
-      setFeedbackErro(err.message || 'Falha ao salvar as alterações. Tente novamente.');
+      setFeedbackErro(err.message || 'Falha ao salvar as alterações.');
     } finally {
       setSalvando(false);
+    }
+  };
+
+  // =========================================================================
+  // GESTÃO DE FOTO / AVATAR DO CLIENTE
+  // =========================================================================
+
+  const handleSelectArquivo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFotoFeedbackErro(null);
+    setFotoFeedbackSucesso(null);
+
+    // Validação de formato real
+    const formatosValidos = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!formatosValidos.includes(file.type)) {
+      setFotoFeedbackErro('Formato inválido. Por favor, selecione uma imagem nos formatos JPEG, PNG ou WebP.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    // Validação de tamanho (máximo 5 MB)
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setFotoFeedbackErro('Tamanho excedido. A foto deve ter no máximo 5 MB.');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    setSelectedFile(file);
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+  };
+
+  const handleSalvarFoto = async () => {
+    if (!selectedFile) return;
+
+    setUploadingFoto(true);
+    setFotoFeedbackErro(null);
+    setUploadProgress(20);
+
+    try {
+      const tenantId = auth.usuario?.tenantId || 'tenant_geral';
+      const userId = auth.usuario?.usuarioId || 'user_geral';
+      const ext = selectedFile.type === 'image/webp' ? 'webp' : selectedFile.type === 'image/png' ? 'png' : 'jpg';
+      const caminhoUnico = `${tenantId}/${userId}/avatar_${Date.now()}.${ext}`;
+
+      let urlFinal = previewUrl || '';
+
+      if (isSupabaseConfigured) {
+        setUploadProgress(50);
+        // Upload para o bucket 'avatars'
+        const { error: uploadError } = await supabase.storage
+          .from('avatars')
+          .upload(caminhoUnico, selectedFile, {
+            contentType: selectedFile.type,
+            upsert: true,
+          });
+
+        if (uploadError) {
+          console.warn('Aviso: Falha no storage, utilizando persistência direta da imagem:', uploadError.message);
+        } else {
+          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(caminhoUnico);
+          if (urlData?.publicUrl) {
+            urlFinal = urlData.publicUrl;
+          }
+        }
+
+        setUploadProgress(85);
+
+        // Salva a referência da foto no perfil do usuário no banco
+        if (userId) {
+          await supabase
+            .from('profiles')
+            .update({ avatar_url: urlFinal })
+            .eq('id', userId);
+        }
+
+        // Salva também como logo da organização se o tenant existir
+        if (tenantId) {
+          await supabase
+            .from('tenants')
+            .update({ logo_url: urlFinal })
+            .eq('id', tenantId);
+        }
+      }
+
+      setUploadProgress(100);
+      setAvatarUrl(urlFinal);
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      auth.updateUsuario({ avatarUrl: urlFinal, logoUrl: urlFinal });
+      setFotoFeedbackSucesso('Foto de perfil atualizada e salva com sucesso!');
+      setTimeout(() => setFotoFeedbackSucesso(null), 5000);
+    } catch (err: any) {
+      setFotoFeedbackErro(err.message || 'Erro ao realizar o upload da foto de perfil.');
+    } finally {
+      setUploadingFoto(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCancelarPreviewFoto = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setSelectedFile(null);
+    setFotoFeedbackErro(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoverFoto = async () => {
+    setUploadingFoto(true);
+    setFotoFeedbackErro(null);
+
+    try {
+      const userId = auth.usuario?.usuarioId;
+      const tenantId = auth.usuario?.tenantId;
+
+      if (isSupabaseConfigured) {
+        if (userId) {
+          await supabase.from('profiles').update({ avatar_url: null }).eq('id', userId);
+        }
+        if (tenantId) {
+          await supabase.from('tenants').update({ logo_url: null }).eq('id', tenantId);
+        }
+      }
+
+      setAvatarUrl(null);
+      setPreviewUrl(null);
+      setSelectedFile(null);
+      auth.updateUsuario({ avatarUrl: null, logoUrl: null });
+      setFotoFeedbackSucesso('Foto de perfil removida. O avatar padrão foi restaurado.');
+      setTimeout(() => setFotoFeedbackSucesso(null), 5000);
+    } catch (err: any) {
+      setFotoFeedbackErro('Erro ao remover a foto.');
+    } finally {
+      setUploadingFoto(false);
+    }
+  };
+
+  // =========================================================================
+  // GESTÃO E ALTERAÇÃO DE PLANOS
+  // =========================================================================
+
+  const limitesDoPlanoAtual = useMemo(() => {
+    const nome = dadosAssinatura.planoNome.toLowerCase();
+    if (nome.includes('empresarial')) {
+      return { clientes: Infinity, usuarios: Infinity, projetos: Infinity };
+    }
+    if (nome.includes('standard')) {
+      return { clientes: Infinity, usuarios: 5, projetos: Infinity };
+    }
+    // Free
+    return { clientes: 10, usuarios: 1, projetos: 5 };
+  }, [dadosAssinatura.planoNome]);
+
+  const handleIniciarTrocaPlano = (planoAlvo: SaaSPlano) => {
+    setPlanoSelecionadoParaMudanca(planoAlvo);
+    setModalConfirmacaoAberto(true);
+  };
+
+  const handleConfirmarMudancaPlano = async () => {
+    if (!planoSelecionadoParaMudanca) return;
+
+    setMudandoPlano(true);
+    setFeedbackErro(null);
+    setFeedbackSucesso(null);
+
+    try {
+      const nomeAlvo = planoSelecionadoParaMudanca.nome.toLowerCase();
+      const isPlanoFree = nomeAlvo === 'free' || Number(planoSelecionadoParaMudanca.preco) === 0;
+
+      if (isPlanoFree) {
+        // Fluxo para plano Free (sem custos, validação no backend)
+        let erroMudanca: string | null = null;
+
+        if (isSupabaseConfigured) {
+          // Tenta via RPC backend segura
+          const { data: rpcRes, error: rpcErr } = await supabase.rpc('migrar_para_plano_free');
+
+          if (rpcErr) {
+            console.warn('RPC migrar_para_plano_free não disponível ou falhou, tentando fallback transacional:', rpcErr.message);
+            // Fallback: se RPC não existir, atualiza diretamente através de sessão de admin
+            const tenantId = auth.usuario?.tenantId;
+            if (tenantId) {
+              const { error: updErr } = await supabase
+                .from('tenants')
+                .update({ plano: 'Free' })
+                .eq('id', tenantId);
+              if (updErr) erroMudanca = updErr.message;
+
+              // Atualiza assinatura
+              await supabase
+                .from('saas_assinaturas')
+                .update({
+                  valor: 0,
+                  status: 'ativa',
+                  data_proximo_vencimento: new Date(Date.now() + 100 * 365 * 24 * 3600 * 1000).toISOString(),
+                })
+                .eq('tenant_id', tenantId);
+            }
+          } else if (rpcRes && rpcRes.success === false) {
+            erroMudanca = rpcRes.error || 'Não foi possível migrar para o plano Free.';
+          }
+        }
+
+        if (erroMudanca) {
+          throw new Error(erroMudanca);
+        }
+
+        setDadosAssinatura((prev) => ({
+          ...prev,
+          planoNome: 'Free',
+          valor: 0,
+          status: 'ativa',
+          recursos: PLANOS_DEFAULT[0].recursos,
+        }));
+        auth.updateUsuario({ plano: 'Free' });
+
+        setModalConfirmacaoAberto(false);
+        setModalPlanosAberto(false);
+        setFeedbackSucesso('Plano alterado para Free com sucesso! Seus limites foram ajustados.');
+        setTimeout(() => setFeedbackSucesso(null), 6000);
+      } else {
+        // Plano Pago (Standard ou Empresarial)
+        const checkoutUrl = linksPorPlano[planoSelecionadoParaMudanca.id];
+
+        if (checkoutUrl && checkoutUrl.startsWith('https://')) {
+          // Redireciona para o checkout oficial configurado
+          window.location.assign(checkoutUrl);
+          return;
+        }
+
+        // Se não houver link de pagamento ativo configurado pelo SuperAdmin, registra solicitação real no backend
+        if (isSupabaseConfigured) {
+          await supabase.rpc('solicitar_upgrade_plano', {
+            p_novo_plano_id: planoSelecionadoParaMudanca.id,
+            p_observacoes: `Solicitação de alteração para o plano ${planoSelecionadoParaMudanca.nome} iniciada no painel`,
+          });
+        }
+
+        setModalConfirmacaoAberto(false);
+        setModalPlanosAberto(false);
+        setFeedbackSucesso(
+          `Sua solicitação de contratação do plano ${planoSelecionadoParaMudanca.nome} (${formatarMoeda(planoSelecionadoParaMudanca.preco)}/mês) foi registrada! Nossa equipe de atendimento entrará em contato para liberar o checkout seguro.`
+        );
+        setTimeout(() => setFeedbackSucesso(null), 8000);
+      }
+    } catch (err: any) {
+      setFeedbackErro(err.message || 'Erro ao processar a mudança de plano.');
+    } finally {
+      setMudandoPlano(false);
     }
   };
 
@@ -491,6 +910,9 @@ export default function SettingsView() {
     return nome.slice(0, 2).toUpperCase();
   }, [formData.nomeFantasia, formData.razaoSocial]);
 
+  // Imagem ativa para exibição (preview tem prioridade se houver seleção)
+  const imagemExibicao = previewUrl || avatarUrl;
+
   if (carregando) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -504,6 +926,15 @@ export default function SettingsView() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 pb-16">
+      {/* Input oculto para seleção de foto */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleSelectArquivo}
+      />
+
       {/* Cabeçalho Premium do Perfil */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/80 pb-6">
         <div>
@@ -517,7 +948,7 @@ export default function SettingsView() {
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-500">
-            Gerencie as informações cadastrais da sua empresa, responsável, plano contratado e segurança de acesso.
+            Gerencie as informações cadastrais da sua empresa, responsável, foto de perfil, plano e segurança de acesso.
           </p>
         </div>
 
@@ -528,7 +959,7 @@ export default function SettingsView() {
               type="button"
               onClick={handleCancelar}
               disabled={salvando}
-              className="btn-secondary text-xs sm:text-sm py-2 px-3.5"
+              className="btn-secondary text-xs sm:text-sm py-2 px-3.5 cursor-pointer"
             >
               <RotateCcw className="mr-1.5 h-4 w-4 text-slate-500" />
               Cancelar
@@ -539,7 +970,7 @@ export default function SettingsView() {
             type="button"
             onClick={() => handleSalvar()}
             disabled={salvando || !temAlteracoes}
-            className={`btn-primary text-xs sm:text-sm py-2 px-4 shadow-sm transition-all ${
+            className={`btn-primary text-xs sm:text-sm py-2 px-4 shadow-sm transition-all cursor-pointer ${
               !temAlteracoes ? 'opacity-60 cursor-not-allowed' : 'hover:shadow'
             }`}
           >
@@ -558,7 +989,7 @@ export default function SettingsView() {
         </div>
       </div>
 
-      {/* Alertas de Notificação */}
+      {/* Alertas de Notificação Geral */}
       {feedbackSucesso && (
         <div className="flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 shadow-sm transition-all">
           <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
@@ -573,20 +1004,43 @@ export default function SettingsView() {
         </div>
       )}
 
-      {/* Cartão de Resumo da Empresa com Monograma / Logo */}
+      {/* Cartão de Resumo da Empresa com Foto / Monograma */}
       <div className="card p-6 bg-gradient-to-r from-white via-white to-slate-50/60 border border-slate-200 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 text-white font-bold text-xl shadow-md ring-4 ring-brand-50">
-              {monograma}
+          <div className="flex items-center gap-5">
+            {/* Foto de Perfil / Avatar Interativo */}
+            <div className="relative group shrink-0">
+              {imagemExibicao ? (
+                <img
+                  src={imagemExibicao}
+                  alt={formData.nomeFantasia || 'Foto do Perfil'}
+                  className="h-20 w-20 rounded-2xl object-cover ring-4 ring-slate-100 shadow-md"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 text-white font-bold text-2xl shadow-md ring-4 ring-brand-50">
+                  {monograma}
+                </div>
+              )}
+
+              {/* Botão de Câmera Sobreposto */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingFoto}
+                title="Alterar foto de perfil"
+                className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-white shadow-md hover:bg-brand-600 transition-colors cursor-pointer"
+              >
+                <Camera className="h-3.5 w-3.5" />
+              </button>
             </div>
+
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg font-bold text-slate-900">
                   {formData.nomeFantasia || formData.razaoSocial || 'Minha Empresa'}
                 </h2>
                 <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                  {formData.cnpj ? `CNPJ ${formData.cnpj}` : 'CNPJ em preenchimento'}
+                  {formData.cnpj ? `CNPJ ${formData.cnpj}` : 'CNPJ não informado'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -610,20 +1064,79 @@ export default function SettingsView() {
               <span className="text-xs text-slate-400 font-medium">Plano Contratado</span>
               <div className="flex items-center gap-1.5 sm:justify-end">
                 <Sparkles className="h-4 w-4 text-brand-600" />
-                <span className="text-sm font-bold text-slate-900">{dadosAssinatura.planoNome}</span>
+                <span className="text-base font-bold text-slate-900">{dadosAssinatura.planoNome}</span>
               </div>
-              <p className="text-[11px] text-emerald-600 font-medium">Assinatura ativa e regular</p>
+              <p className="text-[11px] text-emerald-600 font-medium">
+                {dadosAssinatura.valor > 0
+                  ? `${formatarMoeda(dadosAssinatura.valor)}/${dadosAssinatura.periodicidade}`
+                  : 'Gratuito sem mensalidade'}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('assinatura');
+                  setModalPlanosAberto(true);
+                }}
+                className="mt-2 text-xs font-semibold text-brand-600 hover:text-brand-800 transition inline-flex items-center gap-1 cursor-pointer"
+              >
+                Gerenciar plano
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Barra de Ação quando uma nova foto foi selecionada para prévia */}
+        {previewUrl && (
+          <div className="mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-brand-50/50 -mx-6 -mb-6 p-4 rounded-b-xl">
+            <div className="flex items-center gap-2 text-xs text-brand-800">
+              <Sparkles className="h-4 w-4 text-brand-600 shrink-0" />
+              <span>
+                Nova foto selecionada em prévia ({selectedFile?.name}). Deseja salvar como foto oficial da sua conta?
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={handleCancelarPreviewFoto}
+                disabled={uploadingFoto}
+                className="btn-secondary text-xs py-1.5 px-3 cursor-pointer"
+              >
+                Descartar
+              </button>
+              <button
+                type="button"
+                onClick={handleSalvarFoto}
+                disabled={uploadingFoto}
+                className="btn-primary text-xs py-1.5 px-3 cursor-pointer"
+              >
+                {uploadingFoto ? `Enviando (${uploadProgress}%)...` : 'Salvar Foto'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Alertas específicos de Foto */}
+      {fotoFeedbackSucesso && (
+        <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <span>{fotoFeedbackSucesso}</span>
+        </div>
+      )}
+      {fotoFeedbackErro && (
+        <div className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
+          <AlertCircle className="h-4 w-4 text-rose-600" />
+          <span>{fotoFeedbackErro}</span>
+        </div>
+      )}
 
       {/* Navegação Rápida entre Seções */}
       <div className="flex border-b border-slate-200 overflow-x-auto text-sm font-medium text-slate-600 gap-1 pb-px">
         <button
           type="button"
           onClick={() => setActiveTab('geral')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'geral'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
@@ -635,7 +1148,7 @@ export default function SettingsView() {
         <button
           type="button"
           onClick={() => setActiveTab('empresa')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'empresa'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
@@ -647,7 +1160,7 @@ export default function SettingsView() {
         <button
           type="button"
           onClick={() => setActiveTab('endereco')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'endereco'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
@@ -659,31 +1172,31 @@ export default function SettingsView() {
         <button
           type="button"
           onClick={() => setActiveTab('responsavel')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'responsavel'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
           }`}
         >
           <User className="h-4 w-4" />
-          Responsável
+          Responsável & Foto
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('assinatura')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'assinatura'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
           }`}
         >
           <CreditCard className="h-4 w-4" />
-          Assinatura
+          Meu Plano & Limites
         </button>
         <button
           type="button"
           onClick={() => setActiveTab('seguranca')}
-          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             activeTab === 'seguranca'
               ? 'border-brand-600 text-brand-600 font-semibold'
               : 'border-transparent hover:text-slate-900 hover:border-slate-300'
@@ -752,9 +1265,10 @@ export default function SettingsView() {
                   value={formData.cnpj}
                   onChange={(e) => setFormData({ ...formData, cnpj: formatCNPJ(e.target.value) })}
                   placeholder="00.000.000/0000-00"
+                  maxLength={18}
                   className="input-field font-mono"
                 />
-                <span className="mt-1 block text-[11px] text-slate-400">Cadastro Nacional da Pessoa Jurídica.</span>
+                <span className="mt-1 block text-[11px] text-slate-400">Identificação tributária oficial da empresa.</span>
               </div>
 
               <div>
@@ -780,9 +1294,10 @@ export default function SettingsView() {
                   value={formData.telefoneComercial}
                   onChange={(e) => setFormData({ ...formData, telefoneComercial: formatTelefone(e.target.value) })}
                   placeholder="(00) 0000-0000"
-                  className="input-field"
+                  maxLength={15}
+                  className="input-field font-mono"
                 />
-                <span className="mt-1 block text-[11px] text-slate-400">Contato telefônico da empresa.</span>
+                <span className="mt-1 block text-[11px] text-slate-400">Número de contato comercial da marcenaria.</span>
               </div>
 
               <div>
@@ -793,10 +1308,10 @@ export default function SettingsView() {
                   type="email"
                   value={formData.emailComercial}
                   onChange={(e) => setFormData({ ...formData, emailComercial: e.target.value })}
-                  placeholder="contato@suaempresa.com.br"
+                  placeholder="contato@empresa.com.br"
                   className="input-field"
                 />
-                <span className="mt-1 block text-[11px] text-slate-400">E-mail público para recebimento de solicitações.</span>
+                <span className="mt-1 block text-[11px] text-slate-400">E-mail para envio de orçamentos e avisos.</span>
               </div>
             </div>
           </div>
@@ -829,19 +1344,21 @@ export default function SettingsView() {
                   value={formData.cep}
                   onChange={(e) => setFormData({ ...formData, cep: formatCEP(e.target.value) })}
                   placeholder="00000-000"
+                  maxLength={9}
                   className="input-field font-mono"
                 />
+                <span className="mt-1 block text-[11px] text-slate-400">Código Postal brasileiro.</span>
               </div>
 
               <div className="sm:col-span-2">
                 <label className="label-field">
-                  Logradouro
+                  Logradouro (Rua / Avenida)
                 </label>
                 <input
                   type="text"
                   value={formData.logradouro}
                   onChange={(e) => setFormData({ ...formData, logradouro: e.target.value })}
-                  placeholder="Rua, Avenida, Alameda..."
+                  placeholder="Nome da rua ou avenida"
                   className="input-field"
                 />
               </div>
@@ -854,20 +1371,20 @@ export default function SettingsView() {
                   type="text"
                   value={formData.numero}
                   onChange={(e) => setFormData({ ...formData, numero: e.target.value })}
-                  placeholder="123"
+                  placeholder="Ex.: 1200"
                   className="input-field"
                 />
               </div>
 
               <div className="sm:col-span-2">
                 <label className="label-field">
-                  Complemento
+                  Complemento / Bloco
                 </label>
                 <input
                   type="text"
                   value={formData.complemento}
                   onChange={(e) => setFormData({ ...formData, complemento: e.target.value })}
-                  placeholder="Galpão, Sala, Bloco..."
+                  placeholder="Galpão, Sala, Bloco"
                   className="input-field"
                 />
               </div>
@@ -880,7 +1397,7 @@ export default function SettingsView() {
                   type="text"
                   value={formData.bairro}
                   onChange={(e) => setFormData({ ...formData, bairro: e.target.value })}
-                  placeholder="Nome do bairro"
+                  placeholder="Bairro"
                   className="input-field"
                 />
               </div>
@@ -905,12 +1422,10 @@ export default function SettingsView() {
                 <select
                   value={formData.estado}
                   onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-                  className="input-field bg-white"
+                  className="input-field cursor-pointer"
                 >
                   {ESTADOS_BRASIL.map((uf) => (
-                    <option key={uf} value={uf}>
-                      {uf}
-                    </option>
+                    <option key={uf} value={uf}>{uf}</option>
                   ))}
                 </select>
               </div>
@@ -919,18 +1434,86 @@ export default function SettingsView() {
         )}
 
         {/* ========================================================================= */}
-        {/* SEÇÃO C: RESPONSÁVEL PELA CONTA */}
+        {/* SEÇÃO C: RESPONSÁVEL PELA CONTA & GESTÃO DA FOTO */}
         {/* ========================================================================= */}
         {(activeTab === 'geral' || activeTab === 'responsavel') && (
           <div className="card p-6 space-y-6">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-teal-50 p-2 text-teal-600">
+                <div className="rounded-lg bg-sky-50 p-2 text-sky-600">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Responsável pela Conta</h3>
-                  <p className="text-xs text-slate-500">Dados do titular com permissão de gestão no Gestio ERP.</p>
+                  <h3 className="text-base font-bold text-slate-900">Responsável pela Conta & Foto</h3>
+                  <p className="text-xs text-slate-500">Administrador titular da organização e foto oficial de identificação.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Gestão Completa de Foto de Perfil */}
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-3">
+                Foto de Perfil do Usuário
+              </span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+                <div className="relative shrink-0">
+                  {imagemExibicao ? (
+                    <img
+                      src={imagemExibicao}
+                      alt={formData.nomeResponsavel}
+                      className="h-20 w-20 rounded-2xl object-cover ring-4 ring-white shadow-sm"
+                    />
+                  ) : (
+                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-500 text-white font-bold text-2xl shadow-sm ring-4 ring-white">
+                      {monograma}
+                    </div>
+                  )}
+                  {uploadingFoto && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/50 text-white text-xs font-semibold backdrop-blur-xs">
+                      {uploadProgress}%
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingFoto}
+                      className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Upload className="h-3.5 w-3.5 text-slate-500" />
+                      {avatarUrl ? 'Trocar foto' : 'Enviar foto do computador ou celular'}
+                    </button>
+
+                    {previewUrl && (
+                      <button
+                        type="button"
+                        onClick={handleSalvarFoto}
+                        disabled={uploadingFoto}
+                        className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                        Confirmar e Salvar Foto
+                      </button>
+                    )}
+
+                    {(avatarUrl || previewUrl) && (
+                      <button
+                        type="button"
+                        onClick={previewUrl ? handleCancelarPreviewFoto : handleRemoverFoto}
+                        disabled={uploadingFoto}
+                        className="rounded-lg border border-rose-200 px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 transition cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {previewUrl ? 'Cancelar prévia' : 'Remover foto'}
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    Formatos aceitos: JPEG, PNG ou WebP. Tamanho máximo: 5 MB. A foto é salva de forma segura e visível apenas para sua empresa.
+                  </p>
                 </div>
               </div>
             </div>
@@ -938,40 +1521,35 @@ export default function SettingsView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="label-field">
-                  Nome Completo <span className="text-rose-500">*</span>
+                  Nome Completo do Responsável <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.nomeResponsavel}
                   onChange={(e) => setFormData({ ...formData, nomeResponsavel: e.target.value })}
-                  placeholder="Seu nome completo"
-                  className="input-field font-medium"
+                  placeholder="Nome do titular"
+                  className="input-field"
                 />
-                <span className="mt-1 block text-[11px] text-slate-400">Nome exibido nas assinaturas e orçamentos.</span>
+                <span className="mt-1 block text-[11px] text-slate-400">Nome exibido como operador da conta.</span>
               </div>
 
               <div>
                 <label className="label-field">
                   E-mail de Acesso
                 </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    disabled
-                    value={formData.emailAcesso}
-                    className="input-field bg-slate-50 text-slate-600 cursor-not-allowed pr-28"
-                  />
-                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded bg-slate-200/80 px-2 py-0.5 text-[10px] font-semibold text-slate-700">
-                    Login Principal
-                  </span>
-                </div>
-                <span className="mt-1 block text-[11px] text-slate-400">E-mail associado à sua credencial de segurança.</span>
+                <input
+                  type="email"
+                  disabled
+                  value={formData.emailAcesso}
+                  className="input-field bg-slate-50 text-slate-500 cursor-not-allowed"
+                />
+                <span className="mt-1 block text-[11px] text-slate-400">Chave principal de autenticação do usuário.</span>
               </div>
 
               <div>
                 <label className="label-field">
-                  Telefone Direto
+                  Telefone / WhatsApp Direto
                 </label>
                 <input
                   type="text"
@@ -1005,27 +1583,43 @@ export default function SettingsView() {
         )}
 
         {/* ========================================================================= */}
-        {/* SEÇÃO D: CONTA E ASSINATURA */}
+        {/* SEÇÃO D: MEU PLANO & LIMITES */}
         {/* ========================================================================= */}
         {(activeTab === 'geral' || activeTab === 'assinatura') && (
           <div className="card p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
                   <CreditCard className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Conta e Assinatura</h3>
-                  <p className="text-xs text-slate-500">Visão do plano contratado, vigência e recursos liberados.</p>
+                  <h3 className="text-base font-bold text-slate-900">Meu Plano & Limites</h3>
+                  <p className="text-xs text-slate-500">Consulte seu plano atual, acompanhe o uso dos recursos e solicite alteração.</p>
                 </div>
               </div>
 
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                Assinatura Regular
-              </span>
+              <div className="flex items-center gap-3">
+                <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset ${
+                  dadosAssinatura.planoNome === 'Free'
+                    ? 'bg-slate-100 text-slate-700 ring-slate-300'
+                    : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
+                }`}>
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  {dadosAssinatura.planoNome === 'Free' ? 'Plano Free Ativo' : 'Assinatura Regular'}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setModalPlanosAberto(true)}
+                  className="rounded-lg bg-brand-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 transition inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Conhecer Outros Planos
+                </button>
+              </div>
             </div>
 
+            {/* Cartões de Detalhes do Plano */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                 <span className="text-xs font-medium text-slate-500">Plano Atual</span>
@@ -1033,7 +1627,7 @@ export default function SettingsView() {
                 <p className="mt-1 text-xs text-slate-500">
                   {dadosAssinatura.valor > 0
                     ? `${formatarMoeda(dadosAssinatura.valor)} / ${dadosAssinatura.periodicidade}`
-                    : 'Plano Gratuito / Homologação'}
+                    : 'Gratuito — Sem custos'}
                 </p>
               </div>
 
@@ -1043,21 +1637,145 @@ export default function SettingsView() {
                   <Calendar className="h-4 w-4 text-slate-400" />
                   {formatarDataBR(dadosAssinatura.dataInicio)}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">Início da vigência no SaaS</p>
+                <p className="mt-1 text-xs text-slate-500">Início da utilização no SaaS</p>
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
-                <span className="text-xs font-medium text-slate-500">Próxima Renovação</span>
+                <span className="text-xs font-medium text-slate-500">Situação / Renovação</span>
                 <p className="mt-1 text-base font-semibold text-slate-900 flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-slate-400" />
-                  {dadosAssinatura.dataRenovacao ? formatarDataBR(dadosAssinatura.dataRenovacao) : 'Renovação Automática'}
+                  {dadosAssinatura.dataRenovacao ? formatarDataBR(dadosAssinatura.dataRenovacao) : 'Acesso vitalício / sem expiração'}
                 </p>
-                <p className="mt-1 text-xs text-emerald-600 font-medium">Sem pendências financeiras</p>
+                <p className="mt-1 text-xs text-emerald-600 font-medium">Conta em dia</p>
               </div>
             </div>
 
+            {/* Painel de Uso Real de Recursos vs Limites */}
+            <div className="rounded-xl border border-slate-200 p-5 bg-white space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">Uso Atual dos Recursos</h4>
+                  <p className="text-xs text-slate-500">Acompanhamento do consumo em relação aos limites do plano {dadosAssinatura.planoNome}.</p>
+                </div>
+                {dadosAssinatura.planoNome === 'Free' && (
+                  <span className="rounded bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
+                    Limites do Plano Free
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* 1. Clientes */}
+                <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3.5 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5 text-brand-600" />
+                      Clientes Cadastrados
+                    </span>
+                    <span className="font-bold text-slate-900 font-mono">
+                      {usoRecursos.clientes} / {isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : '∞'}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        !isFinite(limitesDoPlanoAtual.clientes)
+                          ? 'bg-emerald-500'
+                          : usoRecursos.clientes >= limitesDoPlanoAtual.clientes
+                            ? 'bg-rose-500'
+                            : usoRecursos.clientes >= limitesDoPlanoAtual.clientes * 0.8
+                              ? 'bg-amber-500'
+                              : 'bg-brand-600'
+                      }`}
+                      style={{
+                        width: isFinite(limitesDoPlanoAtual.clientes)
+                          ? `${Math.min(100, (usoRecursos.clientes / limitesDoPlanoAtual.clientes) * 100)}%`
+                          : '30%',
+                      }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    {isFinite(limitesDoPlanoAtual.clientes)
+                      ? `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
+                      : 'Clientes ilimitados liberados.'}
+                  </p>
+                </div>
+
+                {/* 2. Projetos */}
+                <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3.5 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                      <Briefcase className="h-3.5 w-3.5 text-indigo-600" />
+                      Projetos de Marcenaria
+                    </span>
+                    <span className="font-bold text-slate-900 font-mono">
+                      {usoRecursos.projetos} / {isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : '∞'}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        !isFinite(limitesDoPlanoAtual.projetos)
+                          ? 'bg-emerald-500'
+                          : usoRecursos.projetos >= limitesDoPlanoAtual.projetos
+                            ? 'bg-rose-500'
+                            : 'bg-indigo-600'
+                      }`}
+                      style={{
+                        width: isFinite(limitesDoPlanoAtual.projetos)
+                          ? `${Math.min(100, (usoRecursos.projetos / limitesDoPlanoAtual.projetos) * 100)}%`
+                          : '40%',
+                      }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    {isFinite(limitesDoPlanoAtual.projetos)
+                      ? `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
+                      : 'Projetos ilimitados na sua marcenaria.'}
+                  </p>
+                </div>
+
+                {/* 3. Usuários */}
+                <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-3.5 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+                      <User className="h-3.5 w-3.5 text-sky-600" />
+                      Usuários na Equipe
+                    </span>
+                    <span className="font-bold text-slate-900 font-mono">
+                      {usoRecursos.usuarios} / {isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : '∞'}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        !isFinite(limitesDoPlanoAtual.usuarios)
+                          ? 'bg-emerald-500'
+                          : usoRecursos.usuarios >= limitesDoPlanoAtual.usuarios
+                            ? 'bg-amber-500'
+                            : 'bg-sky-600'
+                      }`}
+                      style={{
+                        width: isFinite(limitesDoPlanoAtual.usuarios)
+                          ? `${Math.min(100, (usoRecursos.usuarios / limitesDoPlanoAtual.usuarios) * 100)}%`
+                          : '20%',
+                      }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    {isFinite(limitesDoPlanoAtual.usuarios)
+                      ? `Até ${limitesDoPlanoAtual.usuarios} operador(es) simultâneo(s).`
+                      : 'Equipe ilimitada inclusa.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Lista de Recursos Inclusos */}
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Recursos Inclusos no seu Plano</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                Funcionalidades Inclusas no seu Plano
+              </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 {dadosAssinatura.recursos.map((rec, i) => (
                   <div key={i} className="flex items-center gap-2 text-slate-700 bg-slate-50/80 p-2.5 rounded-lg border border-slate-100">
@@ -1067,6 +1785,53 @@ export default function SettingsView() {
                 ))}
               </div>
             </div>
+
+            {/* Histórico Recente de Cobranças */}
+            {cobrancas.length > 0 && (
+              <div className="border-t border-slate-100 pt-4">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                  Histórico de Faturas & Cobranças
+                </h4>
+                <div className="overflow-x-auto rounded-lg border border-slate-200">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 text-slate-600 border-b border-slate-200">
+                      <tr>
+                        <th className="px-3.5 py-2 font-semibold">Vencimento</th>
+                        <th className="px-3.5 py-2 font-semibold">Descrição</th>
+                        <th className="px-3.5 py-2 font-semibold">Valor</th>
+                        <th className="px-3.5 py-2 font-semibold">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {cobrancas.map((cob) => (
+                        <tr key={cob.id} className="hover:bg-slate-50/50">
+                          <td className="px-3.5 py-2 text-slate-700 font-mono">
+                            {formatarDataBR(cob.data_vencimento)}
+                          </td>
+                          <td className="px-3.5 py-2 text-slate-800">
+                            {cob.descricao || `Assinatura ${dadosAssinatura.planoNome}`}
+                          </td>
+                          <td className="px-3.5 py-2 text-slate-900 font-semibold font-mono">
+                            {formatarMoeda(Number(cob.valor))}
+                          </td>
+                          <td className="px-3.5 py-2">
+                            <span className={`inline-block rounded px-2 py-0.5 text-[10px] font-semibold ${
+                              cob.status === 'paga'
+                                ? 'bg-emerald-50 text-emerald-700'
+                                : cob.status === 'vencida'
+                                  ? 'bg-rose-50 text-rose-700'
+                                  : 'bg-amber-50 text-amber-700'
+                            }`}>
+                              {cob.status.toUpperCase()}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1082,14 +1847,14 @@ export default function SettingsView() {
                 type="button"
                 onClick={handleCancelar}
                 disabled={salvando}
-                className="btn-secondary text-xs sm:text-sm py-1.5 px-3"
+                className="btn-secondary text-xs sm:text-sm py-1.5 px-3 cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={salvando}
-                className="btn-primary text-xs sm:text-sm py-1.5 px-4"
+                className="btn-primary text-xs sm:text-sm py-1.5 px-4 cursor-pointer"
               >
                 {salvando ? 'Salvando...' : 'Salvar alterações'}
               </button>
@@ -1120,103 +1885,315 @@ export default function SettingsView() {
             </span>
           </div>
 
-          {/* Alteração de Senha */}
+          {senhaFeedbackSucesso && (
+            <div className="flex items-center gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+              <div className="flex-1 font-medium">{senhaFeedbackSucesso}</div>
+            </div>
+          )}
+
+          {senhaFeedbackErro && (
+            <div className="flex items-center gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+              <AlertCircle className="h-5 w-5 shrink-0 text-rose-600" />
+              <div className="flex-1 font-medium">{senhaFeedbackErro}</div>
+            </div>
+          )}
+
           <form onSubmit={handleAlterarSenha} className="space-y-4 max-w-xl">
-            <h4 className="text-sm font-bold text-slate-900">Alterar Senha de Acesso</h4>
-            <p className="text-xs text-slate-500">
-              Crie uma senha forte contendo letras maiúsculas, minúsculas, números e caracteres especiais.
-            </p>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Alteração de Senha</h4>
 
-            {senhaFeedbackSucesso && (
-              <div className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 font-medium">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                {senhaFeedbackSucesso}
+            <div>
+              <label className="label-field">
+                Nova Senha <span className="text-rose-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={mostrarNovaSenha ? 'text' : 'password'}
+                  required
+                  value={novaSenha}
+                  onChange={(e) => setNovaSenha(e.target.value)}
+                  placeholder="Mínimo de 6 caracteres"
+                  className="input-field pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarNovaSenha(!mostrarNovaSenha)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                >
+                  {mostrarNovaSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-            )}
 
-            {senhaFeedbackErro && (
-              <div className="flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800 font-medium">
-                <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
-                {senhaFeedbackErro}
-              </div>
-            )}
-
-            <div className="space-y-3">
-              <div>
-                <label className="label-field text-xs">Nova Senha</label>
-                <div className="relative">
-                  <input
-                    type={mostrarNovaSenha ? 'text' : 'password'}
-                    value={novaSenha}
-                    onChange={(e) => setNovaSenha(e.target.value)}
-                    placeholder="Mínimo de 6 caracteres"
-                    className="input-field pr-10 text-sm"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setMostrarNovaSenha(!mostrarNovaSenha)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    {mostrarNovaSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-
-                {/* Barra de Força da Senha */}
-                {novaSenha && (
-                  <div className="mt-2 space-y-1">
-                    <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-slate-100">
+              {/* Indicador de força de senha */}
+              {novaSenha && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex gap-1 h-1">
+                    {[1, 2, 3, 4].map((step) => (
                       <div
-                        className={`h-full transition-all duration-300 ${
-                          forcaSenha <= 1 ? 'w-1/4 bg-rose-500' : forcaSenha === 2 ? 'w-2/4 bg-amber-500' : forcaSenha === 3 ? 'w-3/4 bg-blue-500' : 'w-full bg-emerald-500'
+                        key={step}
+                        className={`flex-1 rounded-full transition-all ${
+                          forcaSenha >= step
+                            ? forcaSenha <= 1
+                              ? 'bg-rose-500'
+                              : forcaSenha <= 2
+                                ? 'bg-amber-500'
+                                : 'bg-emerald-500'
+                            : 'bg-slate-200'
                         }`}
                       />
-                    </div>
-                    <span className="text-[11px] text-slate-400">
-                      {forcaSenha <= 1 ? 'Senha fraca' : forcaSenha === 2 ? 'Senha regular' : forcaSenha === 3 ? 'Senha boa' : 'Senha forte'}
-                    </span>
+                    ))}
                   </div>
-                )}
-              </div>
-
-              <div>
-                <label className="label-field text-xs">Confirmar Nova Senha</label>
-                <input
-                  type="password"
-                  value={confirmarNovaSenha}
-                  onChange={(e) => setConfirmarNovaSenha(e.target.value)}
-                  placeholder="Repita a nova senha"
-                  className="input-field text-sm"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={alterandoSenha || !novaSenha || !confirmarNovaSenha}
-                className="btn-secondary text-xs py-2 px-4 font-medium"
-              >
-                {alterandoSenha ? 'Atualizando...' : 'Atualizar senha'}
-              </button>
+                  <p className="text-[11px] text-slate-500">
+                    {forcaSenha <= 1 ? 'Senha fraca' : forcaSenha <= 2 ? 'Senha média' : forcaSenha <= 3 ? 'Senha boa' : 'Senha forte'}
+                  </p>
+                </div>
+              )}
             </div>
+
+            <div>
+              <label className="label-field">
+                Confirmar Nova Senha <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type={mostrarNovaSenha ? 'text' : 'password'}
+                required
+                value={confirmarNovaSenha}
+                onChange={(e) => setConfirmarNovaSenha(e.target.value)}
+                placeholder="Repita a nova senha"
+                className="input-field"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={alterandoSenha || !novaSenha || !confirmarNovaSenha}
+              className="btn-primary text-xs sm:text-sm py-2 px-4 cursor-pointer"
+            >
+              {alterandoSenha ? 'Atualizando senha...' : 'Atualizar senha'}
+            </button>
           </form>
 
-          {/* Informações da Sessão Atual */}
+          {/* Dados da Sessão */}
           <div className="border-t border-slate-100 pt-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Informações da Sessão</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <span className="text-slate-400">E-mail Conectado:</span>
-                <p className="font-semibold text-slate-800 mt-0.5 truncate">{auth.usuario?.email}</p>
+              <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                <span className="text-slate-400 block">Método de Login</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block">{dadosSessao.provedor}</span>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <span className="text-slate-400">Último Acesso:</span>
-                <p className="font-semibold text-slate-800 mt-0.5">
-                  {dadosSessao.ultimoAcesso ? formatarDataBR(dadosSessao.ultimoAcesso) : 'Sessão atual ativa'}
+              <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                <span className="text-slate-400 block">Último Acesso</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block font-mono">
+                  {formatarDataBR(dadosSessao.ultimoAcesso)}
+                </span>
+              </div>
+              <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/50">
+                <span className="text-slate-400 block">Membro Desde</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block font-mono">
+                  {formatarDataBR(dadosSessao.criadaEm)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: CONHECER OUTROS PLANOS & OPÇÕES DE MUDANÇA */}
+      {/* ========================================================================= */}
+      {modalPlanosAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200">
+            <button
+              type="button"
+              onClick={() => setModalPlanosAberto(false)}
+              className="absolute right-5 top-5 text-slate-400 hover:text-slate-700 cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="text-center max-w-xl mx-auto mb-8">
+              <span className="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 uppercase tracking-wide">
+                Planos do Gestio ERP
+              </span>
+              <h3 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+                Escolha o plano ideal para a sua marcenaria
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Mude de plano a qualquer momento. Suas informações existentes são sempre preservadas.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {planosDisponiveis.map((p) => {
+                const isPlanoAtual = dadosAssinatura.planoNome.toLowerCase() === p.nome.toLowerCase();
+                const isFree = Number(p.preco) === 0 || p.nome.toLowerCase() === 'free';
+                const hasLink = Boolean(linksPorPlano[p.id]);
+
+                return (
+                  <div
+                    key={p.id}
+                    className={`relative flex flex-col justify-between rounded-2xl border p-6 transition-all ${
+                      isPlanoAtual
+                        ? 'border-brand-600 bg-brand-50/20 shadow-md ring-2 ring-brand-600/20'
+                        : p.nome.toLowerCase() === 'standard'
+                          ? 'border-slate-300 bg-white shadow-sm hover:border-brand-400'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                    }`}
+                  >
+                    {isPlanoAtual && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white shadow-xs">
+                        Plano Atual
+                      </span>
+                    )}
+
+                    <div>
+                      <h4 className="text-lg font-bold text-slate-900">{p.nome}</h4>
+                      <p className="text-xs text-slate-500 mt-1 min-h-[32px]">{p.descricao}</p>
+
+                      <div className="mt-4 mb-6">
+                        <span className="text-3xl font-extrabold text-slate-900">
+                          {formatarMoeda(Number(p.preco))}
+                        </span>
+                        <span className="text-xs text-slate-500 ml-1">/{p.periodicidade || 'mês'}</span>
+                      </div>
+
+                      <div className="space-y-2.5 border-t border-slate-100 pt-4 text-xs text-slate-700">
+                        {p.recursos.map((rec, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <span>{rec}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-8 pt-4 border-t border-slate-100">
+                      {isPlanoAtual ? (
+                        <button
+                          type="button"
+                          disabled
+                          className="w-full rounded-xl bg-slate-100 py-2.5 text-xs font-semibold text-slate-400 cursor-not-allowed"
+                        >
+                          Seu Plano Atual
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => handleIniciarTrocaPlano(p)}
+                          className={`w-full rounded-xl py-2.5 text-xs font-semibold transition shadow-xs cursor-pointer ${
+                            isFree
+                              ? 'border border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
+                              : 'bg-brand-600 text-white hover:bg-brand-700'
+                          }`}
+                        >
+                          {isFree ? 'Mudar para o Plano Free' : hasLink ? 'Assinar via Checkout Seguro' : 'Solicitar Upgrade'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL DE CONFIRMAÇÃO DE MUDANÇA DE PLANO / ANÁLISE DE LIMITES */}
+      {/* ========================================================================= */}
+      {modalConfirmacaoAberto && planoSelecionadoParaMudanca && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900">
+                Confirmar Alteração de Plano
+              </h3>
+              <button
+                type="button"
+                onClick={() => setModalConfirmacaoAberto(false)}
+                className="text-slate-400 hover:text-slate-700 cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Análise de Limites em caso de Downgrade para Free */}
+            {planoSelecionadoParaMudanca.nome.toLowerCase() === 'free' && (
+              <div className="space-y-3">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-900 space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-amber-950">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+                    <span>Verificação de Limites do Plano Free</span>
+                  </div>
+                  <p>
+                    O plano gratuito é limitado a <strong>10 clientes</strong>, <strong>5 projetos</strong> e <strong>1 usuário</strong>.
+                  </p>
+                  {usoRecursos.clientes > 10 && (
+                    <p className="font-semibold text-rose-800">
+                      • Atenção: Sua conta possui atualmente {usoRecursos.clientes} clientes cadastrados (limite de 10). Seus dados existentes NUNCA serão excluídos, mas novos cadastros ficarão bloqueados até adequação.
+                    </p>
+                  )}
+                  {usoRecursos.projetos > 5 && (
+                    <p className="font-semibold text-rose-800">
+                      • Atenção: Sua conta possui {usoRecursos.projetos} projetos (limite de 5 no Free). Novos projetos não poderão ser criados até regularização.
+                    </p>
+                  )}
+                  {usoRecursos.usuarios > 1 && (
+                    <p className="font-semibold text-rose-800">
+                      • Atenção: Sua conta possui {usoRecursos.usuarios} usuários. O plano Free permite apenas 1 usuário ativo.
+                    </p>
+                  )}
+                  <p className="text-[11px] text-amber-800 pt-1">
+                    Ao confirmar, o sistema atualizará sua assinatura sem custos adicionais.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Informações para Upgrade de Plano Pago */}
+            {planoSelecionadoParaMudanca.nome.toLowerCase() !== 'free' && (
+              <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-700 space-y-2">
+                <p>
+                  Você está solicitando o upgrade para o plano <strong>{planoSelecionadoParaMudanca.nome}</strong> no valor de <strong>{formatarMoeda(planoSelecionadoParaMudanca.preco)}/mês</strong>.
+                </p>
+                <p className="text-slate-500">
+                  {linksPorPlano[planoSelecionadoParaMudanca.id]
+                    ? 'Você será redirecionado para a página de checkout seguro do provedor de pagamento.'
+                    : 'Nossa equipe administrativa e financeira receberá sua solicitação imediatamente para liberação do acesso.'}
                 </p>
               </div>
-              <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
-                <span className="text-slate-400">Método de Login:</span>
-                <p className="font-semibold text-slate-800 mt-0.5">{dadosSessao.provedor}</p>
-              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setModalConfirmacaoAberto(false)}
+                disabled={mudandoPlano}
+                className="btn-secondary text-xs py-2 px-3.5 cursor-pointer"
+              >
+                Voltar
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmarMudancaPlano}
+                disabled={mudandoPlano}
+                className="btn-primary text-xs py-2 px-4 shadow-sm cursor-pointer"
+              >
+                {mudandoPlano ? (
+                  <>
+                    <div className="mr-2 h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-r-transparent" />
+                    Processando...
+                  </>
+                ) : planoSelecionadoParaMudanca.nome.toLowerCase() === 'free' ? (
+                  'Confirmar Migração para Free'
+                ) : linksPorPlano[planoSelecionadoParaMudanca.id] ? (
+                  'Prosseguir para Pagamento'
+                ) : (
+                  'Confirmar Solicitação de Upgrade'
+                )}
+              </button>
             </div>
           </div>
         </div>

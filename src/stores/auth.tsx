@@ -28,6 +28,8 @@ interface AuthContextType {
   register: (payload: RegisterPayload) => Promise<ApiResult<{ confirmationRequired?: boolean }>>;
   recuperarSenha: (email: string) => Promise<ApiResult<void>>;
   logout: () => Promise<void>;
+  updateUsuario: (dados: Partial<UsuarioAutenticado>) => void;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -47,7 +49,7 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, tenant_id, nome_completo, email, papel, ativo, tenants(id, plano, ativo)')
+      .select('id, tenant_id, nome_completo, email, papel, ativo, avatar_url, tenants(id, plano, ativo, logo_url)')
       .eq('id', userId)
       .maybeSingle();
 
@@ -117,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email: user.email || '',
       papel,
       plano,
+      avatarUrl: profile.avatar_url || null,
+      logoUrl: profile?.tenants?.logo_url || null,
       papelInterno: internalRole,
     };
 
@@ -134,6 +138,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return true;
+  };
+
+  const updateUsuario = (dados: Partial<UsuarioAutenticado>) => {
+    setUsuario((prev) => {
+      if (!prev) return null;
+      const atualizado = { ...prev, ...dados };
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          parsed.usuario = atualizado;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        }
+      } catch (e) {
+        console.warn('Erro ao sincronizar localStorage auth:', e);
+      }
+      return atualizado;
+    });
+  };
+
+  const refreshProfile = async () => {
+    if (!usuario?.usuarioId || !isSupabaseConfigured) return;
+    try {
+      const { profile, isActive, internalRole } = await fetchUserProfile(usuario.usuarioId);
+      if (isActive && profile) {
+        const plano = mapPlanoNome(profile?.tenants?.plano);
+        const atualizado: UsuarioAutenticado = {
+          ...usuario,
+          nomeCompleto: profile.nome_completo || usuario.nomeCompleto,
+          plano,
+          avatarUrl: profile.avatar_url || null,
+          logoUrl: profile?.tenants?.logo_url || null,
+          papelInterno: internalRole,
+        };
+        setUsuario(atualizado);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          parsed.usuario = atualizado;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        }
+      }
+    } catch (e) {
+      console.warn('Erro ao atualizar dados do perfil:', e);
+    }
   };
 
   const clearAuthState = () => {
@@ -353,6 +402,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         recuperarSenha,
         logout,
+        updateUsuario,
+        refreshProfile,
       }}
     >
       {children}
