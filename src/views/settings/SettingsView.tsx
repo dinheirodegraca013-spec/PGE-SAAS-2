@@ -183,13 +183,7 @@ export default function SettingsView() {
     periodicidade: 'mensal',
     dataInicio: null,
     dataRenovacao: null,
-    recursos: [
-      'Até 10 clientes cadastrados',
-      '1 usuário na equipe',
-      'Até 5 projetos de marcenaria',
-      'Módulo de Móveis Planejados',
-      'Suporte por e-mail',
-    ],
+    recursos: [],
   });
 
   // Modal de Conhecer / Mudar Planos
@@ -320,15 +314,16 @@ export default function SettingsView() {
                 status: subData.status || 'ativa',
                 valor: Number(subData.valor ?? planoAssoc?.preco ?? 0),
                 periodicidade: subData.periodicidade || planoAssoc?.periodicidade || 'mensal',
-                dataInicio: subData.data_inicio || dataInicioTenant,
+                dataInicio: subData.data_inicio || null,
                 dataRenovacao: subData.data_proximo_vencimento || null,
                 recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
             } else {
               setDadosAssinatura((prev) => ({
                 ...prev,
-                planoNome: planoTenant,
-                dataInicio: dataInicioTenant,
+                planoNome: planoTenant || 'Não informado',
+                dataInicio: null,
+                dataRenovacao: null,
                 valor: 0,
                 recursos: [],
               }));
@@ -354,16 +349,14 @@ export default function SettingsView() {
             .eq('status', 'ativo')
             .order('ordem', { ascending: true });
 
-          if (catalogPlanos && catalogPlanos.length > 0 && mounted) {
-            setPlanosDisponiveis(catalogPlanos);
-          }
+          if (mounted) setPlanosDisponiveis(catalogPlanos || []);
 
           const { data: catalogLinks } = await supabase
             .from('saas_planos_links')
             .select('plano_id, url_checkout')
             .eq('status', 'ativo');
 
-          if (catalogLinks && mounted) {
+          if (mounted) {
             const map: Record<string, string> = {};
             catalogLinks.forEach((l) => {
               if (l.plano_id && l.url_checkout) map[l.plano_id] = l.url_checkout;
