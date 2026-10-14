@@ -250,6 +250,8 @@ export default function AdminEmpresasView() {
                   <th className="px-5 py-3.5">Usuários</th>
                   <th className="px-5 py-3.5">Próximo Vencimento</th>
                   <th className="px-5 py-3.5">Data Cadastro</th>
+                  <th className="px-5 py-3.5">Data Contratação</th>
+                  <th className="px-5 py-3.5">Início da Utilização</th>
                   <th className="px-5 py-3.5">Contratação / Início</th>
                   <th className="px-5 py-3.5 text-right">Ações de Gestão</th>
                 </tr>
@@ -304,6 +306,8 @@ export default function AdminEmpresasView() {
                       {emp.dataVencimento ? formatarData(emp.dataVencimento) : '—'}
                     </td>
                     <td className="px-5 py-4 text-slate-500">{formatarData(emp.createdAt)}</td>
+                    <td className="px-5 py-4 text-slate-600">{formatarData(emp.dataContratacao || '')}</td>
+                    <td className="px-5 py-4 text-slate-600">{formatarData(emp.inicioUtilizacao || '')}</td>
                     <td className="px-5 py-4 text-slate-500"><div>Contratação: {emp.dataContratacao ? formatarData(emp.dataContratacao) : 'Pendente'}</div><div className="mt-1">Utilização: {emp.inicioUtilizacao ? formatarData(emp.inicioUtilizacao) : 'Pendente'}</div></td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
