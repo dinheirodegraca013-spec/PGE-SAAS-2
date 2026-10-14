@@ -108,7 +108,7 @@ const INITIAL_FORM: FormState = {
   razaoSocial: '',
   nomeFantasia: '',
   cnpj: '',
-  ramoAtividade: 'Marcenaria & Móveis Planejados',
+  ramoAtividade: '',
   telefoneComercial: '',
   emailComercial: '',
 
@@ -123,7 +123,7 @@ const INITIAL_FORM: FormState = {
   nomeResponsavel: '',
   emailAcesso: '',
   telefoneResponsavel: '',
-  cargo: 'Administrador da Organização',
+  cargo: '',
 };
 
 export default function SettingsView() {
@@ -373,7 +373,7 @@ export default function SettingsView() {
 
           if (mounted) {
             const map: Record<string, string> = {};
-            catalogLinks.forEach((l) => {
+            (catalogLinks || []).forEach((l) => {
               if (l.plano_id && l.url_checkout) map[l.plano_id] = l.url_checkout;
             });
             setLinksPorPlano(map);
@@ -405,7 +405,7 @@ export default function SettingsView() {
         const estadoInicial: FormState = {
           razaoSocial,
           nomeFantasia,
-          cnpj: formatCNPJ(cnpj),
+          cnpj: formatCNPJ(dadosLocais.cnpj || cnpj),
           ramoAtividade: dadosLocais.ramoAtividade || '',
           telefoneComercial: dadosLocais.telefoneComercial ? formatTelefone(dadosLocais.telefoneComercial) : '',
           emailComercial: dadosLocais.emailComercial || '',
@@ -854,7 +854,7 @@ export default function SettingsView() {
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
-              {dadosAssinatura.status === 'ativa' ? 'Assinatura ativa' : 'Conta cadastrada'}
+              {dadosAssinatura.status === 'ativa' ? 'Assinatura ativa' : dadosAssinatura.status === 'sem assinatura cadastrada' ? 'Aguardando ativação' : 'Status indisponível'}
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-500">
@@ -963,7 +963,7 @@ export default function SettingsView() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5 text-slate-400" />
-                  {formData.cidade} - {formData.estado}
+                  {[formData.cidade, formData.estado].filter(Boolean).join(' - ') || 'Endereço não informado'}
                 </span>
               </div>
             </div>
@@ -978,10 +978,12 @@ export default function SettingsView() {
               </div>
               <p className="text-[11px] text-emerald-600 font-medium">
                 {dadosAssinatura.status === 'sem assinatura cadastrada'
-                  ? 'Nenhuma assinatura cadastrada'
-                  : dadosAssinatura.valor > 0
-                    ? `${formatarMoeda(dadosAssinatura.valor)}/${dadosAssinatura.periodicidade}`
-                    : 'Gratuito sem mensalidade'}
+                  ? 'Sem assinatura registrada'
+                  : dadosAssinatura.status === 'indisponível'
+                    ? 'Dados financeiros indisponíveis'
+                    : dadosAssinatura.valor > 0
+                      ? `${formatarMoeda(dadosAssinatura.valor)}/${dadosAssinatura.periodicidade}`
+                      : dadosAssinatura.planoNome.toLowerCase() === 'free' ? 'Gratuito sem mensalidade' : 'Valor não cadastrado na assinatura'}
               </p>
               <button
                 type="button"
@@ -1517,7 +1519,7 @@ export default function SettingsView() {
                     : 'bg-emerald-50 text-emerald-700 ring-emerald-600/20'
                 }`}>
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  {dadosAssinatura.planoNome === 'Free' ? 'Plano Free Ativo' : 'Assinatura Regular'}
+                  {dadosAssinatura.status === 'ativa' ? 'Assinatura ativa' : dadosAssinatura.status === 'sem assinatura cadastrada' ? 'Aguardando ativação' : 'Status indisponível'}
                 </span>
 
                 <button
@@ -1537,9 +1539,13 @@ export default function SettingsView() {
                 <span className="text-xs font-medium text-slate-500">Plano Atual</span>
                 <p className="mt-1 text-xl font-bold text-slate-900">{dadosAssinatura.planoNome}</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  {dadosAssinatura.valor > 0
-                    ? `${formatarMoeda(dadosAssinatura.valor)} / ${dadosAssinatura.periodicidade}`
-                    : 'Gratuito — Sem custos'}
+                  {dadosAssinatura.status === 'sem assinatura cadastrada'
+                    ? 'Sem assinatura registrada'
+                    : dadosAssinatura.status === 'indisponível'
+                      ? 'Dados financeiros indisponíveis'
+                      : dadosAssinatura.valor > 0
+                        ? `${formatarMoeda(dadosAssinatura.valor)} / ${dadosAssinatura.periodicidade}`
+                        : dadosAssinatura.planoNome.toLowerCase() === 'free' ? 'Gratuito — Sem custos' : 'Valor não cadastrado'}
                 </p>
               </div>
 
@@ -1569,7 +1575,7 @@ export default function SettingsView() {
                   <h4 className="text-sm font-bold text-slate-900">Uso Atual dos Recursos</h4>
                   <p className="text-xs text-slate-500">Acompanhamento do consumo em relação aos limites do plano {dadosAssinatura.planoNome}.</p>
                 </div>
-                {dadosAssinatura.planoNome === 'Free' && (
+                {dadosAssinatura.planoNome.toLowerCase() === 'free' && dadosAssinatura.status === 'ativa' && (
                   <span className="rounded bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
                     Limites do Plano Free
                   </span>
