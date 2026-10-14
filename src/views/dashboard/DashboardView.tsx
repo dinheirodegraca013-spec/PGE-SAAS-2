@@ -98,6 +98,49 @@ export default function DashboardView() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <div className="mb-5">
+            <h3 className="font-bold text-slate-900">Orçamentos por projeto</h3>
+            <p className="mt-1 text-xs text-slate-500">Valores de orçamento cadastrados nos projetos reais</p>
+          </div>
+          {carregando ? <p className="py-8 text-sm text-slate-500">Carregando dados do gráfico...</p> : projetos.length === 0 ? <p className="py-8 text-sm text-slate-500">Cadastre um projeto para visualizar o gráfico.</p> : (
+            <div className="flex h-56 items-end gap-3 overflow-x-auto border-b border-slate-200 pb-2">
+              {projetos.slice(0, 8).map((projeto) => {
+                const valor = Math.max(0, Number(projeto.valorTotalOrcamento) || 0);
+                const maximo = Math.max(1, ...projetos.slice(0, 8).map((item) => Number(item.valorTotalOrcamento) || 0));
+                const altura = valor > 0 ? Math.max(6, (valor / maximo) * 100) : 3;
+                return <div key={projeto.id} title={`${projeto.titulo || 'Projeto'}: ${formatarMoeda(valor)}`} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
+                  <span className="text-center text-[10px] font-semibold text-slate-600">{formatarMoeda(valor)}</span>
+                  <div className="flex h-36 w-full items-end"><div className="w-full rounded-t-md bg-gradient-to-t from-violet-700 to-cyan-500" style={{ height: `${altura}%` }} /></div>
+                  <span className="w-full truncate text-center text-[10px] text-slate-500">{projeto.titulo || 'Sem título'}</span>
+                </div>;
+              })}
+            </div>
+          )}
+        </section>
+        <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+          <div className="mb-5">
+            <h3 className="font-bold text-slate-900">Projetos por status</h3>
+            <p className="mt-1 text-xs text-slate-500">Distribuição baseada no status salvo em cada projeto</p>
+          </div>
+          {carregando ? <p className="py-8 text-sm text-slate-500">Carregando dados do gráfico...</p> : projetos.length === 0 ? <p className="py-8 text-sm text-slate-500">Sem projetos para distribuir por status.</p> : (
+            <div className="space-y-4">
+              {Object.entries(projetos.reduce<Record<string, number>>((acc, projeto) => {
+                const status = String(projeto.status || 'Sem status');
+                acc[status] = (acc[status] || 0) + 1;
+                return acc;
+              }, {})).sort((a, b) => b[1] - a[1]).map(([status, quantidade]) => (
+                <div key={status}>
+                  <div className="mb-1.5 flex items-center justify-between gap-3 text-sm"><span className="truncate font-medium text-slate-700">{status}</span><span className="font-bold text-slate-900">{quantidade}</span></div>
+                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-600" style={{ width: `${(quantidade / projetos.length) * 100}%` }} /></div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
             <div><h3 className="font-bold text-slate-900">Clientes recentes</h3><p className="mt-1 text-xs text-slate-500">Registros retornados pelo Supabase</p></div>
