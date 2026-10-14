@@ -327,13 +327,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             nome_completo: payload.nomeCompleto.trim(),
             razao_social: payload.razaoSocial.trim(),
             nome_fantasia: payload.nomeFantasia?.trim() || null,
-            plano: planoNome,
+            plano: planoNome,\n            plano_solicitado_id: payload.planoSolicitadoId || null,
           },
         },
       });
 
       if (error) {
         return { succeeded: false, errors: [error.message || 'Erro ao realizar cadastro no Supabase.'] };
+      }
+
+      // Contas de planos pagos ficam pendentes e sem acesso até a ativação manual pelo Super Admin.
+      if (data.session && Number(payload.plano) !== 0) {
+        await supabase.auth.signOut();
+        clearAuthState();
+        return { succeeded: true, value: { confirmationRequired: false }, errors: [] };
       }
 
       // Se a confirmação de e-mail estiver desabilitada, a sessão já existe
