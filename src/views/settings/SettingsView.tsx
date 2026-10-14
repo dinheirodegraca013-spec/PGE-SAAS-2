@@ -236,7 +236,7 @@ export default function SettingsView() {
         let emailAcesso = auth.usuario?.email || '';
         let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || 'Membro');
         let dataInicioTenant: string | null = null;
-        let planoTenant = auth.usuario?.plano || 'Free';
+        let planoTenant = auth.usuario?.plano || 'Não informado';
         let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
 
         if (isSupabaseConfigured) {
@@ -244,7 +244,7 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, plano, ativo, created_at')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id')
               .eq('id', tenantId)
               .maybeSingle();
 
@@ -333,14 +333,28 @@ export default function SettingsView() {
                 recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
             } else {
+              // Sem assinatura não significa automaticamente que o plano seja gratuito.
+              // Mostra o plano solicitado, se existir, mas deixa claro que ainda não foi ativado.
+              let planoSolicitado: any = null;
+              if (tenantData?.plano_solicitado_id) {
+                const { data: solicitadoData } = await supabase
+                  .from('saas_planos')
+                  .select('id, nome, preco, periodicidade, recursos')
+                  .eq('id', tenantData.plano_solicitado_id)
+                  .maybeSingle();
+                planoSolicitado = solicitadoData;
+              }
+
+              const planoExibido = planoSolicitado?.nome || planoTenant || 'Não informado';
+              const eFreeAtivo = String(planoExibido).toLowerCase() === 'free' && tenantData?.ativo === true;
               setDadosAssinatura({
-                planoNome: planoTenant || 'Não informado',
-                status: 'sem assinatura cadastrada',
-                valor: 0,
-                periodicidade: 'mensal',
+                planoNome: planoExibido,
+                status: eFreeAtivo ? 'ativa' : 'sem assinatura cadastrada',
+                valor: Number(planoSolicitado?.preco ?? 0),
+                periodicidade: planoSolicitado?.periodicidade || 'mensal',
                 dataInicio: null,
                 dataRenovacao: null,
-                recursos: [],
+                recursos: Array.isArray(planoSolicitado?.recursos) ? planoSolicitado.recursos : [],
               });
             }
 
@@ -978,7 +992,7 @@ export default function SettingsView() {
               </div>
               <p className="text-[11px] text-emerald-600 font-medium">
                 {dadosAssinatura.status === 'sem assinatura cadastrada'
-                  ? 'Sem assinatura registrada'
+                  ? (dadosAssinatura.valor > 0 ? 'Aguardando ativação manual' : 'Sem assinatura registrada')
                   : dadosAssinatura.status === 'indisponível'
                     ? 'Dados financeiros indisponíveis'
                     : dadosAssinatura.valor > 0
@@ -1540,7 +1554,7 @@ export default function SettingsView() {
                 <p className="mt-1 text-xl font-bold text-slate-900">{dadosAssinatura.planoNome}</p>
                 <p className="mt-1 text-xs text-slate-500">
                   {dadosAssinatura.status === 'sem assinatura cadastrada'
-                    ? 'Sem assinatura registrada'
+                    ? (dadosAssinatura.valor > 0 ? 'Aguardando ativação manual' : 'Sem assinatura registrada')
                     : dadosAssinatura.status === 'indisponível'
                       ? 'Dados financeiros indisponíveis'
                       : dadosAssinatura.valor > 0
