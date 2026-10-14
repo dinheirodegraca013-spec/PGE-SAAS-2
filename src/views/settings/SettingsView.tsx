@@ -378,12 +378,12 @@ export default function SettingsView() {
                 planoSolicitado = solicitadoData;
               }
 
-              const planoExibido = planoSolicitado?.nome || planoTenant || 'Não informado';
-              const eFreeAtivo = String(planoExibido).toLowerCase() === 'free' && tenantAtivo === true;
+              const planoExibido = planoSolicitado?.nome || (planoSolicitadoId ? 'Plano solicitado indisponível' : planoTenant || 'Não informado');
+              const eFreeAtivo = !planoSolicitadoId && String(planoExibido).toLowerCase() === 'free' && tenantAtivo === true;
               setDadosAssinatura({
                 planoNome: planoExibido,
-                status: eFreeAtivo ? 'ativa' : 'sem assinatura cadastrada',
-                valor: Number(planoSolicitado?.preco ?? 0),
+                status: planoSolicitadoId && !planoSolicitado ? 'indisponível' : eFreeAtivo ? 'ativa' : 'sem assinatura cadastrada',
+                valor: planoSolicitado ? Number(planoSolicitado.preco) : 0,
                 periodicidade: planoSolicitado?.periodicidade || 'mensal',
                 dataInicio: null,
                 dataContratacao: dataContratacaoTenant,
