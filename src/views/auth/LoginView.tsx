@@ -102,7 +102,7 @@ export default function LoginView() {
                 <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" />
                 <p className="text-sm font-medium text-slate-900">E-mail de recuperação enviado!</p>
                 <p className="text-xs text-slate-500">
-                  Verifique sua caixa de entrada e clique no link recebido para redefinir sua senha.
+                  Verifique seu e-mail, copie o código de recuperação e use-o na página de redefinição de senha.
                 </p>
                 <button
                   type="button"
@@ -136,7 +136,7 @@ export default function LoginView() {
                 </div>
                 {erroServidor && <p className="text-xs text-red-600 font-medium">{erroServidor}</p>}
                 <button type="submit" className="btn-primary w-full text-xs" disabled={enviandoRecuperacao}>
-                  {enviandoRecuperacao ? 'Enviando link...' : 'Enviar Link de Redefinição'}
+                  {enviandoRecuperacao ? 'Enviando código...' : 'Enviar Link de Redefinição'}
                 </button>
               </form>
             )}
