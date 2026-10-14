@@ -218,3 +218,18 @@ ALTER TABLE public.orcamentos ADD COLUMN IF NOT EXISTS public_token UUID NOT NUL
 CREATE UNIQUE INDEX IF NOT EXISTS orcamentos_public_token_key ON public.orcamentos(public_token);
 DROP FUNCTION IF EXISTS public.get_public_orcamento(uuid);
 DROP FUNCTION IF EXISTS public.assinar_orcamento_publico(uuid,text);
+
+-- Políticas de atualização cadastral de Tenants por administradores da organização
+GRANT UPDATE (razao_social, nome_fantasia, documento) ON public.tenants TO authenticated;
+DROP POLICY IF EXISTS tenant_members_update_own_tenant ON public.tenants;
+CREATE POLICY tenant_members_update_own_tenant ON public.tenants
+  FOR UPDATE TO authenticated
+  USING (
+    id = (SELECT private.current_tenant_id())
+    AND (SELECT private.current_user_role()) IN ('AdministradorTenant', 'SuperAdmin')
+  )
+  WITH CHECK (
+    id = (SELECT private.current_tenant_id())
+    AND (SELECT private.current_user_role()) IN ('AdministradorTenant', 'SuperAdmin')
+  );
+
