@@ -14,8 +14,13 @@
   --color-brand-900: #3b176f;
   --color-whatsapp: #25d366;
   --color-whatsapp-dark: #128c7e;
-  --color-surface: #f5f7fa;
-  --color-surface-dark: #0f172a;
+  --color-surface: #f8fafc;
+  --color-surface-dark: #111827;
+  --color-gestio-navy: #111827;
+  --color-gestio-deep: #172554;
+  --color-gestio-cyan: #06b6d4;
+  --color-gestio-purple: #7c3aed;
+  --color-gestio-violet: #6d28d9;
 }
 
 @layer base {

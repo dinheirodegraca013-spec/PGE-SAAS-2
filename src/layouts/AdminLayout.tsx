@@ -19,6 +19,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
+import { GestioEmblem } from '@/components/brand/GestioBrand';
 
 interface AdminNavItem {
   label: string;
@@ -73,11 +74,9 @@ export default function AdminLayout() {
         {/* Brand Header */}
         <div className="flex h-16 items-center justify-between border-b border-slate-800 px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-indigo-600 text-white font-bold text-base shadow-sm">
-              <Shield className="h-5 w-5 text-white" />
-            </div>
+            <GestioEmblem size={32} />
             <div>
-              <span className="block text-sm font-bold tracking-tight text-white">PGE SAAS 2</span>
+              <span className="block text-sm font-bold tracking-tight text-white">GESTIO <span className="text-cyan-400 font-semibold text-xs">ADMIN</span></span>
               <span className="block text-[11px] font-medium text-slate-400">{auth.isSuperAdmin ? 'Administração Global' : 'Gestão Financeira'}</span>
             </div>
           </div>

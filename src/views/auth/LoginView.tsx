@@ -3,6 +3,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Sparkles, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
 
+import { GestioLogo } from '@/components/brand/GestioBrand';
+
 export default function LoginView() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -63,14 +65,10 @@ export default function LoginView() {
 
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-12">
       <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-white font-bold text-xl shadow-md mb-4">
-            E
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">ERP SaaS</h1>
-          <p className="mt-1 text-sm text-slate-500">Gestão para marcenarias e prestadores de serviços</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <GestioLogo variant="light" size="lg" withTagline={true} className="mb-2" />
         </div>
 
         {searchParams.get('confirmacao') === 'sucesso' && (

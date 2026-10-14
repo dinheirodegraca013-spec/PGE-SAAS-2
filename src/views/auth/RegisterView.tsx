@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth';
 import { TenantPlano } from '@/types/api';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { PlanoDefinicao } from './planos';
+import { GestioLogo } from '@/components/brand/GestioBrand';
 
 export default function RegisterView() {
   const navigate = useNavigate();
@@ -183,14 +184,12 @@ export default function RegisterView() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-12">
       <div className="w-full max-w-3xl">
-        <div className="mb-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-white font-bold text-xl shadow-md mb-4">
-            E
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Crie sua conta</h1>
-          <p className="mt-1 text-sm text-slate-500">Comece a usar o ERP SaaS na sua marcenaria</p>
+        <div className="mb-8 flex flex-col items-center text-center">
+          <GestioLogo variant="light" size="lg" withTagline={true} className="mb-2" />
+          <h1 className="text-xl font-bold tracking-tight text-slate-800 mt-2">Crie sua conta no Gestio ERP</h1>
+          <p className="mt-1 text-sm text-slate-500">Gestão inteligente para sua marcenaria ou empresa de serviços</p>
         </div>
 
         {sucessoConfirmacao ? (
