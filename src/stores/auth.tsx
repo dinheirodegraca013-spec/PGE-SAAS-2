@@ -329,7 +329,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             razao_social: payload.razaoSocial.trim(),
             nome_fantasia: payload.nomeFantasia?.trim() || null,
             plano: 'Free',
-            plano_solicitado_id: payload.planoSolicitadoId || null,\n            plano_solicitado_id: payload.planoSolicitadoId || null,
+            plano_solicitado_id: payload.planoSolicitadoId || null,
           },
         },
       });
