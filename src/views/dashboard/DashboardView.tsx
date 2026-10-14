@@ -97,82 +97,48 @@ export default function DashboardView() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <div className="mb-5">
-            <h3 className="font-bold text-slate-900">Orçamentos por projeto</h3>
-            <p className="mt-1 text-xs text-slate-500">Valores de orçamento cadastrados nos projetos reais</p>
-          </div>
-          {carregando ? <p className="py-8 text-sm text-slate-500">Carregando dados do gráfico...</p> : projetos.length === 0 ? <p className="py-8 text-sm text-slate-500">Cadastre um projeto para visualizar o gráfico.</p> : (
-            <div className="flex h-56 items-end gap-3 overflow-x-auto border-b border-slate-200 pb-2">
-              {projetos.slice(0, 8).map((projeto) => {
-                const valor = Math.max(0, Number(projeto.valorTotalOrcamento) || 0);
-                const maximo = Math.max(1, ...projetos.slice(0, 8).map((item) => Number(item.valorTotalOrcamento) || 0));
-                const altura = valor > 0 ? Math.max(6, (valor / maximo) * 100) : 3;
-                return <div key={projeto.id} title={`${projeto.titulo || 'Projeto'}: ${formatarMoeda(valor)}`} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
-                  <span className="text-center text-[10px] font-semibold text-slate-600">{formatarMoeda(valor)}</span>
-                  <div className="flex h-36 w-full items-end"><div className="w-full rounded-t-md bg-gradient-to-t from-violet-700 to-cyan-500" style={{ height: `${altura}%` }} /></div>
-                  <span className="w-full truncate text-center text-[10px] text-slate-500">{projeto.titulo || 'Sem título'}</span>
-                </div>;
-              })}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Orçamentos dos projetos</h3>
+              <p className="text-xs text-slate-500">Valores reais cadastrados nos projetos</p>
             </div>
-          )}
+            <Link to="/projetos" className="text-xs font-semibold text-violet-700 hover:text-cyan-700">Ver projetos →</Link>
+          </div>
+          {carregando ? <p className="py-12 text-sm text-slate-500">Carregando gráfico...</p> : projetos.length === 0 ? <p className="py-12 text-sm text-slate-500">Ainda não há projetos para montar o gráfico.</p> : (() => {
+            const dados = projetos.slice(0, 10).map((p) => ({ label: p.titulo || 'Projeto sem título', valor: Math.max(0, Number(p.valorTotalOrcamento) || 0) }));
+            const maxValor = Math.max(1, ...dados.map((d) => d.valor)) * 1.15;
+            const largura = 650, altura = 220, esquerda = 50, direita = 20, topo = 20, baixo = 30;
+            const larguraInterna = largura - esquerda - direita, alturaInterna = altura - topo - baixo;
+            const pontos = dados.map((d, i) => ({ ...d, x: esquerda + (dados.length === 1 ? larguraInterna / 2 : i / (dados.length - 1) * larguraInterna), y: topo + alturaInterna - d.valor / maxValor * alturaInterna }));
+            const caminho = pontos.map((p, i) => (i === 0 ? 'M' : 'L') + ' ' + p.x + ' ' + p.y).join(' ');
+            const area = pontos.length ? caminho + ' L ' + pontos[pontos.length - 1].x + ' ' + (topo + alturaInterna) + ' L ' + pontos[0].x + ' ' + (topo + alturaInterna) + ' Z' : '';
+            return <div className="mt-5 w-full overflow-x-auto">
+              <svg viewBox={`0 0 ${largura} ${altura}`} className="h-56 min-w-[520px] w-full" role="img" aria-label="Gráfico de valores de orçamento por projeto">
+                <defs><linearGradient id="orcamentoGradReal" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C3AED" stopOpacity=".24"/><stop offset="100%" stopColor="#C4B5FD" stopOpacity="0"/></linearGradient></defs>
+                {[0,.25,.5,.75,1].map((pct,i) => { const y=topo+alturaInterna*(1-pct); return <g key={i}><line x1={esquerda} y1={y} x2={largura-direita} y2={y} stroke="#E2E8F0" strokeDasharray="4 4"/><text x={esquerda-8} y={y+3} textAnchor="end" fill="#94A3B8" fontSize="10">{formatarMoeda(maxValor*pct)}</text></g>; })}
+                <path d={area} fill="url(#orcamentoGradReal)"/><path d={caminho} fill="none" stroke="#7C3AED" strokeWidth="2.75" strokeLinecap="round" strokeLinejoin="round"/>
+                {pontos.map((p,i)=><g key={i}><title>{p.label}: {formatarMoeda(p.valor)}</title><circle cx={p.x} cy={p.y} r="4" fill="#fff" stroke="#7C3AED" strokeWidth="2"/><text x={p.x} y={altura-6} textAnchor="middle" fill="#64748B" fontSize="9">{String(i+1).padStart(2,'0')}</text></g>)}
+              </svg>
+              <p className="mt-1 text-[10px] text-slate-400">Cada ponto corresponde a um projeto listado; os números no eixo horizontal seguem a ordem dos projetos.</p>
+              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">{dados.slice(0,6).map((d,i)=><div key={i} className="flex min-w-0 items-center justify-between gap-3 text-xs"><span className="truncate text-slate-600">{i+1}. {d.label}</span><span className="shrink-0 font-semibold text-slate-900">{formatarMoeda(d.valor)}</span></div>)}</div>
+            </div>;
+          })()}
         </section>
-        <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-          <div className="mb-5">
-            <h3 className="font-bold text-slate-900">Projetos por status</h3>
-            <p className="mt-1 text-xs text-slate-500">Distribuição baseada no status salvo em cada projeto</p>
-          </div>
-          {carregando ? <p className="py-8 text-sm text-slate-500">Carregando dados do gráfico...</p> : projetos.length === 0 ? <p className="py-8 text-sm text-slate-500">Sem projetos para distribuir por status.</p> : (
-            <div className="space-y-4">
-              {Object.entries(projetos.reduce<Record<string, number>>((acc, projeto) => {
-                const status = String(projeto.status || 'Sem status');
-                acc[status] = (acc[status] || 0) + 1;
-                return acc;
-              }, {})).sort((a, b) => b[1] - a[1]).map(([status, quantidade]) => (
-                <div key={status}>
-                  <div className="mb-1.5 flex items-center justify-between gap-3 text-sm"><span className="truncate font-medium text-slate-700">{status}</span><span className="font-bold text-slate-900">{quantidade}</span></div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-violet-600" style={{ width: `${(quantidade / projetos.length) * 100}%` }} /></div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <div><h3 className="font-bold text-slate-900">Clientes recentes</h3><p className="mt-1 text-xs text-slate-500">Registros retornados pelo Supabase</p></div>
-            <Link to="/clientes" className="text-xs font-bold text-cyan-700 hover:text-violet-700">Ver todos →</Link>
-          </div>
-          {carregando ? <p className="p-6 text-sm text-slate-500">Carregando clientes...</p> : clientes.length === 0 ? <p className="p-6 text-sm text-slate-500">Nenhum cliente cadastrado.</p> : (
-            <div className="divide-y divide-slate-100">
-              {clientes.slice(0, 5).map((cliente) => <div key={cliente.id} className="flex items-center gap-3 px-5 py-3.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-700">{(cliente.nome || '?').slice(0, 2).toUpperCase()}</span>
-                <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-slate-900">{cliente.nome}</p><p className="truncate text-xs text-slate-500">{cliente.telefoneWhatsApp || cliente.email || 'Sem contato informado'}</p></div>
-              </div>)}
-            </div>
-          )}
-        </section>
-
-        <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-            <div><h3 className="font-bold text-slate-900">Projetos recentes</h3><p className="mt-1 text-xs text-slate-500">Projetos reais cadastrados</p></div>
-            <Link to="/projetos" className="text-xs font-bold text-cyan-700 hover:text-violet-700">Ver todos →</Link>
-          </div>
-          {carregando ? <p className="p-6 text-sm text-slate-500">Carregando projetos...</p> : projetos.length === 0 ? <p className="p-6 text-sm text-slate-500">Nenhum projeto cadastrado.</p> : (
-            <div className="divide-y divide-slate-100">
-              {projetos.slice(0, 5).map((projeto) => {
-                const cliente = clientes.find((c) => c.id === projeto.clienteId);
-                return <div key={projeto.id} className="flex items-center gap-3 px-5 py-3.5">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-700"><Sofa className="h-4 w-4" /></span>
-                  <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold text-slate-900">{projeto.titulo || 'Projeto sem título'}</p><p className="truncate text-xs text-slate-500">{cliente?.nome || 'Cliente não vinculado'} · {String(projeto.status)}</p></div>
-                  <span className="shrink-0 text-xs font-semibold text-slate-700">{formatarMoeda(Number(projeto.valorTotalOrcamento) || 0)}</span>
-                </div>;
-              })}
-            </div>
-          )}
+        <section className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm lg:col-span-4">
+          <div><h3 className="text-base font-bold text-slate-900">Status dos projetos</h3><p className="text-xs text-slate-500">Distribuição dos registros reais</p></div>
+          {carregando ? <p className="py-8 text-sm text-slate-500">Carregando gráfico...</p> : projetos.length === 0 ? <p className="py-8 text-sm text-slate-500">Ainda não há projetos para distribuir.</p> : (() => {
+            const statusMap = new Map<string, number>();
+            projetos.forEach((p) => { const status = String(p.status ?? 'Sem status'); statusMap.set(status, (statusMap.get(status) || 0) + 1); });
+            const itens = Array.from(statusMap.entries()).map(([status, count], i) => ({ status, count, color: ['#06B6D4','#7C3AED','#F59E0B','#94A3B8','#10B981','#6366F1'][i%6] }));
+            const total = projetos.length, circ = 2 * Math.PI * 58;
+            let offset = 0;
+            return <div className="my-5 flex flex-col items-center">
+              <div className="relative h-[190px] w-[190px]"><svg viewBox="0 0 160 160" className="h-full w-full -rotate-90">{itens.map((item,i)=>{const len=item.count/total*circ;const prior=offset;offset+=len;return <circle key={item.status} cx="80" cy="80" r="58" fill="none" stroke={item.color} strokeWidth="17" strokeDasharray={`${len} ${circ-len}`} strokeDashoffset={-prior}/>;})}</svg><div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"><span className="text-3xl font-black text-slate-900">{total}</span><span className="text-[11px] text-slate-400">Projetos</span></div></div>
+              <div className="mt-4 grid w-full grid-cols-2 gap-3 border-t border-slate-100 pt-4">{itens.map(item=><div key={item.status} className="flex items-start gap-2"><span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{backgroundColor:item.color}}/><div><p className="text-xs font-semibold text-slate-800">{item.status}</p><p className="text-[10px] text-slate-500">{Math.round(item.count/total*100)}% ({item.count})</p></div></div>)}</div>
+            </div>;
+          })()}
         </section>
       </div>
 
