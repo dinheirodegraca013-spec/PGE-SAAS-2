@@ -41,6 +41,7 @@ import FinanceiroPagamentosView from './views/admin/financeiro/FinanceiroPagamen
 import FinanceiroLinksView from './views/admin/financeiro/FinanceiroLinksView';
 import FinanceiroRelatoriosView from './views/admin/financeiro/FinanceiroRelatoriosView';
 import AcessoNegadoView from './views/admin/AcessoNegadoView';
+import LandingPage from './views/public/LandingPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const auth = useAuthStore();
@@ -58,6 +59,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   if (!auth.isAuthenticated) {
+    if (location.pathname === '/') return <LandingPage />;
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
