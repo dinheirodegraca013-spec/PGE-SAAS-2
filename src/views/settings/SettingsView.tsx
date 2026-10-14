@@ -126,57 +126,6 @@ const INITIAL_FORM: FormState = {
   cargo: 'Administrador da Organização',
 };
 
-// Planos padrão para exibição e comparação
-const PLANOS_DEFAULT: SaaSPlano[] = []; /* Planos devem vir exclusivamente do Supabase. */
-/*
-  {
-    id: 'plano_free',
-    nome: 'Free',
-    descricao: 'Para pequenos negócios e testes do sistema.',
-    preco: 0,
-    periodicidade: 'mensal',
-    status: 'ativo',
-    recursos: [],
-    ordem: 0,
-    createdAt: '2026-01-01T00:00:00Z',
-  },
-  {
-    id: 'plano_standard',
-    nome: 'Standard',
-    descricao: 'Para marcenarias em operação com equipe.',
-    preco: 89.9,
-    periodicidade: 'mensal',
-    status: 'ativo',
-    recursos: [
-      'Clientes ilimitados',
-      'Até 5 usuários na equipe',
-      'Projetos de móveis ilimitados',
-      'Integração oficial WhatsApp',
-      'Relatórios e orçamentos em PDF',
-      'Suporte prioritário',
-    ],
-    ordem: 1,
-    createdAt: '2026-01-01T00:00:00Z',
-  },
-  {
-    id: 'plano_empresarial',
-    nome: 'Empresarial',
-    descricao: 'Para operações maiores com múltiplas equipes.',
-    preco: 199.9,
-    periodicidade: 'mensal',
-    status: 'ativo',
-    recursos: [
-      'Tudo do plano Standard',
-      'Usuários ilimitados',
-      'Múltiplos módulos de negócio',
-      'Controle avançado de permissões',
-      'Suporte dedicado 24/7',
-    ],
-    ordem: 2,
-    createdAt: '2026-01-01T00:00:00Z',
-  },
-]; */
-
 export default function SettingsView() {
   const auth = useAuthStore();
   const [searchParams] = useSearchParams();
@@ -319,14 +268,13 @@ export default function SettingsView() {
           if (userId) {
             const { data: profileData } = await supabase
               .from('profiles')
-              .select('nome_completo, email, papel, avatar_url')
+              .select('nome_completo, email, papel')
               .eq('id', userId)
               .maybeSingle();
 
             if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
               if (profileData.email) emailAcesso = profileData.email;
-              if (profileData.avatar_url) fotoUrlPerfil = profileData.avatar_url;
               if (profileData.papel) {
                 cargo = profileData.papel === 'AdministradorTenant' ? 'Administrador da Organização' : profileData.papel;
               }
@@ -661,18 +609,12 @@ export default function SettingsView() {
 
         // Salva a referência da foto no perfil do usuário no banco
         if (userId) {
-          await supabase
-            .from('profiles')
-            .update({ avatar_url: urlFinal })
-            .eq('id', userId);
+          // O schema atual de profiles não possui coluna avatar_url.
         }
 
         // Salva também como logo da organização se o tenant existir
         if (tenantId) {
-          await supabase
-            .from('tenants')
-            .update({ logo_url: urlFinal })
-            .eq('id', tenantId);
+          // O schema atual de tenants não possui coluna logo_url.
         }
       }
 
@@ -709,10 +651,10 @@ export default function SettingsView() {
 
       if (isSupabaseConfigured) {
         if (userId) {
-          await supabase.from('profiles').update({ avatar_url: null }).eq('id', userId);
+          // O schema atual de profiles não possui coluna avatar_url.
         }
         if (tenantId) {
-          await supabase.from('tenants').update({ logo_url: null }).eq('id', tenantId);
+          // O schema atual de tenants não possui coluna logo_url.
         }
       }
 
@@ -804,7 +746,7 @@ export default function SettingsView() {
           planoNome: 'Free',
           valor: 0,
           status: 'ativa',
-          recursos: PLANOS_DEFAULT[0].recursos,
+          recursos: [],
         }));
         auth.updateUsuario({ plano: 'Free' });
 
