@@ -895,74 +895,67 @@ export const adminService = {
     if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
 
     try {
-      // 1. Tenants
-      const { data: tenants } = await supabase.from('tenants').select('id, status, plano');
-      // 2. Profiles
-      const { data: profiles } = await supabase.from('profiles').select('id');
-      // 3. Assinaturas
-      const { data: assinaturas } = await supabase.from('saas_assinaturas').select('*');
-      // 4. Cobranças
-      const { data: cobrancas } = await supabase.from('saas_cobrancas').select('*');
-      // 5. Pagamentos
-      const { data: pagamentos } = await supabase.from('saas_pagamentos').select('*');
-      // 6. Audit Logs recentes
-      const { data: logs } = await supabase
-        .from('saas_audit_logs')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      const totalEmpresas = (tenants || []).length;
-      const empresasAtivas = (tenants || []).filter((t: any) => t.status === 'ativo' || !t.status).length;
-      const empresasSuspensas = (tenants || []).filter((t: any) => t.status === 'suspenso').length;
-      const empresasCanceladas = (tenants || []).filter((t: any) => t.status === 'cancelado').length;
-
-      const totalUsuarios = (profiles || []).length;
-
-      const assinaturasAtivas = (assinaturas || []).filter((a: any) => a.status === 'ativa').length;
-      const assinaturasPendentes = (assinaturas || []).filter((a: any) => a.status === 'pendente').length;
-      const assinaturasVencidas = (assinaturas || []).filter((a: any) => a.status === 'vencida').length;
-      const assinaturasCanceladas = (assinaturas || []).filter((a: any) => a.status === 'cancelada').length;
-
-      // MRR: soma de assinaturas ativas
-      let mrrEstimado = (assinaturas || [])
-        .filter((a: any) => a.status === 'ativa')
-        .reduce((sum: number, a: any) => sum + Number(a.valor || 0), 0);
-
-      // Se não houver assinaturas cadastradas na tabela, calcula pelo plano cadastrado no tenant
-      if (mrrEstimado === 0 && totalEmpresas > 0) {
-        mrrEstimado = (tenants || [])
-          .filter((t: any) => t.status === 'ativo' || !t.status)
-          .reduce((sum: number, t: any) => {
-            const v = t.plano === 'Empresarial' ? 199.9 : t.plano === 'Free' ? 0 : 89.9;
-            return sum + v;
-          }, 0);
+      // Todas as métricas vêm de consultas reais. Falha de consulta não vira zero nem estimativa inventada.
+      const [tenantsRes, profilesRes, assinaturasRes, cobrancasRes, pagamentosRes, logsRes] = await Promise.all([
+        supabase.from('tenants').select('id, razao_social, ativo, plano'),
+        supabase.from('profiles').select('id, tenant_id'),
+        supabase.from('saas_assinaturas').select('*'),
+        supabase.from('saas_cobrancas').select('*'),
+        supabase.from('saas_pagamentos').select('*'),
+        supabase.from('saas_audit_logs').select('*').order('created_at', { ascending: false }).limit(10),
+      ]);
+      const queryErrors = [tenantsRes.error, profilesRes.error, assinaturasRes.error, cobrancasRes.error, pagamentosRes.error, logsRes.error].filter(Boolean);
+      if (queryErrors.length) {
+        return { succeeded: false, errors: queryErrors.map((e: any) => e.message || 'Falha ao consultar dados reais do painel financeiro.') };
       }
 
-      // Receita Recebida: pagamentos com status 'confirmado'
-      const receitaRecebidaPeriodo = (pagamentos || [])
-        .filter((p: any) => p.status === 'confirmado')
+      const tenants = (tenantsRes.data || []).filter((t: any) => !String(t.razao_social || '').startsWith('[EXCLUÍDA] '));
+      const profiles = profilesRes.data || [];
+      const assinaturas = assinaturasRes.data || [];
+      const cobrancas = cobrancasRes.data || [];
+      const pagamentos = pagamentosRes.data || [];
+      const logs = logsRes.data || [];
+
+      const totalEmpresas = tenants.length;
+      const empresasAtivas = tenants.filter((t: any) => t.ativo === true).length;
+      const empresasSuspensas = tenants.filter((t: any) => t.ativo === false).length;
+      const empresasCanceladas = assinaturas.filter((a: any) => a.status === 'cancelada').length;
+      const tenantIdsAtivos = new Set(tenants.filter((t: any) => t.ativo === true).map((t: any) => t.id));
+      const totalUsuarios = profiles.filter((p: any) => tenantIdsAtivos.has(p.tenant_id)).length;
+
+      const assinaturasAtivas = assinaturas.filter((a: any) => a.status === 'ativa').length;
+      const assinaturasPendentes = assinaturas.filter((a: any) => a.status === 'pendente').length;
+      const assinaturasVencidas = assinaturas.filter((a: any) => a.status === 'vencida').length;
+      const assinaturasCanceladas = assinaturas.filter((a: any) => a.status === 'cancelada').length;
+
+      // MRR: normaliza somente assinaturas ativas para equivalente mensal; sem fallback por preço presumido.
+      const mrrEstimado = assinaturas
+        .filter((a: any) => a.status === 'ativa')
+        .reduce((sum: number, a: any) => {
+          const valor = Number(a.valor || 0);
+          const fatorMensal: Record<string, number> = { mensal: 1, trimestral: 1 / 3, semestral: 1 / 6, anual: 1 / 12 };
+          return sum + valor * (fatorMensal[String(a.periodicidade || 'mensal').toLowerCase()] || 1);
+        }, 0);
+
+      // Receita confirmada nos últimos 30 dias; pagamentos não confirmados ou fora da janela não entram.
+      const inicioPeriodo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+      const receitaRecebidaPeriodo = pagamentos
+        .filter((p: any) => p.status === 'confirmado' && p.data_pagamento && new Date(p.data_pagamento).getTime() >= inicioPeriodo)
         .reduce((sum: number, p: any) => sum + Number(p.valor || 0), 0);
 
-      // Valores pendentes: cobranças com status 'pendente'
-      const valoresPendentes = (cobrancas || [])
+      const valoresPendentes = cobrancas
         .filter((c: any) => c.status === 'pendente')
         .reduce((sum: number, c: any) => sum + Number(c.valor || 0), 0);
 
-      // Inadimplência: cobranças vencidas
-      const inadimplenciaValor = (cobrancas || [])
+      const inadimplenciaValor = cobrancas
         .filter((c: any) => c.status === 'vencida')
         .reduce((sum: number, c: any) => sum + Number(c.valor || 0), 0);
 
-      // Distribuição de planos
-      const distribuicaoPlanos: Record<string, number> = {
-        Free: 0,
-        Standard: 0,
-        Empresarial: 0,
-      };
-      (tenants || []).forEach((t: any) => {
-        const p = t.plano || 'Standard';
-        distribuicaoPlanos[p] = (distribuicaoPlanos[p] || 0) + 1;
+      const distribuicaoPlanos: Record<string, number> = { Free: 0, Standard: 0, Empresarial: 0 };
+      tenants.forEach((t: any) => {
+        const nome = String(t.plano || 'free').toLowerCase();
+        const chave = nome === 'empresarial' ? 'Empresarial' : nome === 'standard' ? 'Standard' : nome === 'free' ? 'Free' : nome;
+        distribuicaoPlanos[chave] = (distribuicaoPlanos[chave] || 0) + 1;
       });
 
       const recentAuditLogs: SaaSAuditLog[] = (logs || []).map((l: any) => ({
