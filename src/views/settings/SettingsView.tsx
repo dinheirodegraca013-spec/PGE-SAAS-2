@@ -668,17 +668,12 @@ export default function SettingsView() {
   // GESTÃO E ALTERAÇÃO DE PLANOS
   // =========================================================================
 
-  const limitesDoPlanoAtual = useMemo(() => {
-    const nome = dadosAssinatura.planoNome.toLowerCase();
-    if (nome.includes('empresarial')) {
-      return { clientes: Infinity, usuarios: Infinity, projetos: Infinity };
-    }
-    if (nome.includes('standard')) {
-      return { clientes: Infinity, usuarios: 5, projetos: Infinity };
-    }
-    // Free
-    return { clientes: 10, usuarios: 1, projetos: 5 };
-  }, [dadosAssinatura.planoNome]);
+  // O schema atual não possui limites estruturados por recurso; não inventar cotas.
+  const limitesDoPlanoAtual = useMemo(() => ({
+    clientes: null as number | null,
+    usuarios: null as number | null,
+    projetos: null as number | null,
+  }), []);
 
   const handleIniciarTrocaPlano = (planoAlvo: SaaSPlano) => {
     setPlanoSelecionadoParaMudanca(planoAlvo);
@@ -745,7 +740,7 @@ export default function SettingsView() {
 
         setModalConfirmacaoAberto(false);
         setModalPlanosAberto(false);
-        setFeedbackSucesso('Plano alterado para Free com sucesso! Seus limites foram ajustados.');
+        setFeedbackSucesso('Plano alterado para Free com sucesso! O plano foi alterado.');
         setTimeout(() => setFeedbackSucesso(null), 6000);
       } else {
         // Plano Pago (Standard ou Empresarial)
@@ -1595,7 +1590,7 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes ?? '—'} / {isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : '∞'}
+                      {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1619,7 +1614,7 @@ export default function SettingsView() {
                   <p className="text-[11px] text-slate-500">
                     {isFinite(limitesDoPlanoAtual.clientes)
                       ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
-                      : 'Uso de clientes consultado no banco.'}
+                      : 'Limite não cadastrado no plano.'}
                   </p>
                 </div>
 
@@ -1631,7 +1626,7 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos ?? '—'} / {isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : '∞'}
+                      {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1653,7 +1648,7 @@ export default function SettingsView() {
                   <p className="text-[11px] text-slate-500">
                     {isFinite(limitesDoPlanoAtual.projetos)
                       ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
-                      : 'Uso de projetos consultado no banco.'}
+                      : 'Limite não cadastrado no plano.'}
                   </p>
                 </div>
 
@@ -1665,7 +1660,7 @@ export default function SettingsView() {
                       Usuários na Equipe
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.usuarios ?? '—'} / {isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : '∞'}
+                      {usoRecursos.usuarios ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -2049,21 +2044,21 @@ export default function SettingsView() {
                     <span>Verificação de Limites do Plano Free</span>
                   </div>
                   <p>
-                    O plano gratuito é limitado a <strong>10 clientes</strong>, <strong>5 projetos</strong> e <strong>1 usuário</strong>.
+                    Os limites do plano Free precisam estar cadastrados no catálogo de planos para serem exibidos com precisão.
                   </p>
                   {usoRecursos.clientes !== null && usoRecursos.clientes > 10 && (
                     <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui atualmente {usoRecursos.clientes} clientes cadastrados (limite de 10). Seus dados existentes NUNCA serão excluídos, mas novos cadastros ficarão bloqueados até adequação.
+                      • Atenção: Sua conta possui atualmente {usoRecursos.clientes} clientes cadastrados (limite de 10). Seus dados existentes não serão excluídos.
                     </p>
                   )}
                   {usoRecursos.projetos !== null && usoRecursos.projetos > 5 && (
                     <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui {usoRecursos.projetos} projetos (limite de 5 no Free). Novos projetos não poderão ser criados até regularização.
+                      • Atenção: Sua conta possui {usoRecursos.projetos} projetos (limite de 5 no Free). Consulte os limites cadastrados do plano antes de migrar.
                     </p>
                   )}
                   {usoRecursos.usuarios !== null && usoRecursos.usuarios > 1 && (
                     <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui {usoRecursos.usuarios} usuários. O plano Free permite apenas 1 usuário ativo.
+                      • Atenção: Sua conta possui {usoRecursos.usuarios} usuários. Consulte os limites cadastrados do plano antes de migrar.
                     </p>
                   )}
                   <p className="text-[11px] text-amber-800 pt-1">
