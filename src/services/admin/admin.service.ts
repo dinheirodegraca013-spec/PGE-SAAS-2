@@ -96,6 +96,9 @@ export const adminService = {
           status: (t.ativo === false
             ? (assinatura?.status === 'cancelada' ? 'cancelado' : 'suspenso')
             : (assinatura?.status === 'cancelada' ? 'cancelado' : assinatura?.status === 'suspensa' ? 'suspenso' : 'ativo')) as any,
+          planoSolicitadoId: t.plano_solicitado_id || undefined,
+          dataContratacao: t.data_contratacao || undefined,
+          inicioUtilizacao: t.inicio_utilizacao || undefined,
           createdAt: t.created_at,
           totalUsuarios: totalUsers,
           totalProjetos: 0,
