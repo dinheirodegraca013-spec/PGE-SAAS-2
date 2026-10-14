@@ -15,6 +15,8 @@ export default function PagamentoObrigadoView() {
   const slug = (planoParam || (window.location.pathname.includes('empresarial') ? 'empresarial' : window.location.pathname.includes('free') ? 'free' : 'standard')).toLowerCase();
   const plano = PLANOS[slug] || PLANOS.standard;
   const gratuito = slug === 'free';
+  const mensagemWhatsApp = encodeURIComponent(`Olá! Acabei de me cadastrar na Gestio ERP e escolhi o plano ${plano.nome}. Já realizei o pagamento e gostaria de solicitar a ativação manual.\nE-mail cadastrado: `);
+  const whatsappUrl = `https://wa.me/?text=${mensagemWhatsApp}`;
   const mensagem = encodeURIComponent(
     'Olá! Acabei de realizar o checkout do Gestio e solicito a ativação manual do meu plano ' +
     plano.nome + '. Meu e-mail de cadastro é: [INFORME SEU E-MAIL].'
