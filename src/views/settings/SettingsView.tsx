@@ -320,14 +320,15 @@ export default function SettingsView() {
                 recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
             } else {
-              setDadosAssinatura((prev) => ({
-                ...prev,
+              setDadosAssinatura({
                 planoNome: planoTenant || 'Não informado',
+                status: 'sem assinatura cadastrada',
+                valor: 0,
+                periodicidade: 'mensal',
                 dataInicio: null,
                 dataRenovacao: null,
-                valor: 0,
                 recursos: [],
-              }));
+              });
             }
 
             // Busca histórico de cobranças do tenant
