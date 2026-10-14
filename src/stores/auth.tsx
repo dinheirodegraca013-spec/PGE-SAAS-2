@@ -207,9 +207,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('Erro ao verificar sessão Supabase:', error.message);
             clearAuthState();
           } else if (session?.user && mounted) {
-            const ok = await applySession(session);
-            if (!ok) {
-              console.warn('Usuário inativo ou sessão inválida.');
+            // A tela de recuperação não deve exigir perfil/tenant nem encerrar a sessão
+            // antes que o usuário consiga atualizar a própria senha.
+            if (window.location.pathname === '/redefinir-senha') {
+              setAccessToken(session.access_token);
+              setRefreshToken(session.refresh_token || null);
+            } else {
+              const ok = await applySession(session);
+              if (!ok) {
+                console.warn('Usuário inativo ou sessão inválida.');
+              }
             }
           } else {
             clearAuthState();
@@ -239,7 +246,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
           if (session?.user) {
-            await applySession(session);
+            if (window.location.pathname === '/redefinir-senha') {
+              setAccessToken(session.access_token);
+              setRefreshToken(session.refresh_token || null);
+            } else {
+              await applySession(session);
+            }
           }
         } else if (event === 'SIGNED_OUT') {
           clearAuthState();
