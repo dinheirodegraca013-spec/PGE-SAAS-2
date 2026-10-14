@@ -238,7 +238,7 @@ export default function SettingsView() {
                 let planoSolicitadoId: string | null = null;
         let tenantAtivo: boolean | null = null;
         let planoTenant = auth.usuario?.plano || 'Não informado';
-        let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
+        let fotoUrlPerfil: string | null = null;
         let dadosComerciais: Record<string, any> = {};
 
         if (isSupabaseConfigured) {
@@ -246,13 +246,14 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id, logo_url')
               .eq('id', tenantId)
               .maybeSingle();
 
             if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
+              fotoUrlPerfil = tenantData.logo_url || null;
                             planoSolicitadoId = tenantData.plano_solicitado_id || null;
               tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
@@ -279,12 +280,13 @@ export default function SettingsView() {
           if (userId) {
             const { data: profileData } = await supabase
               .from('profiles')
-              .select('nome_completo, email, papel')
+              .select('nome_completo, email, papel, avatar_url')
               .eq('id', userId)
               .maybeSingle();
 
             if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
+              if (profileData.avatar_url) fotoUrlPerfil = profileData.avatar_url;
               if (profileData.email) emailAcesso = profileData.email;
               if (profileData.papel) {
                 cargo = profileData.papel === 'AdministradorTenant' ? 'Administrador da Organização' : profileData.papel;
@@ -632,8 +634,11 @@ export default function SettingsView() {
     setUploadProgress(20);
 
     try {
-      const tenantId = auth.usuario?.tenantId || 'tenant_geral';
-      const userId = auth.usuario?.usuarioId || 'user_geral';
+      const tenantId = auth.usuario?.tenantId;
+      const userId = auth.usuario?.usuarioId;
+      if (!tenantId || !userId || !isSupabaseConfigured) {
+        throw new Error('Não foi possível identificar sua conta real. Entre novamente antes de enviar a foto.');
+      }
       const ext = selectedFile.type === 'image/webp' ? 'webp' : selectedFile.type === 'image/png' ? 'png' : 'jpg';
       const caminhoUnico = `${tenantId}/${userId}/avatar_${Date.now()}.${ext}`;
 
@@ -649,26 +654,18 @@ export default function SettingsView() {
             upsert: true,
           });
 
-        if (uploadError) {
-          console.warn('Aviso: Falha no storage, utilizando persistência direta da imagem:', uploadError.message);
-        } else {
-          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(caminhoUnico);
-          if (urlData?.publicUrl) {
-            urlFinal = urlData.publicUrl;
-          }
-        }
+        if (uploadError) throw new Error('A foto não foi salva no armazenamento: ' + uploadError.message);
+        const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(caminhoUnico);
+        if (!urlData?.publicUrl) throw new Error('O armazenamento não retornou uma URL válida para a foto.');
+        urlFinal = urlData.publicUrl;
 
         setUploadProgress(85);
 
-        // Salva a referência da foto no perfil do usuário no banco
-        if (userId) {
-          // O schema atual de profiles não possui coluna avatar_url.
-        }
-
-        // Salva também como logo da organização se o tenant existir
-        if (tenantId) {
-          // O schema atual de tenants não possui coluna logo_url.
-        }
+        const { error: profilePhotoError } = await supabase
+          .from('profiles')
+          .update({ avatar_url: urlFinal, updated_at: new Date().toISOString() })
+          .eq('id', userId);
+        if (profilePhotoError) throw new Error('A foto foi enviada, mas não foi possível salvar sua referência no perfil: ' + profilePhotoError.message);
       }
 
       setUploadProgress(100);
@@ -676,7 +673,7 @@ export default function SettingsView() {
       setSelectedFile(null);
       setPreviewUrl(null);
       auth.updateUsuario({ avatarUrl: urlFinal, logoUrl: urlFinal });
-      setFotoFeedbackSucesso('Foto de perfil atualizada e salva com sucesso!');
+      setFotoFeedbackSucesso('Foto de perfil salva no banco de dados com sucesso!');
       setTimeout(() => setFotoFeedbackSucesso(null), 5000);
     } catch (err: any) {
       setFotoFeedbackErro(err.message || 'Erro ao realizar o upload da foto de perfil.');
@@ -702,14 +699,9 @@ export default function SettingsView() {
       const userId = auth.usuario?.usuarioId;
       const tenantId = auth.usuario?.tenantId;
 
-      if (isSupabaseConfigured) {
-        if (userId) {
-          // O schema atual de profiles não possui coluna avatar_url.
-        }
-        if (tenantId) {
-          // O schema atual de tenants não possui coluna logo_url.
-        }
-      }
+      if (!isSupabaseConfigured || !userId) throw new Error('Não foi possível identificar sua conta real.');
+      const { error: removeError } = await supabase.from('profiles').update({ avatar_url: null, updated_at: new Date().toISOString() }).eq('id', userId);
+      if (removeError) throw new Error('Não foi possível remover a foto salva: ' + removeError.message);
 
       setAvatarUrl(null);
       setPreviewUrl(null);
@@ -718,7 +710,7 @@ export default function SettingsView() {
       setFotoFeedbackSucesso('Foto de perfil removida. O avatar padrão foi restaurado.');
       setTimeout(() => setFotoFeedbackSucesso(null), 5000);
     } catch (err: any) {
-      setFotoFeedbackErro('Erro ao remover a foto.');
+      setFotoFeedbackErro(err.message || 'Erro ao remover a foto.');
     } finally {
       setUploadingFoto(false);
     }
