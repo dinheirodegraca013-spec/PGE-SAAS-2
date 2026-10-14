@@ -139,9 +139,18 @@ export const adminService = {
         .maybeSingle();
       if (assinaturaError) return { succeeded: false, errors: [assinaturaError.message] };
 
+      // A coluna tenants.plano aceita apenas os identificadores em minúsculas definidos pelo CHECK.
+      const planoTenant = String(plano.nome || '').trim().toLowerCase();
+      if (!['free', 'standard', 'empresarial'].includes(planoTenant)) {
+        return {
+          succeeded: false,
+          errors: [`O plano "${plano.nome}" não corresponde a um plano compatível com a empresa. Use Free, Standard ou Empresarial.`],
+        };
+      }
+
       const { error: tenantUpdateError } = await supabase
         .from('tenants')
-        .update({ plano: plano.nome })
+        .update({ plano: planoTenant })
         .eq('id', tenantId);
       if (tenantUpdateError) return { succeeded: false, errors: [tenantUpdateError.message] };
 
