@@ -15,38 +15,77 @@ export default function ResetPasswordView() {
 
   useEffect(() => {
     let mounted = true;
+    let recoveryEventSeen = false;
 
-    // Supabase troca o token do link de recuperação por uma sessão no navegador.
+    const setValidSession = () => {
+      if (!mounted) return;
+      recoveryEventSeen = true;
+      setSessaoValida(true);
+      setErro(null);
+      setValidando(false);
+    };
+
     const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       if (!mounted) return;
-      if (event === 'PASSWORD_RECOVERY' && session) {
-        setSessaoValida(true);
-        setErro(null);
-        setValidando(false);
+      if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
+        setValidSession();
       }
     });
 
     const verificarSessao = async () => {
-      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-      const params = new URLSearchParams(window.location.search);
-      const linkError = params.get('error_description') || hash.get('error_description');
+      try {
+        const url = new URL(window.location.href);
+        const hash = new URLSearchParams(url.hash.replace(/^#/, ''));
+        const params = url.searchParams;
+        const linkError = params.get('error_description') || hash.get('error_description') || params.get('error') || hash.get('error');
 
-      if (linkError) {
-        if (mounted) {
-          setErro('O link de recuperação expirou ou é inválido. Solicite um novo link.');
+        if (linkError) {
+          throw new Error('O link de recuperação expirou ou é inválido. Solicite um novo link.');
+        }
+
+        // PKCE: troca o código recebido por uma sessão autenticada.
+        const code = params.get('code');
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw error;
+          url.searchParams.delete('code');
+          window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+        } else {
+          // Fluxo por token hash: valida o token de recuperação diretamente.
+          const tokenHash = params.get('token_hash') || hash.get('token_hash');
+          if (tokenHash) {
+            const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'recovery' });
+            if (error) throw error;
+            window.history.replaceState({}, document.title, url.pathname);
+          } else {
+            // Fluxo implícito: os tokens vêm no fragmento da URL.
+            const accessToken = hash.get('access_token');
+            const refreshToken = hash.get('refresh_token');
+            if (accessToken && refreshToken) {
+              const { error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
+              if (error) throw error;
+              window.history.replaceState({}, document.title, url.pathname + url.search);
+            }
+          }
+        }
+
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (!mounted) return;
+        if (data.session) {
+          setValidSession();
+        } else if (!recoveryEventSeen) {
+          setErro('Não foi possível validar o link de recuperação. Solicite um novo link e abra o e-mail mais recente.');
           setValidando(false);
         }
-        return;
+      } catch (err: any) {
+        if (!mounted) return;
+        setErro(err?.message || 'Não foi possível validar o link. Solicite um novo link.');
+        setValidando(false);
       }
-
-      const { data, error: sessionError } = await supabase.auth.getSession();
-      if (!mounted) return;
-      if (!sessionError && data.session) {
-        setSessaoValida(true);
-      } else {
-        setErro('Não foi possível validar o link. Solicite uma nova recuperação de senha e abra o link mais recente recebido por e-mail.');
-      }
-      setValidando(false);
     };
 
     void verificarSessao();
@@ -72,7 +111,7 @@ export default function ResetPasswordView() {
     setEnviando(true);
     try {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session || !sessaoValida) {
+      if (sessionError || !sessionData.session) {
         setErro('Sua sessão de recuperação não é válida. Solicite um novo link.');
         return;
       }
