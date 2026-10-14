@@ -48,11 +48,12 @@ export default function AppLayout() {
         }`}
       >
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white font-bold text-sm shadow-xs">
-              E
+          <div className="flex min-w-0 items-center gap-3">
+            <img src="/gestio-mark.svg" alt="Emblema GESTIO" className="h-10 w-10 shrink-0 drop-shadow-sm" />
+            <div className="min-w-0 leading-tight">
+              <span className="block text-lg font-extrabold tracking-[0.16em] text-slate-900">GESTIO</span>
+              <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.11em] text-slate-500">Gestão inteligente</span>
             </div>
-            <span className="text-lg font-bold tracking-tight text-slate-900">ERP SaaS</span>
           </div>
           <button
             type="button"
