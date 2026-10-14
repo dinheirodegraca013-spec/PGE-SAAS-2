@@ -114,73 +114,15 @@ export const adminService = {
   async alterarPlanoEmpresa(tenantId: string, planoId: string): Promise<ApiResult<void>> {
     if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
     try {
-      const { data: plano, error: planoError } = await supabase
-        .from('saas_planos')
-        .select('id,nome,preco,periodicidade,status')
-        .eq('id', planoId)
-        .maybeSingle();
-      if (planoError) return { succeeded: false, errors: [planoError.message] };
-      if (!plano) return { succeeded: false, errors: ['O plano selecionado não existe mais. Atualize a lista e tente novamente.'] };
-      if (plano.status !== 'ativo') return { succeeded: false, errors: ['Não é possível atribuir um plano inativo.'] };
-
-      const { data: tenant, error: tenantError } = await supabase
-        .from('tenants')
-        .select('id,razao_social,plano')
-        .eq('id', tenantId)
-        .single();
-      if (tenantError) return { succeeded: false, errors: [tenantError.message] };
-
-      const { data: assinatura, error: assinaturaError } = await supabase
-        .from('saas_assinaturas')
-        .select('id,plano_id,valor,periodicidade,status')
-        .eq('tenant_id', tenantId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (assinaturaError) return { succeeded: false, errors: [assinaturaError.message] };
-
-      // A coluna tenants.plano aceita apenas os identificadores em minúsculas definidos pelo CHECK.
-      const planoTenant = String(plano.nome || '').trim().toLowerCase();
-      if (!['free', 'standard', 'empresarial'].includes(planoTenant)) {
-        return {
-          succeeded: false,
-          errors: [`O plano "${plano.nome}" não corresponde a um plano compatível com a empresa. Use Free, Standard ou Empresarial.`],
-        };
-      }
-
-      const { error: tenantUpdateError } = await supabase
-        .from('tenants')
-        .update({ plano: planoTenant })
-        .eq('id', tenantId);
-      if (tenantUpdateError) return { succeeded: false, errors: [tenantUpdateError.message] };
-
-      if (assinatura) {
-        const { error: assinaturaUpdateError } = await supabase
-          .from('saas_assinaturas')
-          .update({
-            plano_id: plano.id,
-            valor: Number(plano.preco || 0),
-            periodicidade: plano.periodicidade || 'mensal',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', assinatura.id);
-        if (assinaturaUpdateError) {
-          // Reverte o nome do plano no tenant para evitar estado divergente.
-          await supabase.from('tenants').update({ plano: tenant.plano }).eq('id', tenantId);
-          return { succeeded: false, errors: [assinaturaUpdateError.message] };
-        }
-      }
-
-      await registrarSaaSAuditLog('Administracao', 'ALTERAR_PLANO_EMPRESA', tenantId, {
-        empresa: tenant.razao_social,
-        planoAnterior: tenant.plano,
-        planoNovo: plano.nome,
-        assinaturaAtualizada: Boolean(assinatura),
-        observacao: 'Alteração administrativa de plano; não realiza cobrança automática.',
+      const { data, error } = await supabase.rpc('admin_ativar_plano_empresa', {
+        p_tenant_id: tenantId,
+        p_plano_id: planoId,
       });
+      if (error) return { succeeded: false, errors: [error.message] };
+      if (!data?.success) return { succeeded: false, errors: [data?.message || 'Não foi possível ativar o plano.'] };
       return { succeeded: true, errors: [] };
     } catch (err: any) {
-      return { succeeded: false, errors: [err.message || 'Erro ao alterar plano da empresa.'] };
+      return { succeeded: false, errors: [err.message || 'Erro ao ativar o plano da empresa.'] };
     }
   },
 
