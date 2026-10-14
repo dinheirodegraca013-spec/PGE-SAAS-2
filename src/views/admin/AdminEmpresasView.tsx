@@ -98,6 +98,11 @@ export default function AdminEmpresasView() {
     e.preventDefault();
     if (!empresaSelecionada) return;
 
+    if (novoStatus === 'ativo' && empresaSelecionada.planoSolicitadoId) {
+      alert('Esta empresa possui um plano pago aguardando ativação. Confirme o pagamento e use “Alterar plano” para ativar a assinatura e iniciar a vigência na data correta.');
+      return;
+    }
+
     if ((novoStatus === 'suspenso' || novoStatus === 'cancelado') && !motivo.trim()) {
       alert('Por favor, informe a justificativa/motivo para auditoria.');
       return;
