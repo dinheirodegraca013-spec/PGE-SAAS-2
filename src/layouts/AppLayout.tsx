@@ -49,7 +49,7 @@ export default function AppLayout() {
       >
         <div className="flex h-16 items-center justify-between border-b border-slate-200 px-6">
           <div className="flex min-w-0 items-center gap-3">
-            <img src="/gestio-mark.svg" alt="Emblema GESTIO" className="h-10 w-10 shrink-0 drop-shadow-sm" />
+            <img src="/gestio-mark.png" alt="Emblema GESTIO" className="h-10 w-10 shrink-0 drop-shadow-sm" />
             <div className="min-w-0 leading-tight">
               <span className="block text-lg font-extrabold tracking-[0.16em] text-slate-900">GESTIO</span>
               <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.11em] text-slate-500">Gestão inteligente</span>
