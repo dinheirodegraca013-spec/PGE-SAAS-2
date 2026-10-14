@@ -1585,7 +1585,7 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
+                      {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1621,7 +1621,7 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
+                      {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1655,7 +1655,7 @@ export default function SettingsView() {
                       Usuários na Equipe
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.usuarios ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
+                      {usoRecursos.usuarios ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
