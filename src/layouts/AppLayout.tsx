@@ -119,9 +119,6 @@ export default function AppLayout() {
           </div>
         </header>
 
-        <div className="gestio-page-heading flex shrink-0 items-center justify-between px-4 pt-5 sm:px-6 lg:px-8">
-          <div><p className="text-[10px] font-bold uppercase tracking-[.2em] text-cyan-700">GESTIO / PAINEL</p><h1 className="mt-1 text-xl font-extrabold tracking-tight text-slate-950 sm:text-2xl">{currentTitle}</h1><p className="mt-1 text-xs text-slate-500 sm:text-sm">Visão geral da sua empresa</p></div>
-        </div>
         <main className="gestio-content flex-1 overflow-y-auto px-4 pb-6 pt-5 sm:px-6 lg:px-8 lg:pb-8">
           <Outlet />
           <div className="gestio-footer-banner mt-7 flex flex-col gap-4 rounded-2xl border border-cyan-400/30 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
