@@ -788,6 +788,7 @@ export default function SettingsView() {
           } else if (rpcRes && rpcRes.success === false) {
             erroMudanca = rpcRes.error || 'Não foi possível migrar para o plano Free.';
           }
+        }
 
         if (erroMudanca) {
           throw new Error(erroMudanca);
