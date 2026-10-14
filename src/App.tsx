@@ -14,6 +14,7 @@ import FinanceiroGuard from './components/auth/FinanceiroGuard';
 // Views do Painel do Cliente (Existentes - 100% preservadas)
 import DashboardView from './views/dashboard/DashboardView';
 import LoginView from './views/auth/LoginView';
+import ResetPasswordView from './views/auth/ResetPasswordView';
 import RegisterView from './views/auth/RegisterView';
 import ClientesListView from './modules/clientes/views/ClientesListView';
 import ProjetosListView from './modules/furniture/views/ProjetosListView';
@@ -103,6 +104,7 @@ export default function App() {
               </PublicOnly>
             }
           />
+          <Route path="/redefinir-senha" element={<ResetPasswordView />} />
 
           {/* Página de Acesso Restrito / Negado */}
           <Route path="/acesso-negado" element={<AcessoNegadoView />} />
