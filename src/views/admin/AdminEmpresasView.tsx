@@ -125,9 +125,18 @@ export default function AdminEmpresasView() {
   };
 
   const handleExcluirEmpresa = async (emp: SaaSEmpresaItem) => {
-    if (!window.confirm(`Excluir definitivamente a empresa "${emp.razaoSocial}"? Essa ação não pode ser desfeita.`)) return;
-    const res = await adminService.excluirEmpresa(emp.id);
+    const confirmacao = window.prompt(
+      `Para excluir/arquivar "${emp.razaoSocial}", digite a razão social exatamente como aparece:`
+    );
+    if (confirmacao === null) return;
+    if (confirmacao.trim() !== emp.razaoSocial) {
+      alert('A confirmação não corresponde ao nome da empresa. Nenhuma alteração foi feita.');
+      return;
+    }
+    if (!window.confirm(`Confirmar exclusão administrativa de "${emp.razaoSocial}"? Os acessos serão desativados, as assinaturas canceladas e o histórico financeiro será preservado.`)) return;
+    const res = await adminService.excluirEmpresa(emp.id, confirmacao.trim());
     if (!res.succeeded) { alert(res.errors.join(' ')); return; }
+    alert('Empresa arquivada com segurança. Acessos desativados e histórico financeiro preservado.');
     await carregarEmpresas();
   };
 
