@@ -1014,39 +1014,19 @@ export const adminService = {
         return { succeeded: false, errors: [error.message] };
       }
 
-      const configs: SaaSGatewayConfig[] = [
-        {
-          id: 'mp-default',
-          provedor: 'MercadoPago',
-          ativo: false,
-          modoAmbiente: 'sandbox',
-          webhookUrl: `${window.location.origin}/api/gateways/mercadopago/webhook`,
-        },
-        {
-          id: 'inf-default',
-          provedor: 'InfinitePay',
-          ativo: false,
-          modoAmbiente: 'sandbox',
-          webhookUrl: `${window.location.origin}/api/gateways/infinitepay/webhook`,
-        },
-      ];
-
-      (data || []).forEach((d: any) => {
-        const idx = configs.findIndex((c) => c.provedor === d.provedor);
-        if (idx >= 0) {
-          configs[idx] = {
-            id: d.id,
-            provedor: d.provedor,
-            ativo: Boolean(d.ativo),
-            modoAmbiente: d.modo_ambiente || 'sandbox',
-            publicKey: d.public_key || undefined,
-            accessTokenMascarado: d.access_token_mascarado || undefined,
-            webhookSecretMascarado: d.webhook_secret_mascarado || undefined,
-            webhookUrl: d.webhook_url || configs[idx].webhookUrl,
-            updatedAt: d.updated_at,
-          };
-        }
-      });
+      // Exibir exclusivamente gateways cadastrados no banco. Não inventar IDs,
+      // URLs de webhook ou configurações que ainda não foram salvas.
+      const configs: SaaSGatewayConfig[] = (data || []).map((d: any) => ({
+        id: d.id,
+        provedor: d.provedor,
+        ativo: Boolean(d.ativo),
+        modoAmbiente: d.modo_ambiente || 'sandbox',
+        publicKey: d.public_key || undefined,
+        accessTokenMascarado: d.access_token_mascarado || undefined,
+        webhookSecretMascarado: d.webhook_secret_mascarado || undefined,
+        webhookUrl: d.webhook_url || undefined,
+        updatedAt: d.updated_at || undefined,
+      }));
 
       return { succeeded: true, value: configs, errors: [] };
     } catch (err: any) {
