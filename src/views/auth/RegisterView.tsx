@@ -369,7 +369,7 @@ export default function RegisterView() {
             {estaEnviando ? 'Criando conta...' : 'Criar conta e entrar no ERP'}
           </button>
           <p className="text-center text-xs text-slate-400">
-            Nenhuma cobrança é realizada neste ambiente de demonstração e homologação.
+            Para planos pagos, você seguirá para o checkout configurado. A ativação será manual após a conferência do pagamento.
           </p>
         </form>
         )}
