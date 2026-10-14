@@ -172,21 +172,23 @@ export const adminService = {
     }
   },
 
-  async excluirEmpresa(id: string): Promise<ApiResult<void>> {
+  async excluirEmpresa(id: string, confirmacao: string): Promise<ApiResult<void>> {
     if (!isSupabaseConfigured) return { succeeded: false, errors: ['Supabase não configurado.'] };
     try {
-      const [{ count: users, error: usersError }, { count: subs, error: subsError }] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('tenant_id', id),
-        supabase.from('saas_assinaturas').select('id', { count: 'exact', head: true }).eq('tenant_id', id),
-      ]);
-      if (usersError) return { succeeded: false, errors: [usersError.message] };
-      if (subsError) return { succeeded: false, errors: [subsError.message] };
-      if ((users || 0) > 0 || (subs || 0) > 0) return { succeeded: false, errors: ['Não é possível excluir: a empresa possui usuários ou assinaturas vinculadas.'] };
-      const { error } = await supabase.from('tenants').delete().eq('id', id);
+      const { data, error } = await supabase.rpc('admin_excluir_empresa', {
+        p_tenant_id: id,
+        p_confirmacao: confirmacao,
+      });
       if (error) return { succeeded: false, errors: [error.message] };
-      await registrarSaaSAuditLog('Administracao', 'EXCLUIR_EMPRESA', id);
+      if (!data?.success) return { succeeded: false, errors: [data?.message || 'Não foi possível excluir/arquivar a empresa.'] };
+      await registrarSaaSAuditLog('Administracao', 'EXCLUIR_EMPRESA', id, {
+        arquivamentoSeguro: true,
+        historicoFinanceiroPreservado: true,
+      });
       return { succeeded: true, errors: [] };
-    } catch (err: any) { return { succeeded: false, errors: [err.message || 'Erro ao excluir empresa.'] }; }
+    } catch (err: any) {
+      return { succeeded: false, errors: [err.message || 'Erro ao excluir empresa.'] };
+    }
   },
 
   async atualizarStatusEmpresa(
