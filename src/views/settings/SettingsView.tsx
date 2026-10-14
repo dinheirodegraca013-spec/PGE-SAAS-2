@@ -161,9 +161,9 @@ export default function SettingsView() {
 
   // Uso de recursos do tenant atual
   const [usoRecursos, setUsoRecursos] = useState({
-    clientes: 0,
-    projetos: 0,
-    usuarios: 1,
+    clientes: null as number | null,
+    projetos: null as number | null,
+    usuarios: null as number | null,
   });
 
   // Dados da assinatura e conta
@@ -1592,7 +1592,7 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes} / {isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : '∞'}
+                      {usoRecursos.clientes ?? '—'} / {isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : '∞'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1608,15 +1608,15 @@ export default function SettingsView() {
                       }`}
                       style={{
                         width: isFinite(limitesDoPlanoAtual.clientes)
-                          ? `${Math.min(100, (usoRecursos.clientes / limitesDoPlanoAtual.clientes) * 100)}%`
-                          : '30%',
+                          ? `${Math.min(100, ((usoRecursos.clientes ?? 0) / limitesDoPlanoAtual.clientes) * 100)}%`
+                          : '0%',
                       }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-500">
                     {isFinite(limitesDoPlanoAtual.clientes)
-                      ? `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
-                      : 'Clientes ilimitados liberados.'}
+                      ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
+                      : 'Uso de clientes consultado no banco.'}
                   </p>
                 </div>
 
@@ -1628,7 +1628,7 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos} / {isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : '∞'}
+                      {usoRecursos.projetos ?? '—'} / {isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : '∞'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1642,15 +1642,15 @@ export default function SettingsView() {
                       }`}
                       style={{
                         width: isFinite(limitesDoPlanoAtual.projetos)
-                          ? `${Math.min(100, (usoRecursos.projetos / limitesDoPlanoAtual.projetos) * 100)}%`
-                          : '40%',
+                          ? `${Math.min(100, ((usoRecursos.projetos ?? 0) / limitesDoPlanoAtual.projetos) * 100)}%`
+                          : '0%',
                       }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-500">
                     {isFinite(limitesDoPlanoAtual.projetos)
-                      ? `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
-                      : 'Projetos ilimitados na sua marcenaria.'}
+                      ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
+                      : 'Uso de projetos consultado no banco.'}
                   </p>
                 </div>
 
@@ -1662,7 +1662,7 @@ export default function SettingsView() {
                       Usuários na Equipe
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.usuarios} / {isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : '∞'}
+                      {usoRecursos.usuarios ?? '—'} / {isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : '∞'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
@@ -1676,8 +1676,8 @@ export default function SettingsView() {
                       }`}
                       style={{
                         width: isFinite(limitesDoPlanoAtual.usuarios)
-                          ? `${Math.min(100, (usoRecursos.usuarios / limitesDoPlanoAtual.usuarios) * 100)}%`
-                          : '20%',
+                          ? `${Math.min(100, ((usoRecursos.usuarios ?? 0) / limitesDoPlanoAtual.usuarios) * 100)}%`
+                          : '0%',
                       }}
                     />
                   </div>
@@ -2048,17 +2048,17 @@ export default function SettingsView() {
                   <p>
                     O plano gratuito é limitado a <strong>10 clientes</strong>, <strong>5 projetos</strong> e <strong>1 usuário</strong>.
                   </p>
-                  {usoRecursos.clientes > 10 && (
+                  {usoRecursos.clientes !== null && usoRecursos.clientes > 10 && (
                     <p className="font-semibold text-rose-800">
                       • Atenção: Sua conta possui atualmente {usoRecursos.clientes} clientes cadastrados (limite de 10). Seus dados existentes NUNCA serão excluídos, mas novos cadastros ficarão bloqueados até adequação.
                     </p>
                   )}
-                  {usoRecursos.projetos > 5 && (
+                  {usoRecursos.projetos !== null && usoRecursos.projetos > 5 && (
                     <p className="font-semibold text-rose-800">
                       • Atenção: Sua conta possui {usoRecursos.projetos} projetos (limite de 5 no Free). Novos projetos não poderão ser criados até regularização.
                     </p>
                   )}
-                  {usoRecursos.usuarios > 1 && (
+                  {usoRecursos.usuarios !== null && usoRecursos.usuarios > 1 && (
                     <p className="font-semibold text-rose-800">
                       • Atenção: Sua conta possui {usoRecursos.usuarios} usuários. O plano Free permite apenas 1 usuário ativo.
                     </p>
