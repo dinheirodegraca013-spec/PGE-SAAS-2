@@ -159,6 +159,7 @@ export default function RegisterView() {
         email: email.trim(),
         senha,
         plano,
+        planoSolicitadoId: isPlanoFree ? undefined : planoBanco.id,
       });
 
       if (!resultado.succeeded) {
