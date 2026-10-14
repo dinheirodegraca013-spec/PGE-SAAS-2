@@ -4,6 +4,22 @@ import { LogOut, Menu, X, Shield, Bell, Search, Crown, ArrowRight } from 'lucide
 import { useAuthStore } from '@/stores/auth';
 import { navGroups } from './navigation';
 
+
+function getPapelVisivel(papel?: string | null) {
+  const normalizado = String(papel || '').trim().toLowerCase().replace(/[ _-]/g, '');
+  const nomes: Record<string, string> = {
+    administradortenant: 'Administrador da empresa',
+    tenantadmin: 'Administrador da empresa',
+    administrador: 'Administrador da empresa',
+    superadmin: 'Superadministrador',
+    saasadmin: 'Superadministrador',
+    financeiro: 'Financeiro',
+    gestor: 'Gestor',
+    usuario: 'Usuário',
+  };
+  return nomes[normalizado] || (papel && !/tenant/i.test(papel) ? papel : 'Administrador da empresa');
+}
+
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const auth = useAuthStore();
@@ -90,7 +106,7 @@ export default function AppLayout() {
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-white">{auth.usuario?.nomeCompleto ?? 'Usuário'}</p>
-              <p className="truncate text-xs text-slate-400">{auth.usuario?.papel ?? 'Administrador'}</p>
+              <p className="truncate text-xs text-slate-400">{getPapelVisivel(auth.usuario?.papel)}</p>
             </div>
           </NavLink>
           <button type="button" onClick={handleLogout} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-400 transition hover:bg-white/[.06] hover:text-white"><LogOut className="h-4 w-4" />Sair da conta</button>
