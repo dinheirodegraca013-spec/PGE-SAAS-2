@@ -118,7 +118,7 @@ const INITIAL_FORM: FormState = {
   complemento: '',
   bairro: '',
   cidade: '',
-  estado: 'SP',
+  estado: '',
 
   nomeResponsavel: '',
   emailAcesso: '',
@@ -281,9 +281,12 @@ export default function SettingsView() {
               supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('tenant_id', tenantId),
             ]);
 
-            const clientesCount = resClientes.status === 'fulfilled' ? (resClientes.value.count ?? 0) : 0;
-            const projetosCount = resProjetos.status === 'fulfilled' ? (resProjetos.value.count ?? 0) : 0;
-            const usuariosCount = resUsuarios.status === 'fulfilled' ? (resUsuarios.value.count ?? 1) : 1;
+            const clientesCount = resClientes.status === 'fulfilled' && !resClientes.value.error ? (resClientes.value.count ?? 0) : null;
+            const projetosCount = resProjetos.status === 'fulfilled' && !resProjetos.value.error ? (resProjetos.value.count ?? 0) : null;
+            const usuariosCount = resUsuarios.status === 'fulfilled' && !resUsuarios.value.error ? (resUsuarios.value.count ?? 0) : null;
+            if (clientesCount === null || projetosCount === null || usuariosCount === null) {
+              setFeedbackErro('Uma ou mais contagens não puderam ser consultadas. Os dados indisponíveis serão exibidos como traço.');
+            }
 
             if (mounted) {
               setUsoRecursos({
