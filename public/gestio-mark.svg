@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="silver" x1="17" y1="8" x2="53" y2="82" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".45" stop-color="#dbe7f1"/><stop offset=".78" stop-color="#7192ad"/><stop offset="1" stop-color="#f8fbff"/></linearGradient>
+    <linearGradient id="cyan" x1="28" y1="39" x2="74" y2="51" gradientUnits="userSpaceOnUse"><stop stop-color="#31f5ff"/><stop offset=".55" stop-color="#00bfe9"/><stop offset="1" stop-color="#075b92"/></linearGradient>
+    <linearGradient id="purple" x1="78" y1="44" x2="62" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#d7a0ff"/><stop offset=".35" stop-color="#861bff"/><stop offset="1" stop-color="#321078"/></linearGradient>
+  </defs>
+  <path d="M48 7H87L65 29C61 33 57 35 50 35H39C30 35 25 39 20 46L12 58C7 65 10 72 16 78L31 92H18L7 80C-1 71 0 61 7 51L27 20C32 12 39 7 48 7Z" fill="url(#silver)" stroke="#173b5c" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M30 40H68C75 40 78 45 73 50L57 64H31C27 64 25 61 28 57L38 45C40 42 43 40 48 40Z" fill="url(#cyan)" stroke="#44eaff" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M72 41L80 41C88 41 92 46 92 54V67C92 74 89 79 83 84L65 97H37L52 83C57 78 62 73 68 67L80 54C83 50 79 45 72 41Z" fill="url(#purple)" stroke="#9c4bff" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M17 77L31 91C36 96 44 96 51 91L66 80" stroke="#21e8ff" stroke-width="1.4" stroke-linecap="round"/>
+</svg>
