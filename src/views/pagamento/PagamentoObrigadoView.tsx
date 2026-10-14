@@ -16,9 +16,9 @@ export default function PagamentoObrigadoView() {
   const plano = PLANOS[slug] || PLANOS.standard;
   const gratuito = slug === 'free';
   const mensagem = encodeURIComponent(
-    `Olá! Acabei de realizar o cadastro no Gestio e escolhi o plano ${plano.nome}. Gostaria de solicitar a ativação manual do meu plano. Vou enviar os dados da empresa e o comprovante do pagamento para conferência.`
+    `Olá! Acabei de concluir o checkout do Gestio e solicito a ativação manual do meu plano ${plano.nome}.\n\nNome da empresa: \nE-mail usado no cadastro: \n\nPor favor, confiram o pagamento e ativem meu acesso. Sei que a ativação depende da conferência manual.`
   );
-  const linkWhatsApp = `https://wa.me/${WHATSAPP_ATIVACAO}?text=${mensagem}`;
+  const whatsappUrl = `https://wa.me/${WHATSAPP_ATIVACAO}?text=${mensagem}`;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-surface px-4 py-10">
@@ -28,7 +28,7 @@ export default function PagamentoObrigadoView() {
         </div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">GESTIO</p>
         <h1 className="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-          {gratuito ? 'Obrigado por escolher o Gestio!' : 'Cadastro recebido!'}
+          {gratuito ? 'Obrigado por escolher o Gestio!' : 'Próximo passo: solicitar a ativação'}
         </h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">{plano.descricao}</p>
 
@@ -42,7 +42,7 @@ export default function PagamentoObrigadoView() {
               <p className="mt-1 text-xs leading-5 text-slate-600">
                 {gratuito
                   ? 'Você pode entrar na plataforma e utilizar os recursos disponíveis no plano gratuito.'
-                  : 'Após concluir o pagamento, chame nossa equipe no WhatsApp. O Super Admin vai conferir as informações e liberar manualmente seu plano. A contagem do contrato e da utilização começa no dia da ativação administrativa.'}
+                  : 'Após concluir o pagamento, toque no botão do WhatsApp para solicitar a ativação. Nossa equipe vai conferir o pagamento e o Super Admin liberará o plano manualmente. A contratação e o início de utilização serão registrados na data da ativação.'}
               </p>
             </div>
           </div>
@@ -50,21 +50,23 @@ export default function PagamentoObrigadoView() {
 
         <div className="mt-7 flex flex-col justify-center gap-3">
           {!gratuito && (
-            <a href={linkWhatsApp} target="_blank" rel="noopener noreferrer" className="btn-primary inline-flex items-center justify-center gap-2">
-              <MessageCircle className="h-4 w-4" />
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#16A34A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#15803D]"
+            >
+              <MessageCircle className="h-5 w-5" />
               Chamar no WhatsApp para ativar
-              <ArrowRight className="h-4 w-4" />
             </a>
           )}
-          <Link to="/login" className="btn-secondary inline-flex items-center justify-center gap-2">
+          <Link to="/login" className="btn-primary gap-2">
             Ir para o login <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/cadastro" className="text-sm font-medium text-slate-500 hover:text-slate-700">Voltar ao site</Link>
+          <Link to="/cadastro" className="btn-secondary">Voltar ao site</Link>
         </div>
         <p className="mt-6 text-[11px] leading-5 text-slate-400">
-          {gratuito
-            ? 'Obrigado por confiar no Gestio.'
-            : 'O retorno do checkout não confirma o pagamento. A ativação só ocorre depois da conferência manual pelo Gestio.'}
+          {gratuito ? 'Obrigado por confiar no Gestio.' : 'O retorno do checkout não comprova, por si só, que o pagamento foi aprovado. A ativação depende da conferência manual pela equipe.'}
         </p>
       </section>
     </main>
