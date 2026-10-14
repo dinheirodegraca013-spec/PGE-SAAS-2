@@ -9,6 +9,7 @@ export interface RegisterPayload {
   email: string;
   senha: string;
   plano: number;
+  planoSolicitadoId?: string;
 }
 
 const STORAGE_KEY = 'erp-saas:auth';
@@ -327,7 +328,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             nome_completo: payload.nomeCompleto.trim(),
             razao_social: payload.razaoSocial.trim(),
             nome_fantasia: payload.nomeFantasia?.trim() || null,
-            plano: planoNome,\n            plano_solicitado_id: payload.planoSolicitadoId || null,
+            plano: 'Free',
+            plano_solicitado_id: payload.planoSolicitadoId || null,\n            plano_solicitado_id: payload.planoSolicitadoId || null,
           },
         },
       });
@@ -337,6 +339,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Contas de planos pagos ficam pendentes e sem acesso até a ativação manual pelo Super Admin.
+      if (data.session && Number(payload.plano) !== 0) {
+        await supabase.auth.signOut();
+        clearAuthState();
+        return { succeeded: true, value: { confirmationRequired: false }, errors: [] };
+      }
+
+      // Planos pagos permanecem bloqueados até a ativação manual pelo Super Admin.
       if (data.session && Number(payload.plano) !== 0) {
         await supabase.auth.signOut();
         clearAuthState();
