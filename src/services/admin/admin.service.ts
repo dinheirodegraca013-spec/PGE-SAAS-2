@@ -75,11 +75,16 @@ export const adminService = {
       if (tenantsErr) return { succeeded: false, errors: [tenantsErr.message] };
 
       // 2. Busca contagem de perfis por tenant
-      const { data: profilesData } = await supabase.from('profiles').select('tenant_id');
+      const { data: profilesData, error: profilesErr } = await supabase.from('profiles').select('tenant_id');
+      if (profilesErr) return { succeeded: false, errors: [profilesErr.message] };
 
-      // 3. Busca assinaturas atuais
-      const { data: assinaturasData } = await supabase.from('saas_assinaturas').select('*');
-      const { data: planosData } = await supabase.from('saas_planos').select('id,nome');
+      // 3. Assinaturas em ordem decrescente para escolher a mais recente de cada empresa.
+      const { data: assinaturasData, error: assinaturasErr } = await supabase
+        .from('saas_assinaturas').select('*').order('created_at', { ascending: false });
+      if (assinaturasErr) return { succeeded: false, errors: [assinaturasErr.message] };
+
+      const { data: planosData, error: planosErr } = await supabase.from('saas_planos').select('id,nome,preco');
+      if (planosErr) return { succeeded: false, errors: [planosErr.message] };
 
       const empresas: SaaSEmpresaItem[] = (tenantsData || [])
         // Empresas arquivadas por exclusão ficam fora do painel; o registro permanece no banco para auditoria.
