@@ -244,17 +244,15 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, documento, plano, status, ativo, logo_url, created_at')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at')
               .eq('id', tenantId)
               .maybeSingle();
 
             if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
-              cnpj = tenantData.documento || '';
               dataInicioTenant = tenantData.created_at || null;
               if (tenantData.plano) planoTenant = tenantData.plano;
-              if (tenantData.logo_url && !fotoUrlPerfil) fotoUrlPerfil = tenantData.logo_url;
             }
           }
 
@@ -493,7 +491,6 @@ export default function SettingsView() {
             .update({
               razao_social: formData.razaoSocial.trim(),
               nome_fantasia: formData.nomeFantasia.trim() || null,
-              documento: cleanCnpj || null,
             })
             .eq('id', tenantId);
 
@@ -864,7 +861,7 @@ export default function SettingsView() {
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
-              Conta Ativa
+              {dadosAssinatura.status === 'ativa' ? 'Assinatura ativa' : 'Conta cadastrada'}
             </span>
           </div>
           <p className="mt-1 text-sm text-slate-500">
@@ -987,9 +984,11 @@ export default function SettingsView() {
                 <span className="text-base font-bold text-slate-900">{dadosAssinatura.planoNome}</span>
               </div>
               <p className="text-[11px] text-emerald-600 font-medium">
-                {dadosAssinatura.valor > 0
-                  ? `${formatarMoeda(dadosAssinatura.valor)}/${dadosAssinatura.periodicidade}`
-                  : 'Gratuito sem mensalidade'}
+                {dadosAssinatura.status === 'sem assinatura cadastrada'
+                  ? 'Nenhuma assinatura cadastrada'
+                  : dadosAssinatura.valor > 0
+                    ? `${formatarMoeda(dadosAssinatura.valor)}/${dadosAssinatura.periodicidade}`
+                    : 'Gratuito sem mensalidade'}
               </p>
               <button
                 type="button"
