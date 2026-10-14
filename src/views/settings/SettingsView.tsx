@@ -360,8 +360,8 @@ export default function SettingsView() {
                 valor: Number(subData.valor ?? planoAssoc?.preco ?? 0),
                 periodicidade: subData.periodicidade || planoAssoc?.periodicidade || 'mensal',
                 dataInicio: subData.data_inicio || null,
-                dataContratacao: dataContratacaoTenant || subData.data_inicio || null,
-                inicioUtilizacao: inicioUtilizacaoTenant || subData.data_inicio || null,
+                dataContratacao: dataContratacaoTenant,
+                inicioUtilizacao: inicioUtilizacaoTenant,
                 dataRenovacao: subData.data_proximo_vencimento || null,
                 recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
