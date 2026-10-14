@@ -130,6 +130,9 @@ export interface SaaSEmpresaItem {
   documento?: string;
   plano: string;
   status: 'ativo' | 'suspenso' | 'cancelado';
+  planoSolicitadoId?: string;
+  dataContratacao?: string;
+  inicioUtilizacao?: string;
   createdAt: string;
   totalUsuarios: number;
   totalProjetos: number;
