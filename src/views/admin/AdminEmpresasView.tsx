@@ -305,10 +305,10 @@ export default function AdminEmpresasView() {
                         {emp.status !== 'ativo' && (
                           <button
                             type="button"
-                            onClick={() => abrirModalStatus(emp, 'ativo')}
+                            onClick={() => abrirAlteracaoPlano(emp)}
                             className="rounded px-2.5 py-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition cursor-pointer"
                           >
-                            Ativar
+                            Ativar plano
                           </button>
                         )}
                         {emp.status === 'ativo' && (
