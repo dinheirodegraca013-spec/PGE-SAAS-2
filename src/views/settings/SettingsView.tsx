@@ -2046,23 +2046,8 @@ export default function SettingsView() {
                   <p>
                     Os limites do plano Free precisam estar cadastrados no catálogo de planos para serem exibidos com precisão.
                   </p>
-                  {usoRecursos.clientes !== null && usoRecursos.clientes > 10 && (
-                    <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui atualmente {usoRecursos.clientes} clientes cadastrados (limite de 10). Seus dados existentes não serão excluídos.
-                    </p>
-                  )}
-                  {usoRecursos.projetos !== null && usoRecursos.projetos > 5 && (
-                    <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui {usoRecursos.projetos} projetos (limite de 5 no Free). Consulte os limites cadastrados do plano antes de migrar.
-                    </p>
-                  )}
-                  {usoRecursos.usuarios !== null && usoRecursos.usuarios > 1 && (
-                    <p className="font-semibold text-rose-800">
-                      • Atenção: Sua conta possui {usoRecursos.usuarios} usuários. Consulte os limites cadastrados do plano antes de migrar.
-                    </p>
-                  )}
                   <p className="text-[11px] text-amber-800 pt-1">
-                    Ao confirmar, o sistema atualizará sua assinatura sem custos adicionais.
+                    A alteração de plano será registrada após a confirmação. Os limites só serão exibidos quando estiverem cadastrados no plano.
                   </p>
                 </div>
               </div>
