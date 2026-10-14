@@ -701,30 +701,11 @@ export default function SettingsView() {
           const { data: rpcRes, error: rpcErr } = await supabase.rpc('migrar_para_plano_free');
 
           if (rpcErr) {
-            console.warn('RPC migrar_para_plano_free não disponível ou falhou, tentando fallback transacional:', rpcErr.message);
-            // Fallback: se RPC não existir, atualiza diretamente através de sessão de admin
-            const tenantId = auth.usuario?.tenantId;
-            if (tenantId) {
-              const { error: updErr } = await supabase
-                .from('tenants')
-                .update({ plano: 'Free' })
-                .eq('id', tenantId);
-              if (updErr) erroMudanca = updErr.message;
-
-              // Atualiza assinatura
-              await supabase
-                .from('saas_assinaturas')
-                .update({
-                  valor: 0,
-                  status: 'ativa',
-                  data_proximo_vencimento: new Date(Date.now() + 100 * 365 * 24 * 3600 * 1000).toISOString(),
-                })
-                .eq('tenant_id', tenantId);
-            }
+            // Sem fallback direto: uma falha no RPC não pode deixar tenant e assinatura divergentes.
+            erroMudanca = `Não foi possível confirmar a mudança para o plano Free no servidor: ${rpcErr.message}`;
           } else if (rpcRes && rpcRes.success === false) {
             erroMudanca = rpcRes.error || 'Não foi possível migrar para o plano Free.';
           }
-        }
 
         if (erroMudanca) {
           throw new Error(erroMudanca);
@@ -1562,9 +1543,9 @@ export default function SettingsView() {
                 <span className="text-xs font-medium text-slate-500">Situação / Renovação</span>
                 <p className="mt-1 text-base font-semibold text-slate-900 flex items-center gap-1.5">
                   <Clock className="h-4 w-4 text-slate-400" />
-                  {dadosAssinatura.dataRenovacao ? formatarDataBR(dadosAssinatura.dataRenovacao) : 'Acesso vitalício / sem expiração'}
+                  {dadosAssinatura.dataRenovacao ? formatarDataBR(dadosAssinatura.dataRenovacao) : 'Não informado'}
                 </p>
-                <p className="mt-1 text-xs text-emerald-600 font-medium">Conta em dia</p>
+                <p className="mt-1 text-xs text-slate-500 font-medium">{dadosAssinatura.status === "ativa" ? "Status ativo no cadastro; pagamento não é validado por esta tela." : dadosAssinatura.status === "pendente" ? "Aguardando ativação administrativa." : "Status conforme registro disponível."}</p>
               </div>
             </div>
 
