@@ -49,7 +49,7 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, tenant_id, nome_completo, email, papel, ativo, avatar_url, tenants(id, plano, ativo)')
+      .select('id, tenant_id, nome_completo, email, papel, ativo, tenants(id, plano, ativo)')
       .eq('id', userId)
       .maybeSingle();
 
