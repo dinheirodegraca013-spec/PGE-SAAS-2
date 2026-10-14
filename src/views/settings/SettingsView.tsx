@@ -127,7 +127,8 @@ const INITIAL_FORM: FormState = {
 };
 
 // Planos padrão para exibição e comparação
-const PLANOS_DEFAULT: SaaSPlano[] = [
+const PLANOS_DEFAULT: SaaSPlano[] = []; /* Planos devem vir exclusivamente do Supabase. */
+/*
   {
     id: 'plano_free',
     nome: 'Free',
@@ -135,13 +136,7 @@ const PLANOS_DEFAULT: SaaSPlano[] = [
     preco: 0,
     periodicidade: 'mensal',
     status: 'ativo',
-    recursos: [
-      'Até 10 clientes cadastrados',
-      '1 usuário na equipe',
-      'Até 5 projetos de marcenaria',
-      'Módulo de Móveis Planejados',
-      'Suporte por e-mail',
-    ],
+    recursos: [],
     ordem: 0,
     createdAt: '2026-01-01T00:00:00Z',
   },
@@ -180,7 +175,7 @@ const PLANOS_DEFAULT: SaaSPlano[] = [
     ordem: 2,
     createdAt: '2026-01-01T00:00:00Z',
   },
-];
+]; */
 
 export default function SettingsView() {
   const auth = useAuthStore();
@@ -223,7 +218,7 @@ export default function SettingsView() {
   });
 
   // Dados da assinatura e conta
-  const [dadosAssinatura, setDadosAssinatura] = useState<{
+  const [dadosAssinatura, setDadosAssinatura] = useState<{ 
     planoNome: string;
     status: string;
     valor: number;
@@ -233,8 +228,8 @@ export default function SettingsView() {
     recursos: string[];
     checkoutUrl?: string | null;
   }>({
-    planoNome: 'Free',
-    status: 'ativa',
+    planoNome: 'Não informado',
+    status: 'pendente',
     valor: 0,
     periodicidade: 'mensal',
     dataInicio: null,
@@ -250,7 +245,7 @@ export default function SettingsView() {
 
   // Modal de Conhecer / Mudar Planos
   const [modalPlanosAberto, setModalPlanosAberto] = useState(false);
-  const [planosDisponiveis, setPlanosDisponiveis] = useState<SaaSPlano[]>(PLANOS_DEFAULT);
+  const [planosDisponiveis, setPlanosDisponiveis] = useState<SaaSPlano[]>([]);
   const [linksPorPlano, setLinksPorPlano] = useState<Record<string, string>>({});
   const [mudandoPlano, setMudandoPlano] = useState(false);
   const [planoSelecionadoParaMudanca, setPlanoSelecionadoParaMudanca] = useState<SaaSPlano | null>(null);
@@ -371,7 +366,7 @@ export default function SettingsView() {
 
             if (subData) {
               const planoAssoc = subData.saas_planos;
-              const nomePlanoFinal = planoAssoc?.nome || planoTenant || 'Free';
+              const nomePlanoFinal = planoAssoc?.nome || planoTenant || 'Não informado';
               setDadosAssinatura({
                 planoNome: nomePlanoFinal,
                 status: subData.status || 'ativa',
@@ -379,25 +374,15 @@ export default function SettingsView() {
                 periodicidade: subData.periodicidade || planoAssoc?.periodicidade || 'mensal',
                 dataInicio: subData.data_inicio || dataInicioTenant,
                 dataRenovacao: subData.data_proximo_vencimento || null,
-                recursos: Array.isArray(planoAssoc?.recursos) && planoAssoc.recursos.length > 0
-                  ? planoAssoc.recursos
-                  : nomePlanoFinal === 'Empresarial'
-                    ? PLANOS_DEFAULT[2].recursos
-                    : nomePlanoFinal === 'Standard'
-                      ? PLANOS_DEFAULT[1].recursos
-                      : PLANOS_DEFAULT[0].recursos,
+                recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
             } else {
               setDadosAssinatura((prev) => ({
                 ...prev,
                 planoNome: planoTenant,
                 dataInicio: dataInicioTenant,
-                valor: planoTenant === 'Empresarial' ? 199.9 : planoTenant === 'Standard' ? 89.9 : 0,
-                recursos: planoTenant === 'Empresarial'
-                  ? PLANOS_DEFAULT[2].recursos
-                  : planoTenant === 'Standard'
-                    ? PLANOS_DEFAULT[1].recursos
-                    : PLANOS_DEFAULT[0].recursos,
+                valor: 0,
+                recursos: [],
               }));
             }
 
@@ -462,25 +447,25 @@ export default function SettingsView() {
         }
 
         const estadoInicial: FormState = {
-          razaoSocial: razaoSocial || 'Marcenaria Arte Design Ltda',
-          nomeFantasia: nomeFantasia || 'Marcenaria Arte & Design',
-          cnpj: formatCNPJ(cnpj || '12.345.678/0001-90'),
-          ramoAtividade: dadosLocais.ramoAtividade || 'Marcenaria & Móveis Planejados',
-          telefoneComercial: dadosLocais.telefoneComercial ? formatTelefone(dadosLocais.telefoneComercial) : '(11) 3245-8900',
-          emailComercial: dadosLocais.emailComercial || 'contato@marcenariaarte.com.br',
+          razaoSocial,
+          nomeFantasia,
+          cnpj: formatCNPJ(cnpj),
+          ramoAtividade: dadosLocais.ramoAtividade || '',
+          telefoneComercial: dadosLocais.telefoneComercial ? formatTelefone(dadosLocais.telefoneComercial) : '',
+          emailComercial: dadosLocais.emailComercial || '',
 
-          cep: dadosLocais.cep ? formatCEP(dadosLocais.cep) : '04578-000',
-          logradouro: dadosLocais.logradouro || 'Avenida das Nações Unidas',
-          numero: dadosLocais.numero || '12901',
-          complemento: dadosLocais.complemento || 'Galpão 4B',
-          bairro: dadosLocais.bairro || 'Brooklin Novo',
-          cidade: dadosLocais.cidade || 'São Paulo',
-          estado: dadosLocais.estado || 'SP',
+          cep: dadosLocais.cep ? formatCEP(dadosLocais.cep) : '',
+          logradouro: dadosLocais.logradouro || '',
+          numero: dadosLocais.numero || '',
+          complemento: dadosLocais.complemento || '',
+          bairro: dadosLocais.bairro || '',
+          cidade: dadosLocais.cidade || '',
+          estado: dadosLocais.estado || '',
 
-          nomeResponsavel: nomeResponsavel || 'Carlos Eduardo Oliveira',
-          emailAcesso: emailAcesso || 'carlos@marcenariaarte.com.br',
-          telefoneResponsavel: dadosLocais.telefoneResponsavel ? formatTelefone(dadosLocais.telefoneResponsavel) : '(11) 98765-4321',
-          cargo: cargo || 'Administrador da Organização',
+          nomeResponsavel,
+          emailAcesso,
+          telefoneResponsavel: dadosLocais.telefoneResponsavel ? formatTelefone(dadosLocais.telefoneResponsavel) : '',
+          cargo,
         };
 
         if (mounted) {
