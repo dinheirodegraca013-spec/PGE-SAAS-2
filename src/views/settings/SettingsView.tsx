@@ -236,6 +236,8 @@ export default function SettingsView() {
         let emailAcesso = auth.usuario?.email || '';
         let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || 'Membro');
         let dataInicioTenant: string | null = null;
+        let planoSolicitadoId: string | null = null;
+        let tenantAtivo: boolean | null = null;
         let planoTenant = auth.usuario?.plano || 'Não informado';
         let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
 
@@ -252,6 +254,8 @@ export default function SettingsView() {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
               dataInicioTenant = tenantData.created_at || null;
+              planoSolicitadoId = tenantData.plano_solicitado_id || null;
+              tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
             }
           }
@@ -336,17 +340,17 @@ export default function SettingsView() {
               // Sem assinatura não significa automaticamente que o plano seja gratuito.
               // Mostra o plano solicitado, se existir, mas deixa claro que ainda não foi ativado.
               let planoSolicitado: any = null;
-              if (tenantData?.plano_solicitado_id) {
+              if (planoSolicitadoId) {
                 const { data: solicitadoData } = await supabase
                   .from('saas_planos')
                   .select('id, nome, preco, periodicidade, recursos')
-                  .eq('id', tenantData.plano_solicitado_id)
+                  .eq('id', planoSolicitadoId)
                   .maybeSingle();
                 planoSolicitado = solicitadoData;
               }
 
               const planoExibido = planoSolicitado?.nome || planoTenant || 'Não informado';
-              const eFreeAtivo = String(planoExibido).toLowerCase() === 'free' && tenantData?.ativo === true;
+              const eFreeAtivo = String(planoExibido).toLowerCase() === 'free' && tenantAtivo === true;
               setDadosAssinatura({
                 planoNome: planoExibido,
                 status: eFreeAtivo ? 'ativa' : 'sem assinatura cadastrada',
