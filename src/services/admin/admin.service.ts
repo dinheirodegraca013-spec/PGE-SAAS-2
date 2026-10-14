@@ -80,7 +80,10 @@ export const adminService = {
       // 3. Busca assinaturas atuais
       const { data: assinaturasData } = await supabase.from('saas_assinaturas').select('*');
 
-      const empresas: SaaSEmpresaItem[] = (tenantsData || []).map((t: any) => {
+      const empresas: SaaSEmpresaItem[] = (tenantsData || [])
+        // Empresas arquivadas por exclusão ficam fora do painel; o registro permanece no banco para auditoria.
+        .filter((t: any) => !String(t.razao_social || '').startsWith('[EXCLUÍDA] '))
+        .map((t: any) => {
         const totalUsers = (profilesData || []).filter((p: any) => p.tenant_id === t.id).length;
         const assinatura = (assinaturasData || []).find((a: any) => a.tenant_id === t.id);
 
@@ -181,10 +184,7 @@ export const adminService = {
       });
       if (error) return { succeeded: false, errors: [error.message] };
       if (!data?.success) return { succeeded: false, errors: [data?.message || 'Não foi possível excluir/arquivar a empresa.'] };
-      await registrarSaaSAuditLog('Administracao', 'EXCLUIR_EMPRESA', id, {
-        arquivamentoSeguro: true,
-        historicoFinanceiroPreservado: true,
-      });
+      // A RPC já grava o log oficial da exclusão para evitar registros duplicados.
       return { succeeded: true, errors: [] };
     } catch (err: any) {
       return { succeeded: false, errors: [err.message || 'Erro ao excluir empresa.'] };
