@@ -1620,7 +1620,7 @@ export default function SettingsView() {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-sm font-bold text-slate-900">Uso Atual dos Recursos</h4>
-                  <p className="text-xs text-slate-500">Acompanhamento do consumo em relação aos limites do plano {dadosAssinatura.planoNome}.</p>
+                  <p className="text-xs text-slate-500">Contagens consultadas no banco. Os limites só serão exibidos quando estiverem cadastrados no sistema.</p>
                 </div>
                 {dadosAssinatura.planoNome.toLowerCase() === 'free' && dadosAssinatura.status === 'ativa' && (
                   <span className="rounded bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
@@ -1641,24 +1641,7 @@ export default function SettingsView() {
                       {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        !Number.isFinite(limitesDoPlanoAtual.clientes)
-                          ? 'bg-emerald-500'
-                          : usoRecursos.clientes >= limitesDoPlanoAtual.clientes
-                            ? 'bg-rose-500'
-                            : usoRecursos.clientes >= limitesDoPlanoAtual.clientes * 0.8
-                              ? 'bg-amber-500'
-                              : 'bg-brand-600'
-                      }`}
-                      style={{
-                        width: Number.isFinite(limitesDoPlanoAtual.clientes)
-                          ? `${Math.min(100, ((usoRecursos.clientes ?? 0) / limitesDoPlanoAtual.clientes) * 100)}%`
-                          : '0%',
-                      }}
-                    />
-                  </div>
+                  <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
                     {Number.isFinite(limitesDoPlanoAtual.clientes)
                       ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
@@ -1677,22 +1660,7 @@ export default function SettingsView() {
                       {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        !Number.isFinite(limitesDoPlanoAtual.projetos)
-                          ? 'bg-emerald-500'
-                          : usoRecursos.projetos >= limitesDoPlanoAtual.projetos
-                            ? 'bg-rose-500'
-                            : 'bg-indigo-600'
-                      }`}
-                      style={{
-                        width: Number.isFinite(limitesDoPlanoAtual.projetos)
-                          ? `${Math.min(100, ((usoRecursos.projetos ?? 0) / limitesDoPlanoAtual.projetos) * 100)}%`
-                          : '0%',
-                      }}
-                    />
-                  </div>
+                  <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
                     {Number.isFinite(limitesDoPlanoAtual.projetos)
                       ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
@@ -1711,22 +1679,7 @@ export default function SettingsView() {
                       {usoRecursos.usuarios ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      className={`h-full rounded-full transition-all ${
-                        !Number.isFinite(limitesDoPlanoAtual.usuarios)
-                          ? 'bg-emerald-500'
-                          : usoRecursos.usuarios >= limitesDoPlanoAtual.usuarios
-                            ? 'bg-amber-500'
-                            : 'bg-sky-600'
-                      }`}
-                      style={{
-                        width: Number.isFinite(limitesDoPlanoAtual.usuarios)
-                          ? `${Math.min(100, ((usoRecursos.usuarios ?? 0) / limitesDoPlanoAtual.usuarios) * 100)}%`
-                          : '0%',
-                      }}
-                    />
-                  </div>
+                  <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
                     {Number.isFinite(limitesDoPlanoAtual.usuarios)
                       ? `Até ${limitesDoPlanoAtual.usuarios} operador(es) simultâneo(s).`
@@ -1774,7 +1727,7 @@ export default function SettingsView() {
                             {formatarDataBR(cob.data_vencimento)}
                           </td>
                           <td className="px-3.5 py-2 text-slate-800">
-                            {cob.descricao || `Assinatura ${dadosAssinatura.planoNome}`}
+                            {cob.descricao || 'Sem descrição cadastrada'}
                           </td>
                           <td className="px-3.5 py-2 text-slate-900 font-semibold font-mono">
                             {formatarMoeda(Number(cob.valor))}
