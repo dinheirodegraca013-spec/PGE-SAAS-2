@@ -288,13 +288,12 @@ export default function SettingsView() {
           if (userId) {
             const { data: profileData } = await supabase
               .from('profiles')
-              .select('nome_completo, email, papel, avatar_url')
+              .select('nome_completo, email, papel')
               .eq('id', userId)
               .maybeSingle();
 
             if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
-              if (profileData.avatar_url) fotoUrlPerfil = profileData.avatar_url;
               if (profileData.email) emailAcesso = profileData.email;
               if (profileData.papel) {
                 cargo = profileData.papel === 'AdministradorTenant' ? 'Administrador da Organização' : profileData.papel;
@@ -676,10 +675,10 @@ export default function SettingsView() {
         setUploadProgress(85);
 
         const { error: profilePhotoError } = await supabase
-          .from('profiles')
-          .update({ avatar_url: urlFinal, updated_at: new Date().toISOString() })
-          .eq('id', userId);
-        if (profilePhotoError) throw new Error('A foto foi enviada, mas não foi possível salvar sua referência no perfil: ' + profilePhotoError.message);
+          .from('tenants')
+          .update({ logo_url: urlFinal, updated_at: new Date().toISOString() })
+          .eq('id', tenantId);
+        if (profilePhotoError) throw new Error('A imagem foi enviada, mas não foi possível salvar a referência da empresa: ' + profilePhotoError.message);
       }
 
       setUploadProgress(100);
@@ -714,8 +713,9 @@ export default function SettingsView() {
       const tenantId = auth.usuario?.tenantId;
 
       if (!isSupabaseConfigured || !userId) throw new Error('Não foi possível identificar sua conta real.');
-      const { error: removeError } = await supabase.from('profiles').update({ avatar_url: null, updated_at: new Date().toISOString() }).eq('id', userId);
-      if (removeError) throw new Error('Não foi possível remover a foto salva: ' + removeError.message);
+      if (!tenantId) throw new Error('Não foi possível identificar a empresa desta conta.');
+      const { error: removeError } = await supabase.from('tenants').update({ logo_url: null, updated_at: new Date().toISOString() }).eq('id', tenantId);
+      if (removeError) throw new Error('Não foi possível remover a imagem salva: ' + removeError.message);
 
       setAvatarUrl(null);
       setPreviewUrl(null);
