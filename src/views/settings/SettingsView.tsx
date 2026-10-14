@@ -250,13 +250,16 @@ export default function SettingsView() {
         if (isSupabaseConfigured) {
           // 1. Busca dados do tenant
           if (tenantId) {
-            const { data: tenantData } = await supabase
+            const { data: tenantData, error: tenantError } = await supabase
               .from('tenants')
               .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id, logo_url, data_contratacao, inicio_utilizacao')
               .eq('id', tenantId)
               .maybeSingle();
 
-            if (tenantData) {
+            if (tenantError) {
+              console.error('Erro ao consultar dados reais da empresa:', tenantError.message);
+              if (mounted) setFeedbackErro('Não foi possível carregar os dados reais da empresa. Nenhum dado estimado será usado.');
+            } else if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
               fotoUrlPerfil = tenantData.logo_url || null;
@@ -286,13 +289,16 @@ export default function SettingsView() {
 
           // Busca dados do perfil do responsável
           if (userId) {
-            const { data: profileData } = await supabase
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
               .select('nome_completo, email, papel')
               .eq('id', userId)
               .maybeSingle();
 
-            if (profileData) {
+            if (profileError) {
+              console.error('Erro ao consultar o perfil real:', profileError.message);
+              if (mounted) setFeedbackErro('Não foi possível consultar o perfil salvo. Campos indisponíveis ficarão vazios.');
+            } else if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
               if (profileData.email) emailAcesso = profileData.email;
               if (profileData.papel) {
@@ -406,20 +412,31 @@ export default function SettingsView() {
           }
 
           // 5. Busca catálogo de planos e links de pagamento
-          const { data: catalogPlanos } = await supabase
+          const { data: catalogPlanos, error: catalogPlanosError } = await supabase
             .from('saas_planos')
             .select('*')
             .eq('status', 'ativo')
             .order('ordem', { ascending: true });
 
-          if (mounted) setPlanosDisponiveis(catalogPlanos || []);
+          if (catalogPlanosError) {
+            console.error('Erro ao consultar catálogo real de planos:', catalogPlanosError.message);
+            if (mounted) {
+              setPlanosDisponiveis([]);
+              setFeedbackErro('Não foi possível consultar os planos cadastrados. Nenhum preço ou plano de exemplo será exibido.');
+            }
+          } else if (mounted) {
+            setPlanosDisponiveis(catalogPlanos || []);
+          }
 
-          const { data: catalogLinks } = await supabase
+          const { data: catalogLinks, error: catalogLinksError } = await supabase
             .from('saas_planos_links')
             .select('plano_id, url_checkout')
             .eq('status', 'ativo');
 
-          if (mounted) {
+          if (catalogLinksError) {
+            console.error('Erro ao consultar links de checkout reais:', catalogLinksError.message);
+            if (mounted) setLinksPorPlano({});
+          } else if (mounted) {
             const map: Record<string, string> = {};
             (catalogLinks || []).forEach((l) => {
               if (l.plano_id && l.url_checkout) map[l.plano_id] = l.url_checkout;
