@@ -299,7 +299,7 @@ export default function SettingsView() {
 
           // 4. Busca dados reais de assinatura
           if (tenantId) {
-            const { data: subData } = await supabase
+            const { data: subData, error: subError } = await supabase
               .from('saas_assinaturas')
               .select('*, saas_planos(id, nome, preco, periodicidade, recursos)')
               .eq('tenant_id', tenantId)
@@ -307,7 +307,20 @@ export default function SettingsView() {
               .limit(1)
               .maybeSingle();
 
-            if (subData) {
+            if (subError) {
+              if (mounted) {
+                setFeedbackErro('Não foi possível consultar a assinatura no banco. Os dados financeiros não serão presumidos.');
+                setDadosAssinatura({
+                  planoNome: planoTenant || 'Não informado',
+                  status: 'indisponível',
+                  valor: 0,
+                  periodicidade: 'mensal',
+                  dataInicio: null,
+                  dataRenovacao: null,
+                  recursos: [],
+                });
+              }
+            } else if (subData) {
               const planoAssoc = subData.saas_planos;
               const nomePlanoFinal = planoAssoc?.nome || planoTenant || 'Não informado';
               setDadosAssinatura({
@@ -1572,13 +1585,13 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
+                      {usoRecursos.clientes ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        !isFinite(limitesDoPlanoAtual.clientes)
+                        !Number.isFinite(limitesDoPlanoAtual.clientes)
                           ? 'bg-emerald-500'
                           : usoRecursos.clientes >= limitesDoPlanoAtual.clientes
                             ? 'bg-rose-500'
@@ -1587,14 +1600,14 @@ export default function SettingsView() {
                               : 'bg-brand-600'
                       }`}
                       style={{
-                        width: isFinite(limitesDoPlanoAtual.clientes)
+                        width: Number.isFinite(limitesDoPlanoAtual.clientes)
                           ? `${Math.min(100, ((usoRecursos.clientes ?? 0) / limitesDoPlanoAtual.clientes) * 100)}%`
                           : '0%',
                       }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    {isFinite(limitesDoPlanoAtual.clientes)
+                    {Number.isFinite(limitesDoPlanoAtual.clientes)
                       ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
                       : 'Limite não cadastrado no plano.'}
                   </p>
@@ -1608,27 +1621,27 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
+                      {usoRecursos.projetos ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        !isFinite(limitesDoPlanoAtual.projetos)
+                        !Number.isFinite(limitesDoPlanoAtual.projetos)
                           ? 'bg-emerald-500'
                           : usoRecursos.projetos >= limitesDoPlanoAtual.projetos
                             ? 'bg-rose-500'
                             : 'bg-indigo-600'
                       }`}
                       style={{
-                        width: isFinite(limitesDoPlanoAtual.projetos)
+                        width: Number.isFinite(limitesDoPlanoAtual.projetos)
                           ? `${Math.min(100, ((usoRecursos.projetos ?? 0) / limitesDoPlanoAtual.projetos) * 100)}%`
                           : '0%',
                       }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    {isFinite(limitesDoPlanoAtual.projetos)
+                    {Number.isFinite(limitesDoPlanoAtual.projetos)
                       ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
                       : 'Limite não cadastrado no plano.'}
                   </p>
@@ -1642,29 +1655,29 @@ export default function SettingsView() {
                       Usuários na Equipe
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.usuarios ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
+                      {usoRecursos.usuarios ?? '—'} / {Number.Number.isFinite(limitesDoPlanoAtual.usuarios) ? limitesDoPlanoAtual.usuarios : 'Não definido'}
                     </span>
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        !isFinite(limitesDoPlanoAtual.usuarios)
+                        !Number.isFinite(limitesDoPlanoAtual.usuarios)
                           ? 'bg-emerald-500'
                           : usoRecursos.usuarios >= limitesDoPlanoAtual.usuarios
                             ? 'bg-amber-500'
                             : 'bg-sky-600'
                       }`}
                       style={{
-                        width: isFinite(limitesDoPlanoAtual.usuarios)
+                        width: Number.isFinite(limitesDoPlanoAtual.usuarios)
                           ? `${Math.min(100, ((usoRecursos.usuarios ?? 0) / limitesDoPlanoAtual.usuarios) * 100)}%`
                           : '0%',
                       }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    {isFinite(limitesDoPlanoAtual.usuarios)
+                    {Number.isFinite(limitesDoPlanoAtual.usuarios)
                       ? `Até ${limitesDoPlanoAtual.usuarios} operador(es) simultâneo(s).`
-                      : 'Equipe ilimitada inclusa.'}
+                      : 'Limite não cadastrado no plano.'}
                   </p>
                 </div>
               </div>
