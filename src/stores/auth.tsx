@@ -315,8 +315,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
     }
 
-    const planoNome = mapPlanoNome(payload.plano);
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email: payload.email.trim(),
@@ -339,13 +337,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Contas de planos pagos ficam pendentes e sem acesso até a ativação manual pelo Super Admin.
-      if (data.session && Number(payload.plano) !== 0) {
-        await supabase.auth.signOut();
-        clearAuthState();
-        return { succeeded: true, value: { confirmationRequired: false }, errors: [] };
-      }
-
-      // Planos pagos permanecem bloqueados até a ativação manual pelo Super Admin.
       if (data.session && Number(payload.plano) !== 0) {
         await supabase.auth.signOut();
         clearAuthState();
