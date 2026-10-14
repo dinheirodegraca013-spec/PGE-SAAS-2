@@ -64,8 +64,8 @@ export default function AdminEmpresasView() {
 
   const abrirAlteracaoPlano = (empresa: SaaSEmpresaItem) => {
     setEmpresaPlano(empresa);
-    const planoAtual = planos.find((p) => p.nome === empresa.plano);
-    setPlanoSelecionado(planoAtual?.id || '');
+    const planoAtual = planos.find((p) => p.nome.trim().toLowerCase() === empresa.plano.trim().toLowerCase());
+    setPlanoSelecionado(empresa.planoSolicitadoId || planoAtual?.id || '');
     setModalPlanoAberto(true);
   };
 
@@ -74,7 +74,7 @@ export default function AdminEmpresasView() {
     if (!empresaPlano || !planoSelecionado) return;
     const planoNovo = planos.find((p) => p.id === planoSelecionado);
     if (!planoNovo) return;
-    if (!window.confirm('Confirmar alteração do plano de ' + empresaPlano.razaoSocial + ' para ' + planoNovo.nome + '? O valor e a periodicidade da assinatura vinculada serão atualizados, sem cobrança automática.')) return;
+    if (!window.confirm('Confirmar alteração do plano de ' + empresaPlano.razaoSocial + ' para ' + planoNovo.nome + '? O ciclo começa na data da ativação. Confirme o pagamento manualmente antes de ativar.')) return;
     setSalvandoPlano(true);
     try {
       const res = await adminService.alterarPlanoEmpresa(empresaPlano.id, planoSelecionado);
@@ -148,7 +148,7 @@ export default function AdminEmpresasView() {
       (emp.documento && emp.documento.includes(busca));
 
     const matchStatus = filtroStatus === 'todos' || emp.status === filtroStatus;
-    const matchPlano = filtroPlano === 'todos' || emp.plano === filtroPlano;
+    const matchPlano = filtroPlano === 'todos' || emp.plano.toLowerCase() === filtroPlano.toLowerCase();
 
     return matchBusca && matchStatus && matchPlano;
   });
@@ -245,6 +245,7 @@ export default function AdminEmpresasView() {
                   <th className="px-5 py-3.5">Usuários</th>
                   <th className="px-5 py-3.5">Próximo Vencimento</th>
                   <th className="px-5 py-3.5">Data Cadastro</th>
+                  <th className="px-5 py-3.5">Contratação / Início</th>
                   <th className="px-5 py-3.5 text-right">Ações de Gestão</th>
                 </tr>
               </thead>
@@ -265,8 +266,8 @@ export default function AdminEmpresasView() {
                       <div className="text-[11px] text-slate-500 font-mono">
                         {formatarMoeda(emp.valorAssinatura || 0)}/mês
                       </div>
-                      <button type="button" onClick={() => abrirAlteracaoPlano(emp)} className="mt-2 inline-flex items-center gap-1 rounded-md bg-violet-50 px-2 py-1 text-[10px] font-semibold text-violet-700 hover:bg-violet-100" title="Alterar plano da empresa">
-                        <ArrowUpCircle className="h-3 w-3" /> Alterar plano
+                      <button type="button" onClick={() => abrirAlteracaoPlano(emp)} className="mt-2 inline-flex items-center gap-1 rounded-md bg-violet-50 px-2 py-1 text-[10px] font-semibold text-violet-700 hover:bg-violet-100" title="Ativar ou alterar plano da empresa">
+                        <ArrowUpCircle className="h-3 w-3" /> {emp.planoSolicitadoId && emp.status !== 'ativo' ? 'Ativar plano solicitado' : 'Alterar plano'}
                       </button>
                     </td>
                     <td className="px-5 py-4">
@@ -296,6 +297,7 @@ export default function AdminEmpresasView() {
                       {emp.dataVencimento ? formatarData(emp.dataVencimento) : '—'}
                     </td>
                     <td className="px-5 py-4 text-slate-500">{formatarData(emp.createdAt)}</td>
+                    <td className="px-5 py-4 text-slate-500"><div>Contratação: {emp.dataContratacao ? formatarData(emp.dataContratacao) : 'Pendente'}</div><div className="mt-1">Utilização: {emp.inicioUtilizacao ? formatarData(emp.inicioUtilizacao) : 'Pendente'}</div></td>
                     <td className="px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         {emp.status !== 'ativo' && (
@@ -355,10 +357,10 @@ export default function AdminEmpresasView() {
                     {planos.map((p) => <option key={p.id} value={p.id}>{p.nome} — {formatarMoeda(p.preco)}/{p.periodicidade}</option>)}
                   </select>
                 </div>
-                {planos.find((p) => p.id === planoSelecionado) && <div className="rounded-lg border border-violet-100 bg-violet-50 p-3 text-xs text-violet-900"><p className="font-semibold">{planos.find((p) => p.id === planoSelecionado)?.nome}</p><p className="mt-1">{formatarMoeda(planos.find((p) => p.id === planoSelecionado)?.preco || 0)} por período {planos.find((p) => p.id === planoSelecionado)?.periodicidade}</p><p className="mt-2">A mudança é administrativa. Nenhuma cobrança será processada automaticamente.</p></div>}
+                {planos.find((p) => p.id === planoSelecionado) && <div className="rounded-lg border border-violet-100 bg-violet-50 p-3 text-xs text-violet-900"><p className="font-semibold">{planos.find((p) => p.id === planoSelecionado)?.nome}</p><p className="mt-1">{formatarMoeda(planos.find((p) => p.id === planoSelecionado)?.preco || 0)} por período {planos.find((p) => p.id === planoSelecionado)?.periodicidade}</p><p className="mt-2">A ativação libera o plano e inicia o ciclo de utilização nesta data. Confirme o pagamento manualmente antes de ativar.</p></div>}
                 <div className="flex justify-end gap-2 border-t border-slate-100 pt-4">
                   <button type="button" onClick={() => setModalPlanoAberto(false)} className="rounded-lg border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button>
-                  <button type="submit" disabled={salvandoPlano || !planoSelecionado} className="rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-700 disabled:opacity-50">{salvandoPlano ? 'Salvando...' : 'Confirmar upgrade'}</button>
+                  <button type="submit" disabled={salvandoPlano || !planoSelecionado} className="rounded-lg bg-violet-600 px-4 py-2 text-xs font-semibold text-white hover:bg-violet-700 disabled:opacity-50">{salvandoPlano ? 'Ativando...' : (empresaPlano.planoSolicitadoId && empresaPlano.status !== 'ativo' ? 'Confirmar ativação' : 'Confirmar alteração')}</button>
                 </div>
               </form>
             )}
