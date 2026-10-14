@@ -235,8 +235,7 @@ export default function SettingsView() {
         let nomeResponsavel = auth.usuario?.nomeCompleto || '';
         let emailAcesso = auth.usuario?.email || '';
         let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || 'Membro');
-        let dataInicioTenant: string | null = null;
-        let planoSolicitadoId: string | null = null;
+                let planoSolicitadoId: string | null = null;
         let tenantAtivo: boolean | null = null;
         let planoTenant = auth.usuario?.plano || 'Não informado';
         let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
@@ -254,8 +253,7 @@ export default function SettingsView() {
             if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
-              dataInicioTenant = tenantData.created_at || null;
-              planoSolicitadoId = tenantData.plano_solicitado_id || null;
+                            planoSolicitadoId = tenantData.plano_solicitado_id || null;
               tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
             }
@@ -806,7 +804,7 @@ export default function SettingsView() {
         setModalConfirmacaoAberto(false);
         setModalPlanosAberto(false);
         setFeedbackSucesso(
-          `Sua solicitação de contratação do plano ${planoSelecionadoParaMudanca.nome} (${formatarMoeda(planoSelecionadoParaMudanca.preco)}/mês) foi registrada! Nossa equipe de atendimento entrará em contato para liberar o checkout seguro.`
+          `Sua solicitação de contratação do plano ${planoSelecionadoParaMudanca.nome} (${formatarMoeda(planoSelecionadoParaMudanca.preco)}/${planoSelecionadoParaMudanca.periodicidade}) foi registrada! Nossa equipe de atendimento entrará em contato para liberar o checkout seguro.`
         );
         setTimeout(() => setFeedbackSucesso(null), 8000);
       }
