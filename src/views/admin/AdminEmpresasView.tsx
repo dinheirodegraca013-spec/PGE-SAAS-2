@@ -273,7 +273,9 @@ export default function AdminEmpresasView() {
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                          emp.status === 'ativo'
+                          emp.planoSolicitadoId && emp.status !== 'ativo'
+                            ? 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                            : emp.status === 'ativo'
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
                             : emp.status === 'suspenso'
                             ? 'bg-amber-50 text-amber-700 border border-amber-200/50'
@@ -287,7 +289,7 @@ export default function AdminEmpresasView() {
                         ) : (
                           <XCircle className="h-3 w-3 text-red-600" />
                         )}
-                        {emp.status === 'ativo' ? 'Ativa' : emp.status === 'suspenso' ? 'Suspensa' : 'Cancelada'}
+                        {emp.planoSolicitadoId && emp.status !== 'ativo' ? 'Aguardando ativação' : emp.status === 'ativo' ? 'Ativa' : emp.status === 'suspenso' ? 'Suspensa' : 'Cancelada'}
                       </span>
                     </td>
                     <td className="px-5 py-4 font-mono font-medium text-slate-700">
