@@ -79,6 +79,7 @@ export const adminService = {
 
       // 3. Busca assinaturas atuais
       const { data: assinaturasData } = await supabase.from('saas_assinaturas').select('*');
+      const { data: planosData } = await supabase.from('saas_planos').select('id,nome');
 
       const empresas: SaaSEmpresaItem[] = (tenantsData || [])
         // Empresas arquivadas por exclusão ficam fora do painel; o registro permanece no banco para auditoria.
@@ -92,7 +93,7 @@ export const adminService = {
           razaoSocial: t.razao_social || 'Empresa sem nome',
           nomeFantasia: t.nome_fantasia || undefined,
           documento: t.documento || undefined,
-          plano: t.plano || 'Standard',
+          plano: (planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.nome || t.plano || 'Standard',
           status: (t.ativo === false
             ? (assinatura?.status === 'cancelada' ? 'cancelado' : 'suspenso')
             : (assinatura?.status === 'cancelada' ? 'cancelado' : assinatura?.status === 'suspensa' ? 'suspenso' : 'ativo')) as any,
@@ -103,7 +104,7 @@ export const adminService = {
           totalUsuarios: totalUsers,
           totalProjetos: 0,
           assinaturaStatus: assinatura?.status || (t.status === 'ativo' ? 'ativa' : 'pendente'),
-          valorAssinatura: assinatura ? Number(assinatura.valor) : (t.plano === 'Empresarial' ? 199.9 : t.plano === 'Free' ? 0 : 89.9),
+          valorAssinatura: assinatura ? Number(assinatura.valor) : Number((planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.preco || 0),
           dataVencimento: assinatura?.data_proximo_vencimento || undefined,
         };
       });
