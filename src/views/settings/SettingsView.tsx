@@ -173,6 +173,8 @@ export default function SettingsView() {
     valor: number;
     periodicidade: string;
     dataInicio: string | null;
+    dataContratacao: string | null;
+    inicioUtilizacao: string | null;
     dataRenovacao: string | null;
     recursos: string[];
     checkoutUrl?: string | null;
@@ -182,6 +184,8 @@ export default function SettingsView() {
     valor: 0,
     periodicidade: 'mensal',
     dataInicio: null,
+    dataContratacao: null,
+    inicioUtilizacao: null,
     dataRenovacao: null,
     recursos: [],
   });
@@ -202,7 +206,7 @@ export default function SettingsView() {
   }>({
     ultimoAcesso: null,
     criadaEm: null,
-    provedor: 'E-mail / Senha',
+    provedor: 'Não informado',
   });
 
   // Histórico de cobranças
@@ -234,11 +238,13 @@ export default function SettingsView() {
         let cnpj = '';
         let nomeResponsavel = auth.usuario?.nomeCompleto || '';
         let emailAcesso = auth.usuario?.email || '';
-        let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || 'Membro');
+        let cargo = auth.usuario?.papel === 'AdministradorTenant' ? 'Administrador da Organização' : (auth.usuario?.papel || '');
                 let planoSolicitadoId: string | null = null;
         let tenantAtivo: boolean | null = null;
         let planoTenant = auth.usuario?.plano || 'Não informado';
         let fotoUrlPerfil: string | null = null;
+        let dataContratacaoTenant: string | null = null;
+        let inicioUtilizacaoTenant: string | null = null;
         let dadosComerciais: Record<string, any> = {};
 
         if (isSupabaseConfigured) {
@@ -246,7 +252,7 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id, logo_url')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id, logo_url, data_contratacao, inicio_utilizacao')
               .eq('id', tenantId)
               .maybeSingle();
 
@@ -254,6 +260,8 @@ export default function SettingsView() {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
               fotoUrlPerfil = tenantData.logo_url || null;
+              dataContratacaoTenant = tenantData.data_contratacao || null;
+              inicioUtilizacaoTenant = tenantData.inicio_utilizacao || null;
                             planoSolicitadoId = tenantData.plano_solicitado_id || null;
               tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
@@ -337,6 +345,8 @@ export default function SettingsView() {
                   valor: 0,
                   periodicidade: 'mensal',
                   dataInicio: null,
+                  dataContratacao: dataContratacaoTenant,
+                  inicioUtilizacao: inicioUtilizacaoTenant,
                   dataRenovacao: null,
                   recursos: [],
                 });
@@ -346,10 +356,12 @@ export default function SettingsView() {
               const nomePlanoFinal = planoAssoc?.nome || planoTenant || 'Não informado';
               setDadosAssinatura({
                 planoNome: nomePlanoFinal,
-                status: subData.status || 'ativa',
+                status: subData.status || 'indisponível',
                 valor: Number(subData.valor ?? planoAssoc?.preco ?? 0),
                 periodicidade: subData.periodicidade || planoAssoc?.periodicidade || 'mensal',
                 dataInicio: subData.data_inicio || null,
+                dataContratacao: dataContratacaoTenant || subData.data_inicio || null,
+                inicioUtilizacao: inicioUtilizacaoTenant || subData.data_inicio || null,
                 dataRenovacao: subData.data_proximo_vencimento || null,
                 recursos: Array.isArray(planoAssoc?.recursos) ? planoAssoc.recursos : [],
               });
@@ -374,6 +386,8 @@ export default function SettingsView() {
                 valor: Number(planoSolicitado?.preco ?? 0),
                 periodicidade: planoSolicitado?.periodicidade || 'mensal',
                 dataInicio: null,
+                dataContratacao: dataContratacaoTenant,
+                inicioUtilizacao: inicioUtilizacaoTenant,
                 dataRenovacao: null,
                 recursos: Array.isArray(planoSolicitado?.recursos) ? planoSolicitado.recursos : [],
               });
@@ -421,7 +435,7 @@ export default function SettingsView() {
             setDadosSessao({
               ultimoAcesso: user.last_sign_in_at || null,
               criadaEm: user.created_at || null,
-              provedor: user.app_metadata?.provider === 'email' ? 'E-mail e Senha' : (user.app_metadata?.provider || 'E-mail e Senha'),
+              provedor: user.app_metadata?.provider === 'email' ? 'E-mail e Senha' : (user.app_metadata?.provider || 'Não informado'),
             });
           }
         }
@@ -985,7 +999,7 @@ export default function SettingsView() {
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg font-bold text-slate-900">
-                  {formData.nomeFantasia || formData.razaoSocial || 'Minha Empresa'}
+                  {formData.nomeFantasia || formData.razaoSocial || 'Empresa não identificada'}
                 </h2>
                 <span className="rounded bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
                   {formData.cnpj ? `CNPJ ${formData.cnpj}` : 'CNPJ não informado'}
@@ -1592,9 +1606,18 @@ export default function SettingsView() {
                 <span className="text-xs font-medium text-slate-500">Data de Contratação</span>
                 <p className="mt-1 text-base font-semibold text-slate-900 flex items-center gap-1.5">
                   <Calendar className="h-4 w-4 text-slate-400" />
-                  {formatarDataBR(dadosAssinatura.dataInicio)}
+                  {formatarDataBR(dadosAssinatura.dataContratacao)}
                 </p>
-                <p className="mt-1 text-xs text-slate-500">Início da utilização no SaaS</p>
+                <p className="mt-1 text-xs text-slate-500">Data registrada na ativação administrativa</p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
+                <span className="text-xs font-medium text-slate-500">Início da Utilização</span>
+                <p className="mt-1 text-base font-semibold text-slate-900 flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 text-slate-400" />
+                  {formatarDataBR(dadosAssinatura.inicioUtilizacao)}
+                </p>
+                <p className="mt-1 text-xs text-slate-500">Data em que o Super Admin liberou o acesso</p>
               </div>
 
               <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
