@@ -240,6 +240,7 @@ export default function SettingsView() {
         let tenantAtivo: boolean | null = null;
         let planoTenant = auth.usuario?.plano || 'Não informado';
         let fotoUrlPerfil: string | null = auth.usuario?.avatarUrl || null;
+        let dadosComerciais: Record<string, any> = {};
 
         if (isSupabaseConfigured) {
           // 1. Busca dados do tenant
@@ -260,7 +261,23 @@ export default function SettingsView() {
             }
           }
 
-          // 2. Busca dados do perfil do responsável
+          // Dados complementares comerciais vêm do banco, não do armazenamento local do navegador.
+          if (tenantId) {
+            const { data: comerciais, error: comerciaisError } = await supabase
+              .from('tenant_dados_comerciais')
+              .select('cnpj, ramo_atividade, telefone_comercial, email_comercial, cep, logradouro, numero, complemento, bairro, cidade, estado, telefone_responsavel, cargo')
+              .eq('tenant_id', tenantId)
+              .maybeSingle();
+
+            if (comerciaisError) {
+              console.error('Erro ao consultar dados comerciais:', comerciaisError.message);
+              if (mounted) setFeedbackErro('Não foi possível consultar os dados comerciais salvos no banco. Campos complementares não serão preenchidos com dados locais.');
+            } else if (comerciais) {
+              dadosComerciais = comerciais;
+            }
+          }
+
+          // Busca dados do perfil do responsável
           if (userId) {
             const { data: profileData } = await supabase
               .from('profiles')
@@ -409,37 +426,26 @@ export default function SettingsView() {
           }
         }
 
-        // 7. Recupera dados complementares locais
-        let dadosLocais: Partial<FormState> = {};
-        if (tenantId) {
-          try {
-            const salvo = localStorage.getItem(`gestio_cliente_perfil_${tenantId}`);
-            if (salvo) dadosLocais = JSON.parse(salvo);
-          } catch {
-            // Ignora
-          }
-        }
-
+        // Dados complementares são carregados exclusivamente da tabela do tenant.
+        // Dados antigos de localStorage não são considerados cadastro oficial.
         const estadoInicial: FormState = {
           razaoSocial,
           nomeFantasia,
-          cnpj: formatCNPJ(dadosLocais.cnpj || cnpj),
-          ramoAtividade: dadosLocais.ramoAtividade || '',
-          telefoneComercial: dadosLocais.telefoneComercial ? formatTelefone(dadosLocais.telefoneComercial) : '',
-          emailComercial: dadosLocais.emailComercial || '',
-
-          cep: dadosLocais.cep ? formatCEP(dadosLocais.cep) : '',
-          logradouro: dadosLocais.logradouro || '',
-          numero: dadosLocais.numero || '',
-          complemento: dadosLocais.complemento || '',
-          bairro: dadosLocais.bairro || '',
-          cidade: dadosLocais.cidade || '',
-          estado: dadosLocais.estado || '',
-
+          cnpj: formatCNPJ(dadosComerciais.cnpj || cnpj),
+          ramoAtividade: dadosComerciais.ramo_atividade || '',
+          telefoneComercial: dadosComerciais.telefone_comercial ? formatTelefone(dadosComerciais.telefone_comercial) : '',
+          emailComercial: dadosComerciais.email_comercial || '',
+          cep: dadosComerciais.cep ? formatCEP(dadosComerciais.cep) : '',
+          logradouro: dadosComerciais.logradouro || '',
+          numero: dadosComerciais.numero || '',
+          complemento: dadosComerciais.complemento || '',
+          bairro: dadosComerciais.bairro || '',
+          cidade: dadosComerciais.cidade || '',
+          estado: dadosComerciais.estado || '',
           nomeResponsavel,
           emailAcesso,
-          telefoneResponsavel: dadosLocais.telefoneResponsavel ? formatTelefone(dadosLocais.telefoneResponsavel) : '',
-          cargo,
+          telefoneResponsavel: dadosComerciais.telefone_responsavel ? formatTelefone(dadosComerciais.telefone_responsavel) : '',
+          cargo: dadosComerciais.cargo || cargo,
         };
 
         if (mounted) {
@@ -549,9 +555,33 @@ export default function SettingsView() {
         }
       }
 
-      // 3. Salva complementos locais
-      if (tenantId) {
-        localStorage.setItem(`gestio_cliente_perfil_${tenantId}`, JSON.stringify(formData));
+      // Persiste os campos complementares no banco, vinculados ao tenant atual.
+      if (isSupabaseConfigured && tenantId) {
+        const { error: comerciaisError } = await supabase
+          .from('tenant_dados_comerciais')
+          .upsert({
+            tenant_id: tenantId,
+            cnpj: formData.cnpj.replace(/\D/g, '') || null,
+            ramo_atividade: formData.ramoAtividade.trim() || null,
+            telefone_comercial: formData.telefoneComercial.replace(/\D/g, '') || null,
+            email_comercial: formData.emailComercial.trim() || null,
+            cep: formData.cep.replace(/\D/g, '') || null,
+            logradouro: formData.logradouro.trim() || null,
+            numero: formData.numero.trim() || null,
+            complemento: formData.complemento.trim() || null,
+            bairro: formData.bairro.trim() || null,
+            cidade: formData.cidade.trim() || null,
+            estado: formData.estado.trim().toUpperCase() || null,
+            telefone_responsavel: formData.telefoneResponsavel.replace(/\D/g, '') || null,
+            cargo: formData.cargo.trim() || null,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'tenant_id' });
+
+        if (comerciaisError) {
+          throw new Error('Os dados comerciais não foram salvos no banco: ' + comerciaisError.message);
+        }
+      } else {
+        throw new Error('Supabase indisponível. As alterações não foram confirmadas.');
       }
 
       setDadosOriginais(formData);
@@ -1356,6 +1386,7 @@ export default function SettingsView() {
                   onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
                   className="input-field cursor-pointer"
                 >
+                  <option value="">Selecione o estado</option>
                   {ESTADOS_BRASIL.map((uf) => (
                     <option key={uf} value={uf}>{uf}</option>
                   ))}
