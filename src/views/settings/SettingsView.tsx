@@ -252,7 +252,7 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData, error: tenantError } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, plano, ativo, created_at, plano_solicitado_id, logo_url, data_contratacao, inicio_utilizacao')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at')
               .eq('id', tenantId)
               .maybeSingle();
 
@@ -262,10 +262,10 @@ export default function SettingsView() {
             } else if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
-              fotoUrlPerfil = tenantData.logo_url || null;
-              dataContratacaoTenant = tenantData.data_contratacao || null;
-              inicioUtilizacaoTenant = tenantData.inicio_utilizacao || null;
-                            planoSolicitadoId = tenantData.plano_solicitado_id || null;
+              fotoUrlPerfil = null; // Sem coluna de logo validada no banco
+              dataContratacaoTenant = null; // Só exibir data quando existir registro real
+              inicioUtilizacaoTenant = null; // Não presumir início pelo cadastro
+                            planoSolicitadoId = null; // Campo de solicitação ainda não disponível
               tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
             }
