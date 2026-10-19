@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, LucideIcon } from 'lucide-react';
+import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, Wallet, LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -21,6 +21,7 @@ export const navGroups: NavGroup[] = [
       { label: 'Início', path: '/', icon: Home },
       { label: 'Clientes', path: '/clientes', icon: Users },
       { label: 'Serviços', path: '/servicos', icon: Briefcase },
+      { label: 'Meu Financeiro', path: '/meu-financeiro', icon: Wallet },
       // Módulo WhatsApp temporariamente oculto do menu
       // { label: 'Conversas WhatsApp', path: '/whatsapp', icon: MessageCircle },
     ],
