@@ -26,6 +26,7 @@ import ConversasPendentesView from './modules/whatsapp/views/ConversasPendentesV
 import WhatsAppConfiguracaoView from './modules/whatsapp/views/WhatsAppConfiguracaoView';
 import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
+import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -141,6 +142,7 @@ export default function App() {
             <Route path="whatsapp/inbox" element={<WhatsAppInboxView />} />
             <Route path="whatsapp/configuracao" element={<WhatsAppConfiguracaoView />} />
             <Route path="configuracoes" element={<SettingsView />} />
+            <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
           </Route>
 
           {/* =============================================================== */}
