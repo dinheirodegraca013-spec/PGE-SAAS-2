@@ -15,6 +15,26 @@ CREATE TABLE IF NOT EXISTS public.financeiro_lancamentos (
  created_at timestamptz NOT NULL DEFAULT now(),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+-- Defesa adicional: projeto e lancamento devem pertencer ao mesmo tenant.
+-- FK simples de projeto nao verifica tenant_id.
+CREATE OR REPLACE FUNCTION public.financeiro_verificar_tenant_projeto()
+RETURNS trigger LANGUAGE plpgsql SET search_path = ''
+AS $financeiro$
+BEGIN
+ IF NEW.projeto_id IS NOT NULL AND NOT EXISTS (
+  SELECT 1 FROM public.projetos_marcenaria p
+  WHERE p.id = NEW.projeto_id AND p.tenant_id = NEW.tenant_id
+ ) THEN
+  RAISE EXCEPTION 'Projeto nao pertence a empresa do lancamento'
+   USING ERRCODE = '23514';
+ END IF;
+ RETURN NEW;
+END;
+$financeiro$;
+REVOKE ALL ON FUNCTION public.financeiro_verificar_tenant_projeto() FROM PUBLIC;
+CREATE TRIGGER financeiro_lancamento_tenant_projeto_check
+ BEFORE INSERT OR UPDATE OF projeto_id, tenant_id ON public.financeiro_lancamentos
+ FOR EACH ROW EXECUTE FUNCTION public.financeiro_verificar_tenant_projeto();
 CREATE UNIQUE INDEX IF NOT EXISTS financeiro_lancamentos_id_tenant_idx ON public.financeiro_lancamentos(id,tenant_id);
 CREATE TABLE IF NOT EXISTS public.financeiro_baixas (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
