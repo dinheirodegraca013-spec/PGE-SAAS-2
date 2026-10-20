@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.financeiro_lancamentos (
  created_at timestamptz NOT NULL DEFAULT now(),
  updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS financeiro_lancamentos_id_tenant_idx ON public.financeiro_lancamentos(id,tenant_id);
 CREATE TABLE IF NOT EXISTS public.financeiro_baixas (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  lancamento_id uuid NOT NULL REFERENCES public.financeiro_lancamentos(id) ON DELETE RESTRICT,
@@ -27,7 +28,6 @@ CREATE TABLE IF NOT EXISTS public.financeiro_baixas (
  CONSTRAINT financeiro_baixas_tenant_fk FOREIGN KEY (lancamento_id, tenant_id)
  REFERENCES public.financeiro_lancamentos(id, tenant_id)
 );
-CREATE UNIQUE INDEX IF NOT EXISTS financeiro_lancamentos_id_tenant_idx ON public.financeiro_lancamentos(id,tenant_id);
 CREATE INDEX IF NOT EXISTS financeiro_lancamentos_tenant_venc_idx ON public.financeiro_lancamentos(tenant_id,vencimento);
 CREATE INDEX IF NOT EXISTS financeiro_baixas_tenant_data_idx ON public.financeiro_baixas(tenant_id,data_pagamento);
 ALTER TABLE public.financeiro_lancamentos ENABLE ROW LEVEL SECURITY;
