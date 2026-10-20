@@ -26,7 +26,21 @@ def check_schema():
         assert len(names) == 2, names
     print("RPC prerequisites found")
 
+def thread_smoke():
+    results = []
+    gate = threading.Barrier(2)
+    def worker():
+        gate.wait(timeout=10)
+        results.append("ok")
+    jobs = [threading.Thread(target=worker) for _ in range(2)]
+    for job in jobs:
+        job.start()
+    for job in jobs:
+        job.join(timeout=20)
+    assert results == ["ok", "ok"]
+
 if __name__ == "__main__":
     check_schema()
+    thread_smoke()
 
 # Concurrency scenarios run only against disposable CI PostgreSQL.
