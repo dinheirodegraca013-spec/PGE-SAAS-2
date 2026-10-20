@@ -211,7 +211,10 @@ export default function AdminDashboardView() {
               const count = metricas?.distribuicaoPlanos?.[planoKey] || 0;
               const total = metricas?.totalEmpresas || 1;
               const percent = Math.round((count / (total || 1)) * 100);
-              const valorRef = planoKey === 'Empresarial' ? 'R$ 199,90/mês' : planoKey === 'Standard' ? 'R$ 89,90/mês' : 'Gratuito';
+              const preco = metricas?.precosPlanos?.[planoKey];
+              const valorRef = preco === null || preco === undefined
+                ? 'Preço indisponível'
+                : preco === 0 ? 'Gratuito' : `${formatarMoeda(preco)}/mês`;
 
               return (
                 <div key={planoKey} className="space-y-1.5">

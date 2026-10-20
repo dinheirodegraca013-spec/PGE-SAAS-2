@@ -894,6 +894,7 @@ export const adminService = {
       valoresPendentes: number;
       inadimplenciaValor: number;
       distribuicaoPlanos: Record<string, number>;
+      precosPlanos: Record<string, number | null>;
       recentAuditLogs: SaaSAuditLog[];
     }>
   > {
@@ -901,15 +902,16 @@ export const adminService = {
 
     try {
       // Todas as métricas vêm de consultas reais. Falha de consulta não vira zero nem estimativa inventada.
-      const [tenantsRes, profilesRes, assinaturasRes, cobrancasRes, pagamentosRes, logsRes] = await Promise.all([
+      const [tenantsRes, profilesRes, assinaturasRes, cobrancasRes, pagamentosRes, logsRes, planosRes] = await Promise.all([
         supabase.from('tenants').select('id, razao_social, ativo, plano'),
         supabase.from('profiles').select('id, tenant_id'),
         supabase.from('saas_assinaturas').select('*'),
         supabase.from('saas_cobrancas').select('*'),
         supabase.from('saas_pagamentos').select('*'),
         supabase.from('saas_audit_logs').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('saas_planos').select('nome, preco').eq('status', 'ativo'),
       ]);
-      const queryErrors = [tenantsRes.error, profilesRes.error, assinaturasRes.error, cobrancasRes.error, pagamentosRes.error, logsRes.error].filter(Boolean);
+      const queryErrors = [tenantsRes.error, profilesRes.error, assinaturasRes.error, cobrancasRes.error, pagamentosRes.error, logsRes.error, planosRes.error].filter(Boolean);
       if (queryErrors.length) {
         return { succeeded: false, errors: queryErrors.map((e: any) => e.message || 'Falha ao consultar dados reais do painel financeiro.') };
       }
@@ -920,6 +922,15 @@ export const adminService = {
       const cobrancas = cobrancasRes.data || [];
       const pagamentos = pagamentosRes.data || [];
       const logs = logsRes.data || [];
+      const precosPlanos: Record<string, number | null> = { Free: null, Standard: null, Empresarial: null };
+      (planosRes.data || []).forEach((plano: any) => {
+        const nome = String(plano.nome || '').trim().toLowerCase();
+        const chave = nome === 'empresarial' ? 'Empresarial' : nome === 'standard' ? 'Standard' : nome === 'free' ? 'Free' : null;
+        if (chave) {
+          const preco = Number(plano.preco);
+          precosPlanos[chave] = Number.isFinite(preco) && preco >= 0 ? preco : null;
+        }
+      });
 
       const totalEmpresas = tenants.length;
       const empresasAtivas = tenants.filter((t: any) => t.ativo === true).length;
@@ -992,6 +1003,7 @@ export const adminService = {
           valoresPendentes,
           inadimplenciaValor,
           distribuicaoPlanos,
+          precosPlanos,
           recentAuditLogs,
         },
         errors: [],
