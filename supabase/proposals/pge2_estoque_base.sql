@@ -10,7 +10,7 @@ CREATE TABLE public.estoque_itens (
  estoque_minimo numeric(14,3) NOT NULL DEFAULT 0 CHECK (estoque_minimo >= 0),
  ativo boolean NOT NULL DEFAULT true,
  created_at timestamptz NOT NULL DEFAULT now(),
- UNIQUE (id, tenant_id)
+ CONSTRAINT estoque_itens_id_tenant_uniq UNIQUE (id, tenant_id)
 );
 CREATE UNIQUE INDEX estoque_itens_codigo_tenant_uniq ON public.estoque_itens (tenant_id, lower(codigo)) WHERE codigo IS NOT NULL;
 CREATE INDEX estoque_itens_tenant_nome_idx ON public.estoque_itens (tenant_id, nome);
@@ -34,7 +34,7 @@ CREATE POLICY estoque_itens_read ON public.estoque_itens FOR SELECT TO authentic
  USING (tenant_id = (SELECT private.current_tenant_id()));
 CREATE POLICY estoque_mov_read ON public.estoque_movimentacoes FOR SELECT TO authenticated
  USING (tenant_id = (SELECT private.current_tenant_id()));
--- Sem políticas de escrita: movimentações exigem RPC transacional,
+-- PENDENTE: FK composta (projeto_id,tenant_id) para impedir vinculo entre empresas.\n-- Sem políticas de escrita: movimentações exigem RPC transacional,
 -- validação de saldo, autorização de papel e vínculo projeto/tenant.
 REVOKE ALL ON public.estoque_itens,public.estoque_movimentacoes FROM anon;
 REVOKE INSERT,UPDATE,DELETE ON public.estoque_itens,public.estoque_movimentacoes FROM authenticated;
