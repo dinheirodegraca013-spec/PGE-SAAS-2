@@ -23,7 +23,7 @@ BEGIN
  END IF;
  SELECT p.papel, p.ativo INTO v_papel, v_ativo
  FROM public.profiles p WHERE p.id = auth.uid() AND p.tenant_id = v_tenant;
- IF NOT FOUND OR v_ativo IS DISTINCT FROM true OR v_papel NOT IN ('admin','administrador') THEN
+ IF NOT FOUND OR v_ativo IS DISTINCT FROM true OR lower(v_papel) NOT IN ('admin','administrador','administradortenant') THEN
   RAISE EXCEPTION 'Operação não autorizada' USING ERRCODE = '42501';
  END IF;
  IF p_tipo NOT IN ('entrada','saida','ajuste_entrada','ajuste_saida')
