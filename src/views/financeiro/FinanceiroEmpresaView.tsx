@@ -21,23 +21,16 @@ export default function FinanceiroEmpresaView() {
       const resultado = await projetosService.listar();
       if (!resultado.succeeded) throw new Error(resultado.errors.join(' ') || 'Falha ao carregar projetos.');
       setProjetos(resultado.value?.items || []);
-      const { data: baixas, error: baixasErro } = await supabase.from('financeiro_baixas')
-        .select('valor,financeiro_lancamentos!inner(tipo,status)');
-      if (baixasErro) {
+      const { data: resumo, error: resumoErro } = await supabase.rpc('financeiro_resumo_baixas');
+      if (resumoErro) {
         setReceitas(null);
         setDespesas(null);
       } else {
-        let totalReceitas = 0;
-        let totalDespesas = 0;
-        for (const baixa of baixas || []) {
-          const lancamento = baixa.financeiro_lancamentos as unknown as { tipo: string; status: string } | null;
-          const valor = Number(baixa.valor);
-          if (!Number.isFinite(valor) || valor <= 0 || lancamento?.status === 'cancelado') continue;
-          if (lancamento?.tipo === 'receita') totalReceitas += valor;
-          if (lancamento?.tipo === 'despesa') totalDespesas += valor;
-        }
-        setReceitas(totalReceitas);
-        setDespesas(totalDespesas);
+        const totais = Array.isArray(resumo) ? resumo[0] : resumo;
+        const totalReceitas = Number(totais?.receitas);
+        const totalDespesas = Number(totais?.despesas);
+        setReceitas(Number.isFinite(totalReceitas) && totalReceitas >= 0 ? totalReceitas : null);
+        setDespesas(Number.isFinite(totalDespesas) && totalDespesas >= 0 ? totalDespesas : null);
       }
     } catch (e) {
       setProjetos([]);
