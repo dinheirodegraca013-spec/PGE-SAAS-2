@@ -102,7 +102,7 @@ BEGIN
  END;
 END $$;
 -- Authenticated users must not bypass RPCs with direct UPDATE or DELETE.
-DO $
+DO $$
 BEGIN
  BEGIN
   UPDATE public.financeiro_lancamentos SET descricao='ALTERADO' WHERE true;
@@ -114,7 +114,7 @@ BEGIN
   RAISE EXCEPTION 'DELETE unexpectedly allowed';
  EXCEPTION WHEN insufficient_privilege THEN NULL;
  END;
-END $;
+END $$;
 RESET ROLE;
 SET ROLE anon;
 DO $$
