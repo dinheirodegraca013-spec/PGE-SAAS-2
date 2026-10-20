@@ -44,7 +44,7 @@ END $$;
 -- As RPCs transacionais de escrita são verificadas separadamente.
 SET ROLE authenticated;
 SET request.jwt.claim.sub = '20000000-0000-0000-0000-000000000001';
-DO $
+DO $$
 DECLARE t text;
 BEGIN
  FOREACH t IN ARRAY ARRAY['estoque_itens','estoque_movimentacoes','financeiro_lancamentos','financeiro_baixas'] LOOP
