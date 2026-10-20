@@ -33,7 +33,7 @@ VALUES
 -- Cross-tenant project references must be rejected even by privileged setup.
 INSERT INTO public.projetos_marcenaria(id,tenant_id)
 VALUES ('30000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000002');
-DO $
+DO $$
 BEGIN
  BEGIN
   INSERT INTO public.financeiro_lancamentos
@@ -43,7 +43,7 @@ BEGIN
   RAISE EXCEPTION 'Cross-tenant project accepted';
  EXCEPTION WHEN check_violation THEN NULL;
  END;
-END $;
+END $$;
 -- Integrity: reject a baixa linked to another tenant at the FK boundary.
 DO $$
 BEGIN
