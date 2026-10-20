@@ -3,18 +3,21 @@ import { Link, useParams } from 'react-router-dom';
 import { CheckCircle2, Clock3, ArrowRight, ShieldCheck, MessageCircle } from 'lucide-react';
 
 const PLANOS: Record<string, { nome: string; descricao: string }> = {
-  free: { nome: 'Free', descricao: 'Seu plano gratuito está pronto para começar.' },
-  standard: { nome: 'Standard', descricao: 'Agradecemos por escolher o plano Standard do Gestio.' },
-  empresarial: { nome: 'Empresarial', descricao: 'Agradecemos por escolher o plano Empresarial do Gestio.' },
+  basico: { nome: 'Básico', descricao: 'Agradecemos por escolher o plano Básico do Gestio.' },
+  profissional: { nome: 'Profissional', descricao: 'Agradecemos por escolher o plano Profissional do Gestio.' },
+  premium: { nome: 'Premium/Plus', descricao: 'Agradecemos por escolher o plano Premium/Plus do Gestio.' },
+  free: { nome: 'Básico', descricao: 'Agradecemos por escolher o plano Básico do Gestio.' },
+  standard: { nome: 'Profissional', descricao: 'Agradecemos por escolher o plano Profissional do Gestio.' },
+  empresarial: { nome: 'Premium/Plus', descricao: 'Agradecemos por escolher o plano Premium/Plus do Gestio.' },
 };
 
 const WHATSAPP_ATIVACAO = '5513997340823';
 
 export default function PagamentoObrigadoView() {
   const { plano: planoParam } = useParams();
-  const slug = (planoParam || (window.location.pathname.includes('empresarial') ? 'empresarial' : window.location.pathname.includes('free') ? 'free' : window.location.pathname.includes('standard') ? 'standard' : '')).toLowerCase();
+  const slug = (planoParam || (window.location.pathname.includes('premium') || window.location.pathname.includes('empresarial') ? 'premium' : window.location.pathname.includes('basico') || window.location.pathname.includes('free') ? 'basico' : window.location.pathname.includes('profissional') || window.location.pathname.includes('standard') ? 'profissional' : '')).toLowerCase();
   const plano = PLANOS[slug] || { nome: 'Não informado', descricao: 'Não foi possível identificar o plano nesta confirmação.' };
-  const gratuito = slug === 'free';
+  const gratuito = false;
   const mensagem = encodeURIComponent(
     `Olá! Acabei de concluir o checkout do Gestio e solicito a ativação manual do meu plano ${plano.nome}.\n\nNome da empresa: \nE-mail usado no cadastro: \n\nPor favor, confiram o pagamento e ativem meu acesso. Sei que a ativação depende da conferência manual.`
   );
@@ -37,12 +40,10 @@ export default function PagamentoObrigadoView() {
             {gratuito ? <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" /> : <Clock3 className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />}
             <div>
               <h2 className="text-sm font-semibold text-slate-900">
-                {gratuito ? 'Plano selecionado: Free' : 'Plano selecionado: ' + plano.nome}
+                {'Plano selecionado: ' + plano.nome}
               </h2>
               <p className="mt-1 text-xs leading-5 text-slate-600">
-                {gratuito
-                  ? 'Você pode entrar na plataforma e utilizar os recursos disponíveis no plano gratuito.'
-                  : 'Após concluir o pagamento, toque no botão do WhatsApp para solicitar a ativação. Nossa equipe vai conferir o pagamento e o Super Admin liberará o plano manualmente. A contratação e o início de utilização serão registrados na data da ativação.'}
+                {'Após concluir o pagamento, toque no botão do WhatsApp para solicitar a ativação. Nossa equipe vai conferir o pagamento e o Super Admin liberará o plano manualmente. A contratação e o início de utilização serão registrados na data da ativação.'}
               </p>
             </div>
           </div>
@@ -66,7 +67,7 @@ export default function PagamentoObrigadoView() {
           <Link to="/cadastro" className="btn-secondary">Voltar ao site</Link>
         </div>
         <p className="mt-6 text-[11px] leading-5 text-slate-400">
-          {gratuito ? 'Obrigado por confiar no Gestio.' : 'O retorno do checkout não comprova, por si só, que o pagamento foi aprovado. A ativação depende da conferência manual pela equipe.'}
+          {'O retorno do checkout não comprova, por si só, que o pagamento foi aprovado. A ativação depende da conferência manual pela equipe.'}
         </p>
       </section>
     </main>

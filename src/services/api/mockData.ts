@@ -12,7 +12,7 @@ export const INITIAL_USER: UsuarioAutenticado = {
   nomeCompleto: 'Carlos Eduardo Oliveira',
   email: 'carlos@marcenariaarte.com.br',
   papel: 'AdministradorTenant',
-  plano: 'Standard',
+  plano: 'Profissional',
 };
 
 export const INITIAL_CLIENTES: Cliente[] = [

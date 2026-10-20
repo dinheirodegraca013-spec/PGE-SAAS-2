@@ -922,10 +922,10 @@ export const adminService = {
       const cobrancas = cobrancasRes.data || [];
       const pagamentos = pagamentosRes.data || [];
       const logs = logsRes.data || [];
-      const precosPlanos: Record<string, number | null> = { Free: null, Standard: null, Empresarial: null };
+      const precosPlanos: Record<string, number | null> = { Básico: null, Profissional: null, 'Premium/Plus': null };
       (planosRes.data || []).forEach((plano: any) => {
         const nome = String(plano.nome || '').trim().toLowerCase();
-        const chave = nome === 'empresarial' ? 'Empresarial' : nome === 'standard' ? 'Standard' : nome === 'free' ? 'Free' : null;
+        const chave = ['premium', 'premium/plus', 'empresarial'].includes(nome) ? 'Premium/Plus' : ['profissional', 'standard'].includes(nome) ? 'Profissional' : ['basico', 'básico', 'free'].includes(nome) ? 'Básico' : null;
         if (chave) {
           const preco = Number(plano.preco);
           precosPlanos[chave] = Number.isFinite(preco) && preco >= 0 ? preco : null;
@@ -967,10 +967,10 @@ export const adminService = {
         .filter((c: any) => c.status === 'vencida')
         .reduce((sum: number, c: any) => sum + Number(c.valor || 0), 0);
 
-      const distribuicaoPlanos: Record<string, number> = { Free: 0, Standard: 0, Empresarial: 0 };
+      const distribuicaoPlanos: Record<string, number> = { Básico: 0, Profissional: 0, 'Premium/Plus': 0 };
       tenants.forEach((t: any) => {
         const nome = String(t.plano || 'free').toLowerCase();
-        const chave = nome === 'empresarial' ? 'Empresarial' : nome === 'standard' ? 'Standard' : nome === 'free' ? 'Free' : nome;
+        const chave = ['premium', 'premium/plus', 'empresarial'].includes(nome) ? 'Premium/Plus' : ['profissional', 'standard'].includes(nome) ? 'Profissional' : ['basico', 'básico', 'free'].includes(nome) ? 'Básico' : nome;
         distribuicaoPlanos[chave] = (distribuicaoPlanos[chave] || 0) + 1;
       });
 

@@ -207,7 +207,7 @@ export default function AdminDashboardView() {
           </div>
 
           <div className="space-y-4">
-            {['Free', 'Standard', 'Empresarial'].map((planoKey) => {
+            {['Básico', 'Profissional', 'Premium/Plus'].map((planoKey) => {
               const count = metricas?.distribuicaoPlanos?.[planoKey] || 0;
               const total = metricas?.totalEmpresas || 1;
               const percent = Math.round((count / (total || 1)) * 100);
@@ -225,9 +225,9 @@ export default function AdminDashboardView() {
                   <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
-                        planoKey === 'Empresarial'
+                        planoKey === 'Premium/Plus'
                           ? 'bg-purple-600'
-                          : planoKey === 'Standard'
+                          : planoKey === 'Profissional'
                           ? 'bg-brand-600'
                           : 'bg-slate-400'
                       }`}

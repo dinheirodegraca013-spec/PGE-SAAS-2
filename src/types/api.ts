@@ -38,6 +38,10 @@ export enum PapelUsuario {
 
 /** Espelha ERP.SaaS.Core.Entities.TenantPlano — planos de assinatura do SaaS. */
 export enum TenantPlano {
+  Basico = 0,
+  Profissional = 1,
+  Premium = 2,
+  /** Aliases legados mantidos para compatibilidade com integrações antigas. */
   Free = 0,
   Standard = 1,
   Empresarial = 2,
@@ -51,7 +55,7 @@ export interface UsuarioAutenticado {
   email: string;
   /** O backend serializa o enum PapelUsuario como string (ex.: "AdministradorTenant"), não como número. */
   papel: string;
-  /** O backend serializa o enum TenantPlano como string (ex.: "Standard"), não como número. */
+  /** O backend serializa o enum TenantPlano como string (ex.: "Profissional"), não como número. */
   plano: string;
   /** URL pública da foto de perfil do usuário */
   avatarUrl?: string | null;
