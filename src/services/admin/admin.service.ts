@@ -98,7 +98,7 @@ export const adminService = {
           razaoSocial: t.razao_social || 'Empresa sem nome',
           nomeFantasia: t.nome_fantasia || undefined,
           documento: t.documento || undefined,
-          plano: (planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.nome || t.plano || 'Standard',
+          plano: (planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.nome || t.plano || 'Não informado',
           status: (t.ativo === false
             ? (assinatura?.status === 'cancelada' ? 'cancelado' : 'suspenso')
             : (assinatura?.status === 'cancelada' ? 'cancelado' : assinatura?.status === 'suspensa' ? 'suspenso' : 'ativo')) as any,
@@ -433,7 +433,7 @@ export const adminService = {
         motivoCancelamento: d.motivo_cancelamento || undefined,
         tenantNome: d.tenants?.razao_social || 'Empresa',
         tenantDocumento: d.tenants?.documento || undefined,
-        planoNome: d.saas_planos?.nome || d.tenants?.plano || 'Standard',
+        planoNome: d.saas_planos?.nome || d.tenants?.plano || 'Não informado',
       }));
 
       return { succeeded: true, value: assinaturas, errors: [] };
