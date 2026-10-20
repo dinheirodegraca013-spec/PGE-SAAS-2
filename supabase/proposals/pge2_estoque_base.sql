@@ -14,7 +14,9 @@ CREATE TABLE public.estoque_itens (
 );
 CREATE UNIQUE INDEX estoque_itens_codigo_tenant_uniq ON public.estoque_itens (tenant_id, lower(codigo)) WHERE codigo IS NOT NULL;
 CREATE INDEX estoque_itens_tenant_nome_idx ON public.estoque_itens (tenant_id, nome);
--- Chave composta de projeto requer UNIQUE(id,tenant_id) no schema real;\n-- esta proposta usa trigger de verificacao ate a migracao de chave composta.\nCREATE TABLE public.estoque_movimentacoes (
+-- Chave composta de projeto requer UNIQUE(id,tenant_id) no schema real;
+-- esta proposta usa trigger de verificacao ate a migracao de chave composta.
+CREATE TABLE public.estoque_movimentacoes (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
  tenant_id uuid NOT NULL,
  item_id uuid NOT NULL,
