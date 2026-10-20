@@ -26,9 +26,10 @@ BEGIN
  IF NOT FOUND OR v_ativo IS DISTINCT FROM true OR v_papel NOT IN ('AdministradorTenant','Gerente','Estoque') THEN
   RAISE EXCEPTION 'Operação não autorizada' USING ERRCODE = '42501';
  END IF;
- IF p_tipo NOT IN ('entrada','saida','ajuste_entrada','ajuste_saida')
+ IF p_tipo IS NULL OR p_tipo NOT IN ('entrada','saida','ajuste_entrada','ajuste_saida')
     OR p_quantidade IS NULL OR p_quantidade <= 0
     OR p_quantidade > 99999999999.999
+    OR p_quantidade <> round(p_quantidade, 3)
     OR p_motivo IS NULL OR length(trim(p_motivo)) = 0 THEN
   RAISE EXCEPTION 'Movimentação inválida' USING ERRCODE = '22023';
  END IF;
