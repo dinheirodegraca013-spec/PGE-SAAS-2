@@ -10,6 +10,13 @@ DSN = os.getenv("GESTIO_TEST_DSN", "host=localhost dbname=gestio_rpc_test user=p
 def connect():
     return psycopg.connect(DSN)
 
+def connect_test_user(user_id):
+    db = connect()
+    db.execute("SET ROLE authenticated")
+    db.execute("SELECT set_config('request.jwt.claim.sub', %s, false)", (user_id,))
+    db.commit()
+    return db
+
 def check_schema():
     with connect() as db:
         names = [row[0] for row in db.execute(
