@@ -32,6 +32,7 @@ BEGIN
 END;
 $financeiro$;
 REVOKE ALL ON FUNCTION public.financeiro_verificar_tenant_projeto() FROM PUBLIC;
+DROP TRIGGER IF EXISTS financeiro_lancamento_tenant_projeto_check ON public.financeiro_lancamentos;
 CREATE TRIGGER financeiro_lancamento_tenant_projeto_check
  BEFORE INSERT OR UPDATE OF projeto_id, tenant_id ON public.financeiro_lancamentos
  FOR EACH ROW EXECUTE FUNCTION public.financeiro_verificar_tenant_projeto();
@@ -54,8 +55,10 @@ ALTER TABLE public.financeiro_lancamentos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.financeiro_baixas ENABLE ROW LEVEL SECURITY;
 -- Acesso somente leitura nesta etapa. Escritas exigem RPC transacional validada.
 -- A politica usa o mesmo helper de tenant das tabelas existentes.
+DROP POLICY IF EXISTS financeiro_lancamentos_select ON public.financeiro_lancamentos;
 CREATE POLICY financeiro_lancamentos_select ON public.financeiro_lancamentos FOR SELECT TO authenticated
  USING (tenant_id = (SELECT private.current_tenant_id()));
+DROP POLICY IF EXISTS financeiro_baixas_select ON public.financeiro_baixas;
 CREATE POLICY financeiro_baixas_select ON public.financeiro_baixas FOR SELECT TO authenticated
  USING (tenant_id = (SELECT private.current_tenant_id()));
 REVOKE ALL ON public.financeiro_lancamentos, public.financeiro_baixas FROM anon;
