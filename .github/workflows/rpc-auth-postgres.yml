@@ -1,7 +1,7 @@
 name: RPC authenticated PostgreSQL tests
 on:
   pull_request:
-    branches: [main]
+    branches: [main, "integration/**"]
   workflow_dispatch:
 jobs:
   rpc-auth:

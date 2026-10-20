@@ -1,7 +1,7 @@
 name: Financeiro PostgreSQL isolated tests
 on:
   pull_request:
-    branches: [main]
+    branches: [main, "integration/**"]
   workflow_dispatch:
 jobs:
   postgres-finance:
