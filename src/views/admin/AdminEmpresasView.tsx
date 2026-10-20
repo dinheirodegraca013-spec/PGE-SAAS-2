@@ -225,9 +225,9 @@ export default function AdminEmpresasView() {
           className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 font-medium focus:border-brand-500 focus:outline-hidden"
         >
           <option value="todos">Todos os Planos</option>
-          <option value="Free">Plano Free</option>
-          <option value="Standard">Plano Standard</option>
-          <option value="Empresarial">Plano Empresarial</option>
+          <option value="basico">Plano Básico</option>
+          <option value="profissional">Plano Profissional</option>
+          <option value="premium">Plano Premium/Plus</option>
         </select>
       </div>
 

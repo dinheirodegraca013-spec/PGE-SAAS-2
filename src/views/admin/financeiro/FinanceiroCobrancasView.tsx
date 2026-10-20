@@ -310,7 +310,7 @@ export default function FinanceiroCobrancasView() {
                 <input
                   type="text"
                   required
-                  placeholder="Ex.: Mensalidade Standard - Outubro"
+                  placeholder="Ex.: Mensalidade Profissional - Outubro"
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"

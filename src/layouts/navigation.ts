@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, Wallet, LucideIcon } from 'lucide-react';
+import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, Wallet, Package, LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -29,7 +29,8 @@ export const navGroups: NavGroup[] = [
   {
     title: 'Móveis Planejados',
     items: [
-      { label: 'Projetos', path: '/projetos', icon: Sofa },
+      { label: 'Projetos e Orçamentos', path: '/projetos', icon: Sofa },
+      { label: 'Estoque', path: '/estoque', icon: Package },
     ],
   },
   {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, Plus, Phone, Mail, Search, AlertCircle, Sparkles } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import EmptyState from '@/components/shared/EmptyState';
 import { clientesService } from '../services/clientes.service';
 import type { Cliente, ClienteCreateInput } from '../types/cliente';
@@ -10,7 +11,8 @@ export default function ClientesListView() {
   const auth = useAuthStore();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const isPlanoFree = auth.usuario?.plano === 'Free';
-  const limiteAtingido = isPlanoFree && clientes.length >= 10;
+  const [limiteClientes, setLimiteClientes] = useState<number | null>(null);
+  const limiteAtingido = isPlanoFree && limiteClientes !== null && clientes.length >= limiteClientes;
   const [carregandoLista, setCarregandoLista] = useState(true);
   const [erroLista, setErroLista] = useState<string | null>(null);
   const [busca, setBusca] = useState('');
@@ -48,6 +50,29 @@ export default function ClientesListView() {
     carregarClientes();
   }, []);
 
+  useEffect(() => {
+    let mounted = true;
+    async function carregarLimiteDoPlano() {
+      if (!isSupabaseConfigured || !auth.usuario?.plano) {
+        if (mounted) setLimiteClientes(null);
+        return;
+      }
+      const { data } = await supabase
+        .from('saas_planos')
+        .select('recursos')
+        .ilike('nome', auth.usuario.plano)
+        .eq('status', 'ativo')
+        .maybeSingle();
+      if (!mounted) return;
+      const recursos = Array.isArray(data?.recursos) ? data.recursos : [];
+      const recursoClientes = recursos.find((recurso: unknown) => typeof recurso === 'string' && /cliente/i.test(recurso) && !/ilimitad/i.test(recurso));
+      const limite = typeof recursoClientes === 'string' ? recursoClientes.match(/até\s+(\d+)\s+clientes?/i)?.[1] : undefined;
+      setLimiteClientes(limite ? Number(limite) : null);
+    }
+    void carregarLimiteDoPlano();
+    return () => { mounted = false; };
+  }, [auth.usuario?.plano]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.nome.trim()) {
@@ -56,7 +81,7 @@ export default function ClientesListView() {
     }
 
     if (limiteAtingido) {
-      setErroFormulario('Limite atingido: O plano Free permite até 10 clientes cadastrados. Conheça outros planos para cadastrar clientes ilimitados.');
+      setErroFormulario(`Limite atingido: o plano permite até ${limiteClientes} clientes cadastrados. Conheça outros planos para cadastrar clientes ilimitados.`);
       return;
     }
 
@@ -100,7 +125,7 @@ export default function ClientesListView() {
   return (
     <div className="space-y-6">
       {/* Alerta de Limite do Plano Free */}
-      {isPlanoFree && (
+      {isPlanoFree && limiteClientes !== null && (
         <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${
           limiteAtingido ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-slate-200 bg-white text-slate-700'
         } shadow-xs`}>
@@ -110,12 +135,12 @@ export default function ClientesListView() {
             </div>
             <div>
               <p className="text-sm font-semibold">
-                Plano Free: {clientes.length} de 10 clientes cadastrados
+                Plano Free: {clientes.length} de {limiteClientes} clientes cadastrados
               </p>
               <p className="text-xs text-slate-500">
                 {limiteAtingido
                   ? 'Você atingiu o limite de clientes do plano gratuito. Nenhum dado foi excluído.'
-                  : 'Seu plano gratuito permite cadastrar até 10 clientes.'}
+                  : `Seu plano gratuito permite cadastrar até ${limiteClientes} clientes.`}
               </p>
             </div>
           </div>
@@ -141,7 +166,7 @@ export default function ClientesListView() {
           className="btn-primary gap-2 self-start sm:self-auto cursor-pointer"
           onClick={() => {
             if (limiteAtingido && !mostrarFormulario) {
-              setErroFormulario('Limite de 10 clientes do Plano Free atingido. Para cadastrar novos clientes, mude para o plano Standard ou Empresarial.');
+              setErroFormulario(`Limite de ${limiteClientes} clientes do Plano Free atingido. Para cadastrar novos clientes, mude para o plano Standard ou Empresarial.`);
             }
             setMostrarFormulario(!mostrarFormulario);
           }}

@@ -4,11 +4,24 @@ on:
   push:
     branches: [main, "fix/**"]
   pull_request:
-    branches: [main]
+    branches: [main, "integration/**"]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: gestio_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gestio_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,5 +37,19 @@ jobs:
         run: bun install --frozen-lockfile
       - name: TypeScript check
         run: bun run lint
+      - name: Offline inventory contract tests
+        run: bun run test
+      - name: PostgreSQL stock integration (disposable)
+        env:
+          PGHOST: localhost
+          PGPORT: '5432'
+          PGUSER: postgres
+          PGDATABASE: gestio_test
+        run: |
+          psql -v ON_ERROR_STOP=1 -f tests/estoque-local-fixture.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/proposals/pge2_estoque_base.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/proposals/pge2_estoque_transacional.sql
+          psql -v ON_ERROR_STOP=1 -f tests/estoque-integration.sql
+          psql -v ON_ERROR_STOP=1 -f tests/estoque-auth-integration.sql
       - name: Production build
         run: bun run build

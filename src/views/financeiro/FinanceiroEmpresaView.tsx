@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, CircleAlert, RefreshCw, Wallet, FileText, TrendingUp } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 import { projetosService } from '@/modules/furniture/services/projetos.service';
 import type { ProjetoMovelPlanejado } from '@/modules/furniture/types/projeto';
 
@@ -10,6 +11,15 @@ export default function FinanceiroEmpresaView() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [busca, setBusca] = useState('');
+  const [lancamentos,setLancamentos]=useState<any[]>([]);
+  const [tipo,setTipo]=useState('despesa');
+  const [descricao,setDescricao]=useState('');
+  const [valor,setValor]=useState('');
+  const [vencimento,setVencimento]=useState('');
+  const [mensagem,setMensagem]=useState('');
+  const [salvando,setSalvando]=useState(false);
+  const [receitas, setReceitas] = useState<number | null>(null);
+  const [despesas, setDespesas] = useState<number | null>(null);
 
   const carregar = async () => {
     setCarregando(true);
@@ -18,6 +28,20 @@ export default function FinanceiroEmpresaView() {
       const resultado = await projetosService.listar();
       if (!resultado.succeeded) throw new Error(resultado.errors.join(' ') || 'Falha ao carregar projetos.');
       setProjetos(resultado.value?.items || []);
+      const {data: lista,error: listaErro}=await supabase.from('financeiro_lancamentos').select('id,tipo,descricao,valor,vencimento,status').order('vencimento',{ascending:false});
+      if(listaErro) throw listaErro;
+      setLancamentos(lista||[]);
+      const { data: resumo, error: resumoErro } = await supabase.rpc('financeiro_resumo_baixas');
+      if (resumoErro) {
+        setReceitas(null);
+        setDespesas(null);
+      } else {
+        const totais = Array.isArray(resumo) ? resumo[0] : resumo;
+        const totalReceitas = Number(totais?.receitas);
+        const totalDespesas = Number(totais?.despesas);
+        setReceitas(Number.isFinite(totalReceitas) && totalReceitas >= 0 ? totalReceitas : null);
+        setDespesas(Number.isFinite(totalDespesas) && totalDespesas >= 0 ? totalDespesas : null);
+      }
     } catch (e) {
       setProjetos([]);
       setErro(e instanceof Error ? e.message : 'Falha na consulta financeira.');
@@ -49,14 +73,17 @@ export default function FinanceiroEmpresaView() {
         </button>
       </header>
 
+      <form className="grid gap-3 rounded-xl border p-4 sm:grid-cols-5" onSubmit={async e=>{e.preventDefault();if(salvando)return;setMensagem('');const valorNumero=Number(valor);if(!Number.isFinite(valorNumero)||valorNumero<=0||!/^\\d+(?:[.,]\\d{1,2})?$/.test(valor.trim())||!descricao.trim()||!vencimento){setMensagem('Preencha descrição, valor positivo com até duas casas decimais e vencimento.');return;}setSalvando(true);const {error}=await supabase.rpc('financeiro_criar_lancamento',{p_tipo:tipo,p_descricao:descricao,p_valor:valorNumero,p_vencimento:vencimento,p_projeto_id:null});setSalvando(false);if(error){setMensagem(error.message);return;}setDescricao('');setValor('');await carregar();setMensagem('Lançamento registrado.');}}><h2 className="font-bold sm:col-span-5">Contas a pagar e receber</h2><select aria-label="Tipo" value={tipo} onChange={e=>setTipo(e.target.value)} className="rounded border p-2"><option value="despesa">A pagar</option><option value="receita">A receber</option></select><input aria-label="Descrição" required placeholder="Descrição" value={descricao} onChange={e=>setDescricao(e.target.value)} className="rounded border p-2"/><input aria-label="Valor" required type="number" min="0.01" step="0.01" placeholder="Valor" value={valor} onChange={e=>setValor(e.target.value)} className="rounded border p-2"/><input aria-label="Vencimento" required type="date" value={vencimento} onChange={e=>setVencimento(e.target.value)} className="rounded border p-2"/><button disabled={salvando} className="rounded bg-slate-900 p-2 text-white disabled:opacity-50">{salvando?'Salvando...':'Cadastrar'}</button></form>
+      {mensagem && <p role="status" className="text-sm">{mensagem}</p>}
+      <section className="rounded-xl border p-4"><h2 className="mb-3 font-bold">Lançamentos financeiros</h2>{lancamentos.length===0?<p className="text-sm text-slate-500">Nenhum lançamento cadastrado.</p>:<div className="space-y-2">{lancamentos.map(l=><div key={l.id} className="flex flex-wrap items-center justify-between gap-2 border-b py-2 text-sm"><span>{l.tipo==='receita'?'Receber':'Pagar'} — {l.descricao} — {moeda(Number(l.valor))} — {l.status}</span>{l.status!=='quitado'&&l.status!=='cancelado'&&<button className="rounded border px-3 py-1" onClick={async()=>{const quantia=window.prompt('Valor da baixa (R$)');if(quantia===null)return;const valorBaixa=Number(quantia.trim().replace(',','.'));if(!Number.isFinite(valorBaixa)||valorBaixa<=0||Math.round(valorBaixa*100)!==valorBaixa*100){setMensagem('Informe um valor positivo com até duas casas decimais.');return;}const agora=new Date();const data=`${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,'0')}-${String(agora.getDate()).padStart(2,'0')}`;const {error}=await supabase.rpc('financeiro_registrar_baixa',{p_lancamento_id:l.id,p_valor:valorBaixa,p_data_pagamento:data,p_metodo:null,p_referencia:null});if(error){setMensagem(error.message);return;}await carregar();setMensagem('Baixa registrada.');}}>Registrar baixa</button>}</div>)}</div>}</section>
       {erro && <div role="alert" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><CircleAlert className="h-5 w-5 shrink-0" />{erro}</div>}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: 'Orçamentos cadastrados', value: carregando || erro ? '—' : moeda(valorOrcado), detail: 'Soma dos valores orçados; não é receita', icon: FileText },
           { label: 'Projetos com orçamento', value: carregando || erro ? '—' : String(projetosValidos.filter(p => p.valor > 0).length), detail: 'Projetos com valor informado', icon: TrendingUp },
-          { label: 'Receitas recebidas', value: 'Não disponível', detail: 'Sem conciliação de recebimentos neste módulo', icon: ArrowDownRight },
-          { label: 'Despesas pagas', value: 'Não disponível', detail: 'Sem lançamentos financeiros neste módulo', icon: ArrowUpRight },
+          { label: 'Receitas recebidas', value: receitas === null ? 'Não disponível' : moeda(receitas), detail: receitas === null ? 'Conciliação ainda não habilitada' : 'Baixas financeiras registradas', icon: ArrowDownRight },
+          { label: 'Despesas pagas', value: despesas === null ? 'Não disponível' : moeda(despesas), detail: despesas === null ? 'Conciliação ainda não habilitada' : 'Baixas financeiras registradas', icon: ArrowUpRight },
         ].map(card => <section key={card.label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-center justify-between gap-2"><p className="text-xs font-semibold text-slate-500">{card.label}</p><card.icon className="h-5 w-5 text-violet-600" /></div>
           <p className="mt-4 text-xl font-extrabold text-slate-950">{card.value}</p>

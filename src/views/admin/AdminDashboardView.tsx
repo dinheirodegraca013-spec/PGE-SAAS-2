@@ -207,11 +207,14 @@ export default function AdminDashboardView() {
           </div>
 
           <div className="space-y-4">
-            {['Free', 'Standard', 'Empresarial'].map((planoKey) => {
+            {['Básico', 'Profissional', 'Premium/Plus'].map((planoKey) => {
               const count = metricas?.distribuicaoPlanos?.[planoKey] || 0;
               const total = metricas?.totalEmpresas || 1;
               const percent = Math.round((count / (total || 1)) * 100);
-              const valorRef = planoKey === 'Empresarial' ? 'R$ 199,90/mês' : planoKey === 'Standard' ? 'R$ 89,90/mês' : 'Gratuito';
+              const preco = metricas?.precosPlanos?.[planoKey];
+              const valorRef = preco === null || preco === undefined
+                ? 'Preço indisponível'
+                : preco === 0 ? 'Gratuito' : `${formatarMoeda(preco)}/mês`;
 
               return (
                 <div key={planoKey} className="space-y-1.5">
@@ -222,9 +225,9 @@ export default function AdminDashboardView() {
                   <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                     <div
                       className={`h-full rounded-full ${
-                        planoKey === 'Empresarial'
+                        planoKey === 'Premium/Plus'
                           ? 'bg-purple-600'
-                          : planoKey === 'Standard'
+                          : planoKey === 'Profissional'
                           ? 'bg-brand-600'
                           : 'bg-slate-400'
                       }`}

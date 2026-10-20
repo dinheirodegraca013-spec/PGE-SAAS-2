@@ -27,6 +27,7 @@ import WhatsAppConfiguracaoView from './modules/whatsapp/views/WhatsAppConfigura
 import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
+import EstoqueView from './views/estoque/EstoqueView';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -143,6 +144,7 @@ export default function App() {
             <Route path="whatsapp/configuracao" element={<WhatsAppConfiguracaoView />} />
             <Route path="configuracoes" element={<SettingsView />} />
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
+            <Route path="estoque" element={<EstoqueView />} />
           </Route>
 
           {/* =============================================================== */}

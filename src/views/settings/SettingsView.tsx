@@ -252,7 +252,7 @@ export default function SettingsView() {
           if (tenantId) {
             const { data: tenantData, error: tenantError } = await supabase
               .from('tenants')
-              .select('razao_social, nome_fantasia, plano, ativo, created_at')
+              .select('razao_social, nome_fantasia, plano, ativo, created_at, data_contratacao, inicio_utilizacao, logo_url')
               .eq('id', tenantId)
               .maybeSingle();
 
@@ -262,9 +262,9 @@ export default function SettingsView() {
             } else if (tenantData) {
               razaoSocial = tenantData.razao_social || '';
               nomeFantasia = tenantData.nome_fantasia || '';
-              fotoUrlPerfil = null; // Sem coluna de logo validada no banco
-              dataContratacaoTenant = null; // Só exibir data quando existir registro real
-              inicioUtilizacaoTenant = null; // Não presumir início pelo cadastro
+              fotoUrlPerfil = tenantData.logo_url || null;
+              dataContratacaoTenant = tenantData.data_contratacao || null;
+              inicioUtilizacaoTenant = tenantData.inicio_utilizacao || null;
                             planoSolicitadoId = null; // Campo de solicitação ainda não disponível
               tenantAtivo = tenantData.ativo ?? null;
               if (tenantData.plano) planoTenant = tenantData.plano;
@@ -291,7 +291,7 @@ export default function SettingsView() {
           if (userId) {
             const { data: profileData, error: profileError } = await supabase
               .from('profiles')
-              .select('nome_completo, email, papel')
+              .select('nome_completo, email, papel, avatar_url')
               .eq('id', userId)
               .maybeSingle();
 
@@ -301,6 +301,7 @@ export default function SettingsView() {
             } else if (profileData) {
               if (profileData.nome_completo) nomeResponsavel = profileData.nome_completo;
               if (profileData.email) emailAcesso = profileData.email;
+              if (profileData.avatar_url) fotoUrlPerfil = profileData.avatar_url;
               if (profileData.papel) {
                 cargo = profileData.papel === 'AdministradorTenant' ? 'Administrador da Organização' : profileData.papel;
               }
@@ -1679,12 +1680,12 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
+                      {usoRecursos.clientes ?? '—'} / {(limitesDoPlanoAtual.clientes !== null && Number.isFinite(limitesDoPlanoAtual.clientes)) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
-                    {Number.isFinite(limitesDoPlanoAtual.clientes)
+                    {(limitesDoPlanoAtual.clientes !== null && Number.isFinite(limitesDoPlanoAtual.clientes))
                       ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
                       : 'Limite não cadastrado no plano.'}
                   </p>
@@ -1698,12 +1699,12 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
+                      {usoRecursos.projetos ?? '—'} / {(limitesDoPlanoAtual.projetos !== null && Number.isFinite(limitesDoPlanoAtual.projetos)) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
-                    {Number.isFinite(limitesDoPlanoAtual.projetos)
+                    {(limitesDoPlanoAtual.projetos !== null && Number.isFinite(limitesDoPlanoAtual.projetos))
                       ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
                       : 'Limite não cadastrado no plano.'}
                   </p>

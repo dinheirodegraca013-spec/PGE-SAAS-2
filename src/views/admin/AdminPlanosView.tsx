@@ -165,9 +165,9 @@ export default function AdminPlanosView() {
           <p className="mb-4 max-w-3xl text-xs leading-5 text-slate-500">Copie a URL correspondente e cole no campo de retorno do checkout do Mercado Pago. Estas páginas ficam fora do menu público. O retorno não libera o plano automaticamente: a confirmação deve vir do Mercado Pago por webhook ou validação segura.</p>
           <div className="space-y-3">
             {[
-              { slug: 'free', nome: 'Free' },
-              { slug: 'standard', nome: 'Standard' },
-              { slug: 'empresarial', nome: 'Empresarial' },
+              { slug: 'basico', nome: 'Básico' },
+              { slug: 'profissional', nome: 'Profissional' },
+              { slug: 'premium', nome: 'Premium/Plus' },
             ].map((item) => {
               const url = `${window.location.origin}/pagamento/obrigado/${item.slug}`;
               return (

@@ -98,7 +98,7 @@ export const adminService = {
           razaoSocial: t.razao_social || 'Empresa sem nome',
           nomeFantasia: t.nome_fantasia || undefined,
           documento: t.documento || undefined,
-          plano: (planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.nome || t.plano || 'Standard',
+          plano: (planosData || []).find((p: any) => p.id === t.plano_solicitado_id)?.nome || t.plano || 'Não informado',
           status: (t.ativo === false
             ? (assinatura?.status === 'cancelada' ? 'cancelado' : 'suspenso')
             : (assinatura?.status === 'cancelada' ? 'cancelado' : assinatura?.status === 'suspensa' ? 'suspenso' : 'ativo')) as any,
@@ -433,7 +433,7 @@ export const adminService = {
         motivoCancelamento: d.motivo_cancelamento || undefined,
         tenantNome: d.tenants?.razao_social || 'Empresa',
         tenantDocumento: d.tenants?.documento || undefined,
-        planoNome: d.saas_planos?.nome || d.tenants?.plano || 'Standard',
+        planoNome: d.saas_planos?.nome || d.tenants?.plano || 'Não informado',
       }));
 
       return { succeeded: true, value: assinaturas, errors: [] };
@@ -894,6 +894,7 @@ export const adminService = {
       valoresPendentes: number;
       inadimplenciaValor: number;
       distribuicaoPlanos: Record<string, number>;
+      precosPlanos: Record<string, number | null>;
       recentAuditLogs: SaaSAuditLog[];
     }>
   > {
@@ -901,15 +902,16 @@ export const adminService = {
 
     try {
       // Todas as métricas vêm de consultas reais. Falha de consulta não vira zero nem estimativa inventada.
-      const [tenantsRes, profilesRes, assinaturasRes, cobrancasRes, pagamentosRes, logsRes] = await Promise.all([
+      const [tenantsRes, profilesRes, assinaturasRes, cobrancasRes, pagamentosRes, logsRes, planosRes] = await Promise.all([
         supabase.from('tenants').select('id, razao_social, ativo, plano'),
         supabase.from('profiles').select('id, tenant_id'),
         supabase.from('saas_assinaturas').select('*'),
         supabase.from('saas_cobrancas').select('*'),
         supabase.from('saas_pagamentos').select('*'),
         supabase.from('saas_audit_logs').select('*').order('created_at', { ascending: false }).limit(10),
+        supabase.from('saas_planos').select('nome, preco').eq('status', 'ativo'),
       ]);
-      const queryErrors = [tenantsRes.error, profilesRes.error, assinaturasRes.error, cobrancasRes.error, pagamentosRes.error, logsRes.error].filter(Boolean);
+      const queryErrors = [tenantsRes.error, profilesRes.error, assinaturasRes.error, cobrancasRes.error, pagamentosRes.error, logsRes.error, planosRes.error].filter(Boolean);
       if (queryErrors.length) {
         return { succeeded: false, errors: queryErrors.map((e: any) => e.message || 'Falha ao consultar dados reais do painel financeiro.') };
       }
@@ -920,6 +922,15 @@ export const adminService = {
       const cobrancas = cobrancasRes.data || [];
       const pagamentos = pagamentosRes.data || [];
       const logs = logsRes.data || [];
+      const precosPlanos: Record<string, number | null> = { Básico: null, Profissional: null, 'Premium/Plus': null };
+      (planosRes.data || []).forEach((plano: any) => {
+        const nome = String(plano.nome || '').trim().toLowerCase();
+        const chave = ['premium', 'premium/plus', 'empresarial'].includes(nome) ? 'Premium/Plus' : ['profissional', 'standard'].includes(nome) ? 'Profissional' : ['basico', 'básico', 'free'].includes(nome) ? 'Básico' : null;
+        if (chave) {
+          const preco = Number(plano.preco);
+          precosPlanos[chave] = Number.isFinite(preco) && preco >= 0 ? preco : null;
+        }
+      });
 
       const totalEmpresas = tenants.length;
       const empresasAtivas = tenants.filter((t: any) => t.ativo === true).length;
@@ -956,10 +967,10 @@ export const adminService = {
         .filter((c: any) => c.status === 'vencida')
         .reduce((sum: number, c: any) => sum + Number(c.valor || 0), 0);
 
-      const distribuicaoPlanos: Record<string, number> = { Free: 0, Standard: 0, Empresarial: 0 };
+      const distribuicaoPlanos: Record<string, number> = { Básico: 0, Profissional: 0, 'Premium/Plus': 0 };
       tenants.forEach((t: any) => {
         const nome = String(t.plano || 'free').toLowerCase();
-        const chave = nome === 'empresarial' ? 'Empresarial' : nome === 'standard' ? 'Standard' : nome === 'free' ? 'Free' : nome;
+        const chave = ['premium', 'premium/plus', 'empresarial'].includes(nome) ? 'Premium/Plus' : ['profissional', 'standard'].includes(nome) ? 'Profissional' : ['basico', 'básico', 'free'].includes(nome) ? 'Básico' : nome;
         distribuicaoPlanos[chave] = (distribuicaoPlanos[chave] || 0) + 1;
       });
 
@@ -992,6 +1003,7 @@ export const adminService = {
           valoresPendentes,
           inadimplenciaValor,
           distribuicaoPlanos,
+          precosPlanos,
           recentAuditLogs,
         },
         errors: [],

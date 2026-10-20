@@ -1,0 +1,27 @@
+name: Financeiro PostgreSQL isolated tests
+on:
+  pull_request:
+    branches: [main, "integration/**"]
+  workflow_dispatch:
+jobs:
+  postgres-finance:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: gestio_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Run finance migration and tenant isolation assertions
+        run: psql -h localhost -U postgres -d gestio_test -v ON_ERROR_STOP=1 -f tests/sql/financeiro_rls.sql
