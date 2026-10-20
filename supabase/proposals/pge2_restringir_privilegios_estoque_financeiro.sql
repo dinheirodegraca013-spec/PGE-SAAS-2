@@ -1,4 +1,5 @@
--- Executada em produção em 2026-10-20. Idempotente.
+-- Reproduz o estado de privilégios validado em produção em 2026-10-20.
+-- Aplicação idempotente para ambientes novos e recuperação.
 -- Escritas devem passar exclusivamente pelas RPCs autorizadas, com verificação de tenant e papel.
 REVOKE ALL PRIVILEGES ON TABLE
   public.estoque_itens,
