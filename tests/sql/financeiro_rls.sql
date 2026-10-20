@@ -59,7 +59,7 @@ BEGIN
    END IF;
   END IF;
  END LOOP;
-END $;
+END $$;
 SET app.test_tenant_id = '00000000-0000-0000-0000-000000000001';
 DO $$
 DECLARE r numeric; d numeric;
