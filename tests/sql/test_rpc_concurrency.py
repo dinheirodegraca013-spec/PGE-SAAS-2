@@ -1,6 +1,7 @@
 """Concurrency test for the isolated GESTIO PostgreSQL test database."""
 import os
 import psycopg
+import threading
 
 if os.getenv("GESTIO_TEST_DB_ACK") != "disposable":
     raise SystemExit("Only disposable databases are allowed")
