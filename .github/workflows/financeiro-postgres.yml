@@ -10,7 +10,7 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: gestio_test
         ports:
           - 5432:5432
@@ -24,6 +24,4 @@ jobs:
       - name: Install PostgreSQL client
         run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Run finance migration and tenant isolation assertions
-        env:
-          PGPASSWORD: postgres
         run: psql -h localhost -U postgres -d gestio_test -v ON_ERROR_STOP=1 -f tests/sql/financeiro_rls.sql

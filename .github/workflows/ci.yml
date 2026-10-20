@@ -13,7 +13,7 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: gestio_test
         ports:
           - 5432:5432
@@ -41,7 +41,6 @@ jobs:
         run: bun run test
       - name: PostgreSQL stock integration (disposable)
         env:
-          PGPASSWORD: postgres
           PGHOST: localhost
           PGPORT: '5432'
           PGUSER: postgres
