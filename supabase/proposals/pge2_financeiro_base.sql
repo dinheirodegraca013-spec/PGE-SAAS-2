@@ -61,4 +61,23 @@ CREATE POLICY financeiro_baixas_select ON public.financeiro_baixas FOR SELECT TO
 REVOKE ALL ON public.financeiro_lancamentos, public.financeiro_baixas FROM anon;
 REVOKE INSERT, UPDATE, DELETE ON public.financeiro_lancamentos, public.financeiro_baixas FROM authenticated;
 GRANT SELECT ON public.financeiro_lancamentos, public.financeiro_baixas TO authenticated;
+-- Agregacao no banco evita o limite padrao de linhas da API e a ambiguidade
+-- entre as duas FKs de financeiro_baixas para financeiro_lancamentos.
+-- SECURITY INVOKER preserva RLS das duas tabelas.
+CREATE OR REPLACE FUNCTION public.financeiro_resumo_baixas()
+RETURNS TABLE (receitas numeric, despesas numeric)
+LANGUAGE sql STABLE SECURITY INVOKER SET search_path = ''
+AS $financeiro_resumo$
+ SELECT
+  COALESCE(sum(b.valor) FILTER (WHERE l.tipo = 'receita'), 0) AS receitas,
+  COALESCE(sum(b.valor) FILTER (WHERE l.tipo = 'despesa'), 0) AS despesas
+ FROM public.financeiro_baixas AS b
+ JOIN public.financeiro_lancamentos AS l
+   ON l.id = b.lancamento_id AND l.tenant_id = b.tenant_id
+ WHERE b.tenant_id = (SELECT private.current_tenant_id())
+   AND auth.uid() IS NOT NULL
+   AND l.status <> 'cancelado';
+$financeiro_resumo$;
+REVOKE ALL ON FUNCTION public.financeiro_resumo_baixas() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.financeiro_resumo_baixas() TO authenticated;
 COMMIT;
