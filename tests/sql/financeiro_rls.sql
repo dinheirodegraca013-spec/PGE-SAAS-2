@@ -40,10 +40,26 @@ BEGIN
  EXCEPTION WHEN foreign_key_violation THEN NULL;
  END;
 END $$;
--- Current proposal intentionally has no write RPC to prevent overpayment.
--- Enforce no overpayment before enabling any authenticated writes.
+-- Testa RLS e privilégios diretos no PostgreSQL descartável.
+-- As RPCs transacionais de escrita são verificadas separadamente.
 SET ROLE authenticated;
 SET request.jwt.claim.sub = '20000000-0000-0000-0000-000000000001';
+DO $
+DECLARE t text;
+BEGIN
+ FOREACH t IN ARRAY ARRAY['estoque_itens','estoque_movimentacoes','financeiro_lancamentos','financeiro_baixas'] LOOP
+  IF to_regclass('public.' || t) IS NOT NULL THEN
+   IF has_table_privilege(current_user,'public.' || t,'INSERT')
+      OR has_table_privilege(current_user,'public.' || t,'UPDATE')
+      OR has_table_privilege(current_user,'public.' || t,'DELETE')
+      OR has_table_privilege(current_user,'public.' || t,'TRUNCATE')
+      OR has_table_privilege(current_user,'public.' || t,'TRIGGER')
+      OR has_table_privilege(current_user,'public.' || t,'REFERENCES') THEN
+    RAISE EXCEPTION 'Unexpected direct write/DDL privilege on %',t;
+   END IF;
+  END IF;
+ END LOOP;
+END $;
 SET app.test_tenant_id = '00000000-0000-0000-0000-000000000001';
 DO $$
 DECLARE r numeric; d numeric;
