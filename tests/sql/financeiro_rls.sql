@@ -18,6 +18,9 @@ INSERT INTO public.tenants VALUES
  ('00000000-0000-0000-0000-000000000001'),
  ('00000000-0000-0000-0000-000000000002');
 \ir ../../supabase/proposals/pge2_financeiro_base.sql
+-- A segunda aplicação deve ser idempotente: políticas e gatilhos existentes
+-- precisam ser tratados pela migração antes que este teste possa passar.
+\ir ../../supabase/proposals/pge2_financeiro_base.sql
 -- Synthetic fixtures inserted by privileged test setup only.
 INSERT INTO public.financeiro_lancamentos (id,tenant_id,tipo,descricao,valor,vencimento,status)
 VALUES
@@ -27,6 +30,18 @@ INSERT INTO public.financeiro_baixas (lancamento_id,tenant_id,valor,data_pagamen
 VALUES
  ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001',40,'2026-01-02'),
  ('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000002',70,'2026-01-02');
+-- Integrity: reject a baixa linked to another tenant at the FK boundary.
+DO $
+BEGIN
+ BEGIN
+  INSERT INTO public.financeiro_baixas(lancamento_id,tenant_id,valor,data_pagamento)
+  VALUES ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000002',1,'2026-01-02');
+  RAISE EXCEPTION 'Cross-tenant baixa accepted';
+ EXCEPTION WHEN foreign_key_violation THEN NULL;
+ END;
+END $;
+-- Current proposal intentionally has no write RPC to prevent overpayment.
+-- Enforce no overpayment before enabling any authenticated writes.
 SET ROLE authenticated;
 SET request.jwt.claim.sub = '20000000-0000-0000-0000-000000000001';
 SET app.test_tenant_id = '00000000-0000-0000-0000-000000000001';
