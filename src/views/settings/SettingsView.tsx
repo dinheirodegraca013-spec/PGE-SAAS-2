@@ -1679,12 +1679,12 @@ export default function SettingsView() {
                       Clientes Cadastrados
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.clientes ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.clientes) ? limitesDoPlanoAtual.clientes : 'Não definido'}
+                      {usoRecursos.clientes ?? '—'} / {(limitesDoPlanoAtual.clientes !== null && Number.isFinite(limitesDoPlanoAtual.clientes)) ? limitesDoPlanoAtual.clientes : 'Não definido'}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
-                    {Number.isFinite(limitesDoPlanoAtual.clientes)
+                    {(limitesDoPlanoAtual.clientes !== null && Number.isFinite(limitesDoPlanoAtual.clientes))
                       ? usoRecursos.clientes === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.clientes - usoRecursos.clientes)} vagas restantes no plano gratuito.`
                       : 'Limite não cadastrado no plano.'}
                   </p>
@@ -1698,12 +1698,12 @@ export default function SettingsView() {
                       Projetos de Marcenaria
                     </span>
                     <span className="font-bold text-slate-900 font-mono">
-                      {usoRecursos.projetos ?? '—'} / {Number.isFinite(limitesDoPlanoAtual.projetos) ? limitesDoPlanoAtual.projetos : 'Não definido'}
+                      {usoRecursos.projetos ?? '—'} / {(limitesDoPlanoAtual.projetos !== null && Number.isFinite(limitesDoPlanoAtual.projetos)) ? limitesDoPlanoAtual.projetos : 'Não definido'}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">Limite não configurado no banco; nenhuma porcentagem estimada é exibida.</p>
                   <p className="text-[11px] text-slate-500">
-                    {Number.isFinite(limitesDoPlanoAtual.projetos)
+                    {(limitesDoPlanoAtual.projetos !== null && Number.isFinite(limitesDoPlanoAtual.projetos))
                       ? usoRecursos.projetos === null ? 'Contagem indisponível.' : `${Math.max(0, limitesDoPlanoAtual.projetos - usoRecursos.projetos)} projetos restantes no Free.`
                       : 'Limite não cadastrado no plano.'}
                   </p>
