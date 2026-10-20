@@ -8,7 +8,16 @@ CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $a$ SELECT NULLIF
 CREATE TABLE public.tenants(id uuid PRIMARY KEY);
 CREATE TABLE public.profiles(id uuid PRIMARY KEY REFERENCES auth.users(id),tenant_id uuid NOT NULL REFERENCES public.tenants(id),papel text NOT NULL,ativo boolean NOT NULL DEFAULT true);
 CREATE TABLE public.projetos_marcenaria(id uuid PRIMARY KEY,tenant_id uuid NOT NULL REFERENCES public.tenants(id));
-CREATE FUNCTION private.current_tenant_id() RETURNS uuid LANGUAGE sql STABLE AS $t$ SELECT tenant_id FROM public.profiles WHERE id=auth.uid() AND ativo=true $t$;
+-- Mirror the production helper: tenant resolution must bypass profiles RLS
+-- without granting authenticated direct SELECT access to the table.
+CREATE FUNCTION private.current_tenant_id() RETURNS uuid
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
+AS $t$
+ SELECT p.tenant_id
+ FROM public.profiles AS p
+ WHERE p.id = (SELECT auth.uid()) AND p.ativo = true
+ LIMIT 1
+$t$;
 GRANT USAGE ON SCHEMA public,auth,private TO authenticated;
 GRANT EXECUTE ON FUNCTION auth.uid(),private.current_tenant_id() TO authenticated;
 INSERT INTO public.tenants VALUES ('00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-000000000002');
