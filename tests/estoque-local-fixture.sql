@@ -16,6 +16,9 @@ CREATE TABLE public.profiles (
  papel text NOT NULL, ativo boolean NOT NULL DEFAULT true
 );
 CREATE FUNCTION private.current_tenant_id() RETURNS uuid
-LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+LANGUAGE sql STABLE AS $ SELECT nullif(current_setting('request.jwt.claim.tenant_id', true), '')::uuid $;
 CREATE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;
+LANGUAGE sql STABLE AS $ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $;
+GRANT USAGE ON SCHEMA auth, private TO authenticated;
+GRANT EXECUTE ON FUNCTION private.current_tenant_id(), auth.uid() TO authenticated;
+GRANT SELECT ON public.profiles, public.projetos_marcenaria TO authenticated;
