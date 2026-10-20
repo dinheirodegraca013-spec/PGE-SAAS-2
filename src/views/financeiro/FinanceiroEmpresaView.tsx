@@ -11,6 +11,12 @@ export default function FinanceiroEmpresaView() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [busca, setBusca] = useState('');
+  const [lancamentos,setLancamentos]=useState<any[]>([]);
+  const [tipo,setTipo]=useState('despesa');
+  const [descricao,setDescricao]=useState('');
+  const [valor,setValor]=useState('');
+  const [vencimento,setVencimento]=useState('');
+  const [mensagem,setMensagem]=useState('');
   const [receitas, setReceitas] = useState<number | null>(null);
   const [despesas, setDespesas] = useState<number | null>(null);
 
@@ -21,6 +27,9 @@ export default function FinanceiroEmpresaView() {
       const resultado = await projetosService.listar();
       if (!resultado.succeeded) throw new Error(resultado.errors.join(' ') || 'Falha ao carregar projetos.');
       setProjetos(resultado.value?.items || []);
+      const {data: lista,error: listaErro}=await supabase.from('financeiro_lancamentos').select('id,tipo,descricao,valor,vencimento,status').order('vencimento',{ascending:false});
+      if(listaErro) throw listaErro;
+      setLancamentos(lista||[]);
       const { data: resumo, error: resumoErro } = await supabase.rpc('financeiro_resumo_baixas');
       if (resumoErro) {
         setReceitas(null);
@@ -63,6 +72,9 @@ export default function FinanceiroEmpresaView() {
         </button>
       </header>
 
+      <form className="grid gap-3 rounded-xl border p-4 sm:grid-cols-5" onSubmit={async e=>{e.preventDefault();setMensagem('');const {error}=await supabase.rpc('financeiro_criar_lancamento',{p_tipo:tipo,p_descricao:descricao,p_valor:Number(valor),p_vencimento:vencimento,p_projeto_id:null});if(error){setMensagem(error.message);return;}setDescricao('');setValor('');await carregar();setMensagem('Lançamento registrado.');}}><h2 className="font-bold sm:col-span-5">Contas a pagar e receber</h2><select aria-label="Tipo" value={tipo} onChange={e=>setTipo(e.target.value)} className="rounded border p-2"><option value="despesa">A pagar</option><option value="receita">A receber</option></select><input aria-label="Descrição" required placeholder="Descrição" value={descricao} onChange={e=>setDescricao(e.target.value)} className="rounded border p-2"/><input aria-label="Valor" required type="number" min="0.01" step="0.01" placeholder="Valor" value={valor} onChange={e=>setValor(e.target.value)} className="rounded border p-2"/><input aria-label="Vencimento" required type="date" value={vencimento} onChange={e=>setVencimento(e.target.value)} className="rounded border p-2"/><button className="rounded bg-slate-900 p-2 text-white">Cadastrar</button></form>
+      {mensagem && <p role="status" className="text-sm">{mensagem}</p>}
+      <section className="rounded-xl border p-4"><h2 className="mb-3 font-bold">Lançamentos financeiros</h2>{lancamentos.length===0?<p className="text-sm text-slate-500">Nenhum lançamento cadastrado.</p>:<div className="space-y-2">{lancamentos.map(l=><div key={l.id} className="flex flex-wrap items-center justify-between gap-2 border-b py-2 text-sm"><span>{l.tipo==='receita'?'Receber':'Pagar'} — {l.descricao} — {moeda(Number(l.valor))} — {l.status}</span>{l.status!=='quitado'&&l.status!=='cancelado'&&<button className="rounded border px-3 py-1" onClick={async()=>{const quantia=window.prompt('Valor da baixa (R$)');if(quantia===null)return;const data=new Date().toISOString().slice(0,10);const {error}=await supabase.rpc('financeiro_registrar_baixa',{p_lancamento_id:l.id,p_valor:Number(quantia.replace(',','.')),p_data_pagamento:data,p_metodo:null,p_referencia:null});if(error){setMensagem(error.message);return;}await carregar();setMensagem('Baixa registrada.');}}>Registrar baixa</button>}</div>)}</div>}</section>
       {erro && <div role="alert" className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800"><CircleAlert className="h-5 w-5 shrink-0" />{erro}</div>}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
