@@ -31,7 +31,7 @@ VALUES
  ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001',40,'2026-01-02'),
  ('10000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-000000000002',70,'2026-01-02');
 -- Integrity: reject a baixa linked to another tenant at the FK boundary.
-DO $
+DO $$
 BEGIN
  BEGIN
   INSERT INTO public.financeiro_baixas(lancamento_id,tenant_id,valor,data_pagamento)
@@ -39,7 +39,7 @@ BEGIN
   RAISE EXCEPTION 'Cross-tenant baixa accepted';
  EXCEPTION WHEN foreign_key_violation THEN NULL;
  END;
-END $;
+END $$;
 -- Current proposal intentionally has no write RPC to prevent overpayment.
 -- Enforce no overpayment before enabling any authenticated writes.
 SET ROLE authenticated;
