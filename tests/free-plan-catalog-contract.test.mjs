@@ -7,6 +7,8 @@ const sql = readFileSync(new URL('../supabase/migrations/20261020140000_fix_free
 test('downgrade para Free usa o ID real do catálogo', () => {
   assert.match(sql, /lower\(trim\(sp\.nome\)\) = 'free'/);
   assert.match(sql, /sp\.status = 'ativo'/);
+  assert.match(sql, /SET plano = 'free'/);
+  assert.doesNotMatch(sql, /SET plano = 'Free'/);
   assert.doesNotMatch(sql, /v_free_plano_id\s*:=\s*'plano_free'/);
   assert.match(sql, /REVOKE ALL ON FUNCTION public\.migrar_para_plano_free\(\)/);
 });

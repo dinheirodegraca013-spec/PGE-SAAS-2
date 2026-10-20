@@ -38,7 +38,7 @@ BEGIN
   END IF;
 
   PERFORM set_config('pge.allow_system_plan_update', 'true', true);
-  UPDATE public.tenants SET plano = 'Free', plano_solicitado_id = NULL, updated_at = v_agora WHERE id = v_tenant_id;
+  UPDATE public.tenants SET plano = 'free', plano_solicitado_id = NULL, updated_at = v_agora WHERE id = v_tenant_id;
 
   UPDATE public.saas_assinaturas
   SET plano_id = v_free_plano_id, status = 'ativa', valor = 0, periodicidade = 'mensal',
