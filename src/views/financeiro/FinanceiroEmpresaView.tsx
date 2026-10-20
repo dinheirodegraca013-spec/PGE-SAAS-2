@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowDownRight, ArrowUpRight, CircleAlert, RefreshCw, Wallet, FileText, TrendingUp } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, CircleAlert, RefreshCw, FileText, TrendingUp } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { projetosService } from '@/modules/furniture/services/projetos.service';
 import type { ProjetoMovelPlanejado } from '@/modules/furniture/types/projeto';
@@ -90,11 +90,6 @@ export default function FinanceiroEmpresaView() {
           <p className="mt-1 text-xs leading-5 text-slate-500">{card.detail}</p>
         </section>)}
       </div>
-
-      <section className="flex items-start gap-3 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-900">
-        <Wallet className="mt-0.5 h-5 w-5 shrink-0" />
-        <p><strong>Dados reais, sem lançamentos fictícios.</strong> Esta primeira visão consulta os orçamentos dos projetos da empresa. Não calcula lucro, saldo de caixa, contas a pagar ou receber sem registros financeiros próprios e confirmados.</p>
-      </section>
 
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-5">
