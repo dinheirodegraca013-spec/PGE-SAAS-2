@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type Item = { id: string; nome: string; codigo: string | null; unidade: string; estoque_minimo: number; saldo: number };
-type Movimento = { item_id: string; tipo: string; quantidade: number };
 
 export default function EstoqueView() {
   const [itens, setItens] = useState<Item[]>([]);
-  const [saldos, setSaldos] = useState<Record<string, number>>({});
   const [erro, setErro] = useState('');
   const [operando, setOperando] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState('');
@@ -57,7 +55,7 @@ export default function EstoqueView() {
 
   return <main className="space-y-5 pb-8">
     <header className="flex items-center justify-between gap-3">
-      <div><h1 className="text-2xl font-bold">Estoque</h1><p className="text-sm text-slate-500">Consulta de itens e movimentações reais — somente leitura.</p></div>
+      <div><h1 className="text-2xl font-bold">Estoque</h1><p className="text-sm text-slate-500">Consulte saldos e registre entradas, saídas e ajustes autorizados.</p></div>
       <button type="button" onClick={() => void carregar()} disabled={carregando} className="rounded-lg border px-4 py-2">Atualizar</button>
     </header>
     {mensagem && <p role="status" className="rounded-lg bg-green-50 p-4 text-green-800">{mensagem}</p>}
@@ -67,8 +65,8 @@ export default function EstoqueView() {
       <label className="text-sm">Tipo<select value={tipo} onChange={e => setTipo(e.target.value)} className="block w-full rounded border p-2"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste_entrada">Ajuste positivo</option><option value="ajuste_saida">Ajuste negativo</option></select></label>
       <label className="text-sm">Quantidade<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={e => setQuantidade(e.target.value)} className="block w-full rounded border p-2" /></label>
       <label className="text-sm">Motivo<input required maxLength={500} value={motivo} onChange={e => setMotivo(e.target.value)} className="block w-full rounded border p-2" /></label>
-      <button disabled={operando || carregando || !!erro || itens.length === 0} type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-white disabled:opacity-50 sm:col-span-2">{operando ? 'Registrando...' : 'Registrar'}</button>
-      <p className="text-xs text-slate-500 sm:col-span-2">Operação disponível somente após a migração transacional e autorização no banco de homologação.</p>
+      <button disabled={operando || carregando || itens.length === 0} type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-white disabled:opacity-50 sm:col-span-2">{operando ? 'Registrando...' : 'Registrar'}</button>
+      <p className="text-xs text-slate-500 sm:col-span-2">As movimentações exigem permissão de estoque e são registradas no banco.</p>
     </form>
     {erro && <p role="alert" className="rounded-lg bg-red-50 p-4 text-red-800">{erro}</p>}
     {carregando ? <p>Carregando...</p> : !erro && (itens.length === 0 ? <p>Nenhum item cadastrado.</p> :
@@ -80,6 +78,6 @@ export default function EstoqueView() {
           <td className="p-3">{Number(item.estoque_minimo).toLocaleString('pt-BR')}</td>
         </tr>)}</tbody>
       </table></div>)}
-    <p className="text-xs text-slate-500">Saldo calculado e mantido transacionalmente no banco. Requer migrações de estoque aplicadas e validadas.</p>
+    <p className="text-xs text-slate-500">Saldos mantidos transacionalmente no banco.</p>
   </main>;
 }
