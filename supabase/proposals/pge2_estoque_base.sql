@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION public.estoque_verificar_tenant_projeto()
 RETURNS trigger
 LANGUAGE plpgsql
 SET search_path = ''
-AS $
+AS $stock$
 BEGIN
  IF NEW.projeto_id IS NOT NULL AND NOT EXISTS (
    SELECT 1 FROM public.projetos_marcenaria p
@@ -44,7 +44,7 @@ BEGIN
  END IF;
  RETURN NEW;
 END;
-$;
+$stock$;
 REVOKE ALL ON FUNCTION public.estoque_verificar_tenant_projeto() FROM PUBLIC;
 CREATE TRIGGER estoque_mov_tenant_projeto_check
 BEFORE INSERT OR UPDATE OF projeto_id,tenant_id ON public.estoque_movimentacoes
