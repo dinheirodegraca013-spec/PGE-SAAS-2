@@ -50,6 +50,10 @@ CREATE TRIGGER estoque_mov_tenant_projeto_check
 BEFORE INSERT OR UPDATE OF projeto_id,tenant_id ON public.estoque_movimentacoes
 FOR EACH ROW EXECUTE FUNCTION public.estoque_verificar_tenant_projeto();
 CREATE INDEX estoque_mov_tenant_item_data_idx ON public.estoque_movimentacoes (tenant_id,item_id,created_at DESC);
+-- Cover each foreign key with an index in its leading-column order.
+CREATE INDEX estoque_mov_item_tenant_idx ON public.estoque_movimentacoes (item_id,tenant_id);
+CREATE INDEX estoque_mov_projeto_idx ON public.estoque_movimentacoes (projeto_id);
+CREATE INDEX estoque_mov_criado_por_idx ON public.estoque_movimentacoes (criado_por);
 ALTER TABLE public.estoque_itens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.estoque_movimentacoes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY estoque_itens_read ON public.estoque_itens FOR SELECT TO authenticated

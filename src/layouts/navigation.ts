@@ -29,7 +29,7 @@ export const navGroups: NavGroup[] = [
   {
     title: 'Móveis Planejados',
     items: [
-      { label: 'Projetos', path: '/projetos', icon: Sofa },
+      { label: 'Projetos e Orçamentos', path: '/projetos', icon: Sofa },
       { label: 'Estoque', path: '/estoque', icon: Package },
     ],
   },

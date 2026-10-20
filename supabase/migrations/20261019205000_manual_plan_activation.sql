@@ -56,8 +56,8 @@ BEGIN
 
   UPDATE public.tenants SET plano=lower(trim(v_plano.nome)),ativo=true,
     plano_solicitado_id=NULL,
-    data_contratacao=COALESCE(data_contratacao,v_now),
-    inicio_utilizacao=COALESCE(inicio_utilizacao,v_now),
+    data_contratacao=v_now,
+    inicio_utilizacao=v_now,
     updated_at=v_now
   WHERE id=p_tenant_id;
 

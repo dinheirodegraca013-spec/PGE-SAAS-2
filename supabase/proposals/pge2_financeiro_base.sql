@@ -51,6 +51,10 @@ CREATE TABLE IF NOT EXISTS public.financeiro_baixas (
 );
 CREATE INDEX IF NOT EXISTS financeiro_lancamentos_tenant_venc_idx ON public.financeiro_lancamentos(tenant_id,vencimento);
 CREATE INDEX IF NOT EXISTS financeiro_baixas_tenant_data_idx ON public.financeiro_baixas(tenant_id,data_pagamento);
+CREATE INDEX IF NOT EXISTS financeiro_lancamentos_projeto_idx ON public.financeiro_lancamentos(projeto_id);
+CREATE INDEX IF NOT EXISTS financeiro_lancamentos_criado_por_idx ON public.financeiro_lancamentos(criado_por);
+CREATE INDEX IF NOT EXISTS financeiro_baixas_lancamento_idx ON public.financeiro_baixas(lancamento_id);
+CREATE INDEX IF NOT EXISTS financeiro_baixas_lancamento_tenant_idx ON public.financeiro_baixas(lancamento_id,tenant_id);
 ALTER TABLE public.financeiro_lancamentos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.financeiro_baixas ENABLE ROW LEVEL SECURITY;
 -- Acesso somente leitura nesta etapa. Escritas exigem RPC transacional validada.

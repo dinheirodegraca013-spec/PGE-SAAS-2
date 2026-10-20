@@ -37,10 +37,10 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 function mapPlanoNome(planoNum: number | string | undefined): string {
   const normalized = String(planoNum ?? '').trim().toLowerCase();
-  if (normalized === '2' || normalized === 'empresarial') return 'Empresarial';
-  if (normalized === '0' || normalized === 'free') return 'Free';
-  if (normalized === 'standard' || normalized === '1') return 'Standard';
-  return 'Free';
+  if (normalized === '2' || normalized === 'empresarial' || normalized === 'premium' || normalized === 'premium/plus') return 'Premium/Plus';
+  if (normalized === '0' || normalized === 'free' || normalized === 'basico' || normalized === 'básico') return 'Básico';
+  if (normalized === 'standard' || normalized === '1' || normalized === 'profissional') return 'Profissional';
+  return 'Não informado';
 }
 
 /**
@@ -326,7 +326,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             nome_completo: payload.nomeCompleto.trim(),
             razao_social: payload.razaoSocial.trim(),
             nome_fantasia: payload.nomeFantasia?.trim() || null,
-            plano: 'Free',
+            plano: 'Básico',
             plano_solicitado_id: payload.planoSolicitadoId || null,
           },
         },

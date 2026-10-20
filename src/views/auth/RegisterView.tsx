@@ -19,7 +19,7 @@ export default function RegisterView() {
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [planos, setPlanos] = useState<PlanoDefinicao[]>([]);
   const [carregandoPlanos, setCarregandoPlanos] = useState(true);
-  const [plano, setPlano] = useState<number>(TenantPlano.Standard);
+  const [plano, setPlano] = useState<number>(TenantPlano.Profissional);
 
   const [erroServidor, setErroServidor] = useState<string | null>(null);
   const [estaEnviando, setEstaEnviando] = useState(false);
@@ -53,11 +53,11 @@ export default function RegisterView() {
 
       const planosBanco: PlanoDefinicao[] = data.map((p: any) => {
         const nomeNormalizado = String(p.nome || '').trim().toLowerCase();
-        const valor = nomeNormalizado === 'free'
-          ? TenantPlano.Free
-          : nomeNormalizado === 'empresarial'
-            ? TenantPlano.Empresarial
-            : TenantPlano.Standard;
+        const valor = ['basico', 'básico', 'free'].includes(nomeNormalizado)
+          ? TenantPlano.Basico
+          : ['premium', 'premium/plus', 'empresarial'].includes(nomeNormalizado)
+            ? TenantPlano.Premium
+            : TenantPlano.Profissional;
         const preco = Number(p.preco || 0);
         const periodicidade = p.periodicidade || 'mensal';
         return {
@@ -70,7 +70,7 @@ export default function RegisterView() {
           recursos: Array.isArray(p.recursos)
             ? p.recursos.map((recurso: any) => typeof recurso === 'string' ? recurso : recurso?.nome || recurso?.label || '').filter(Boolean)
             : [],
-          destaque: nomeNormalizado === 'standard',
+          destaque: nomeNormalizado === 'profissional' || nomeNormalizado === 'standard',
         };
       });
 
@@ -113,11 +113,11 @@ export default function RegisterView() {
     setEstaEnviando(true);
     try {
       // Resolve o plano e o checkout configurados pelo Super Admin antes de criar a conta.
-      const nomePlanoSelecionado = plano === TenantPlano.Free
-        ? 'free'
-        : plano === TenantPlano.Empresarial
-          ? 'empresarial'
-          : 'standard';
+      const nomePlanoSelecionado = plano === TenantPlano.Basico
+        ? 'basico'
+        : plano === TenantPlano.Premium
+          ? 'premium'
+          : 'profissional';
 
       const { data: planoBanco, error: planoError } = await supabase
         .from('saas_planos')
@@ -131,7 +131,7 @@ export default function RegisterView() {
         return;
       }
 
-      const isPlanoFree = String(planoBanco.nome).trim().toLowerCase() === 'free' || Number(planoBanco.preco) === 0;
+      const isPlanoFree = false;
       let checkoutUrl: string | null = null;
 
       if (!isPlanoFree) {
@@ -159,7 +159,7 @@ export default function RegisterView() {
         email: email.trim(),
         senha,
         plano,
-        planoSolicitadoId: isPlanoFree ? undefined : planoBanco.id,
+        planoSolicitadoId: planoBanco.id,
       });
 
       if (!resultado.succeeded) {

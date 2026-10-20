@@ -105,7 +105,7 @@ export default function ProjetosListView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">Projetos de Marcenaria</h2>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900">Projetos, Orçamentos e Produção</h2>
           <p className="mt-1 text-sm text-slate-500">
             Acompanhamento de produção, medições e execução no Supabase.
           </p>
