@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type Item = { id: string; nome: string; codigo: string | null; unidade: string; estoque_minimo: number; saldo: number };
+type Projeto = { id: string; titulo: string | null; nome: string | null };
 
 export default function EstoqueView() {
   const [itens, setItens] = useState<Item[]>([]);
@@ -11,6 +12,8 @@ export default function EstoqueView() {
   const [erro, setErro] = useState('');
   const [operando, setOperando] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState('');
+  const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [projetoSelecionado, setProjetoSelecionado] = useState('');
   const [tipo, setTipo] = useState('entrada');
   const [quantidade, setQuantidade] = useState('');
   const [motivo, setMotivo] = useState('');
@@ -27,6 +30,8 @@ export default function EstoqueView() {
       return;
     }
     setItens((itensResult.data || []) as Item[]);
+    const projetosResult = await supabase.from('projetos_marcenaria').select('id,titulo,nome').order('created_at', { ascending: false });
+    if (!projetosResult.error) setProjetos((projetosResult.data || []) as Projeto[]);
     setCarregando(false);
   }
 
@@ -43,7 +48,7 @@ export default function EstoqueView() {
     setMensagem('');
     const result = await supabase.rpc('estoque_registrar_movimento', {
       p_item_id: itemSelecionado, p_tipo: tipo, p_quantidade: Number(quantidade),
-      p_motivo: motivo.trim(), p_projeto_id: null,
+      p_motivo: motivo.trim(), p_projeto_id: projetoSelecionado || null,
     });
     setOperando(false);
     if (result.error) {
@@ -69,6 +74,7 @@ export default function EstoqueView() {
       <label className="text-sm">Tipo<select value={tipo} onChange={e => setTipo(e.target.value)} className="block w-full rounded border p-2"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste_entrada">Ajuste positivo</option><option value="ajuste_saida">Ajuste negativo</option></select></label>
       <label className="text-sm">Quantidade<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={e => setQuantidade(e.target.value)} className="block w-full rounded border p-2" /></label>
       <label className="text-sm">Motivo<input required maxLength={500} value={motivo} onChange={e => setMotivo(e.target.value)} className="block w-full rounded border p-2" /></label>
+      <label className="text-sm sm:col-span-2">Projeto relacionado (opcional)<select value={projetoSelecionado} onChange={e => setProjetoSelecionado(e.target.value)} className="block w-full rounded border p-2"><option value="">Movimentação geral</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo || p.nome || p.id}</option>)}</select></label>
       <button disabled={operando || carregando || itens.length === 0} type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-white disabled:opacity-50 sm:col-span-2">{operando ? 'Registrando...' : 'Registrar'}</button>
       <p className="text-xs text-slate-500 sm:col-span-2">As movimentações exigem permissão de estoque e são registradas no banco.</p>
     </form>
