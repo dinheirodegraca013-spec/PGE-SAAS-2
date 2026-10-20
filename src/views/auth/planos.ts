@@ -23,13 +23,14 @@ export const planos: PlanoDefinicao[] = [
   {
     valor: TenantPlano.Standard,
     nome: 'Standard',
-    precoMensal: 'R$ 149/mês',
+    precoMensal: 'R$ 89,90/mês',
     descricao: 'Para marcenarias em operação, com equipe.',
     recursos: [
       'Clientes ilimitados',
       'Até 5 usuários',
-      'Integração com WhatsApp',
-      'Relatórios e dashboards',
+      'Projetos de móveis ilimitados',
+      'Integração oficial WhatsApp',
+      'Relatórios e orçamentos em PDF',
       'Suporte prioritário',
     ],
     destaque: true,
@@ -37,14 +38,14 @@ export const planos: PlanoDefinicao[] = [
   {
     valor: TenantPlano.Empresarial,
     nome: 'Empresarial',
-    precoMensal: 'R$ 399/mês',
+    precoMensal: 'R$ 199,90/mês',
     descricao: 'Para operações maiores, com múltiplas equipes.',
     recursos: [
       'Tudo do plano Standard',
       'Usuários ilimitados',
       'Múltiplos módulos de negócio',
-      'Papéis e permissões avançadas',
-      'Suporte dedicado',
+      'Controle avançado de permissões',
+      'Suporte dedicado 24/7',
     ],
   },
 ];
