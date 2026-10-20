@@ -12,8 +12,8 @@ const WHATSAPP_ATIVACAO = '5513997340823';
 
 export default function PagamentoObrigadoView() {
   const { plano: planoParam } = useParams();
-  const slug = (planoParam || (window.location.pathname.includes('empresarial') ? 'empresarial' : window.location.pathname.includes('free') ? 'free' : 'standard')).toLowerCase();
-  const plano = PLANOS[slug] || PLANOS.standard;
+  const slug = (planoParam || (window.location.pathname.includes('empresarial') ? 'empresarial' : window.location.pathname.includes('free') ? 'free' : window.location.pathname.includes('standard') ? 'standard' : '')).toLowerCase();
+  const plano = PLANOS[slug] || { nome: 'Não informado', descricao: 'Não foi possível identificar o plano nesta confirmação.' };
   const gratuito = slug === 'free';
   const mensagem = encodeURIComponent(
     `Olá! Acabei de concluir o checkout do Gestio e solicito a ativação manual do meu plano ${plano.nome}.\n\nNome da empresa: \nE-mail usado no cadastro: \n\nPor favor, confiram o pagamento e ativem meu acesso. Sei que a ativação depende da conferência manual.`
