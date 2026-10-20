@@ -51,5 +51,6 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/proposals/pge2_estoque_base.sql
           psql -v ON_ERROR_STOP=1 -f supabase/proposals/pge2_estoque_transacional.sql
           psql -v ON_ERROR_STOP=1 -f tests/estoque-integration.sql
+          psql -v ON_ERROR_STOP=1 -f tests/estoque-auth-integration.sql
       - name: Production build
         run: bun run build
