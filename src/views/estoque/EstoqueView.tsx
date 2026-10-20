@@ -5,6 +5,9 @@ type Item = { id: string; nome: string; codigo: string | null; unidade: string; 
 
 export default function EstoqueView() {
   const [itens, setItens] = useState<Item[]>([]);
+  const [novoNome,setNovoNome] = useState('');
+  const [novoCodigo,setNovoCodigo] = useState('');
+  const [novoMinimo,setNovoMinimo] = useState('0');
   const [erro, setErro] = useState('');
   const [operando, setOperando] = useState(false);
   const [itemSelecionado, setItemSelecionado] = useState('');
@@ -58,6 +61,7 @@ export default function EstoqueView() {
       <div><h1 className="text-2xl font-bold">Estoque</h1><p className="text-sm text-slate-500">Consulte saldos e registre entradas, saídas e ajustes autorizados.</p></div>
       <button type="button" onClick={() => void carregar()} disabled={carregando} className="rounded-lg border px-4 py-2">Atualizar</button>
     </header>
+    <form className="rounded-xl border p-4 grid gap-3 sm:grid-cols-4" onSubmit={async e => {e.preventDefault();setOperando(true);setErro('');const {error}=await supabase.rpc('estoque_cadastrar_item',{p_nome:novoNome,p_codigo:novoCodigo||null,p_unidade:'un',p_estoque_minimo:Number(novoMinimo)});setOperando(false);if(error){setErro(error.message);return;}setNovoNome('');setNovoCodigo('');setNovoMinimo('0');setMensagem('Produto cadastrado.');await carregar();}}><h2 className="font-bold sm:col-span-4">Cadastrar produto</h2><input aria-label="Nome do produto" placeholder="Nome do produto" required value={novoNome} onChange={e=>setNovoNome(e.target.value)} className="rounded border p-2"/><input aria-label="Código" placeholder="Código (opcional)" value={novoCodigo} onChange={e=>setNovoCodigo(e.target.value)} className="rounded border p-2"/><input aria-label="Estoque mínimo" type="number" min="0" step="0.001" value={novoMinimo} onChange={e=>setNovoMinimo(e.target.value)} className="rounded border p-2"/><button disabled={operando} className="rounded bg-slate-900 p-2 text-white">Cadastrar</button></form>
     {mensagem && <p role="status" className="rounded-lg bg-green-50 p-4 text-green-800">{mensagem}</p>}
     <form onSubmit={registrar} className="grid gap-3 rounded-xl border p-4 sm:grid-cols-2">
       <h2 className="font-bold sm:col-span-2">Registrar movimentação</h2>
