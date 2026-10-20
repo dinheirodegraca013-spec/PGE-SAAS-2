@@ -87,7 +87,7 @@ export default function AppLayout() {
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-600 text-white shadow-lg shadow-violet-900/40"><Crown className="h-5 w-5" /></div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-white">Plano {auth.usuario?.plano === 'Free' ? 'Free' : (auth.usuario?.plano || 'Profissional')}</p>
+                <p className="text-sm font-bold text-white">Plano {auth.usuario?.plano || 'Não informado'}</p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-300">Ferramentas para organizar e fazer sua empresa crescer.</p>
               </div>
             </div>

@@ -40,7 +40,7 @@ function mapPlanoNome(planoNum: number | string | undefined): string {
   if (normalized === '2' || normalized === 'empresarial') return 'Empresarial';
   if (normalized === '0' || normalized === 'free') return 'Free';
   if (normalized === 'standard' || normalized === '1') return 'Standard';
-  return 'Free';
+  return 'Não informado';
 }
 
 /**
