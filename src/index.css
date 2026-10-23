@@ -88,7 +88,7 @@
   .gestio-app {
     background:
       radial-gradient(ellipse at 70% 0%, rgba(34, 211, 238, .08), transparent 35%),
-      #f3f7fc;
+      #080c1d;
   }
   .gestio-sidebar {
     background:
@@ -110,8 +110,9 @@
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 12px 28px rgba(0,0,0,.15);
   }
   .gestio-topbar {
-    background: rgba(255, 255, 255, .88);
+    background: rgba(8, 12, 29, .94);
     backdrop-filter: blur(18px);
+    border-color: rgba(148, 163, 184, .14);
   }
   .gestio-page-heading {
     background: linear-gradient(180deg, rgba(255,255,255,.48), transparent);
@@ -119,8 +120,31 @@
   .gestio-content {
     background:
       radial-gradient(ellipse at 80% 0%, rgba(139, 92, 246, .045), transparent 35%),
-      transparent;
+      #080c1d;
   }
+  .gestio-content h1,
+  .gestio-content h2,
+  .gestio-content h3,
+  .gestio-content h4,
+  .gestio-content .text-slate-950,
+  .gestio-content .text-slate-900,
+  .gestio-content .text-slate-800,
+  .gestio-content .text-slate-700 { color: #f8fafc !important; }
+  .gestio-content .text-slate-600,
+  .gestio-content .text-slate-500,
+  .gestio-content .text-slate-400 { color: #94a3b8 !important; }
+  .gestio-content .border-slate-200,
+  .gestio-content .border-slate-200\/80,
+  .gestio-content .border-slate-100 { border-color: rgba(148, 163, 184, .18) !important; }
+  .gestio-content .bg-white,
+  .gestio-content .bg-white\/70 { background-color: #11152d !important; }
+  .gestio-content .card { background: #11152d; border-color: rgba(148, 163, 184, .18); color: #f8fafc; }
+  .gestio-content .input-field,
+  .gestio-content input,
+  .gestio-content select,
+  .gestio-content textarea { background-color: #0d1228; border-color: rgba(148, 163, 184, .25); color: #f8fafc; }
+  .gestio-content .btn-secondary { background: #11152d; border-color: rgba(148, 163, 184, .25); color: #e2e8f0; }
+  .gestio-content .gestio-page-heading { background: rgba(17, 21, 45, .82); border-color: rgba(148, 163, 184, .18); }
   .gestio-content .card {
     border-color: rgba(203, 213, 225, .72);
     border-radius: 1rem;
