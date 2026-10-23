@@ -39,6 +39,8 @@
       hover:bg-brand-700 focus-visible:outline focus-visible:outline-2
       focus-visible:outline-offset-2 focus-visible:outline-brand-600
       disabled:cursor-not-allowed disabled:opacity-50;
+    background-image: linear-gradient(100deg, #06b6d4 0%, #2563eb 52%, #9333ea 100%);
+    border: 0;
   }
   .btn-secondary {
     @apply inline-flex items-center justify-center rounded-lg border border-slate-300
@@ -51,10 +53,32 @@
       focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
   }
   .card {
-    @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-sm;
   }
   .label-field {
     @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+  .gestio-page-heading {
+    @apply flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200/70 bg-white/70 px-5 py-4 shadow-sm backdrop-blur-sm;
+  }
+  .gestio-section-title {
+    @apply text-lg font-bold tracking-tight text-slate-900;
+  }
+  .gestio-section-subtitle {
+    @apply mt-1 text-sm text-slate-500;
+  }
+  .gestio-tab {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600;
+  }
+  .gestio-tab-active {
+    @apply text-white shadow-lg shadow-violet-500/20;
+    background-image: linear-gradient(100deg, #06b6d4 0%, #2563eb 52%, #9333ea 100%);
+  }
+  .gestio-tab-inactive {
+    @apply border border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-700;
+  }
+  .gestio-dark-panel {
+    @apply rounded-2xl bg-[#11152d] text-white shadow-xl shadow-slate-900/10;
   }
 }
 
