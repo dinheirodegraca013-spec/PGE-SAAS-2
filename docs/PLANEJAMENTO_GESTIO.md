@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 # Planejamento do GESTIO
 
 ## Ordem de execução
@@ -51,9 +52,9 @@
 
 ## Registro de homologação — 27/10/2026
 
-- Código local: `4b4859a` — testes, lint e build aprovados.
-- Preview Vercel validado: HTTP 200 no deploy `dpl_9Ep91YrtysF4TrzZzyzNLhd6bdUX`.
+- Código publicado: `2b457c1` — testes, lint e build aprovados.
+- Deploy Vercel validado: HTTP 200 no deploy `dpl_D9ySxBRkPb943XQhG7PaufVUzZWy`.
 - Domínio `gestio.dev.br`: HTTP 200 e rollback anterior preservado.
-- Pendência externa: o preview publicado corresponde ao commit `48d5654`; o commit local `4b4859a` ainda aguarda novo build por limite de deploy da Vercel.
+- O deploy publicado inclui a correção de nomenclatura do plano Básico.
 - Presença diária: o banco atual não fornece registro de presença; a interface informa explicitamente “Presença não registrada”.
 
