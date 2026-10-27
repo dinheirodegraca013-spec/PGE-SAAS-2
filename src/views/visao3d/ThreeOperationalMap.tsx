@@ -14,12 +14,6 @@ const colors: Record<MapSector["estado"], number> = {
   critico: 0xd95d68,
   "sem-dados": 0x9aa6b2,
 };
-const cssColors: Record<MapSector["estado"], string> = {
-  normal: "#5fb58a",
-  atencao: "#d1b24f",
-  critico: "#d95d68",
-  "sem-dados": "#9aa6b2",
-};
 
 export default function ThreeOperationalMap({ setores }: { setores: MapSector[] }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -37,7 +31,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     }
     setIndisponivel(false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0);
+    renderer.setClearColor(0xf8fafc, 1);
     renderer.domElement.className = "absolute inset-0 h-full w-full";
     host.insertBefore(renderer.domElement, host.firstChild);
     renderer.domElement.setAttribute("aria-label", "Mapa operacional 3D da empresa");
@@ -139,33 +133,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     );
   }
   return (
-    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-[56vh] min-h-[330px] max-h-[520px] w-full overflow-hidden rounded-xl bg-slate-50 sm:h-[430px] sm:max-h-none">
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-slate-100 to-slate-300/80">
-        <div
-          className="relative grid w-[88%] max-w-[620px] grid-cols-2 gap-2 rounded-2xl border border-slate-300/70 p-3 [perspective:900px] [transform:rotateX(38deg)_rotateZ(-2deg)] sm:grid-cols-3 sm:gap-3 sm:p-4 sm:[transform:rotateX(52deg)_rotateZ(-3deg)_skewX(-3deg)]"
-          style={{
-            backgroundImage: "linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        >
-          {setores.map((setor) => (
-            <div
-              key={setor.id}
-              className="flex min-h-[76px] flex-col items-start justify-end gap-1 rounded-lg border-2 border-white/80 p-2 text-[10px] font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)] sm:min-h-[92px] sm:flex-row sm:items-end sm:justify-between sm:p-3 sm:text-xs"
-              style={{ backgroundColor: cssColors[setor.estado], transform: "translateZ(18px)" }}
-            >
-              <span className="rounded bg-black/20 px-2 py-1">{setor.nome}</span>
-              <span className="rounded-full bg-white/80 px-2 py-1 text-[8px] uppercase tracking-wide text-slate-700 sm:text-[9px]">
-                {setor.estado === "sem-dados" ? "sem dados" : setor.estado}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-lg border border-white/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur">
-        Modo 3D ativo · arraste para girar · roda para aproximar
-      </div>
-    </div>
+    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-[56vh] min-h-[330px] max-h-[520px] w-full overflow-hidden rounded-xl bg-slate-50 sm:h-[430px] sm:max-h-none" />
   );
 }
 

@@ -4,7 +4,7 @@ Data: 27/10/2026
 
 ## Resultado
 
-**PASS técnico; homologação visual final pendente.** A Visão 3D foi corrigida para não ficar vazia no mobile: o canvas WebGL permanece no contêiner, o fundo não cobre o conteúdo e existe uma representação visual 3D de contingência quando o WebGL não renderiza.
+**PASS técnico; homologação visual final pendente.** A Visão 3D usa somente o canvas WebGL Three.js, seguindo o HTML de referência; não há camada fixa sobre o canvas. Quando WebGL não renderiza, o sistema exibe uma mensagem de compatibilidade.
 
 ## Evidências executadas
 
@@ -22,7 +22,7 @@ Data: 27/10/2026
 - Dados: mapa usa estoque/projetos do tenant e declara “Sem dados” sem inventar lançamentos.
 - Visual: menu escuro, conteúdo claro e hierarquia inspirada no HTML 3D.
 - Resiliência: falhas de fonte exibem alerta e ação de atualização.
-- Mobile: camadas corrigidas e fallback visual independente do WebGL.
+- Mobile: canvas redimensionado por viewport, sem sobreposição fixa.
 
 ## Pendências e riscos
 

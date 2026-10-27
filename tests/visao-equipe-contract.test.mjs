@@ -29,8 +29,8 @@ test('Visão 3D usa renderização WebGL real com fallback', () => {
   assert.match(mapa3d, /WebGLRenderer/);
   assert.match(mapa3d, /OrbitControls/);
   assert.match(mapa3d, /Seu navegador não conseguiu abrir o modo 3D/);
-  assert.match(mapa3d, /translateZ\(18px\)/);
-  assert.match(mapa3d, /setClearColor\(0x000000, 0\)/);
+  assert.match(mapa3d, /setClearColor\(0xf8fafc, 1\)/);
+  assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
 });
 
 test('equipe consulta profiles do tenant e explicita presença não registrada', () => {
