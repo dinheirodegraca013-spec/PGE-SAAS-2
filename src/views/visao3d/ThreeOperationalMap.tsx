@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -139,7 +140,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     );
   }
   return (
-    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative min-h-[430px] w-full overflow-hidden rounded-xl bg-slate-50">
+    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-[56vh] min-h-[330px] max-h-[520px] w-full overflow-hidden rounded-xl bg-slate-50 sm:h-[430px] sm:max-h-none">
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-slate-100 to-slate-300/80">
         <div
           className="relative grid w-[92%] max-w-[620px] grid-cols-3 gap-3 rounded-2xl border border-slate-300/70 p-4 [perspective:900px]"

@@ -185,7 +185,7 @@ export default function Visao3DView() {
         </div>
       )}
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="relative isolate min-h-[560px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="relative isolate min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:min-h-[560px]">
           <div
             className="pointer-events-none absolute inset-0 z-0 opacity-40"
             style={{
