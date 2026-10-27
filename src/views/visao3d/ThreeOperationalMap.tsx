@@ -32,7 +32,8 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     setIndisponivel(false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0xf8fafc, 1);
-    host.replaceChildren(renderer.domElement);
+    renderer.domElement.className = "absolute inset-0 h-full w-full";
+    host.insertBefore(renderer.domElement, host.firstChild);
     renderer.domElement.setAttribute("aria-label", "Mapa operacional 3D da empresa");
     renderer.domElement.setAttribute("role", "img");
 
@@ -120,7 +121,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
         }
       });
       renderer.dispose();
-      host.replaceChildren();
+      renderer.domElement.remove();
     };
   }, [setores]);
 
