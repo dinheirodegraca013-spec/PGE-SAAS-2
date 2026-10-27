@@ -12,6 +12,11 @@ Entregar uma versão do GESTIO alinhada ao PGE II: uma plataforma simples para m
 5. **Planos coerentes** — manter os planos alinhados ao documento do PGE II: Básico R$ 39,90, Profissional R$ 79,90 e Premium/Plus R$ 129,90.
 6. **Segurança multiempresa** — preservar autenticação, RLS e isolamento por tenant.
 7. **Publicação controlada** — validar build, testes, variáveis, backup e rollback antes de promover alterações para produção.
+8. **Visão operacional acessível** — abrir a Visão 3D pelo menu, dashboard e links antigos sem rota quebrada.
+9. **Resiliência de carregamento** — manter o mapa visível mesmo quando uma fonte de dados falhar, com erro recuperável e ação de atualizar.
+10. **Experiência responsiva** — preservar a leitura do mapa, alertas e indicadores em desktop, tablet e celular.
+11. **Rastreabilidade de indicadores** — cada número exibido deve vir de estoque/projetos reais ou declarar “Sem dados”.
+12. **Consistência visual** — manter menu lateral escuro, área interna clara e hierarquia baseada no protótipo ERP 3D.
 
 ## Critérios de sucesso
 
@@ -19,3 +24,4 @@ Entregar uma versão do GESTIO alinhada ao PGE II: uma plataforma simples para m
 - Cada indicador informa sua origem ou mostra estado vazio quando não há dados.
 - Fluxos essenciais continuam funcionando após a integração.
 - Build, testes e verificação de produção passam sem regressões críticas.
+

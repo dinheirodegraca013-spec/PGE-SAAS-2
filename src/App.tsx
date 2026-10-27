@@ -148,6 +148,8 @@ export default function App() {
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
             <Route path="estoque" element={<EstoqueView />} />
             <Route path="visao-3d" element={<Visao3DView />} />
+            {/* Alias compatível com links antigos e com o protótipo ERP 3D. */}
+            <Route path="visao3d" element={<Navigate to="/visao-3d" replace />} />
             <Route path="equipe" element={<EquipeView />} />
           </Route>
 
@@ -242,3 +244,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+

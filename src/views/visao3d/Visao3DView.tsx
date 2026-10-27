@@ -54,20 +54,24 @@ export default function Visao3DView() {
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
-    const [estoque, projetosResult] = await Promise.all([
-      supabase
-        .from("estoque_itens")
-        .select("id,nome,saldo,estoque_minimo,unidade")
-        .order("nome"),
-      projetosService.listar(),
-    ]);
-    const mensagens: string[] = [];
-    if (estoque.error) mensagens.push("Estoque indisponível no momento.");
-    else setItens((estoque.data || []) as EstoqueItem[]);
-    if (!projetosResult.succeeded || !projetosResult.value)
-      mensagens.push("Projetos indisponíveis no momento.");
-    else setProjetos(projetosResult.value.items || []);
-    if (mensagens.length) setErro(mensagens.join(" "));
+    try {
+      const [estoque, projetosResult] = await Promise.all([
+        supabase
+          .from("estoque_itens")
+          .select("id,nome,saldo,estoque_minimo,unidade")
+          .order("nome"),
+        projetosService.listar(),
+      ]);
+      const mensagens: string[] = [];
+      if (estoque.error) mensagens.push("Estoque indisponível no momento.");
+      else setItens((estoque.data || []) as EstoqueItem[]);
+      if (!projetosResult.succeeded || !projetosResult.value)
+        mensagens.push("Projetos indisponíveis no momento.");
+      else setProjetos(projetosResult.value.items || []);
+      if (mensagens.length) setErro(mensagens.join(" "));
+    } catch {
+      setErro("Não foi possível carregar a Visão 3D agora. Tente atualizar.");
+    }
     setCarregando(false);
   };
 
@@ -210,7 +214,7 @@ export default function Visao3DView() {
                   setor.id === "estoque"
                     ? "/estoque"
                     : setor.id === "financeiro"
-                      ? "/financeiro"
+                      ? "/meu-financeiro"
                       : "/projetos"
                 }
                 className={`group relative flex min-h-[185px] flex-col justify-between overflow-hidden rounded-xl border-2 p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md ${statusClasses[setor.estado]}`}
