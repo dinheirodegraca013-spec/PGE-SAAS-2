@@ -6,7 +6,7 @@ Entregar uma versão do GESTIO alinhada ao PGE II: uma plataforma simples para m
 ## Metas de produto
 
 1. **Operação centralizada** — permitir acompanhar projetos, tarefas, estoque e financeiro em um único painel.
-2. **Visibilidade operacional** — oferecer a Visão 3D como mapa de setores e alertas, sem substituir os módulos transacionais.
+2. **Visibilidade operacional** — oferecer a Visão 3D WebGL como mapa navegável de setores e alertas, sem substituir os módulos transacionais.
 3. **Equipe rastreável** — apresentar presença, setor e status dos colaboradores com origem de dados identificada.
 4. **Dados confiáveis** — não exibir lançamentos fictícios como se fossem dados da empresa; estados vazios devem ser explícitos.
 5. **Planos coerentes** — manter os planos alinhados ao documento do PGE II: Básico R$ 39,90, Profissional R$ 79,90 e Premium/Plus R$ 129,90.

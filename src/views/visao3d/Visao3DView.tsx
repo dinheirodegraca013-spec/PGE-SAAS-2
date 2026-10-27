@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
+import ThreeOperationalMap from "./ThreeOperationalMap";
 import {
   StatusProjeto,
   type ProjetoMovelPlanejado,
@@ -206,53 +207,11 @@ export default function Visao3DView() {
               Dados do GESTIO
             </span>
           </div>
-          <div className="relative grid min-h-[430px] grid-cols-3 grid-rows-2 gap-3 rounded-2xl border border-dashed border-slate-300 bg-slate-100/70 p-4">
+          <ThreeOperationalMap setores={setores} />
+          <div className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {setores.map((setor) => (
-              <Link
-                key={setor.id}
-                to={
-                  setor.id === "estoque"
-                    ? "/estoque"
-                    : setor.id === "financeiro"
-                      ? "/meu-financeiro"
-                      : "/projetos"
-                }
-                className={`group relative flex min-h-[185px] flex-col justify-between overflow-hidden rounded-xl border-2 p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md ${statusClasses[setor.estado]}`}
-              >
-                <div className={`absolute inset-x-0 top-0 h-2 ${setor.cor}`} />
-                <div className="flex items-start justify-between gap-2 pt-1">
-                  <span className="font-bold">{setor.nome}</span>
-                  <span className="rounded-full bg-white/75 px-2 py-1 text-[10px] font-bold uppercase tracking-wide">
-                    {setor.estado === "critico"
-                      ? "Crítico"
-                      : setor.estado === "normal"
-                        ? "Normal"
-                        : "Sem dados"}
-                  </span>
-                </div>
-                <div>
-                  <div className="mb-2 flex items-center gap-2 text-xs font-semibold opacity-80">
-                    {setor.estado === "critico" ? (
-                      <AlertTriangle className="h-4 w-4" />
-                    ) : setor.estado === "normal" ? (
-                      <CircleCheck className="h-4 w-4" />
-                    ) : (
-                      <span className="h-4 w-4 rounded-full border border-current" />
-                    )}
-                    {setor.detalhe}
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-white/70">
-                    <div
-                      className={`h-full ${setor.cor}`}
-                      style={{
-                        width: setor.estado === "sem-dados" ? "0%" : "100%",
-                      }}
-                    />
-                  </div>
-                </div>
-                <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold opacity-0 transition group-hover:opacity-100">
-                  Abrir módulo <ArrowRight className="h-3 w-3" />
-                </span>
+              <Link key={setor.id} to={setor.id === "estoque" ? "/estoque" : setor.id === "financeiro" ? "/meu-financeiro" : "/projetos"} className={`rounded-lg border px-3 py-2 text-xs font-semibold ${statusClasses[setor.estado]}`}>
+                {setor.nome} · {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
               </Link>
             ))}
           </div>
