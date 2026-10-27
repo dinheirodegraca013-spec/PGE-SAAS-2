@@ -117,7 +117,7 @@ export default function RegisterView() {
       const normalizarNomePlano = (nome: unknown) =>
         String(nome || '')
           .normalize('NFD')
-          .replace(/[\\u0300-\\u036f]/g, '')
+          .replace(/[\u0300-\u036f]/g, '')
           .trim()
           .toLowerCase();
 
