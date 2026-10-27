@@ -326,7 +326,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             nome_completo: payload.nomeCompleto.trim(),
             razao_social: payload.razaoSocial.trim(),
             nome_fantasia: payload.nomeFantasia?.trim() || null,
-            plano: 'Básico',
+            // O campo tenants.plano aceita apenas free, standard ou empresarial.
+            // O plano comercial escolhido fica separado em plano_solicitado_id até a ativação.
+            plano: 'free',
             plano_solicitado_id: payload.planoSolicitadoId || null,
           },
         },
