@@ -81,7 +81,7 @@ export default function RegisterView() {
       const planoInicial = planosBanco.find((p) => p.valor === plano) || planosBanco[0];
       if (planoInicial) {
         setPlano(planoInicial.valor);
-        setPlanoIdSelecionado(planoInicial.id);
+        setPlanoIdSelecionado(String(planoInicial.id || ''));
       }
       setErroServidor(null);
       setCarregandoPlanos(false);
@@ -343,7 +343,7 @@ export default function RegisterView() {
                       name="plano"
                       value={def.valor}
                       checked={isSelected}
-                      onChange={() => { setPlano(def.valor); setPlanoIdSelecionado(def.id); }}
+                      onChange={() => { setPlano(def.valor); setPlanoIdSelecionado(String(def.id || '')); }}
                       className="sr-only"
                     />
                     {def.destaque && (
