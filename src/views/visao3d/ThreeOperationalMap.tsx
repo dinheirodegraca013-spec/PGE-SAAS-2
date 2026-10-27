@@ -139,16 +139,26 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     );
   }
   return (
-    <div ref={hostRef} className="relative min-h-[430px] w-full overflow-hidden rounded-xl bg-slate-50">
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-slate-200/80">
-        <div className="relative grid w-[92%] max-w-[620px] grid-cols-3 gap-3 [perspective:900px]" style={{ transform: "rotateX(52deg) rotateZ(-3deg) skewX(-3deg)" }}>
+    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative min-h-[430px] w-full overflow-hidden rounded-xl bg-slate-50">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-slate-100 to-slate-300/80">
+        <div
+          className="relative grid w-[92%] max-w-[620px] grid-cols-3 gap-3 rounded-2xl border border-slate-300/70 p-4 [perspective:900px]"
+          style={{
+            transform: "rotateX(52deg) rotateZ(-3deg) skewX(-3deg)",
+            backgroundImage: "linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)",
+            backgroundSize: "28px 28px",
+          }}
+        >
           {setores.map((setor) => (
             <div
               key={setor.id}
-              className="flex min-h-[92px] items-end rounded-lg border-2 border-white/80 p-3 text-xs font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)]"
+              className="flex min-h-[92px] items-end justify-between rounded-lg border-2 border-white/80 p-3 text-xs font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)]"
               style={{ backgroundColor: cssColors[setor.estado], transform: "translateZ(18px)" }}
             >
               <span className="rounded bg-black/20 px-2 py-1">{setor.nome}</span>
+              <span className="rounded-full bg-white/80 px-2 py-1 text-[9px] uppercase tracking-wide text-slate-700">
+                {setor.estado === "sem-dados" ? "sem dados" : setor.estado}
+              </span>
             </div>
           ))}
         </div>
