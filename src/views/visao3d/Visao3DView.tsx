@@ -185,16 +185,16 @@ export default function Visao3DView() {
         </div>
       )}
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="relative min-h-[560px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="relative isolate min-h-[560px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div
-            className="pointer-events-none absolute inset-0 opacity-40"
+            className="pointer-events-none absolute inset-0 z-0 opacity-40"
             style={{
               backgroundImage:
                 "linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)",
               backgroundSize: "28px 28px",
             }}
           />
-          <div className="relative mb-4 flex items-start justify-between">
+          <div className="relative z-10 mb-4 flex items-start justify-between">
             <div>
               <h2 className="text-lg font-bold text-slate-900">
                 Planta operacional
@@ -207,15 +207,17 @@ export default function Visao3DView() {
               Dados do GESTIO
             </span>
           </div>
-          <ThreeOperationalMap setores={setores} />
-          <div className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <div className="relative z-10">
+            <ThreeOperationalMap setores={setores} />
+          </div>
+          <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {setores.map((setor) => (
               <Link key={setor.id} to={setor.id === "estoque" ? "/estoque" : setor.id === "financeiro" ? "/meu-financeiro" : "/projetos"} className={`rounded-lg border px-3 py-2 text-xs font-semibold ${statusClasses[setor.estado]}`}>
                 {setor.nome} · {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
               </Link>
             ))}
           </div>
-          <p className="relative mt-4 text-xs text-slate-500">
+          <p className="relative z-10 mt-4 text-xs text-slate-500">
             Mapa sem lançamentos fictícios: setores sem fonte transacional
             permanecem em “Sem dados”.
           </p>
