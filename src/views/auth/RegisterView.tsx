@@ -20,6 +20,7 @@ export default function RegisterView() {
   const [planos, setPlanos] = useState<PlanoDefinicao[]>([]);
   const [carregandoPlanos, setCarregandoPlanos] = useState(true);
   const [plano, setPlano] = useState<number>(TenantPlano.Profissional);
+  const [planoIdSelecionado, setPlanoIdSelecionado] = useState<string>('');
 
   const [erroServidor, setErroServidor] = useState<string | null>(null);
   const [estaEnviando, setEstaEnviando] = useState(false);
@@ -61,6 +62,7 @@ export default function RegisterView() {
         const preco = Number(p.preco || 0);
         const periodicidade = p.periodicidade || 'mensal';
         return {
+          id: String(p.id),
           valor,
           nome: p.nome,
           precoMensal: preco === 0
@@ -75,8 +77,11 @@ export default function RegisterView() {
       });
 
       setPlanos(planosBanco);
-      if (planosBanco.length > 0 && !planosBanco.some((p) => p.valor === plano)) {
-        setPlano(planosBanco[0].valor);
+      // O enum numérico não identifica de forma segura um registro do catálogo.
+      const planoInicial = planosBanco.find((p) => p.valor === plano) || planosBanco[0];
+      if (planoInicial) {
+        setPlano(planoInicial.valor);
+        setPlanoIdSelecionado(String(planoInicial.id || ''));
       }
       setErroServidor(null);
       setCarregandoPlanos(false);
@@ -113,17 +118,17 @@ export default function RegisterView() {
     setEstaEnviando(true);
     try {
       // Resolve o plano e o checkout configurados pelo Super Admin antes de criar a conta.
-      const nomePlanoSelecionado = plano === TenantPlano.Basico
-        ? 'basico'
-        : plano === TenantPlano.Premium
-          ? 'premium'
-          : 'profissional';
+      if (!planoIdSelecionado) {
+        setErroServidor('Selecione um plano disponível antes de continuar.');
+        return;
+      }
 
+      // Valida pelo ID exato do plano mostrado, inclusive nomes comerciais com barras ou aliases.
       const { data: planoBanco, error: planoError } = await supabase
         .from('saas_planos')
         .select('id, nome, preco, periodicidade, status')
+        .eq('id', planoIdSelecionado)
         .eq('status', 'ativo')
-        .ilike('nome', nomePlanoSelecionado)
         .maybeSingle();
 
       if (planoError || !planoBanco) {
@@ -323,10 +328,10 @@ export default function RegisterView() {
               ) : planos.length === 0 ? (
                 <p className="col-span-full rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">Nenhum plano disponível para cadastro neste momento.</p>
               ) : planos.map((def) => {
-                const isSelected = plano === def.valor;
+                const isSelected = planoIdSelecionado === def.id;
                 return (
                   <label
-                    key={def.valor}
+                    key={def.id}
                     className={`relative flex cursor-pointer flex-col rounded-xl border p-4 transition-all ${
                       isSelected
                         ? 'border-brand-600 bg-brand-50/70 ring-2 ring-brand-600 shadow-sm'
@@ -338,7 +343,7 @@ export default function RegisterView() {
                       name="plano"
                       value={def.valor}
                       checked={isSelected}
-                      onChange={() => setPlano(def.valor)}
+                      onChange={() => { setPlano(def.valor); setPlanoIdSelecionado(String(def.id || '')); }}
                       className="sr-only"
                     />
                     {def.destaque && (
