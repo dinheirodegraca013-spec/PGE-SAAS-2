@@ -142,9 +142,8 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-[56vh] min-h-[330px] max-h-[520px] w-full overflow-hidden rounded-xl bg-slate-50 sm:h-[430px] sm:max-h-none">
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-slate-100 to-slate-300/80">
         <div
-          className="relative grid w-[92%] max-w-[620px] grid-cols-3 gap-3 rounded-2xl border border-slate-300/70 p-4 [perspective:900px]"
+          className="relative grid w-[88%] max-w-[620px] grid-cols-2 gap-2 rounded-2xl border border-slate-300/70 p-3 [perspective:900px] [transform:rotateX(38deg)_rotateZ(-2deg)] sm:grid-cols-3 sm:gap-3 sm:p-4 sm:[transform:rotateX(52deg)_rotateZ(-3deg)_skewX(-3deg)]"
           style={{
-            transform: "rotateX(52deg) rotateZ(-3deg) skewX(-3deg)",
             backgroundImage: "linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
@@ -152,11 +151,11 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
           {setores.map((setor) => (
             <div
               key={setor.id}
-              className="flex min-h-[92px] items-end justify-between rounded-lg border-2 border-white/80 p-3 text-xs font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)]"
+              className="flex min-h-[76px] flex-col items-start justify-end gap-1 rounded-lg border-2 border-white/80 p-2 text-[10px] font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)] sm:min-h-[92px] sm:flex-row sm:items-end sm:justify-between sm:p-3 sm:text-xs"
               style={{ backgroundColor: cssColors[setor.estado], transform: "translateZ(18px)" }}
             >
               <span className="rounded bg-black/20 px-2 py-1">{setor.nome}</span>
-              <span className="rounded-full bg-white/80 px-2 py-1 text-[9px] uppercase tracking-wide text-slate-700">
+              <span className="rounded-full bg-white/80 px-2 py-1 text-[8px] uppercase tracking-wide text-slate-700 sm:text-[9px]">
                 {setor.estado === "sem-dados" ? "sem dados" : setor.estado}
               </span>
             </div>
