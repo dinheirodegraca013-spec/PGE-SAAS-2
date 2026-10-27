@@ -48,3 +48,12 @@
 - Documento de planejamento.
 - Especificação da Visão 3D e Equipe.
 - Implementação versionada com testes e evidências de build.
+
+## Registro de homologação — 27/10/2026
+
+- Código local: `4b4859a` — testes, lint e build aprovados.
+- Preview Vercel validado: HTTP 200 no deploy `dpl_9Ep91YrtysF4TrzZzyzNLhd6bdUX`.
+- Domínio `gestio.dev.br`: HTTP 200 e rollback anterior preservado.
+- Pendência externa: o preview publicado corresponde ao commit `48d5654`; o commit local `4b4859a` ainda aguarda novo build por limite de deploy da Vercel.
+- Presença diária: o banco atual não fornece registro de presença; a interface informa explicitamente “Presença não registrada”.
+
