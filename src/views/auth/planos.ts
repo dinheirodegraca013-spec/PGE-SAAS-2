@@ -1,7 +1,7 @@
 import { TenantPlano } from '@/types/api';
 
 export interface PlanoDefinicao {
-  id: string;
+  id?: string;
   valor: TenantPlano;
   nome: string;
   precoMensal: string;
