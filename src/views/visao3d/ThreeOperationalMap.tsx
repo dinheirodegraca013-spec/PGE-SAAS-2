@@ -88,7 +88,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     controls.target.set(0, 0.4, 0);
 
     const resize = () => {
-      const width = host.clientWidth;
+      const width = host.clientWidth || 640;
       const height = Math.max(host.clientHeight, 420);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
@@ -131,6 +131,12 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
       </div>
     );
   }
-  return <div ref={hostRef} className="min-h-[430px] w-full overflow-hidden rounded-xl" />;
+  return (
+    <div ref={hostRef} className="relative min-h-[430px] w-full overflow-hidden rounded-xl bg-slate-50">
+      <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-lg border border-white/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur">
+        Modo 3D ativo · arraste para girar · roda para aproximar
+      </div>
+    </div>
+  );
 }
 
