@@ -25,7 +25,7 @@ test('visão operacional não incorpora os números demonstrativos do protótipo
 });
 
 test('equipe consulta profiles do tenant e explicita presença não registrada', () => {
-  assert.match(equipe, /from\('profiles'\)/);
+  assert.match(equipe, /from\(["']profiles["']\)/);
   assert.match(equipe, /Presença não registrada/);
   assert.match(equipe, /Setor/);
 });
@@ -34,3 +34,4 @@ test('dashboard oferece resumo para Visão 3D e Equipe', () => {
   assert.match(dashboard, /to="\/visao-3d"/);
   assert.match(dashboard, /to="\/equipe"/);
 });
+
