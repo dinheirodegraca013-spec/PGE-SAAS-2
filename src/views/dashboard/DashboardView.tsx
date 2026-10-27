@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TrendingUp, Users, FileText, Clock, Sofa, Wrench, ArrowUpRight, ArrowRight, RefreshCw, CircleAlert } from 'lucide-react';
+import { TrendingUp, Users, FileText, Clock, Sofa, Wrench, ArrowUpRight, ArrowRight, RefreshCw, CircleAlert, Boxes, UserRoundCheck } from 'lucide-react';
 import { clientesService } from '@/modules/clientes/services/clientes.service';
 import { projetosService } from '@/modules/furniture/services/projetos.service';
 import { servicosService } from '@/modules/servicos/services/servicos.service';
@@ -84,6 +84,15 @@ export default function DashboardView() {
         <div className="flex items-center justify-between"><span className="text-xs font-semibold text-slate-500">{c.titulo}</span><span className={`flex h-10 w-10 items-center justify-center rounded-xl ${c.cor==='violet'?'bg-violet-100 text-violet-700':c.cor==='blue'?'bg-blue-100 text-blue-600':'bg-emerald-100 text-emerald-600'}`}><c.icone className="h-5 w-5"/></span></div>
         <div className="mt-3 text-2xl font-extrabold tracking-tight text-slate-950">{carregando?'—':c.valor}</div><p className="mt-1 text-xs text-slate-500">{c.detalhe}</p><p className="mt-3 flex items-center gap-1 text-xs font-semibold text-blue-600">Ver detalhes <ArrowUpRight className="h-3.5 w-3.5"/></p>
       </Link>)}
+    </div>
+
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <Link to="/visao-3d" className="group flex items-center justify-between rounded-2xl border border-cyan-100 bg-gradient-to-r from-cyan-50 to-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <div><p className="text-xs font-bold uppercase tracking-wide text-cyan-700">Operação</p><h2 className="mt-1 text-lg font-extrabold text-slate-900">Abrir Visão 3D</h2><p className="mt-1 text-xs text-slate-500">Mapa de setores e alertas reais.</p></div><Boxes className="h-8 w-8 text-cyan-600" />
+      </Link>
+      <Link to="/equipe" className="group flex items-center justify-between rounded-2xl border border-violet-100 bg-gradient-to-r from-violet-50 to-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+        <div><p className="text-xs font-bold uppercase tracking-wide text-violet-700">Pessoas</p><h2 className="mt-1 text-lg font-extrabold text-slate-900">Abrir Equipe</h2><p className="mt-1 text-xs text-slate-500">Status cadastral e presença registrada.</p></div><UserRoundCheck className="h-8 w-8 text-violet-600" />
+      </Link>
     </div>
 
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
