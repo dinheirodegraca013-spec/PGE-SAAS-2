@@ -14,6 +14,12 @@ const colors: Record<MapSector["estado"], number> = {
   critico: 0xd95d68,
   "sem-dados": 0x9aa6b2,
 };
+const cssColors: Record<MapSector["estado"], string> = {
+  normal: "#5fb58a",
+  atencao: "#d1b24f",
+  critico: "#d95d68",
+  "sem-dados": "#9aa6b2",
+};
 
 export default function ThreeOperationalMap({ setores }: { setores: MapSector[] }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -31,7 +37,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
     }
     setIndisponivel(false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0xf8fafc, 1);
+    renderer.setClearColor(0x000000, 0);
     renderer.domElement.className = "absolute inset-0 h-full w-full";
     host.insertBefore(renderer.domElement, host.firstChild);
     renderer.domElement.setAttribute("aria-label", "Mapa operacional 3D da empresa");
@@ -134,6 +140,19 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
   }
   return (
     <div ref={hostRef} className="relative min-h-[430px] w-full overflow-hidden rounded-xl bg-slate-50">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 to-slate-200/80">
+        <div className="relative grid w-[92%] max-w-[620px] grid-cols-3 gap-3 [perspective:900px]" style={{ transform: "rotateX(52deg) rotateZ(-3deg) skewX(-3deg)" }}>
+          {setores.map((setor) => (
+            <div
+              key={setor.id}
+              className="flex min-h-[92px] items-end rounded-lg border-2 border-white/80 p-3 text-xs font-black text-white shadow-[0_18px_20px_-12px_rgba(15,23,42,0.55)]"
+              style={{ backgroundColor: cssColors[setor.estado], transform: "translateZ(18px)" }}
+            >
+              <span className="rounded bg-black/20 px-2 py-1">{setor.nome}</span>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-lg border border-white/80 bg-white/85 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm backdrop-blur">
         Modo 3D ativo · arraste para girar · roda para aproximar
       </div>
