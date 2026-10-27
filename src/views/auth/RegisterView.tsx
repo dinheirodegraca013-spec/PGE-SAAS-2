@@ -112,22 +112,32 @@ export default function RegisterView() {
     setErroServidor(null);
     setEstaEnviando(true);
     try {
-      // Resolve o plano e o checkout configurados pelo Super Admin antes de criar a conta.
-      const nomePlanoSelecionado = plano === TenantPlano.Basico
-        ? 'basico'
-        : plano === TenantPlano.Premium
-          ? 'premium'
-          : 'profissional';
+      // Resolve o plano pelo nome normalizado: o banco usa "Básico" e "Premium/Plus",
+      // enquanto os identificadores internos são "basico" e "premium".
+      const normalizarNomePlano = (nome: unknown) =>
+        String(nome || '')
+          .normalize('NFD')
+          .replace(/[\\u0300-\\u036f]/g, '')
+          .trim()
+          .toLowerCase();
 
-      const { data: planoBanco, error: planoError } = await supabase
+      const aliasesPorPlano: Record<number, string[]> = {
+        [TenantPlano.Basico]: ['basico', 'basic', 'free'],
+        [TenantPlano.Profissional]: ['profissional', 'professional', 'standard'],
+        [TenantPlano.Premium]: ['premium', 'premium/plus', 'plus', 'empresarial'],
+      };
+      const aliases = aliasesPorPlano[plano] || [];
+      const { data: planosAtivos, error: planosAtivosError } = await supabase
         .from('saas_planos')
         .select('id, nome, preco, periodicidade, status')
-        .eq('status', 'ativo')
-        .ilike('nome', nomePlanoSelecionado)
-        .maybeSingle();
+        .eq('status', 'ativo');
 
-      if (planoError || !planoBanco) {
-        setErroServidor('Não foi possível validar o plano selecionado no banco. Atualize a página ou contate o suporte.');
+      const planoBanco = (planosAtivos || []).find((item: any) =>
+        aliases.includes(normalizarNomePlano(item.nome))
+      );
+
+      if (planosAtivosError || !planoBanco) {
+        setErroServidor('Não foi possível validar o plano selecionado no banco. Confira se o plano está ativo e tente novamente.');
         return;
       }
 
