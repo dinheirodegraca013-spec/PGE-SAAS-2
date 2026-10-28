@@ -28,6 +28,8 @@ import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
 import EstoqueView from './views/estoque/EstoqueView';
+import Visao3DView from './views/visao3d/Visao3DView';
+import EquipeView from './views/equipe/EquipeView';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -145,6 +147,10 @@ export default function App() {
             <Route path="configuracoes" element={<SettingsView />} />
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
             <Route path="estoque" element={<EstoqueView />} />
+            <Route path="visao-3d" element={<Visao3DView />} />
+            {/* Alias compatível com links antigos e com o protótipo ERP 3D. */}
+            <Route path="visao3d" element={<Navigate to="/visao-3d" replace />} />
+            <Route path="equipe" element={<EquipeView />} />
           </Route>
 
           {/* =============================================================== */}
@@ -238,3 +244,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
