@@ -44,9 +44,11 @@ function createLabel(text: string, color: string) {
 export default function ThreeOperationalMap({
   setores,
   trabalhadores,
+  resetKey,
 }: {
   setores: MapSector[];
   trabalhadores: Worker[];
+  resetKey: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [indisponivel, setIndisponivel] = useState(false);
@@ -194,7 +196,7 @@ export default function ThreeOperationalMap({
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [setores, trabalhadores]);
+  }, [resetKey, setores, trabalhadores]);
 
   if (indisponivel) {
     return (
@@ -204,7 +206,7 @@ export default function ThreeOperationalMap({
     );
   }
   return (
-    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-[56vh] min-h-[330px] max-h-[520px] w-full overflow-hidden rounded-xl bg-slate-50 sm:h-[430px] sm:max-h-none" />
+    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-full w-full overflow-hidden bg-slate-50" />
   );
 }
 

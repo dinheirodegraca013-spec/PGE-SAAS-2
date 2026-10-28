@@ -51,6 +51,7 @@ export default function Visao3DView() {
   const [itens, setItens] = useState<EstoqueItem[]>([]);
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [trabalhadores, setTrabalhadores] = useState<Trabalhador[]>([]);
+  const [cameraReset, setCameraReset] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -199,45 +200,39 @@ export default function Visao3DView() {
           {erro}
         </div>
       )}
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="relative isolate min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:min-h-[560px]">
-          <div
-            className="pointer-events-none absolute inset-0 z-0 opacity-40"
-            style={{
-              backgroundImage:
-                "linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
+      <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_410px]">
+        <div className="relative isolate h-[56vh] min-h-[460px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm xl:h-[calc(100vh-150px)] xl:max-h-[760px]">
+          <div className="pointer-events-none absolute left-4 top-4 z-20">
+            <h2 className="text-lg font-extrabold text-slate-900">Planta operacional</h2>
+            <p className="text-xs text-slate-500">Clique em um setor para abrir o módulo correspondente.</p>
+          </div>
+          <span className="pointer-events-none absolute right-4 top-4 z-20 rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">
+            Dados do GESTIO
+          </span>
+          <button
+            type="button"
+            onClick={() => setCameraReset((value) => value + 1)}
+            className="absolute right-4 top-16 z-20 rounded-lg border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white"
+          >
+            Resetar câmera
+          </button>
+          <ThreeOperationalMap
+            setores={setores}
+            trabalhadores={trabalhadores}
+            resetKey={cameraReset}
           />
-          <div className="relative z-10 mb-4 flex items-start justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">
-                Planta operacional
-              </h2>
-              <p className="text-sm text-slate-500">
-                Clique em um setor para abrir o módulo correspondente.
-              </p>
-            </div>
-            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600">
-              Dados do GESTIO
-            </span>
-          </div>
-          <div className="relative z-10">
-            <ThreeOperationalMap setores={setores} trabalhadores={trabalhadores} />
-          </div>
-          <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <p className="pointer-events-none absolute bottom-3 left-4 z-20 text-xs text-slate-500">
+            Arraste para girar · role para aproximar · toque numa sala para abrir o módulo
+          </p>
+        </div>
+        <aside className="space-y-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-2">
             {setores.map((setor) => (
               <Link key={setor.id} to={setor.id === "estoque" ? "/estoque" : setor.id === "financeiro" ? "/meu-financeiro" : "/projetos"} className={`rounded-lg border px-3 py-2 text-xs font-semibold ${statusClasses[setor.estado]}`}>
                 {setor.nome} · {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
               </Link>
             ))}
           </div>
-          <p className="relative z-10 mt-4 text-xs text-slate-500">
-            Mapa sem lançamentos fictícios: setores sem fonte transacional
-            permanecem em “Sem dados”.
-          </p>
-        </div>
-        <aside className="space-y-4">
           <div
             className={`rounded-2xl border-2 p-4 ${estoqueCritico.length ? "border-rose-300 bg-rose-50 text-rose-900" : "border-emerald-300 bg-emerald-50 text-emerald-900"}`}
           >
