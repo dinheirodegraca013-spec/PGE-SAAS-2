@@ -128,7 +128,8 @@ export default function ThreeOperationalMap({
     activeWorkers.forEach((worker, index) => {
       const sectorIndex = index % Math.max(setores.length - 2, 1);
       const x = (sectorIndex % 3 - 1) * 4 + (index % 2 ? 0.5 : -0.5);
-      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 1.35;
+      // Mantém o colaborador no piso, junto à frente do setor, sem ficar atrás ou sobre o bloco.
+      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 1.55;
       const person = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
@@ -141,7 +142,7 @@ export default function ThreeOperationalMap({
       );
       head.position.y = 0.98;
       person.add(body, head);
-      person.position.set(x, 0.15, z);
+      person.position.set(x, 0, z);
       person.scale.setScalar(0.9);
       person.userData.workerId = worker.id;
       person.userData.workerName = worker.nome;
