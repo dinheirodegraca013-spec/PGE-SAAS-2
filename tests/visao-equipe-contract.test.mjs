@@ -28,6 +28,8 @@ test('visão operacional não incorpora os números demonstrativos do protótipo
 test('Visão 3D usa renderização WebGL real com fallback', () => {
   assert.match(mapa3d, /WebGLRenderer/);
   assert.match(mapa3d, /OrbitControls/);
+  assert.match(mapa3d, /activeWorkers/);
+  assert.match(mapa3d, /workerName/);
   assert.match(mapa3d, /Seu navegador não conseguiu abrir o modo 3D/);
   assert.match(mapa3d, /setClearColor\(0xf8fafc, 1\)/);
   assert.doesNotMatch(mapa3d, /Modo 3D ativo/);

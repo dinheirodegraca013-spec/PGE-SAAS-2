@@ -7,6 +7,7 @@ type MapSector = {
   nome: string;
   estado: "normal" | "atencao" | "critico" | "sem-dados";
 };
+type Worker = { id: string; nome: string; ativo: boolean };
 
 const colors: Record<MapSector["estado"], number> = {
   normal: 0x5fb58a,
@@ -15,7 +16,13 @@ const colors: Record<MapSector["estado"], number> = {
   "sem-dados": 0x9aa6b2,
 };
 
-export default function ThreeOperationalMap({ setores }: { setores: MapSector[] }) {
+export default function ThreeOperationalMap({
+  setores,
+  trabalhadores,
+}: {
+  setores: MapSector[];
+  trabalhadores: Worker[];
+}) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [indisponivel, setIndisponivel] = useState(false);
 
@@ -81,6 +88,31 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
       groups.push(group);
     });
 
+    const people = new THREE.Group();
+    const activeWorkers = trabalhadores.filter((worker) => worker.ativo);
+    activeWorkers.forEach((worker, index) => {
+      const sectorIndex = index % Math.max(setores.length - 2, 1);
+      const x = (sectorIndex % 3 - 1) * 4 + (index % 2 ? 0.5 : -0.5);
+      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 1.35;
+      const person = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
+        new THREE.MeshStandardMaterial({ color: 0x0e7490, roughness: 0.65 }),
+      );
+      body.position.y = 0.42;
+      const head = new THREE.Mesh(
+        new THREE.SphereGeometry(0.2, 14, 12),
+        new THREE.MeshStandardMaterial({ color: 0xf0c9a0, roughness: 0.8 }),
+      );
+      head.position.y = 0.98;
+      person.add(body, head);
+      person.position.set(x, 0.15, z);
+      person.userData.workerId = worker.id;
+      person.userData.workerName = worker.nome;
+      people.add(person);
+    });
+    scene.add(people);
+
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.enablePan = false;
@@ -104,6 +136,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
       groups.forEach((group, index) => {
         group.rotation.y = Math.sin(Date.now() * 0.00035 + index) * 0.025;
       });
+      people.position.y = Math.sin(Date.now() * 0.0015) * 0.025;
       controls.update();
       renderer.render(scene, camera);
     };
@@ -123,7 +156,7 @@ export default function ThreeOperationalMap({ setores }: { setores: MapSector[] 
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [setores]);
+  }, [setores, trabalhadores]);
 
   if (indisponivel) {
     return (

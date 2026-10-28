@@ -23,6 +23,7 @@ type EstoqueItem = {
   estoque_minimo: number;
   unidade: string;
 };
+type Trabalhador = { id: string; nome: string; ativo: boolean };
 type Setor = {
   id: string;
   nome: string;
@@ -49,6 +50,7 @@ const setorCores = [
 export default function Visao3DView() {
   const [itens, setItens] = useState<EstoqueItem[]>([]);
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
+  const [trabalhadores, setTrabalhadores] = useState<Trabalhador[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -63,12 +65,25 @@ export default function Visao3DView() {
           .order("nome"),
         projetosService.listar(),
       ]);
+      const perfisResult = await supabase
+        .from("profiles")
+        .select("id,nome_completo,ativo")
+        .order("nome_completo");
       const mensagens: string[] = [];
       if (estoque.error) mensagens.push("Estoque indisponível no momento.");
       else setItens((estoque.data || []) as EstoqueItem[]);
       if (!projetosResult.succeeded || !projetosResult.value)
         mensagens.push("Projetos indisponíveis no momento.");
       else setProjetos(projetosResult.value.items || []);
+      if (perfisResult.error) mensagens.push("Equipe indisponível no momento.");
+      else
+        setTrabalhadores(
+          (perfisResult.data || []).map((perfil) => ({
+            id: perfil.id,
+            nome: perfil.nome_completo || "Colaborador sem nome",
+            ativo: perfil.ativo !== false,
+          })),
+        );
       if (mensagens.length) setErro(mensagens.join(" "));
     } catch {
       setErro("Não foi possível carregar a Visão 3D agora. Tente atualizar.");
@@ -208,7 +223,7 @@ export default function Visao3DView() {
             </span>
           </div>
           <div className="relative z-10">
-            <ThreeOperationalMap setores={setores} />
+            <ThreeOperationalMap setores={setores} trabalhadores={trabalhadores} />
           </div>
           <div className="relative z-10 mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {setores.map((setor) => (
@@ -288,6 +303,17 @@ export default function Visao3DView() {
                 Abrir estoque <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
+          </div>
+          <div className="card p-5">
+            <h2 className="gestio-section-title">Equipe no cenário</h2>
+            <p className="mt-2 text-sm text-slate-500">
+              {trabalhadores.length
+                ? `${trabalhadores.filter((trabalhador) => trabalhador.ativo).length} colaborador(es) cadastrado(s) no tenant.`
+                : "Nenhum colaborador cadastrado."}
+            </p>
+            <p className="mt-2 text-xs text-slate-400">
+              A presença diária não está registrada; os avatares representam apenas o cadastro real.
+            </p>
           </div>
           <div className="card p-5">
             <h2 className="gestio-section-title">Acesso rápido</h2>
