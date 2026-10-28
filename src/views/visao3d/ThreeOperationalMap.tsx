@@ -16,6 +16,31 @@ const colors: Record<MapSector["estado"], number> = {
   "sem-dados": 0x9aa6b2,
 };
 
+function createLabel(text: string, color: string) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 128;
+  const context = canvas.getContext("2d");
+  if (!context) return null;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "rgba(15, 23, 42, 0.88)";
+  context.roundRect(8, 8, canvas.width - 16, canvas.height - 16, 24);
+  context.fill();
+  context.fillStyle = color;
+  context.font = "700 30px Inter, Arial, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(text.slice(0, 24), canvas.width / 2, canvas.height / 2);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(
+    new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }),
+  );
+  sprite.scale.set(2.55, 0.64, 1);
+  sprite.userData.labelTexture = texture;
+  return sprite;
+}
+
 export default function ThreeOperationalMap({
   setores,
   trabalhadores,
@@ -39,6 +64,7 @@ export default function ThreeOperationalMap({
     setIndisponivel(false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0xf8fafc, 1);
+    renderer.shadowMap.enabled = true;
     renderer.domElement.className = "absolute inset-0 h-full w-full";
     host.insertBefore(renderer.domElement, host.firstChild);
     renderer.domElement.setAttribute("aria-label", "Mapa operacional 3D da empresa");
@@ -46,7 +72,7 @@ export default function ThreeOperationalMap({
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(9, 9, 12);
+    camera.position.set(10, 9, 13);
     camera.lookAt(0, 0, 0);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x94a3b8, 2));
     const light = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -58,6 +84,7 @@ export default function ThreeOperationalMap({
       new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.85 }),
     );
     floor.position.y = -0.2;
+    floor.receiveShadow = true;
     scene.add(floor);
     scene.add(new THREE.GridHelper(13, 13, 0xcbd5e1, 0xe2e8f0));
 
@@ -78,6 +105,11 @@ export default function ThreeOperationalMap({
       block.position.y = 0.7;
       block.castShadow = true;
       group.add(block);
+      const label = createLabel(setor.nome, setor.estado === "critico" ? "#fecdd3" : "#e2e8f0");
+      if (label) {
+        label.position.set(0, 1.65, 0);
+        group.add(label);
+      }
       const edge = new THREE.LineSegments(
         new THREE.EdgesGeometry(block.geometry),
         new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 }),
@@ -89,6 +121,7 @@ export default function ThreeOperationalMap({
     });
 
     const people = new THREE.Group();
+    people.name = "colaboradores-ativos";
     const activeWorkers = trabalhadores.filter((worker) => worker.ativo);
     activeWorkers.forEach((worker, index) => {
       const sectorIndex = index % Math.max(setores.length - 2, 1);
@@ -107,6 +140,7 @@ export default function ThreeOperationalMap({
       head.position.y = 0.98;
       person.add(body, head);
       person.position.set(x, 0.15, z);
+      person.scale.setScalar(0.9);
       person.userData.workerId = worker.id;
       person.userData.workerName = worker.nome;
       people.add(person);
@@ -147,6 +181,10 @@ export default function ThreeOperationalMap({
       observer.disconnect();
       controls.dispose();
       scene.traverse((object) => {
+        if (object instanceof THREE.Sprite) {
+          const material = object.material as THREE.SpriteMaterial;
+          material.map?.dispose();
+        }
         if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
           object.geometry.dispose();
           const materials = Array.isArray(object.material) ? object.material : [object.material];
