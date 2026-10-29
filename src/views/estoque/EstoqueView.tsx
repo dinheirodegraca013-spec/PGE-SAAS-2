@@ -1,93 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AlertTriangle, BarChart3, CheckCircle2, Package, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 type Item = { id: string; nome: string; codigo: string | null; unidade: string; estoque_minimo: number; saldo: number };
 type Projeto = { id: string; titulo: string | null; nome: string | null };
+type Status = 'critico' | 'atencao' | 'normal';
+const statusFor = (i: Item): Status => Number(i.saldo) <= Number(i.estoque_minimo) ? 'critico' : Number(i.saldo) <= Number(i.estoque_minimo) * 1.5 ? 'atencao' : 'normal';
+const statusLabel: Record<Status, string> = { critico: 'Crítico', atencao: 'Atenção', normal: 'Normal' };
+const statusClass: Record<Status, string> = { critico: 'border-rose-200 bg-rose-50 text-rose-700', atencao: 'border-amber-200 bg-amber-50 text-amber-700', normal: 'border-emerald-200 bg-emerald-50 text-emerald-700' };
+const fmt = (v: number) => Number(v).toLocaleString('pt-BR');
 
 export default function EstoqueView() {
-  const [itens, setItens] = useState<Item[]>([]);
-  const [novoNome,setNovoNome] = useState('');
-  const [novoCodigo,setNovoCodigo] = useState('');
-  const [novoMinimo,setNovoMinimo] = useState('0');
-  const [erro, setErro] = useState('');
-  const [operando, setOperando] = useState(false);
-  const [itemSelecionado, setItemSelecionado] = useState('');
-  const [projetos, setProjetos] = useState<Projeto[]>([]);
-  const [projetoSelecionado, setProjetoSelecionado] = useState('');
-  const [tipo, setTipo] = useState('entrada');
-  const [quantidade, setQuantidade] = useState('');
-  const [motivo, setMotivo] = useState('');
-  const [mensagem, setMensagem] = useState('');
-  const [carregando, setCarregando] = useState(true);
-
+  const [itens, setItens] = useState<Item[]>([]), [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [aba, setAba] = useState<'mapa' | 'relatorio'>('mapa'), [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(''), [mensagem, setMensagem] = useState('');
+  const [novoNome, setNovoNome] = useState(''), [novoCodigo, setNovoCodigo] = useState(''), [novoMinimo, setNovoMinimo] = useState('0');
+  const [itemSelecionado, setItemSelecionado] = useState(''), [projetoSelecionado, setProjetoSelecionado] = useState('');
+  const [tipo, setTipo] = useState('entrada'), [quantidade, setQuantidade] = useState(''), [motivo, setMotivo] = useState(''), [operando, setOperando] = useState(false);
   async function carregar() {
-    setCarregando(true);
-    setErro('');
-    const itensResult = await supabase.from('estoque_itens').select('id,nome,codigo,unidade,estoque_minimo,saldo').order('nome');
-    if (itensResult.error) {
-      setErro('Estoque indisponível: verifique a migração e as permissões do banco.');
-      setCarregando(false);
-      return;
-    }
-    setItens((itensResult.data || []) as Item[]);
-    const projetosResult = await supabase.from('projetos_marcenaria').select('id,titulo,nome').order('created_at', { ascending: false });
-    if (!projetosResult.error) setProjetos((projetosResult.data || []) as Projeto[]);
+    setCarregando(true); setErro('');
+    const r = await supabase.from('estoque_itens').select('id,nome,codigo,unidade,estoque_minimo,saldo').order('nome');
+    if (r.error) { setErro('Estoque indisponível: verifique a migração e as permissões do banco.'); setCarregando(false); return; }
+    setItens((r.data || []) as Item[]);
+    const p = await supabase.from('projetos_marcenaria').select('id,titulo,nome').order('created_at', { ascending: false });
+    if (!p.error) setProjetos((p.data || []) as Projeto[]);
     setCarregando(false);
   }
-
   useEffect(() => { void carregar(); }, []);
-
-  async function registrar(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!itemSelecionado || !motivo.trim() || !Number.isFinite(Number(quantidade)) || Number(quantidade) <= 0) {
-      setErro('Preencha item, quantidade positiva e motivo.');
-      return;
-    }
-    setOperando(true);
-    setErro('');
-    setMensagem('');
-    const result = await supabase.rpc('estoque_registrar_movimento', {
-      p_item_id: itemSelecionado, p_tipo: tipo, p_quantidade: Number(quantidade),
-      p_motivo: motivo.trim(), p_projeto_id: projetoSelecionado || null,
-    });
-    setOperando(false);
-    if (result.error) {
-      setErro('Movimentação não registrada. Verifique permissões, saldo e migração do banco.');
-      return;
-    }
-    setMensagem('Movimentação registrada.');
-    setQuantidade('');
-    setMotivo('');
-    await carregar();
-  }
+  const resumo = useMemo(() => ({ criticos: itens.filter(i => statusFor(i) === 'critico'), atencao: itens.filter(i => statusFor(i) === 'atencao'), normais: itens.filter(i => statusFor(i) === 'normal') }), [itens]);
+  const compras = useMemo(() => itens.filter(i => Number(i.saldo) < Number(i.estoque_minimo) * 3), [itens]);
+  const projetoNome = projetos[0]?.titulo || projetos[0]?.nome || 'Empresa';
+  async function cadastrar(e: React.FormEvent<HTMLFormElement>) { e.preventDefault(); setOperando(true); const r = await supabase.rpc('estoque_cadastrar_item', { p_nome: novoNome, p_codigo: novoCodigo || null, p_unidade: 'un', p_estoque_minimo: Number(novoMinimo) }); setOperando(false); if (r.error) { setErro(r.error.message); return; } setNovoNome(''); setNovoCodigo(''); setNovoMinimo('0'); setMensagem('Produto cadastrado.'); await carregar(); }
+  async function registrar(e: React.FormEvent<HTMLFormElement>) { e.preventDefault(); if (!itemSelecionado || !motivo.trim() || !Number.isFinite(Number(quantidade)) || Number(quantidade) <= 0) { setErro('Preencha item, quantidade positiva e motivo.'); return; } setOperando(true); setErro(''); const r = await supabase.rpc('estoque_registrar_movimento', { p_item_id: itemSelecionado, p_tipo: tipo, p_quantidade: Number(quantidade), p_motivo: motivo.trim(), p_projeto_id: projetoSelecionado || null }); setOperando(false); if (r.error) { setErro('Movimentação não registrada. Verifique permissões, saldo e migração do banco.'); return; } setMensagem('Movimentação registrada.'); setQuantidade(''); setMotivo(''); await carregar(); }
 
   return <main className="space-y-5 pb-8">
-    <header className="flex items-center justify-between gap-3">
-      <div><h1 className="text-2xl font-bold">Estoque</h1><p className="text-sm text-slate-500">Consulte saldos e registre entradas, saídas e ajustes autorizados.</p></div>
-      <button type="button" onClick={() => void carregar()} disabled={carregando} className="rounded-lg border px-4 py-2">Atualizar</button>
-    </header>
-    <form className="rounded-xl border p-4 grid gap-3 sm:grid-cols-4" onSubmit={async e => {e.preventDefault();setOperando(true);setErro('');const {error}=await supabase.rpc('estoque_cadastrar_item',{p_nome:novoNome,p_codigo:novoCodigo||null,p_unidade:'un',p_estoque_minimo:Number(novoMinimo)});setOperando(false);if(error){setErro(error.message);return;}setNovoNome('');setNovoCodigo('');setNovoMinimo('0');setMensagem('Produto cadastrado.');await carregar();}}><h2 className="font-bold sm:col-span-4">Cadastrar produto</h2><input aria-label="Nome do produto" placeholder="Nome do produto" required value={novoNome} onChange={e=>setNovoNome(e.target.value)} className="rounded border p-2"/><input aria-label="Código" placeholder="Código (opcional)" value={novoCodigo} onChange={e=>setNovoCodigo(e.target.value)} className="rounded border p-2"/><input aria-label="Estoque mínimo" type="number" min="0" step="0.001" value={novoMinimo} onChange={e=>setNovoMinimo(e.target.value)} className="rounded border p-2"/><button disabled={operando} className="rounded bg-slate-900 p-2 text-white">Cadastrar</button></form>
-    {mensagem && <p role="status" className="rounded-lg bg-green-50 p-4 text-green-800">{mensagem}</p>}
-    <form onSubmit={registrar} className="grid gap-3 rounded-xl border p-4 sm:grid-cols-2">
-      <h2 className="font-bold sm:col-span-2">Registrar movimentação</h2>
-      <label className="text-sm">Item<select required value={itemSelecionado} onChange={e => setItemSelecionado(e.target.value)} className="block w-full rounded border p-2"><option value="">Selecione</option>{itens.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}</select></label>
-      <label className="text-sm">Tipo<select value={tipo} onChange={e => setTipo(e.target.value)} className="block w-full rounded border p-2"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste_entrada">Ajuste positivo</option><option value="ajuste_saida">Ajuste negativo</option></select></label>
-      <label className="text-sm">Quantidade<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={e => setQuantidade(e.target.value)} className="block w-full rounded border p-2" /></label>
-      <label className="text-sm">Motivo<input required maxLength={500} value={motivo} onChange={e => setMotivo(e.target.value)} className="block w-full rounded border p-2" /></label>
-      <label className="text-sm sm:col-span-2">Projeto relacionado (opcional)<select value={projetoSelecionado} onChange={e => setProjetoSelecionado(e.target.value)} className="block w-full rounded border p-2"><option value="">Movimentação geral</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo || p.nome || p.id}</option>)}</select></label>
-      <button disabled={operando || carregando || itens.length === 0} type="submit" className="rounded-lg bg-slate-900 px-4 py-2 text-white disabled:opacity-50 sm:col-span-2">{operando ? 'Registrando...' : 'Registrar'}</button>
-      <p className="text-xs text-slate-500 sm:col-span-2">As movimentações exigem permissão de estoque e são registradas no banco.</p>
-    </form>
-    {erro && <p role="alert" className="rounded-lg bg-red-50 p-4 text-red-800">{erro}</p>}
-    {carregando ? <p>Carregando...</p> : !erro && (itens.length === 0 ? <p>Nenhum item cadastrado.</p> :
-      <div className="overflow-x-auto"><table className="w-full text-left text-sm">
-        <thead><tr><th className="p-3">Item</th><th className="p-3">Código</th><th className="p-3">Saldo</th><th className="p-3">Estoque mínimo</th></tr></thead>
-        <tbody>{itens.map(item => <tr key={item.id} className="border-t">
-          <td className="p-3">{item.nome}</td><td className="p-3">{item.codigo || '—'}</td>
-          <td className="p-3">{Number(item.saldo).toLocaleString('pt-BR')} {item.unidade}</td>
-          <td className="p-3">{Number(item.estoque_minimo).toLocaleString('pt-BR')}</td>
-        </tr>)}</tbody>
-      </table></div>)}
-    <p className="text-xs text-slate-500">Saldos mantidos transacionalmente no banco.</p>
+    <header className="gestio-page-heading"><div><h1 className="text-3xl font-black tracking-tight text-slate-950">Estoque</h1><p className="gestio-section-subtitle">{projetoNome} · Mapa vivo do estoque</p></div><button type="button" onClick={() => void carregar()} disabled={carregando} className="btn-secondary inline-flex items-center gap-2 text-sm"><RefreshCw className={`h-4 w-4 ${carregando ? 'animate-spin' : ''}`} />Atualizar</button></header>
+    <div className="flex gap-2"><button type="button" onClick={() => setAba('mapa')} className={`gestio-tab ${aba === 'mapa' ? 'gestio-tab-active' : 'gestio-tab-inactive'}`}>Mapa do estoque</button><button type="button" onClick={() => setAba('relatorio')} className={`gestio-tab ${aba === 'relatorio' ? 'gestio-tab-active' : 'gestio-tab-inactive'}`}><BarChart3 className="mr-1 inline h-4 w-4" />Relatório</button></div>
+    {mensagem && <p role="status" className="rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">{mensagem}</p>}{erro && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{erro}</p>}
+    {carregando ? <p>Carregando estoque...</p> : aba === 'mapa' ? <><section className="grid gap-5 xl:grid-cols-[1.7fr_1fr]"><div className="card p-5"><div className="mb-4 flex items-center justify-between"><div><h2 className="text-lg font-bold">Planta do estoque</h2><p className="text-xs text-slate-500">Itens agrupados por situação atual</p></div><Package className="h-5 w-5 text-cyan-600" /></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{itens.map(i => { const s = statusFor(i); return <button type="button" key={i.id} onClick={() => setItemSelecionado(i.id)} className={`min-h-32 rounded-xl border p-4 text-left transition hover:brightness-110 ${s === 'critico' ? 'border-rose-200 bg-rose-50' : s === 'atencao' ? 'border-amber-200 bg-amber-50' : 'border-emerald-200 bg-emerald-50'}`}><div className="flex items-start justify-between gap-2"><span className="line-clamp-2 text-sm font-bold text-slate-900">{i.nome}</span><span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusClass[s]}`}>{statusLabel[s]}</span></div><p className="mt-5 text-2xl font-black text-slate-900">{fmt(Number(i.saldo))}<span className="ml-1 text-xs font-medium text-slate-500">{i.unidade}</span></p><p className="text-xs text-slate-500">Mínimo: {fmt(Number(i.estoque_minimo))}</p></button>; })}</div>{!itens.length && <p className="py-8 text-center text-sm text-slate-500">Nenhum item cadastrado.</p>}<div className="mt-4 flex gap-4 text-xs text-slate-500"><span>● Normal</span><span className="text-amber-600">● Atenção</span><span className="text-rose-600">● Crítico</span></div></div><aside className="space-y-5"><div className="card p-5"><div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-bold">Alertas</h2><span className="rounded-full bg-rose-100 px-2.5 py-1 text-xs font-bold text-rose-700">{resumo.criticos.length + resumo.atencao.length}</span></div>{[...resumo.criticos, ...resumo.atencao].slice(0, 6).map(i => <div key={i.id} className={`mb-2 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${statusClass[statusFor(i)]}`}><span className="truncate">{i.nome}</span><span className="shrink-0 text-xs">{fmt(Number(i.saldo))} / mín. {fmt(Number(i.estoque_minimo))}</span></div>)}{!resumo.criticos.length && !resumo.atencao.length && <p className="flex items-center gap-2 text-sm text-emerald-700"><CheckCircle2 className="h-4 w-4" />Nenhum alerta no momento.</p>}</div><div className="card p-5"><h2 className="mb-3 text-lg font-bold">Resumo</h2><div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-lg bg-rose-50 p-3"><p className="text-2xl font-black text-rose-600">{resumo.criticos.length}</p><p className="text-[11px] text-slate-500">Críticos</p></div><div className="rounded-lg bg-amber-50 p-3"><p className="text-2xl font-black text-amber-600">{resumo.atencao.length}</p><p className="text-[11px] text-slate-500">Atenção</p></div><div className="rounded-lg bg-emerald-50 p-3"><p className="text-2xl font-black text-emerald-600">{resumo.normais.length}</p><p className="text-[11px] text-slate-500">Normais</p></div></div></div></aside></section><section className="card overflow-hidden p-5"><div className="mb-4"><h2 className="text-lg font-bold">Lista de compras sugerida</h2><p className="text-sm text-slate-500">Reposição calculada até três vezes o estoque mínimo.</p></div><div className="overflow-x-auto"><table className="w-full min-w-[640px] text-left text-sm"><thead className="text-xs uppercase tracking-wide text-slate-500"><tr><th className="p-3">Item</th><th className="p-3">Saldo</th><th className="p-3">Mínimo</th><th className="p-3">Comprar</th><th className="p-3">Status</th></tr></thead><tbody>{compras.map(i => <tr key={i.id} className="border-t border-slate-100"><td className="p-3 font-medium">{i.nome}</td><td className="p-3">{fmt(Number(i.saldo))} {i.unidade}</td><td className="p-3">{fmt(Number(i.estoque_minimo))}</td><td className="p-3 font-semibold">{fmt(Math.max(Number(i.estoque_minimo) * 3 - Number(i.saldo), 0))} {i.unidade}</td><td className="p-3"><span className={`rounded-full border px-2 py-1 text-xs font-bold ${statusClass[statusFor(i)]}`}>{statusLabel[statusFor(i)]}</span></td></tr>)}</tbody></table></div>{!compras.length && <p className="py-5 text-sm text-slate-500">Nenhuma compra sugerida com os dados atuais.</p>}</section></> : <section className="grid gap-4 sm:grid-cols-3">{[['Itens críticos', resumo.criticos.length, 'text-rose-500'], ['Em atenção', resumo.atencao.length, 'text-amber-500'], ['Itens normais', resumo.normais.length, 'text-emerald-500']].map(([label, value, color]) => <div className="card p-5" key={String(label)}><p className="text-sm text-slate-500">{label}</p><p className={`mt-1 text-3xl font-black ${color}`}>{value}</p></div>)}<div className="card overflow-hidden p-5 sm:col-span-3"><h2 className="mb-4 text-lg font-bold">Relatório de estoque</h2><div className="overflow-x-auto"><table className="w-full text-left text-sm"><tbody>{itens.map(i => <tr key={i.id} className="border-t border-slate-100"><td className="p-3 font-medium">{i.nome}</td><td className="p-3">{fmt(Number(i.saldo))} {i.unidade}</td><td className="p-3">{fmt(Number(i.estoque_minimo))}</td><td className="p-3"><span className={`rounded-full border px-2 py-1 text-xs font-bold ${statusClass[statusFor(i)]}`}>{statusLabel[statusFor(i)]}</span></td></tr>)}</tbody></table></div></div></section>}
+    <section className="grid gap-5 lg:grid-cols-2"><form className="card grid gap-3 p-5 sm:grid-cols-4" onSubmit={cadastrar}><h2 className="font-bold sm:col-span-4">Cadastrar produto</h2><input aria-label="Nome do produto" placeholder="Nome do produto" required value={novoNome} onChange={e => setNovoNome(e.target.value)} className="input-field sm:col-span-2" /><input aria-label="Código" placeholder="Código (opcional)" value={novoCodigo} onChange={e => setNovoCodigo(e.target.value)} className="input-field" /><input aria-label="Estoque mínimo" type="number" min="0" step="0.001" value={novoMinimo} onChange={e => setNovoMinimo(e.target.value)} className="input-field" /><button disabled={operando} className="btn-primary sm:col-span-4">Cadastrar</button></form><form onSubmit={registrar} className="card grid gap-3 p-5 sm:grid-cols-2"><h2 className="font-bold sm:col-span-2">Registrar movimentação</h2><label className="text-sm">Item<select required value={itemSelecionado} onChange={e => setItemSelecionado(e.target.value)} className="input-field mt-1"><option value="">Selecione</option>{itens.map(i => <option key={i.id} value={i.id}>{i.nome}</option>)}</select></label><label className="text-sm">Tipo<select value={tipo} onChange={e => setTipo(e.target.value)} className="input-field mt-1"><option value="entrada">Entrada</option><option value="saida">Saída</option><option value="ajuste_entrada">Ajuste positivo</option><option value="ajuste_saida">Ajuste negativo</option></select></label><label className="text-sm">Quantidade<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={e => setQuantidade(e.target.value)} className="input-field mt-1" /></label><label className="text-sm">Motivo<input required maxLength={500} value={motivo} onChange={e => setMotivo(e.target.value)} className="input-field mt-1" /></label><label className="text-sm sm:col-span-2">Projeto relacionado<select value={projetoSelecionado} onChange={e => setProjetoSelecionado(e.target.value)} className="input-field mt-1"><option value="">Movimentação geral</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo || p.nome || p.id}</option>)}</select></label><button disabled={operando || !itens.length} type="submit" className="btn-primary sm:col-span-2">{operando ? 'Registrando...' : 'Registrar'}</button></form></section>
   </main>;
 }
+
