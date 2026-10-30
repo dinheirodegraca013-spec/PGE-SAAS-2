@@ -366,11 +366,13 @@ export default function SettingsView() {
 
           // Busca dados do perfil do responsável
           if (userId) {
-            const { data: profileData, error: profileError } = await supabase
+            let profileQuery = supabase
               .from("profiles")
               .select("nome_completo, email, papel, avatar_url")
-              .eq("id", userId)
-              .maybeSingle();
+              .eq("id", userId);
+            if (tenantId) profileQuery = profileQuery.eq("tenant_id", tenantId);
+            const { data: profileData, error: profileError } =
+              await profileQuery.maybeSingle();
 
             if (profileError) {
               console.error(
@@ -737,12 +739,15 @@ export default function SettingsView() {
 
         // 2. Persiste campos autorizados na tabela 'profiles'
         if (userId) {
-          const { error: profileErr } = await supabase
+          let profileUpdateQuery = supabase
             .from("profiles")
             .update({
               nome_completo: formData.nomeResponsavel.trim(),
             })
             .eq("id", userId);
+          if (tenantId)
+            profileUpdateQuery = profileUpdateQuery.eq("tenant_id", tenantId);
+          const { error: profileErr } = await profileUpdateQuery;
 
           if (profileErr) {
             throw new Error(
