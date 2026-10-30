@@ -295,6 +295,28 @@ export default function DashboardView() {
         </Link>
       </div>
 
+      {conversasPendentes > 0 && (
+        <Link
+          to="/whatsapp"
+          className="flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+              <Clock className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-bold">
+                Há {conversasPendentes} conversa(s) pendente(s)
+              </p>
+              <p className="text-xs text-amber-800">
+                Revise os atendimentos que aguardam resposta.
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="h-4 w-4 shrink-0" />
+        </Link>
+      )}
+
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
         <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm xl:col-span-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
