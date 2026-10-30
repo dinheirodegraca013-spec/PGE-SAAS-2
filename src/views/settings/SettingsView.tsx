@@ -2439,7 +2439,9 @@ export default function SettingsView() {
                     className={`relative flex flex-col justify-between rounded-2xl border p-6 transition-all ${
                       isPlanoAtual
                         ? "border-brand-600 bg-brand-50/20 shadow-md ring-2 ring-brand-600/20"
-                        : p.nome.toLowerCase() === "standard"
+                        : ["standard", "profissional"].includes(
+                              p.nome.toLowerCase(),
+                            )
                           ? "border-slate-300 bg-white shadow-sm hover:border-brand-400"
                           : "border-slate-200 bg-white hover:border-slate-300"
                     }`}
