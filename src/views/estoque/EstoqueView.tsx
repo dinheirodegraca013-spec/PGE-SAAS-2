@@ -7,6 +7,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getCurrentTenantId } from "@/services/api/client";
 import StockMap from "./StockMap";
 
 export type Item = {
@@ -56,10 +57,13 @@ export default function EstoqueView() {
   async function carregar() {
     setCarregando(true);
     setErro("");
-    const r = await supabase
+    const tenantId = getCurrentTenantId();
+    let itensQuery = supabase
       .from("estoque_itens")
       .select("id,nome,codigo,unidade,estoque_minimo,saldo")
       .order("nome");
+    if (tenantId) itensQuery = itensQuery.eq("tenant_id", tenantId);
+    const r = await itensQuery;
     if (r.error) {
       setErro(
         "Estoque indisponível: verifique a migração e as permissões do banco.",
@@ -68,10 +72,12 @@ export default function EstoqueView() {
       return;
     }
     setItens((r.data || []) as Item[]);
-    const p = await supabase
+    let projetosQuery = supabase
       .from("projetos_marcenaria")
       .select("id,titulo,nome")
       .order("created_at", { ascending: false });
+    if (tenantId) projetosQuery = projetosQuery.eq("tenant_id", tenantId);
+    const p = await projetosQuery;
     if (!p.error) setProjetos((p.data || []) as Projeto[]);
     setCarregando(false);
   }
