@@ -29,3 +29,13 @@ test("painel financeiro não transforma consulta indisponível em saldo zero", (
   assert.match(financeiro, /carregando \|\| erro \|\| !metricas/);
   assert.doesNotMatch(financeiro, /metricas\?\.[A-Za-z]+ \|\| 0/);
 });
+
+test("visão geral mantém o hero operacional e o acesso à visão 3D", () => {
+  const dashboard = readFileSync(
+    new URL("../src/views/dashboard/DashboardView.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(dashboard, /Sua operação inteira/);
+  assert.match(dashboard, /Uma só perspectiva/);
+  assert.match(dashboard, /to=\"\/visao-3d\"/);
+});

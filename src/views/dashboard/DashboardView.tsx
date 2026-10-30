@@ -227,7 +227,7 @@ export default function DashboardView() {
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-950">
-            Dashboard
+            Visão geral
           </h1>
           <p className="text-sm text-slate-500">Visão geral da sua empresa</p>
         </div>
@@ -252,6 +252,56 @@ export default function DashboardView() {
           <p>{erro} Os gráficos mostram apenas dados carregados com sucesso.</p>
         </div>
       )}
+
+      <section className="relative overflow-hidden rounded-2xl bg-[#08142f] px-6 py-8 text-white shadow-lg sm:px-10 sm:py-10">
+        <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_78%_40%,rgba(56,189,248,.32),transparent_28%),linear-gradient(135deg,transparent_50%,rgba(99,102,241,.18))]" />
+        <div className="relative z-10 max-w-xl">
+          <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-cyan-300">
+            Conheça a experiência GESTIO
+          </p>
+          <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">
+            Sua operação inteira.
+            <br />
+            Uma só perspectiva.
+          </h2>
+          <p className="mt-4 max-w-md text-sm leading-6 text-slate-300">
+            Visualize setores, acompanhe sua equipe e encontre o que precisa de
+            atenção no mapa da sua marcenaria.
+          </p>
+          <Link
+            to="/visao-3d"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 px-4 py-3 text-xs font-bold text-white shadow-lg transition hover:brightness-110"
+          >
+            Explorar operação 3D <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="pointer-events-none absolute right-4 top-1/2 hidden h-44 w-[45%] -translate-y-1/2 rotate-[-12deg] gap-2 opacity-80 lg:grid lg:grid-cols-3">
+          {[
+            "Corte",
+            "Montagem",
+            "Acabamento",
+            "Instalação",
+            "Estoque",
+            "Financeiro",
+          ].map((setor, i) => (
+            <div
+              key={setor}
+              className={`rounded-lg border border-white/20 p-3 text-[9px] font-bold uppercase tracking-wide shadow-inner ${i === 4 ? "bg-amber-300/25" : "bg-cyan-200/20"}`}
+            >
+              {setor}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="flex items-center justify-between pt-2">
+        <h2 className="text-sm font-black text-slate-900">
+          Essencial, em um relance
+        </h2>
+        <span className="text-[10px] text-slate-400">
+          Dados carregados do GESTIO
+        </span>
+      </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {cards.map((c) => (
@@ -646,4 +696,3 @@ export default function DashboardView() {
     </div>
   );
 }
-
