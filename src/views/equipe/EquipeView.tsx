@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   CircleAlert,
   CircleCheck,
@@ -21,6 +21,7 @@ export default function EquipeView() {
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [busca, setBusca] = useState("");
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
@@ -42,6 +43,15 @@ export default function EquipeView() {
 
   const ativos = perfis.filter((perfil) => perfil.ativo).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
+  const filtrados = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    if (!termo) return perfis;
+    return perfis.filter((perfil) =>
+      [perfil.nome_completo, perfil.email, perfil.papel]
+        .filter(Boolean)
+        .some((valor) => String(valor).toLowerCase().includes(termo)),
+    );
+  }, [busca, perfis]);
 
   return (
     <div className="space-y-5 pb-5">
@@ -109,17 +119,33 @@ export default function EquipeView() {
         </div>
       </div>
       <section className="card overflow-hidden p-5">
-        <div className="mb-4">
-          <h2 className="gestio-section-title">Lista de colaboradores</h2>
-          <p className="gestio-section-subtitle">
-            Origem: profiles do tenant autenticado.
-          </p>
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="gestio-section-title">Lista de colaboradores</h2>
+            <p className="gestio-section-subtitle">
+              Origem: profiles do tenant autenticado.
+            </p>
+          </div>
+          <label className="w-full text-xs font-semibold text-slate-500 sm:w-64">
+            Buscar colaborador
+            <input
+              aria-label="Buscar colaborador"
+              value={busca}
+              onChange={(event) => setBusca(event.target.value)}
+              placeholder="Nome, e-mail ou perfil"
+              className="input-field mt-1"
+            />
+          </label>
         </div>
         {carregando ? (
           <p className="py-8 text-sm text-slate-500">Carregando equipe...</p>
         ) : !perfis.length ? (
           <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
             Nenhum colaborador disponível para este usuário.
+          </div>
+        ) : !filtrados.length ? (
+          <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+            Nenhum colaborador corresponde à busca.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -134,7 +160,7 @@ export default function EquipeView() {
                 </tr>
               </thead>
               <tbody>
-                {perfis.map((perfil) => (
+                {filtrados.map((perfil) => (
                   <tr key={perfil.id} className="border-t border-slate-100">
                     <td className="p-3">
                       <b>{perfil.nome_completo || "Nome não informado"}</b>
