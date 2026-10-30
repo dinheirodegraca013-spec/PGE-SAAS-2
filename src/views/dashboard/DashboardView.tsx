@@ -124,17 +124,24 @@ export default function DashboardView() {
   const totalOrcamentos = projetos.filter(
     (p) => p.status === StatusProjeto.Orcamento,
   ).length;
-  const valorOrcado = projetos.reduce(
-    (total, p) => total + (Number(p.valorTotalOrcamento) || 0),
-    0,
-  );
+  const valoresOrcados = projetos
+    .map((p) => Number(p.valorTotalOrcamento))
+    .filter((valor) => Number.isFinite(valor));
+  const valorOrcado = valoresOrcados.reduce((total, valor) => total + valor, 0);
   const dadosGrafico = useMemo(() => {
     const base = periodo === "10" ? projetos.slice(0, 10) : projetos;
-    return base.map((p, i) => ({
-      label: p.titulo || `Projeto ${i + 1}`,
-      curto: String(i + 1).padStart(2, "0"),
-      valor: Math.max(0, Number(p.valorTotalOrcamento) || 0),
-    }));
+    return base.flatMap((p, i) => {
+      const valor = Number(p.valorTotalOrcamento);
+      return Number.isFinite(valor)
+        ? [
+            {
+              label: p.titulo || `Projeto ${i + 1}`,
+              curto: String(i + 1).padStart(2, "0"),
+              valor: Math.max(0, valor),
+            },
+          ]
+        : [];
+    });
   }, [projetos, periodo]);
   const maxValor = Math.max(1, ...dadosGrafico.map((d) => d.valor)) * 1.12;
   const pontos = dadosGrafico.map((d, i) => ({
@@ -179,7 +186,10 @@ export default function DashboardView() {
   const cards = [
     {
       titulo: "Orçamento total",
-      valor: fontesDisponiveis.projetos ? moeda(valorOrcado) : "—",
+      valor:
+        fontesDisponiveis.projetos && valoresOrcados.length
+          ? moeda(valorOrcado)
+          : "—",
       icone: TrendingUp,
       cor: "violet",
       detalhe: "Soma dos projetos cadastrados",
@@ -299,7 +309,7 @@ export default function DashboardView() {
           Essencial, em um relance
         </h2>
         <span className="text-[10px] text-slate-400">
-          Dados carregados do GESTIO
+          Dados da empresa autenticada
         </span>
       </div>
 
@@ -680,7 +690,9 @@ export default function DashboardView() {
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-800">
-                        {moeda(Number(p.valorTotalOrcamento) || 0)}
+                        {Number.isFinite(Number(p.valorTotalOrcamento))
+                          ? moeda(Number(p.valorTotalOrcamento))
+                          : "—"}
                       </p>
                       <p className="text-[10px] text-slate-500">
                         {statusNome(p.status)}

@@ -39,3 +39,13 @@ test("visão geral mantém o hero operacional e o acesso à visão 3D", () => {
   assert.match(dashboard, /Uma só perspectiva/);
   assert.match(dashboard, /to=\"\/visao-3d\"/);
 });
+
+test("visão geral não converte orçamento ausente em zero fictício", () => {
+  const dashboard = readFileSync(
+    new URL("../src/views/dashboard/DashboardView.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(dashboard, /Number\.isFinite\(valor\)/);
+  assert.match(dashboard, /valoresOrcados\.length/);
+  assert.match(dashboard, /: \"—\"/);
+});
