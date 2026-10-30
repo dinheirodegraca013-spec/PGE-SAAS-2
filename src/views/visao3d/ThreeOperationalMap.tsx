@@ -79,19 +79,25 @@ function addWorkshopFurniture(group: THREE.Group, sectorId: string) {
 
 function createLabel(text: string, color: string) {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 128;
   const context = canvas.getContext("2d");
   if (!context) return null;
+  const font = "600 28px Manrope, Arial, sans-serif";
+  context.font = font;
+  canvas.width = Math.ceil(context.measureText(text).width) + 48;
+  canvas.height = 72;
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "rgba(15, 23, 42, 0.88)";
+  context.fillStyle = "rgba(255, 255, 255, 0.97)";
+  context.strokeStyle = color;
+  context.lineWidth = 3;
+  context.beginPath();
   context.roundRect(8, 8, canvas.width - 16, canvas.height - 16, 24);
   context.fill();
+  context.stroke();
   context.fillStyle = color;
-  context.font = "700 30px Inter, Arial, sans-serif";
+  context.font = font;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillText(text.slice(0, 24), canvas.width / 2, canvas.height / 2);
+  context.fillText(text, canvas.width / 2, canvas.height / 2);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   const sprite = new THREE.Sprite(
@@ -101,7 +107,8 @@ function createLabel(text: string, color: string) {
       depthTest: false,
     }),
   );
-  sprite.scale.set(2.55, 0.64, 1);
+  const width = Math.min(3.8, Math.max(1.6, canvas.width / 160));
+  sprite.scale.set(width, (width * canvas.height) / canvas.width, 1);
   sprite.userData.labelTexture = texture;
   return sprite;
 }
@@ -214,8 +221,12 @@ export default function ThreeOperationalMap({
         group.add(marker);
       }
       const label = createLabel(
-        setor.nome,
-        setor.estado === "critico" ? "#fecdd3" : "#e2e8f0",
+        `${setor.nome} · ${setor.estado === "sem-dados" ? "sem dados" : setor.estado === "critico" ? "crítico" : setor.estado === "atencao" ? "atenção" : "ok"}`,
+        setor.estado === "critico"
+          ? "#e0281b"
+          : setor.estado === "atencao"
+            ? "#a35f00"
+            : "#334155",
       );
       if (label) {
         label.position.set(0, 1.15, -0.95);
