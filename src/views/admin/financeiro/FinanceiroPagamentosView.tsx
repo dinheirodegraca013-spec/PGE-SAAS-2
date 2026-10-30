@@ -406,8 +406,8 @@ export default function FinanceiroPagamentosView() {
                     )
                     .map((cob) => (
                       <option key={cob.id} value={cob.id}>
-                        {cob.tenantNome} — {cob.descricao} (R${" "}
-                        {cob.valor.toFixed(2)})
+                        {cob.tenantNome} — {cob.descricao} (
+                        {formatarMoeda(cob.valor)})
                       </option>
                     ))}
                 </select>
@@ -531,4 +531,3 @@ export default function FinanceiroPagamentosView() {
     </div>
   );
 }
-
