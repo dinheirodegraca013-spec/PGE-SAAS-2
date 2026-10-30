@@ -107,6 +107,12 @@ export const apiClient = {
     }
 
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      return createErrorResult(
+        ["Sessão sem empresa vinculada. Faça login novamente para continuar."],
+        401,
+      );
+    }
 
     try {
       // 1. Clientes (/clientes)
@@ -476,6 +482,12 @@ export const apiClient = {
     }
 
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      return createErrorResult(
+        ["Sessão sem empresa vinculada. Faça login novamente para continuar."],
+        401,
+      );
+    }
 
     try {
       // 1. Criar Cliente (/clientes)
@@ -846,6 +858,12 @@ export const apiClient = {
     }
 
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      return createErrorResult(
+        ["Sessão sem empresa vinculada. Faça login novamente para continuar."],
+        401,
+      );
+    }
 
     try {
       // 1. Atualizar Serviço (/servicos/:id)
@@ -1032,6 +1050,12 @@ export const apiClient = {
     }
 
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      return createErrorResult(
+        ["Sessão sem empresa vinculada. Faça login novamente para continuar."],
+        401,
+      );
+    }
 
     try {
       if (url.startsWith("/clientes/")) {
