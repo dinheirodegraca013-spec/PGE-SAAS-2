@@ -103,10 +103,6 @@ export default function EstoqueView() {
     () => itens.filter((i) => Number(i.saldo) < Number(i.estoque_minimo) * 3),
     [itens],
   );
-  const maiorSaldo = useMemo(
-    () => Math.max(...itens.map((i) => Number(i.saldo)), 1),
-    [itens],
-  );
   const projetoNome = projetos[0]?.titulo || projetos[0]?.nome || "Empresa";
   async function cadastrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -165,7 +161,7 @@ export default function EstoqueView() {
 
   return (
     <main className="space-y-5 pb-8">
-      <header className="gestio-page-heading">
+      <header className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight text-slate-950">
             Estoque
@@ -218,86 +214,6 @@ export default function EstoqueView() {
         >
           {erro}
         </p>
-      )}
-      {!carregando && aba === "mapa" && (
-        <section className="grid gap-4 lg:grid-cols-2">
-          <div className="card p-5">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold">Distribuição do estoque</h2>
-                <p className="text-xs text-slate-500">
-                  Itens reais por situação atual
-                </p>
-              </div>
-              <span className="text-xs text-slate-400">
-                {itens.length} item(ns)
-              </span>
-            </div>
-            <div
-              className="space-y-3"
-              aria-label="Gráfico de distribuição do estoque"
-            >
-              {(
-                [
-                  ["Críticos", resumo.criticos.length, "bg-rose-500"],
-                  ["Em atenção", resumo.atencao.length, "bg-amber-500"],
-                  ["Normais", resumo.normais.length, "bg-emerald-500"],
-                ] as const
-              ).map(([label, value, color]) => (
-                <div key={label}>
-                  <div className="mb-1 flex justify-between text-xs font-semibold text-slate-600">
-                    <span>{label}</span>
-                    <span>{value}</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                    <div
-                      className={`h-full rounded-full ${color}`}
-                      style={{
-                        width: `${itens.length ? Math.max((value / itens.length) * 100, value ? 8 : 0) : 0}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="card p-5">
-            <div className="mb-4">
-              <h2 className="text-lg font-bold">Níveis por item</h2>
-              <p className="text-xs text-slate-500">
-                Saldo comparado ao estoque mínimo
-              </p>
-            </div>
-            <div className="space-y-3" aria-label="Gráfico de níveis por item">
-              {itens.slice(0, 6).map((i) => {
-                const s = statusFor(i);
-                return (
-                  <div key={i.id}>
-                    <div className="mb-1 flex justify-between gap-3 text-xs">
-                      <span className="truncate font-medium text-slate-700">
-                        {i.nome}
-                      </span>
-                      <span className="shrink-0 text-slate-500">
-                        {fmt(Number(i.saldo))}/{fmt(Number(i.estoque_minimo))}
-                      </span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className={`h-full rounded-full ${s === "critico" ? "bg-rose-500" : s === "atencao" ? "bg-amber-500" : "bg-cyan-600"}`}
-                        style={{
-                          width: `${Math.min((Number(i.saldo) / maiorSaldo) * 100, 100)}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-              {!itens.length && (
-                <p className="text-sm text-slate-500">Sem dados para exibir.</p>
-              )}
-            </div>
-          </div>
-        </section>
       )}
       {carregando ? (
         <p>Carregando estoque...</p>
