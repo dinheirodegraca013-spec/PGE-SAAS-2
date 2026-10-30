@@ -117,6 +117,9 @@ export default function Visao3DView() {
   const estoqueCritico = itens.filter(
     (item) => Number(item.saldo) <= Number(item.estoque_minimo),
   );
+  const trabalhadoresAtivos = trabalhadores.filter(
+    (trabalhador) => trabalhador.ativo,
+  );
   const setores = useMemo<Setor[]>(
     () => [
       {
@@ -245,6 +248,45 @@ export default function Visao3DView() {
           </p>
         </div>
         <aside className="space-y-4">
+          {setores.some((setor) => setor.estado === "critico") && (
+            <div className="rounded-2xl border-2 border-rose-500 bg-rose-50 p-4 text-rose-950">
+              <div className="flex items-center gap-2 font-bold">
+                <AlertTriangle className="h-5 w-5 text-rose-600" />
+                {
+                  setores.filter((setor) => setor.estado === "critico").length
+                }{" "}
+                setor(es) em situação crítica
+              </div>
+              <p className="mt-1 text-sm">
+                {setores
+                  .filter((setor) => setor.estado === "critico")
+                  .map((setor) => setor.nome)
+                  .join(", ")}
+              </p>
+            </div>
+          )}
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-3">
+              <small className="text-xs text-slate-500">
+                Ativos cadastrados
+              </small>
+              <b className="mt-1 block text-xl text-slate-900">
+                {trabalhadoresAtivos.length}/{trabalhadores.length}
+              </b>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3">
+              <small className="text-xs text-slate-500">Itens críticos</small>
+              <b className="mt-1 block text-xl text-rose-600">
+                {estoqueCritico.length}
+              </b>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3">
+              <small className="text-xs text-slate-500">Setores</small>
+              <b className="mt-1 block text-xl text-slate-900">
+                {setores.length}
+              </b>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-2">
             {setores.map((setor) => (
               <Link
@@ -280,26 +322,6 @@ export default function Visao3DView() {
                 : "Nenhum alerta crítico foi encontrado nos dados disponíveis."}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <small className="text-xs text-slate-500">Projetos ativos</small>
-              <b className="mt-1 block text-xl text-slate-900">
-                {ativos.length}
-              </b>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <small className="text-xs text-slate-500">Itens críticos</small>
-              <b className="mt-1 block text-xl text-rose-600">
-                {estoqueCritico.length}
-              </b>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <small className="text-xs text-slate-500">Setores</small>
-              <b className="mt-1 block text-xl text-slate-900">
-                {setores.length}
-              </b>
-            </div>
-          </div>
           <div className="card p-5">
             <h2 className="gestio-section-title">O que fazer agora</h2>
             <div className="mt-4 space-y-3">
@@ -330,16 +352,52 @@ export default function Visao3DView() {
             </div>
           </div>
           <div className="card p-5">
-            <h2 className="gestio-section-title">Equipe no cenário</h2>
-            <p className="mt-2 text-sm text-slate-500">
-              {trabalhadores.length
-                ? `${trabalhadores.filter((trabalhador) => trabalhador.ativo).length} colaborador(es) cadastrado(s) no tenant.`
-                : "Nenhum colaborador cadastrado."}
-            </p>
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h2 className="gestio-section-title">Equipe</h2>
+              <Link
+                to="/equipe"
+                className="text-xs font-semibold text-cyan-700"
+              >
+                Ver lista
+              </Link>
+            </div>
             <p className="mt-2 text-xs text-slate-400">
-              A presença diária não está registrada; os avatares representam
-              apenas o cadastro real.
+              Presença diária não registrada; o cenário usa apenas o cadastro
+              real.
             </p>
+            <div className="mt-3 divide-y divide-slate-100">
+              {trabalhadores.slice(0, 8).map((trabalhador) => (
+                <div
+                  key={trabalhador.id}
+                  className="flex items-center justify-between gap-3 py-3"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold text-slate-800">
+                      {trabalhador.nome}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {trabalhador.ativo
+                        ? "Cadastro ativo"
+                        : "Cadastro inativo"}
+                    </p>
+                  </div>
+                  <select
+                    aria-label={`Presença de ${trabalhador.nome}`}
+                    value="nao-registrada"
+                    disabled
+                    onChange={() => undefined}
+                    className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-500"
+                  >
+                    <option value="nao-registrada">Não registrada</option>
+                  </select>
+                </div>
+              ))}
+              {!trabalhadores.length && (
+                <p className="py-4 text-sm text-slate-500">
+                  Nenhum colaborador cadastrado.
+                </p>
+              )}
+            </div>
           </div>
           <div className="card p-5">
             <h2 className="gestio-section-title">Acesso rápido</h2>
@@ -370,4 +428,3 @@ export default function Visao3DView() {
     </div>
   );
 }
-

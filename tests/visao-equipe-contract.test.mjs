@@ -1,31 +1,40 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import fs from 'node:fs';
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
 
-const app = fs.readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8');
-const nav = fs.readFileSync(new URL('../src/layouts/navigation.ts', import.meta.url), 'utf8');
-const dashboard = fs.readFileSync(new URL('../src/views/dashboard/DashboardView.tsx', import.meta.url), 'utf8');
-const readOptional = (path) => fs.existsSync(new URL(path, import.meta.url)) ? fs.readFileSync(new URL(path, import.meta.url), 'utf8') : '';
-const visao = readOptional('../src/views/visao3d/Visao3DView.tsx');
-const mapa3d = readOptional('../src/views/visao3d/ThreeOperationalMap.tsx');
-const equipe = readOptional('../src/views/equipe/EquipeView.tsx');
+const app = fs.readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
+const nav = fs.readFileSync(
+  new URL("../src/layouts/navigation.ts", import.meta.url),
+  "utf8",
+);
+const dashboard = fs.readFileSync(
+  new URL("../src/views/dashboard/DashboardView.tsx", import.meta.url),
+  "utf8",
+);
+const readOptional = (path) =>
+  fs.existsSync(new URL(path, import.meta.url))
+    ? fs.readFileSync(new URL(path, import.meta.url), "utf8")
+    : "";
+const visao = readOptional("../src/views/visao3d/Visao3DView.tsx");
+const mapa3d = readOptional("../src/views/visao3d/ThreeOperationalMap.tsx");
+const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
 
-test('rotas autenticadas incluem Visão 3D e Equipe', () => {
+test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
   assert.match(app, /path="equipe"/);
 });
 
-test('menu lateral aponta para Visão 3D e Equipe', () => {
+test("menu lateral aponta para Visão 3D e Equipe", () => {
   assert.match(nav, /path: '\/visao-3d'/);
   assert.match(nav, /path: '\/equipe'/);
 });
 
-test('visão operacional não incorpora os números demonstrativos do protótipo', () => {
+test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
   assert.doesNotMatch(visao, /R\$\s*10\.550|MDF 18mm \(chapa\).*6 de 10/);
   assert.match(visao, /estoque_itens|projetosService/);
 });
 
-test('Visão 3D usa renderização WebGL real com fallback', () => {
+test("Visão 3D usa renderização WebGL real com fallback", () => {
   assert.match(mapa3d, /WebGLRenderer/);
   assert.match(mapa3d, /OrbitControls/);
   assert.match(mapa3d, /activeWorkers/);
@@ -35,14 +44,23 @@ test('Visão 3D usa renderização WebGL real com fallback', () => {
   assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
 });
 
-test('equipe consulta profiles do tenant e explicita presença não registrada', () => {
+test("Visão 3D mantém o painel lateral com alertas e equipe sem inventar presença", () => {
+  assert.match(
+    visao,
+    /setores\.filter\(\(setor\) => setor\.estado === "critico"\)/,
+  );
+  assert.match(visao, /Equipe/);
+  assert.match(visao, /Presença diária não registrada/);
+  assert.match(visao, /value="nao-registrada"/);
+});
+
+test("equipe consulta profiles do tenant e explicita presença não registrada", () => {
   assert.match(equipe, /from\(["']profiles["']\)/);
   assert.match(equipe, /Presença não registrada/);
   assert.match(equipe, /Setor/);
 });
 
-test('dashboard oferece resumo para Visão 3D e Equipe', () => {
+test("dashboard oferece resumo para Visão 3D e Equipe", () => {
   assert.match(dashboard, /to="\/visao-3d"/);
   assert.match(dashboard, /to="\/equipe"/);
 });
-
