@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   CreditCard,
   Search,
@@ -10,9 +10,9 @@ import {
   Clock,
   ShieldCheck,
   FileText,
-} from 'lucide-react';
-import { adminService } from '@/services/admin/admin.service';
-import { SaaSPagamento, SaaSEmpresaItem, SaaSCobranca } from '@/types/admin';
+} from "lucide-react";
+import { adminService } from "@/services/admin/admin.service";
+import { SaaSPagamento, SaaSEmpresaItem, SaaSCobranca } from "@/types/admin";
 
 export default function FinanceiroPagamentosView() {
   const [pagamentos, setPagamentos] = useState<SaaSPagamento[]>([]);
@@ -20,22 +20,22 @@ export default function FinanceiroPagamentosView() {
   const [cobrancas, setCobrancas] = useState<SaaSCobranca[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
-  const [busca, setBusca] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState<string>('todos');
-  const [filtroConferencia, setFiltroConferencia] = useState<string>('todos');
+  const [busca, setBusca] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState<string>("todos");
+  const [filtroConferencia, setFiltroConferencia] = useState<string>("todos");
 
   // Modal Registrar Pagamento Manual
   const [modalAberto, setModalAberto] = useState(false);
-  const [tenantId, setTenantId] = useState('');
-  const [cobrancaId, setCobrancaId] = useState('');
-  const [valor, setValor] = useState(89.9);
+  const [tenantId, setTenantId] = useState("");
+  const [cobrancaId, setCobrancaId] = useState("");
+  const [valor, setValor] = useState(0);
   const [dataPagamento, setDataPagamento] = useState(
-    new Date().toISOString().split('T')[0]
+    new Date().toISOString().split("T")[0],
   );
   const [formaPagamento, setFormaPagamento] = useState<
-    'PIX' | 'Boleto' | 'Cartao' | 'Transferencia' | 'Dinheiro' | 'Outro'
-  >('PIX');
-  const [comprovanteReferencia, setComprovanteReferencia] = useState('');
+    "PIX" | "Boleto" | "Cartao" | "Transferencia" | "Dinheiro" | "Outro"
+  >("PIX");
+  const [comprovanteReferencia, setComprovanteReferencia] = useState("");
   const [descontoAjuste, setDescontoAjuste] = useState(0);
   const [conferidoManualmente, setConferidoManualmente] = useState(true);
   const [salvando, setSalvando] = useState(false);
@@ -53,7 +53,7 @@ export default function FinanceiroPagamentosView() {
       if (resPag.succeeded && resPag.value) {
         setPagamentos(resPag.value);
       } else {
-        setErro(resPag.errors.join(' '));
+        setErro(resPag.errors.join(" "));
       }
 
       if (resEmp.succeeded && resEmp.value) {
@@ -67,7 +67,7 @@ export default function FinanceiroPagamentosView() {
         setCobrancas(resCob.value);
       }
     } catch {
-      setErro('Erro ao carregar lista de pagamentos.');
+      setErro("Erro ao carregar lista de pagamentos.");
     } finally {
       setCarregando(false);
     }
@@ -80,7 +80,7 @@ export default function FinanceiroPagamentosView() {
   const handleRegistrarPagamento = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!tenantId) {
-      alert('Selecione a empresa associada.');
+      alert("Selecione a empresa associada.");
       return;
     }
 
@@ -99,34 +99,42 @@ export default function FinanceiroPagamentosView() {
 
       if (res.succeeded) {
         setModalAberto(false);
-        setComprovanteReferencia('');
+        setComprovanteReferencia("");
         setDescontoAjuste(0);
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Falha ao registrar pagamento manual.');
+      alert("Falha ao registrar pagamento manual.");
     } finally {
       setSalvando(false);
     }
   };
 
-  const handleAlternarConferencia = async (id: string, estadoAtual: boolean) => {
+  const handleAlternarConferencia = async (
+    id: string,
+    estadoAtual: boolean,
+  ) => {
     try {
-      const res = await adminService.alternarConferenciaPagamento(id, !estadoAtual);
+      const res = await adminService.alternarConferenciaPagamento(
+        id,
+        !estadoAtual,
+      );
       if (res.succeeded) {
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Erro ao atualizar conferência.');
+      alert("Erro ao atualizar conferência.");
     }
   };
 
   const handleEstornar = async (id: string) => {
-    const motivo = prompt('Informe a justificativa/motivo do estorno do pagamento:');
+    const motivo = prompt(
+      "Informe a justificativa/motivo do estorno do pagamento:",
+    );
     if (!motivo) return;
 
     try {
@@ -134,33 +142,38 @@ export default function FinanceiroPagamentosView() {
       if (res.succeeded) {
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Erro ao processar estorno.');
+      alert("Erro ao processar estorno.");
     }
   };
 
   const formatarMoeda = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(val);
   };
 
   const formatarData = (iso: string) => {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleDateString('pt-BR');
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("pt-BR");
   };
 
   const pagamentosFiltrados = pagamentos.filter((pag) => {
     const matchBusca =
-      busca === '' ||
-      (pag.tenantNome && pag.tenantNome.toLowerCase().includes(busca.toLowerCase())) ||
-      (pag.comprovanteReferencia && pag.comprovanteReferencia.toLowerCase().includes(busca.toLowerCase()));
+      busca === "" ||
+      (pag.tenantNome &&
+        pag.tenantNome.toLowerCase().includes(busca.toLowerCase())) ||
+      (pag.comprovanteReferencia &&
+        pag.comprovanteReferencia.toLowerCase().includes(busca.toLowerCase()));
 
-    const matchStatus = filtroStatus === 'todos' || pag.status === filtroStatus;
+    const matchStatus = filtroStatus === "todos" || pag.status === filtroStatus;
     const matchConf =
-      filtroConferencia === 'todos' ||
-      (filtroConferencia === 'conferido' && pag.conferidoManualmente) ||
-      (filtroConferencia === 'pendente' && !pag.conferidoManualmente);
+      filtroConferencia === "todos" ||
+      (filtroConferencia === "conferido" && pag.conferidoManualmente) ||
+      (filtroConferencia === "pendente" && !pag.conferidoManualmente);
 
     return matchBusca && matchStatus && matchConf;
   });
@@ -174,7 +187,8 @@ export default function FinanceiroPagamentosView() {
             Pagamentos & Conciliação Manual
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Registro manual de pagamentos (PIX, TED, Boleto), conciliação com extrato bancário e controle de estornos.
+            Registro manual de pagamentos (PIX, TED, Boleto), conciliação com
+            extrato bancário e controle de estornos.
           </p>
         </div>
         <button
@@ -231,7 +245,9 @@ export default function FinanceiroPagamentosView() {
       {/* Tabela de Pagamentos */}
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
         {carregando ? (
-          <div className="p-12 text-center text-xs text-slate-400">Carregando pagamentos...</div>
+          <div className="p-12 text-center text-xs text-slate-400">
+            Carregando pagamentos...
+          </div>
         ) : pagamentosFiltrados.length === 0 ? (
           <div className="p-12 text-center text-xs text-slate-400">
             Nenhum pagamento encontrado com os filtros selecionados.
@@ -253,8 +269,13 @@ export default function FinanceiroPagamentosView() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {pagamentosFiltrados.map((pag) => (
-                  <tr key={pag.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-5 py-4 font-bold text-slate-900">{pag.tenantNome}</td>
+                  <tr
+                    key={pag.id}
+                    className="hover:bg-slate-50/70 transition-colors"
+                  >
+                    <td className="px-5 py-4 font-bold text-slate-900">
+                      {pag.tenantNome}
+                    </td>
                     <td className="px-5 py-4 font-bold text-emerald-700 font-mono">
                       {formatarMoeda(pag.valor)}
                       {pag.descontoAjuste > 0 && (
@@ -264,23 +285,32 @@ export default function FinanceiroPagamentosView() {
                       )}
                     </td>
                     <td className="px-5 py-4">
-                      <span className="font-semibold text-slate-800">{pag.formaPagamento}</span>
-                      <span className="text-[11px] text-slate-400 font-mono block">{pag.provedor}</span>
+                      <span className="font-semibold text-slate-800">
+                        {pag.formaPagamento}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono block">
+                        {pag.provedor}
+                      </span>
                     </td>
                     <td className="px-5 py-4 text-slate-600 font-mono">
                       {formatarData(pag.dataPagamento)}
                     </td>
                     <td className="px-5 py-4 text-slate-600 font-mono text-[11px]">
-                      {pag.comprovanteReferencia || '—'}
+                      {pag.comprovanteReferencia || "—"}
                     </td>
                     <td className="px-5 py-4">
                       <button
                         type="button"
-                        onClick={() => handleAlternarConferencia(pag.id, pag.conferidoManualmente)}
+                        onClick={() =>
+                          handleAlternarConferencia(
+                            pag.id,
+                            pag.conferidoManualmente,
+                          )
+                        }
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold transition cursor-pointer ${
                           pag.conferidoManualmente
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:bg-emerald-100'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200/50 hover:bg-amber-100'
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50 hover:bg-emerald-100"
+                            : "bg-amber-50 text-amber-700 border border-amber-200/50 hover:bg-amber-100"
                         }`}
                         title="Clique para alternar o status da conferência"
                       >
@@ -289,24 +319,24 @@ export default function FinanceiroPagamentosView() {
                         ) : (
                           <Clock className="h-3 w-3 text-amber-600" />
                         )}
-                        {pag.conferidoManualmente ? 'Conferido' : 'Pendente'}
+                        {pag.conferidoManualmente ? "Conferido" : "Pendente"}
                       </button>
                     </td>
                     <td className="px-5 py-4">
                       <span
                         className={`text-[11px] font-semibold ${
-                          pag.status === 'confirmado'
-                            ? 'text-emerald-700'
-                            : pag.status === 'estornado'
-                            ? 'text-red-600'
-                            : 'text-amber-600'
+                          pag.status === "confirmado"
+                            ? "text-emerald-700"
+                            : pag.status === "estornado"
+                              ? "text-red-600"
+                              : "text-amber-600"
                         }`}
                       >
                         {pag.status.toUpperCase()}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-right">
-                      {pag.status === 'confirmado' && (
+                      {pag.status === "confirmado" && (
                         <button
                           type="button"
                           onClick={() => handleEstornar(pag.id)}
@@ -315,8 +345,10 @@ export default function FinanceiroPagamentosView() {
                           Estornar
                         </button>
                       )}
-                      {pag.status === 'estornado' && (
-                        <span className="text-[11px] text-slate-400 italic">Estornado</span>
+                      {pag.status === "estornado" && (
+                        <span className="text-[11px] text-slate-400 italic">
+                          Estornado
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -331,9 +363,12 @@ export default function FinanceiroPagamentosView() {
       {modalAberto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl border border-slate-200">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Registrar Pagamento Manual</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-1">
+              Registrar Pagamento Manual
+            </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Vincule uma liquidação manual direta para uma marcenaria, renovando a assinatura ou liquidando fatura.
+              Vincule uma liquidação manual direta para uma marcenaria,
+              renovando a assinatura ou liquidando fatura.
             </p>
 
             <form onSubmit={handleRegistrarPagamento} className="space-y-4">
@@ -366,10 +401,13 @@ export default function FinanceiroPagamentosView() {
                 >
                   <option value="">Nenhuma (Entrada direta / avulsa)</option>
                   {cobrancas
-                    .filter((c) => c.status === 'pendente' || c.status === 'vencida')
+                    .filter(
+                      (c) => c.status === "pendente" || c.status === "vencida",
+                    )
                     .map((cob) => (
                       <option key={cob.id} value={cob.id}>
-                        {cob.tenantNome} — {cob.descricao} (R$ {cob.valor.toFixed(2)})
+                        {cob.tenantNome} — {cob.descricao} (R${" "}
+                        {cob.valor.toFixed(2)})
                       </option>
                     ))}
                 </select>
@@ -385,7 +423,9 @@ export default function FinanceiroPagamentosView() {
                     step="0.01"
                     required
                     value={valor}
-                    onChange={(e) => setValor(Number(e.target.value.replace(',', '.')) || 0)}
+                    onChange={(e) =>
+                      setValor(Number(e.target.value.replace(",", ".")) || 0)
+                    }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   />
                 </div>
@@ -429,7 +469,11 @@ export default function FinanceiroPagamentosView() {
                     type="number"
                     step="0.01"
                     value={descontoAjuste}
-                    onChange={(e) => setDescontoAjuste(Number(e.target.value.replace(',', '.')) || 0)}
+                    onChange={(e) =>
+                      setDescontoAjuste(
+                        Number(e.target.value.replace(",", ".")) || 0,
+                      )
+                    }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   />
                 </div>
@@ -456,7 +500,10 @@ export default function FinanceiroPagamentosView() {
                   onChange={(e) => setConferidoManualmente(e.target.checked)}
                   className="h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                <label htmlFor="conferido" className="text-xs font-medium text-slate-700">
+                <label
+                  htmlFor="conferido"
+                  className="text-xs font-medium text-slate-700"
+                >
                   Marcar como conferido manualmente pelo operador agora
                 </label>
               </div>
@@ -474,7 +521,7 @@ export default function FinanceiroPagamentosView() {
                   disabled={salvando}
                   className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 cursor-pointer"
                 >
-                  {salvando ? 'Gravando...' : 'Confirmar e Liquidar'}
+                  {salvando ? "Gravando..." : "Confirmar e Liquidar"}
                 </button>
               </div>
             </form>

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Sofa, Plus, Calendar, ChevronRight, X } from 'lucide-react';
-import EmptyState from '@/components/shared/EmptyState';
-import StatusProjetoBadge from '../components/StatusProjetoBadge';
-import { projetosService } from '../services/projetos.service';
-import { clientesService } from '@/modules/clientes/services/clientes.service';
-import type { ProjetoMovelPlanejado } from '../types/projeto';
-import type { Cliente } from '@/modules/clientes/types/cliente';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Sofa, Plus, Calendar, ChevronRight, X } from "lucide-react";
+import EmptyState from "@/components/shared/EmptyState";
+import StatusProjetoBadge from "../components/StatusProjetoBadge";
+import { projetosService } from "../services/projetos.service";
+import { clientesService } from "@/modules/clientes/services/clientes.service";
+import type { ProjetoMovelPlanejado } from "../types/projeto";
+import type { Cliente } from "@/modules/clientes/types/cliente";
 
 export default function ProjetosListView() {
   const navigate = useNavigate();
@@ -20,10 +20,10 @@ export default function ProjetosListView() {
   const [salvando, setSalvando] = useState(false);
   const [erroModal, setErroModal] = useState<string | null>(null);
   const [novoProjeto, setNovoProjeto] = useState({
-    titulo: '',
-    clienteId: '',
+    titulo: "",
+    clienteId: "",
     valorTotalOrcamento: 0,
-    observacoes: '',
+    observacoes: "",
   });
 
   const carregarProjetos = async () => {
@@ -34,10 +34,13 @@ export default function ProjetosListView() {
       if (resultado.succeeded && resultado.value) {
         setProjetos(resultado.value.items);
       } else {
-        setErro(resultado.errors.join(' ') || 'Não foi possível carregar os projetos.');
+        setErro(
+          resultado.errors.join(" ") ||
+            "Não foi possível carregar os projetos.",
+        );
       }
     } catch {
-      setErro('Falha ao comunicar com o banco de dados.');
+      setErro("Falha ao comunicar com o banco de dados.");
     } finally {
       setCarregando(false);
     }
@@ -50,7 +53,10 @@ export default function ProjetosListView() {
         const lista = res.value;
         setClientes(lista);
         if (lista.length > 0) {
-          setNovoProjeto((prev) => ({ ...prev, clienteId: prev.clienteId || lista[0].id }));
+          setNovoProjeto((prev) => ({
+            ...prev,
+            clienteId: prev.clienteId || lista[0].id,
+          }));
         }
       }
     } catch {
@@ -66,7 +72,7 @@ export default function ProjetosListView() {
   const handleCriarProjeto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!novoProjeto.titulo.trim()) {
-      setErroModal('Informe o título do projeto.');
+      setErroModal("Informe o título do projeto.");
       return;
     }
 
@@ -83,29 +89,39 @@ export default function ProjetosListView() {
       });
 
       if (!res.succeeded) {
-        setErroModal(res.errors.join(' ') || 'Erro ao criar projeto.');
+        setErroModal(res.errors.join(" ") || "Erro ao criar projeto.");
         return;
       }
 
       setModalAberto(false);
-      setNovoProjeto({ titulo: '', clienteId: clientes[0]?.id || '', valorTotalOrcamento: 0, observacoes: '' });
+      setNovoProjeto({
+        titulo: "",
+        clienteId: clientes[0]?.id || "",
+        valorTotalOrcamento: 0,
+        observacoes: "",
+      });
       await carregarProjetos();
     } catch (err: any) {
-      setErroModal(err.message || 'Erro inesperado.');
+      setErroModal(err.message || "Erro inesperado.");
     } finally {
       setSalvando(false);
     }
   };
 
   const formatarMoeda = (valor: number) => {
-    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">Projetos, Orçamentos e Produção</h2>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900">
+            Projetos, Orçamentos e Produção
+          </h2>
           <p className="mt-1 text-sm text-slate-500">
             Acompanhamento de produção, medições e execução no Supabase.
           </p>
@@ -128,7 +144,9 @@ export default function ProjetosListView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
           <div className="card w-full max-w-lg p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">Novo Projeto de Marcenaria</h3>
+              <h3 className="text-base font-bold text-slate-900">
+                Novo Projeto de Marcenaria
+              </h3>
               <button
                 type="button"
                 className="text-slate-400 hover:text-slate-700"
@@ -140,13 +158,17 @@ export default function ProjetosListView() {
 
             <form onSubmit={handleCriarProjeto} className="space-y-4">
               <div>
-                <label className="label-field text-xs">Título do Projeto *</label>
+                <label className="label-field text-xs">
+                  Título do Projeto *
+                </label>
                 <input
                   type="text"
                   placeholder="Ex.: Cozinha Integrada & Closet"
                   className="input-field text-xs"
                   value={novoProjeto.titulo}
-                  onChange={(e) => setNovoProjeto({ ...novoProjeto, titulo: e.target.value })}
+                  onChange={(e) =>
+                    setNovoProjeto({ ...novoProjeto, titulo: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -156,42 +178,65 @@ export default function ProjetosListView() {
                 <select
                   className="input-field text-xs"
                   value={novoProjeto.clienteId}
-                  onChange={(e) => setNovoProjeto({ ...novoProjeto, clienteId: e.target.value })}
+                  onChange={(e) =>
+                    setNovoProjeto({
+                      ...novoProjeto,
+                      clienteId: e.target.value,
+                    })
+                  }
                 >
                   <option value="">Selecione um cliente (opcional)</option>
                   {clientes.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.nome} {c.telefoneWhatsApp ? `(${c.telefoneWhatsApp})` : ''}
+                      {c.nome}{" "}
+                      {c.telefoneWhatsApp ? `(${c.telefoneWhatsApp})` : ""}
                     </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label className="label-field text-xs">Valor Estimado do Orçamento (R$)</label>
+                <label className="label-field text-xs">
+                  Valor Estimado do Orçamento (R$)
+                </label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   placeholder="0,00"
                   className="input-field text-xs"
-                  value={novoProjeto.valorTotalOrcamento || ''}
-                  onChange={(e) => setNovoProjeto({ ...novoProjeto, valorTotalOrcamento: parseFloat(e.target.value) || 0 })}
+                  value={novoProjeto.valorTotalOrcamento || ""}
+                  onChange={(e) =>
+                    setNovoProjeto({
+                      ...novoProjeto,
+                      valorTotalOrcamento:
+                        Number(e.target.value.replace(",", ".")) || 0,
+                    })
+                  }
                 />
               </div>
 
               <div>
-                <label className="label-field text-xs">Observações / Especificações</label>
+                <label className="label-field text-xs">
+                  Observações / Especificações
+                </label>
                 <textarea
                   rows={3}
                   placeholder="Materiais preferenciais, acabamentos e orientações técnicas..."
                   className="input-field text-xs"
                   value={novoProjeto.observacoes}
-                  onChange={(e) => setNovoProjeto({ ...novoProjeto, observacoes: e.target.value })}
+                  onChange={(e) =>
+                    setNovoProjeto({
+                      ...novoProjeto,
+                      observacoes: e.target.value,
+                    })
+                  }
                 />
               </div>
 
-              {erroModal && <p className="text-xs text-red-600 font-medium">{erroModal}</p>}
+              {erroModal && (
+                <p className="text-xs text-red-600 font-medium">{erroModal}</p>
+              )}
 
               <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                 <button
@@ -201,8 +246,12 @@ export default function ProjetosListView() {
                 >
                   Cancelar
                 </button>
-                <button type="submit" className="btn-primary text-xs" disabled={salvando}>
-                  {salvando ? 'Salvando...' : 'Criar Projeto'}
+                <button
+                  type="submit"
+                  className="btn-primary text-xs"
+                  disabled={salvando}
+                >
+                  {salvando ? "Salvando..." : "Criar Projeto"}
                 </button>
               </div>
             </form>
@@ -211,12 +260,17 @@ export default function ProjetosListView() {
       )}
 
       {carregando ? (
-        <div className="card p-8 text-center text-sm text-slate-500">Carregando projetos de marcenaria...</div>
+        <div className="card p-8 text-center text-sm text-slate-500">
+          Carregando projetos de marcenaria...
+        </div>
       ) : erro ? (
         <div className="card p-6 border-red-200 bg-red-50 text-red-700 text-sm">
           <p className="font-semibold">Erro ao carregar projetos:</p>
           <p className="mt-1">{erro}</p>
-          <button onClick={carregarProjetos} className="btn-secondary text-xs mt-3">
+          <button
+            onClick={carregarProjetos}
+            className="btn-secondary text-xs mt-3"
+          >
             Tentar novamente
           </button>
         </div>
@@ -257,7 +311,9 @@ export default function ProjetosListView() {
                     onClick={() => navigate(`/projetos/${projeto.id}`)}
                   >
                     <td className="px-5 py-4">
-                      <div className="text-sm font-semibold text-slate-900">{projeto.titulo}</div>
+                      <div className="text-sm font-semibold text-slate-900">
+                        {projeto.titulo}
+                      </div>
                       {projeto.observacoes && (
                         <div className="text-xs text-slate-500 mt-0.5 max-w-sm truncate">
                           {projeto.observacoes}
@@ -266,7 +322,10 @@ export default function ProjetosListView() {
                       {projeto.dataPrevistaEntrega && (
                         <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
                           <Calendar className="h-3 w-3" />
-                          Entrega: {new Date(projeto.dataPrevistaEntrega).toLocaleDateString('pt-BR')}
+                          Entrega:{" "}
+                          {new Date(
+                            projeto.dataPrevistaEntrega,
+                          ).toLocaleDateString("pt-BR")}
                         </div>
                       )}
                     </td>
@@ -296,3 +355,4 @@ export default function ProjetosListView() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Receipt,
   Search,
@@ -9,27 +9,27 @@ import {
   AlertCircle,
   Copy,
   ExternalLink,
-} from 'lucide-react';
-import { adminService } from '@/services/admin/admin.service';
-import { SaaSCobranca, SaaSEmpresaItem } from '@/types/admin';
+} from "lucide-react";
+import { adminService } from "@/services/admin/admin.service";
+import { SaaSCobranca, SaaSEmpresaItem } from "@/types/admin";
 
 export default function FinanceiroCobrancasView() {
   const [cobrancas, setCobrancas] = useState<SaaSCobranca[]>([]);
   const [empresas, setEmpresas] = useState<SaaSEmpresaItem[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
-  const [busca, setBusca] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState<string>('todos');
+  const [busca, setBusca] = useState("");
+  const [filtroStatus, setFiltroStatus] = useState<string>("todos");
 
   // Modal Nova Cobrança
   const [modalAberto, setModalAberto] = useState(false);
-  const [tenantId, setTenantId] = useState('');
-  const [valor, setValor] = useState(89.9);
+  const [tenantId, setTenantId] = useState("");
+  const [valor, setValor] = useState(0);
   const [dataVencimento, setDataVencimento] = useState(
-    new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0]
+    new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0],
   );
-  const [descricao, setDescricao] = useState('Mensalidade PGE SAAS 2');
-  const [observacoes, setObservacoes] = useState('');
+  const [descricao, setDescricao] = useState("Mensalidade PGE SAAS 2");
+  const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
 
   const carregarDados = async () => {
@@ -44,7 +44,7 @@ export default function FinanceiroCobrancasView() {
       if (resCob.succeeded && resCob.value) {
         setCobrancas(resCob.value);
       } else {
-        setErro(resCob.errors.join(' '));
+        setErro(resCob.errors.join(" "));
       }
 
       if (resEmp.succeeded && resEmp.value) {
@@ -54,7 +54,7 @@ export default function FinanceiroCobrancasView() {
         }
       }
     } catch {
-      setErro('Erro ao listar cobranças financeiras.');
+      setErro("Erro ao listar cobranças financeiras.");
     } finally {
       setCarregando(false);
     }
@@ -67,7 +67,7 @@ export default function FinanceiroCobrancasView() {
   const handleCriarCobranca = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!tenantId) {
-      alert('Selecione a empresa cliente.');
+      alert("Selecione a empresa cliente.");
       return;
     }
 
@@ -79,17 +79,17 @@ export default function FinanceiroCobrancasView() {
         dataVencimento: new Date(dataVencimento).toISOString(),
         descricao,
         observacoes,
-        status: 'pendente',
+        status: "pendente",
       });
 
       if (res.succeeded) {
         setModalAberto(false);
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Falha ao emitir cobrança.');
+      alert("Falha ao emitir cobrança.");
     } finally {
       setSalvando(false);
     }
@@ -98,24 +98,29 @@ export default function FinanceiroCobrancasView() {
   const copiarLink = (texto?: string) => {
     if (!texto) return;
     navigator.clipboard.writeText(texto);
-    alert('Link de pagamento copiado com sucesso!');
+    alert("Link de pagamento copiado com sucesso!");
   };
 
   const formatarMoeda = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(val);
   };
 
   const formatarData = (iso: string) => {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleDateString('pt-BR');
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("pt-BR");
   };
 
   const cobrancasFiltradas = cobrancas.filter((cob) => {
     const matchBusca =
-      busca === '' ||
-      (cob.tenantNome && cob.tenantNome.toLowerCase().includes(busca.toLowerCase())) ||
-      (cob.descricao && cob.descricao.toLowerCase().includes(busca.toLowerCase()));
-    const matchStatus = filtroStatus === 'todos' || cob.status === filtroStatus;
+      busca === "" ||
+      (cob.tenantNome &&
+        cob.tenantNome.toLowerCase().includes(busca.toLowerCase())) ||
+      (cob.descricao &&
+        cob.descricao.toLowerCase().includes(busca.toLowerCase()));
+    const matchStatus = filtroStatus === "todos" || cob.status === filtroStatus;
     return matchBusca && matchStatus;
   });
 
@@ -128,7 +133,8 @@ export default function FinanceiroCobrancasView() {
             Faturas & Cobranças Emitidas
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Controle de cobranças avulsas e recorrentes emitidas para as marcenarias parceiras.
+            Controle de cobranças avulsas e recorrentes emitidas para as
+            marcenarias parceiras.
           </p>
         </div>
         <button
@@ -176,7 +182,9 @@ export default function FinanceiroCobrancasView() {
       {/* Tabela de Cobranças */}
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
         {carregando ? (
-          <div className="p-12 text-center text-xs text-slate-400">Carregando cobranças...</div>
+          <div className="p-12 text-center text-xs text-slate-400">
+            Carregando cobranças...
+          </div>
         ) : cobrancasFiltradas.length === 0 ? (
           <div className="p-12 text-center text-xs text-slate-400">
             Nenhuma fatura encontrada.
@@ -197,9 +205,16 @@ export default function FinanceiroCobrancasView() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {cobrancasFiltradas.map((cob) => (
-                  <tr key={cob.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-5 py-4 font-bold text-slate-900">{cob.tenantNome}</td>
-                    <td className="px-5 py-4 text-slate-700">{cob.descricao}</td>
+                  <tr
+                    key={cob.id}
+                    className="hover:bg-slate-50/70 transition-colors"
+                  >
+                    <td className="px-5 py-4 font-bold text-slate-900">
+                      {cob.tenantNome}
+                    </td>
+                    <td className="px-5 py-4 text-slate-700">
+                      {cob.descricao}
+                    </td>
                     <td className="px-5 py-4 font-bold text-slate-900 font-mono">
                       {formatarMoeda(cob.valor)}
                     </td>
@@ -209,16 +224,16 @@ export default function FinanceiroCobrancasView() {
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                          cob.status === 'paga'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                            : cob.status === 'vencida'
-                            ? 'bg-red-50 text-red-700 border border-red-200/50'
-                            : 'bg-amber-50 text-amber-700 border border-amber-200/50'
+                          cob.status === "paga"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
+                            : cob.status === "vencida"
+                              ? "bg-red-50 text-red-700 border border-red-200/50"
+                              : "bg-amber-50 text-amber-700 border border-amber-200/50"
                         }`}
                       >
-                        {cob.status === 'paga' ? (
+                        {cob.status === "paga" ? (
                           <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                        ) : cob.status === 'vencida' ? (
+                        ) : cob.status === "vencida" ? (
                           <AlertCircle className="h-3 w-3 text-red-600" />
                         ) : (
                           <Clock className="h-3 w-3 text-amber-600" />
@@ -226,7 +241,9 @@ export default function FinanceiroCobrancasView() {
                         {cob.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-5 py-4 text-slate-500 font-mono">{cob.provedor}</td>
+                    <td className="px-5 py-4 text-slate-500 font-mono">
+                      {cob.provedor}
+                    </td>
                     <td className="px-5 py-4 text-right">
                       {cob.linkPagamentoUtilizado ? (
                         <button
@@ -238,7 +255,9 @@ export default function FinanceiroCobrancasView() {
                           Copiar Link
                         </button>
                       ) : (
-                        <span className="text-[11px] text-slate-400">Manual</span>
+                        <span className="text-[11px] text-slate-400">
+                          Manual
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -253,8 +272,12 @@ export default function FinanceiroCobrancasView() {
       {modalAberto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Emitir Nova Cobrança</h3>
-            <p className="text-xs text-slate-500 mb-4">Gere uma nova fatura com vencimento e valor especificados.</p>
+            <h3 className="text-base font-bold text-slate-900 mb-1">
+              Emitir Nova Cobrança
+            </h3>
+            <p className="text-xs text-slate-500 mb-4">
+              Gere uma nova fatura com vencimento e valor especificados.
+            </p>
 
             <form onSubmit={handleCriarCobranca} className="space-y-4">
               <div>
@@ -285,7 +308,9 @@ export default function FinanceiroCobrancasView() {
                     step="0.01"
                     required
                     value={valor}
-                    onChange={(e) => setValor(Number(e.target.value.replace(',', '.')) || 0)}
+                    onChange={(e) =>
+                      setValor(Number(e.target.value.replace(",", ".")) || 0)
+                    }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   />
                 </div>
@@ -343,7 +368,7 @@ export default function FinanceiroCobrancasView() {
                   disabled={salvando}
                   className="rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 cursor-pointer"
                 >
-                  {salvando ? 'Emitindo...' : 'Salvar e Emitir'}
+                  {salvando ? "Emitindo..." : "Salvar e Emitir"}
                 </button>
               </div>
             </form>
