@@ -143,7 +143,8 @@ export default function FinanceiroEmpresaView() {
           e.preventDefault();
           if (salvando) return;
           setMensagem("");
-          const valorNumero = Number(valor);
+          const valorNormalizado = valor.trim().replace(",", ".");
+          const valorNumero = Number(valorNormalizado);
           if (
             !Number.isFinite(valorNumero) ||
             valorNumero <= 0 ||
