@@ -1005,12 +1005,23 @@ export const adminService = {
       // Tenta localizar user_id caso não tenha sido fornecido
       let targetUserId = dados.userId;
       if (!targetUserId) {
-        const { data: prof } = await supabase
+        const { data: prof, error: profileError } = await supabase
           .from("profiles")
           .select("id")
           .eq("email", dados.email.trim())
           .maybeSingle();
-        targetUserId = prof?.id || "00000000-0000-0000-0000-000000000000";
+        if (profileError) {
+          return { succeeded: false, errors: [profileError.message] };
+        }
+        if (!prof?.id) {
+          return {
+            succeeded: false,
+            errors: [
+              "Nenhum usuário autenticado foi encontrado para este e-mail.",
+            ],
+          };
+        }
+        targetUserId = prof.id;
       }
 
       const payload: any = {
