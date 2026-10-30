@@ -85,3 +85,15 @@ test("estoque aceita quantidades decimais no padrão brasileiro", () => {
   assert.match(view, /placeholder="Ex\.\: 1,500"/);
 });
 
+test("mapa do estoque oferece interação acessível por teclado", () => {
+  const map = readFileSync(
+    new URL("../src/views/estoque/StockMap.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(map, /role="button"/);
+  assert.match(map, /tabIndex=\{0\}/);
+  assert.match(map, /aria-label=\{`\$\{item\.nome\}/);
+  assert.match(map, /event\.key === "Enter"/);
+  assert.match(map, /event\.key === " "/);
+});
+

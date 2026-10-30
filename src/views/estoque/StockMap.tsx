@@ -15,6 +15,15 @@ const tone = {
 export default function StockMap({ itens, selecionado, onSelect }: Props) {
   const slabs = itens.slice(0, 4);
   const hardware = itens.slice(4, 10);
+  const ativarPorTeclado = (
+    event: React.KeyboardEvent<SVGGElement>,
+    id: string,
+  ) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      onSelect(id);
+    }
+  };
   return (
     <svg
       viewBox="0 0 660 360"
@@ -47,10 +56,13 @@ export default function StockMap({ itens, selecionado, onSelect }: Props) {
         return (
           <g
             key={item.id}
-            className={
-              selecionado === item.id ? "cursor-pointer" : "cursor-pointer"
-            }
+            className="cursor-pointer outline-none"
+            role="button"
+            tabIndex={0}
+            aria-pressed={selecionado === item.id}
+            aria-label={`${item.nome}, saldo ${item.saldo} ${item.unidade}, status ${status === "critico" ? "crítico" : status === "atencao" ? "atenção" : "normal"}`}
             onClick={() => onSelect(item.id)}
+            onKeyDown={(event) => ativarPorTeclado(event, item.id)}
           >
             <rect
               x={x}
@@ -134,8 +146,13 @@ export default function StockMap({ itens, selecionado, onSelect }: Props) {
         return (
           <g
             key={item.id}
-            className="cursor-pointer"
+            className="cursor-pointer outline-none"
+            role="button"
+            tabIndex={0}
+            aria-pressed={selecionado === item.id}
+            aria-label={`${item.nome}, saldo ${item.saldo} ${item.unidade}, status ${status === "critico" ? "crítico" : status === "atencao" ? "atenção" : "normal"}`}
             onClick={() => onSelect(item.id)}
+            onKeyDown={(event) => ativarPorTeclado(event, item.id)}
           >
             <rect
               x="436"
