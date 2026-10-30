@@ -23,6 +23,7 @@ export default function FinanceiroEmpresaView() {
   const [erro, setErro] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [lancamentos, setLancamentos] = useState<any[]>([]);
+  const [lancamentosDisponiveis, setLancamentosDisponiveis] = useState(false);
   const [tipo, setTipo] = useState("despesa");
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
@@ -35,6 +36,7 @@ export default function FinanceiroEmpresaView() {
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
+    setLancamentosDisponiveis(false);
     try {
       const resultado = await projetosService.listar();
       if (!resultado.succeeded)
@@ -52,6 +54,7 @@ export default function FinanceiroEmpresaView() {
       const { data: lista, error: listaErro } = await lancamentosQuery;
       if (listaErro) throw listaErro;
       setLancamentos(lista || []);
+      setLancamentosDisponiveis(true);
       const { data: resumo, error: resumoErro } = await supabase.rpc(
         "financeiro_resumo_baixas",
       );
@@ -227,7 +230,11 @@ export default function FinanceiroEmpresaView() {
       )}
       <section className="rounded-xl border p-4">
         <h2 className="mb-3 font-bold">Lançamentos financeiros</h2>
-        {lancamentos.length === 0 ? (
+        {!lancamentosDisponiveis ? (
+          <p className="text-sm text-slate-500">
+            Não foi possível consultar os lançamentos agora.
+          </p>
+        ) : lancamentos.length === 0 ? (
           <p className="text-sm text-slate-500">
             Nenhum lançamento cadastrado.
           </p>
