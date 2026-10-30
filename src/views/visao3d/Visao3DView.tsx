@@ -56,6 +56,8 @@ export default function Visao3DView() {
   const [cameraReset, setCameraReset] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [estoqueDisponivel, setEstoqueDisponivel] = useState(false);
+  const [equipeDisponivel, setEquipeDisponivel] = useState(false);
   const abrirSetor = useCallback(
     (sectorId: string) => {
       if (sectorId === "estoque") navigate("/estoque");
@@ -68,6 +70,8 @@ export default function Visao3DView() {
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
+    setEstoqueDisponivel(false);
+    setEquipeDisponivel(false);
     try {
       const tenantId = getCurrentTenantId();
       if (!tenantId) {
@@ -95,12 +99,16 @@ export default function Visao3DView() {
       const perfisResult = await perfisQuery;
       const mensagens: string[] = [];
       if (estoque.error) mensagens.push("Estoque indisponível no momento.");
-      else setItens((estoque.data || []) as EstoqueItem[]);
+      else {
+        setItens((estoque.data || []) as EstoqueItem[]);
+        setEstoqueDisponivel(true);
+      }
       if (!projetosResult.succeeded || !projetosResult.value)
         mensagens.push("Projetos indisponíveis no momento.");
       else setProjetos(projetosResult.value.items || []);
       if (perfisResult.error) mensagens.push("Equipe indisponível no momento.");
-      else
+      else {
+        setEquipeDisponivel(true);
         setTrabalhadores(
           (perfisResult.data || []).map((perfil) => ({
             id: perfil.id,
@@ -108,6 +116,7 @@ export default function Visao3DView() {
             ativo: perfil.ativo !== false,
           })),
         );
+      }
       if (mensagens.length) setErro(mensagens.join(" "));
     } catch {
       setErro("Não foi possível carregar a Visão 3D agora. Tente atualizar.");
@@ -170,14 +179,17 @@ export default function Visao3DView() {
       {
         id: "estoque",
         nome: "Estoque",
-        detalhe: itens.length
-          ? `${estoqueCritico.length} item(ns) no limite`
-          : "Nenhum item cadastrado",
-        estado: !itens.length
-          ? "sem-dados"
-          : estoqueCritico.length
-            ? "critico"
-            : "normal",
+        detalhe: !estoqueDisponivel
+          ? "Estoque indisponível"
+          : itens.length
+            ? `${estoqueCritico.length} item(ns) no limite`
+            : "Nenhum item cadastrado",
+        estado:
+          !estoqueDisponivel || !itens.length
+            ? "sem-dados"
+            : estoqueCritico.length
+              ? "critico"
+              : "normal",
         cor: setorCores[4],
       },
       {
@@ -188,7 +200,7 @@ export default function Visao3DView() {
         cor: setorCores[5],
       },
     ],
-    [ativos.length, estoqueCritico.length, itens.length],
+    [ativos.length, estoqueCritico.length, itens.length, estoqueDisponivel],
   );
 
   return (
@@ -245,7 +257,7 @@ export default function Visao3DView() {
           </button>
           <ThreeOperationalMap
             setores={setores}
-            trabalhadores={trabalhadores}
+            trabalhadores={equipeDisponivel ? trabalhadores : []}
             resetKey={cameraReset}
             onSectorSelect={abrirSetor}
           />
@@ -278,13 +290,15 @@ export default function Visao3DView() {
                 Ativos cadastrados
               </small>
               <b className="mt-1 block text-xl text-slate-900">
-                {trabalhadoresAtivos.length}/{trabalhadores.length}
+                {equipeDisponivel
+                  ? `${trabalhadoresAtivos.length}/${trabalhadores.length}`
+                  : "—"}
               </b>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
               <small className="text-xs text-slate-500">Itens críticos</small>
               <b className="mt-1 block text-xl text-rose-600">
-                {estoqueCritico.length}
+                {estoqueDisponivel ? estoqueCritico.length : "—"}
               </b>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
@@ -318,42 +332,52 @@ export default function Visao3DView() {
               </Link>
             ))}
           </div>
-          <div
-            className={`rounded-2xl border-2 p-4 ${estoqueCritico.length ? "border-rose-300 bg-rose-50 text-rose-900" : "border-emerald-300 bg-emerald-50 text-emerald-900"}`}
-          >
-            <div className="flex items-center gap-2 font-bold">
-              {estoqueCritico.length ? (
-                <AlertTriangle className="h-5 w-5" />
-              ) : (
-                <CircleCheck className="h-5 w-5" />
-              )}
-              {estoqueCritico.length ? "Atenção operacional" : "Tudo certo"}
+          {estoqueDisponivel && (
+            <div
+              className={`rounded-2xl border-2 p-4 ${estoqueCritico.length ? "border-rose-300 bg-rose-50 text-rose-900" : "border-emerald-300 bg-emerald-50 text-emerald-900"}`}
+            >
+              <div className="flex items-center gap-2 font-bold">
+                {estoqueCritico.length ? (
+                  <AlertTriangle className="h-5 w-5" />
+                ) : (
+                  <CircleCheck className="h-5 w-5" />
+                )}
+                {estoqueCritico.length ? "Atenção operacional" : "Tudo certo"}
+              </div>
+              <p className="mt-1 text-sm">
+                {estoqueCritico.length
+                  ? "Há itens que precisam de acompanhamento."
+                  : "Nenhum alerta crítico foi encontrado nos dados disponíveis."}
+              </p>
             </div>
-            <p className="mt-1 text-sm">
-              {estoqueCritico.length
-                ? "Há itens que precisam de acompanhamento."
-                : "Nenhum alerta crítico foi encontrado nos dados disponíveis."}
-            </p>
-          </div>
+          )}
           <div className="card p-5">
             <h2 className="gestio-section-title">O que fazer agora</h2>
             <div className="mt-4 space-y-3">
-              {estoqueCritico.slice(0, 4).map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-xl border border-rose-100 bg-rose-50 p-3 text-sm text-rose-900"
-                >
-                  <b>Estoque no limite: {item.nome}</b>
-                  <p className="mt-1">
-                    Saldo {item.saldo} {item.unidade}; mínimo{" "}
-                    {item.estoque_minimo}.
-                  </p>
-                </div>
-              ))}
-              {!estoqueCritico.length && (
+              {estoqueDisponivel &&
+                estoqueCritico.slice(0, 4).map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-xl border border-rose-100 bg-rose-50 p-3 text-sm text-rose-900"
+                  >
+                    <b>Estoque no limite: {item.nome}</b>
+                    <p className="mt-1">
+                      Saldo {item.saldo} {item.unidade}; mínimo{" "}
+                      {item.estoque_minimo}.
+                    </p>
+                  </div>
+                ))}
+              {estoqueDisponivel && !estoqueCritico.length && (
                 <p className="flex items-center gap-2 text-sm text-emerald-700">
                   <CircleCheck className="h-4 w-4" />
                   Nenhum alerta de estoque.
+                </p>
+              )}
+              {!estoqueDisponivel && (
+                <p className="text-sm text-slate-500">
+                  {carregando
+                    ? "Consultando estoque…"
+                    : "Estoque indisponível. Atualize para tentar novamente."}
                 </p>
               )}
               <Link
@@ -379,35 +403,43 @@ export default function Visao3DView() {
               real.
             </p>
             <div className="mt-3 divide-y divide-slate-100">
-              {trabalhadores.slice(0, 8).map((trabalhador) => (
-                <div
-                  key={trabalhador.id}
-                  className="flex items-center justify-between gap-3 py-3"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-800">
-                      {trabalhador.nome}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {trabalhador.ativo
-                        ? "Cadastro ativo"
-                        : "Cadastro inativo"}
-                    </p>
-                  </div>
-                  <select
-                    aria-label={`Presença de ${trabalhador.nome}`}
-                    value="nao-registrada"
-                    disabled
-                    onChange={() => undefined}
-                    className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-500"
+              {equipeDisponivel &&
+                trabalhadores.slice(0, 8).map((trabalhador) => (
+                  <div
+                    key={trabalhador.id}
+                    className="flex items-center justify-between gap-3 py-3"
                   >
-                    <option value="nao-registrada">Não registrada</option>
-                  </select>
-                </div>
-              ))}
-              {!trabalhadores.length && (
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-800">
+                        {trabalhador.nome}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {trabalhador.ativo
+                          ? "Cadastro ativo"
+                          : "Cadastro inativo"}
+                      </p>
+                    </div>
+                    <select
+                      aria-label={`Presença de ${trabalhador.nome}`}
+                      value="nao-registrada"
+                      disabled
+                      onChange={() => undefined}
+                      className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs text-slate-500"
+                    >
+                      <option value="nao-registrada">Não registrada</option>
+                    </select>
+                  </div>
+                ))}
+              {equipeDisponivel && !trabalhadores.length && (
                 <p className="py-4 text-sm text-slate-500">
                   Nenhum colaborador cadastrado.
+                </p>
+              )}
+              {!equipeDisponivel && (
+                <p className="py-4 text-sm text-slate-500">
+                  {carregando
+                    ? "Consultando equipe…"
+                    : "Equipe indisponível. Atualize para tentar novamente."}
                 </p>
               )}
             </div>
