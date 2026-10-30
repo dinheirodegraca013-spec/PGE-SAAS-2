@@ -17,3 +17,15 @@ test("painel interno mantém a casca visual GESTIO padronizada", () => {
   assert.match(layout, /Sistema online/);
 });
 
+test("painel financeiro não transforma consulta indisponível em saldo zero", () => {
+  const financeiro = readFileSync(
+    new URL(
+      "../src/views/admin/financeiro/FinanceiroDashboardView.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(financeiro, /formatarMetrica/);
+  assert.match(financeiro, /carregando \|\| erro \|\| !metricas/);
+  assert.doesNotMatch(financeiro, /metricas\?\.[A-Za-z]+ \|\| 0/);
+});
