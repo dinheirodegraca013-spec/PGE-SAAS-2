@@ -9,12 +9,73 @@ type MapSector = {
 };
 type Worker = { id: string; nome: string; ativo: boolean };
 
-const colors: Record<MapSector["estado"], number> = {
-  normal: 0x5fb58a,
-  atencao: 0xd1b24f,
-  critico: 0xd95d68,
-  "sem-dados": 0x9aa6b2,
-};
+// Geometria do modelo HTML aprovado, reduzida para a escala do mapa.
+function addWorkshopFurniture(group: THREE.Group, sectorId: string) {
+  const material = (color: number) =>
+    new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+  const wood = material(0x8a5a2b),
+    gray = material(0x555e66),
+    white = material(0xf2f2f2);
+  const box = (
+    w: number,
+    h: number,
+    d: number,
+    m: THREE.Material,
+    x: number,
+    y: number,
+    z: number,
+  ) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+    mesh.position.set(x, y, z);
+    group.add(mesh);
+  };
+  if (sectorId === "corte") {
+    box(2.4, 0.7, 1.2, gray, -0.6, 0.65, -1);
+    const blade = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.5, 0.5, 0.06, 20),
+      material(0xcccccc),
+    );
+    blade.rotation.x = Math.PI / 2;
+    blade.position.set(-0.6, 1.15, -1);
+    group.add(blade);
+    box(1.6, 0.25, 0.5, wood, 1.7, 0.4, -1.4);
+  } else if (sectorId === "montagem") {
+    box(2.6, 0.5, 1.2, wood, -0.4, 0.5, -1);
+    box(1, 1.1, 0.7, material(0xb98a5a), 1.6, 0.7, -1.2);
+  } else if (sectorId === "acabamento") {
+    const booth = new THREE.MeshStandardMaterial({
+      color: 0xcdb6ee,
+      roughness: 0.7,
+      transparent: true,
+      opacity: 0.4,
+    });
+    box(2, 1.6, 1.5, booth, 0, 0.95, -1);
+    box(0.3, 0.3, 0.3, gray, 0.5, 0.6, -1);
+  } else if (sectorId === "instalacao") {
+    box(2.6, 1, 1.2, white, -0.2, 0.8, -1);
+    box(0.9, 0.7, 1.2, white, 1.5, 0.65, -1);
+    [-1.2, 0.9].forEach((x) =>
+      [-1.55, -0.45].forEach((z) => {
+        const wheel = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.3, 0.3, 0.2, 14),
+          material(0x222222),
+        );
+        wheel.rotation.x = Math.PI / 2;
+        wheel.position.set(x, 0.45, z);
+        group.add(wheel);
+      }),
+    );
+  } else if (sectorId === "estoque") {
+    [-1.2, 0.6].forEach((x) => {
+      box(1.5, 1.6, 0.5, gray, x, 0.95, -1.7);
+      [0.5, 1, 1.5].forEach((y) => box(0.5, 0.3, 0.4, wood, x, y + 0.2, -1.65));
+    });
+  } else if (sectorId === "financeiro") {
+    box(2, 0.4, 1, wood, -0.4, 0.5, -1.3);
+    box(0.7, 0.45, 0.05, material(0x222a30), -0.4, 1, -1.5);
+    box(0.6, 0.5, 0.6, material(0x333c44), -0.4, 0.5, -0.4);
+  }
+}
 
 function createLabel(text: string, color: string) {
   const canvas = document.createElement("canvas");
@@ -88,7 +149,7 @@ export default function ThreeOperationalMap({
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(10, 9, 13);
+    camera.position.set(2, 11, 15);
     camera.lookAt(0, 0, 0);
     scene.add(new THREE.HemisphereLight(0xffffff, 0x94a3b8, 2));
     const light = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -111,26 +172,53 @@ export default function ThreeOperationalMap({
       const z = (Math.floor(index / 3) - 0.5) * 4;
       group.position.set(x, 0, z);
       group.userData.sectorId = setor.id;
+      const roomColor = [
+        0xc98a4b, 0x6f9bd1, 0xa77bd1, 0x5fb58a, 0xd1b24f, 0x7a8794,
+      ][index % 6];
       const material = new THREE.MeshStandardMaterial({
-        color: colors[setor.estado],
+        color: roomColor,
         roughness: 0.62,
         metalness: 0.05,
-        transparent: setor.estado === "sem-dados",
-        opacity: setor.estado === "sem-dados" ? 0.45 : 1,
       });
       const block = new THREE.Mesh(
-        new THREE.BoxGeometry(3.1, 1.3, 2.5),
+        new THREE.BoxGeometry(3.3, 0.165, 2.75),
         material,
       );
-      block.position.y = 0.7;
+      block.position.y = 0.0275;
       block.castShadow = true;
       group.add(block);
+      const furniture = new THREE.Group();
+      furniture.scale.setScalar(0.55);
+      const wall = new THREE.Mesh(
+        new THREE.BoxGeometry(6, 1.4, 0.15),
+        new THREE.MeshStandardMaterial({
+          color: roomColor,
+          transparent: true,
+          opacity: 0.35,
+          roughness: 0.7,
+        }),
+      );
+      wall.position.set(0, 0.9, -2.5);
+      furniture.add(wall);
+      addWorkshopFurniture(furniture, setor.id);
+      group.add(furniture);
+      if (setor.estado === "critico" || setor.estado === "atencao") {
+        const marker = new THREE.Mesh(
+          new THREE.ConeGeometry(0.22, 0.45, 4),
+          new THREE.MeshStandardMaterial({
+            color: setor.estado === "critico" ? 0xe0281b : 0xe0a21b,
+          }),
+        );
+        marker.rotation.x = Math.PI;
+        marker.position.set(0, 1.5, -1);
+        group.add(marker);
+      }
       const label = createLabel(
         setor.nome,
         setor.estado === "critico" ? "#fecdd3" : "#e2e8f0",
       );
       if (label) {
-        label.position.set(0, 2.05, 0);
+        label.position.set(0, 1.15, -0.95);
         group.add(label);
       }
       const edge = new THREE.LineSegments(
@@ -154,8 +242,7 @@ export default function ThreeOperationalMap({
       const sectorIndex = index % Math.max(setores.length - 2, 1);
       const x = ((sectorIndex % 3) - 1) * 4 + (index % 2 ? 0.5 : -0.5);
       // Posiciona o colaborador sobre o setor, como no protótipo 3D de referência.
-      const z =
-        (Math.floor(sectorIndex / 3) - 0.5) * 4 + (index % 2 ? 0.45 : -0.45);
+      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 0.85;
       const person = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
@@ -168,8 +255,8 @@ export default function ThreeOperationalMap({
       );
       head.position.y = 0.98;
       person.add(body, head);
-      person.position.set(x, 1.35, z);
-      person.scale.setScalar(0.9);
+      person.position.set(x, 0.11, z);
+      person.scale.setScalar(0.65);
       person.userData.workerId = worker.id;
       person.userData.workerName = worker.nome;
       people.add(person);
@@ -225,10 +312,6 @@ export default function ThreeOperationalMap({
     let frame = 0;
     const animate = () => {
       frame = requestAnimationFrame(animate);
-      groups.forEach((group, index) => {
-        group.rotation.y = Math.sin(Date.now() * 0.00035 + index) * 0.025;
-      });
-      people.position.y = Math.sin(Date.now() * 0.0015) * 0.025;
       controls.update();
       renderer.render(scene, camera);
     };
