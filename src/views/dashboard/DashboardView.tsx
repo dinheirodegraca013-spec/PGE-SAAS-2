@@ -42,6 +42,12 @@ export default function DashboardView() {
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [conversasPendentes, setConversasPendentes] = useState(0);
+  const [fontesDisponiveis, setFontesDisponiveis] = useState({
+    clientes: false,
+    projetos: false,
+    servicos: false,
+    conversas: false,
+  });
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [periodo, setPeriodo] = useState<PeriodoFiltro>("10");
@@ -49,6 +55,12 @@ export default function DashboardView() {
   const carregarDados = async () => {
     setCarregando(true);
     setErro(null);
+    setFontesDisponiveis({
+      clientes: false,
+      projetos: false,
+      servicos: false,
+      conversas: false,
+    });
     try {
       const [cr, pr, sr, wr] = await Promise.all([
         clientesService.listar(),
@@ -57,14 +69,22 @@ export default function DashboardView() {
         conversasPendentesService.listar("Pendente"),
       ]);
       const erros: string[] = [];
-      if (cr.succeeded && cr.value) setClientes(cr.value);
-      else erros.push("Clientes não puderam ser carregados.");
-      if (pr.succeeded && pr.value) setProjetos(pr.value.items || []);
-      else erros.push("Projetos não puderam ser carregados.");
-      if (sr.succeeded && sr.value) setServicos(sr.value);
-      else erros.push("Serviços não puderam ser carregados.");
-      if (wr.succeeded && wr.value) setConversasPendentes(wr.value.length);
-      else erros.push("Conversas pendentes não puderam ser carregadas.");
+      if (cr.succeeded && cr.value) {
+        setClientes(cr.value);
+        setFontesDisponiveis((atual) => ({ ...atual, clientes: true }));
+      } else erros.push("Clientes não puderam ser carregados.");
+      if (pr.succeeded && pr.value) {
+        setProjetos(pr.value.items || []);
+        setFontesDisponiveis((atual) => ({ ...atual, projetos: true }));
+      } else erros.push("Projetos não puderam ser carregados.");
+      if (sr.succeeded && sr.value) {
+        setServicos(sr.value);
+        setFontesDisponiveis((atual) => ({ ...atual, servicos: true }));
+      } else erros.push("Serviços não puderam ser carregados.");
+      if (wr.succeeded && wr.value) {
+        setConversasPendentes(wr.value.length);
+        setFontesDisponiveis((atual) => ({ ...atual, conversas: true }));
+      } else erros.push("Conversas pendentes não puderam ser carregadas.");
       if (erros.length) setErro(erros.join(" "));
     } catch (e) {
       setErro(
@@ -159,7 +179,7 @@ export default function DashboardView() {
   const cards = [
     {
       titulo: "Orçamento total",
-      valor: moeda(valorOrcado),
+      valor: fontesDisponiveis.projetos ? moeda(valorOrcado) : "—",
       icone: TrendingUp,
       cor: "violet",
       detalhe: "Soma dos projetos cadastrados",
@@ -167,7 +187,7 @@ export default function DashboardView() {
     },
     {
       titulo: "Clientes",
-      valor: String(clientes.length),
+      valor: fontesDisponiveis.clientes ? String(clientes.length) : "—",
       icone: Users,
       cor: "blue",
       detalhe: "Clientes cadastrados",
@@ -175,7 +195,7 @@ export default function DashboardView() {
     },
     {
       titulo: "Orçamentos",
-      valor: String(totalOrcamentos),
+      valor: fontesDisponiveis.projetos ? String(totalOrcamentos) : "—",
       icone: FileText,
       cor: "violet",
       detalhe: "Projetos em fase de orçamento",
@@ -183,7 +203,10 @@ export default function DashboardView() {
     },
     {
       titulo: "Serviços em andamento",
-      valor: String(servicosAtivos.length + projetosAtivos.length),
+      valor:
+        fontesDisponiveis.servicos && fontesDisponiveis.projetos
+          ? String(servicosAtivos.length + projetosAtivos.length)
+          : "—",
       icone: Wrench,
       cor: "green",
       detalhe: "Serviços e projetos não concluídos",
@@ -191,7 +214,7 @@ export default function DashboardView() {
     },
     {
       titulo: "Conversas pendentes",
-      valor: String(conversasPendentes),
+      valor: fontesDisponiveis.conversas ? String(conversasPendentes) : "—",
       icone: Clock,
       cor: "blue",
       detalhe: "Atendimentos aguardando resposta",
@@ -295,7 +318,7 @@ export default function DashboardView() {
         </Link>
       </div>
 
-      {conversasPendentes > 0 && (
+      {fontesDisponiveis.conversas && conversasPendentes > 0 && (
         <Link
           to="/whatsapp"
           className="flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
