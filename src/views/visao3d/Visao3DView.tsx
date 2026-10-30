@@ -184,17 +184,14 @@ export default function Visao3DView() {
 
   return (
     <div className="space-y-5 pb-5">
-      <header className="gestio-page-heading">
+      <header className="flex items-center justify-between border-b border-slate-200/80 pb-3">
         <div>
-          <div className="flex items-center gap-2">
-            <Boxes className="h-5 w-5 text-cyan-600" />
-            <h1 className="text-3xl font-black tracking-tight text-slate-950">
-              Visão 3D
-            </h1>
-          </div>
-          <p className="gestio-section-subtitle">
-            Mapa operacional da empresa, inspirado no protótipo ERP 3D.
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-cyan-700">
+            Operação 3D
           </p>
+          <h1 className="mt-1 text-lg font-bold text-slate-900">
+            Mapa operacional da empresa
+          </h1>
         </div>
         <button
           type="button"
@@ -220,8 +217,8 @@ export default function Visao3DView() {
       <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_410px]">
         <div className="relative isolate h-[56vh] min-h-[460px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm xl:h-[calc(100vh-150px)] xl:max-h-[760px]">
           <div className="pointer-events-none absolute left-4 top-4 z-20">
-            <h2 className="text-lg font-extrabold text-slate-900">
-              Planta operacional
+            <h2 className="text-xl font-extrabold text-slate-900">
+              Visão geral da empresa
             </h2>
             <p className="text-xs text-slate-500">
               Clique em um setor para abrir o módulo correspondente.
@@ -286,6 +283,12 @@ export default function Visao3DView() {
                 {setores.length}
               </b>
             </div>
+          </div>
+          <div>
+            <h2 className="mb-2 text-sm font-bold text-slate-900">Módulos</h2>
+            <p className="mb-3 text-xs text-slate-500">
+              Toque para abrir o setor.
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-2">
             {setores.map((setor) => (
@@ -428,3 +431,4 @@ export default function Visao3DView() {
     </div>
   );
 }
+
