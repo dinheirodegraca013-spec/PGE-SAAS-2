@@ -8,6 +8,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
 import type { ProjetoMovelPlanejado } from "@/modules/furniture/types/projeto";
 
@@ -41,10 +42,14 @@ export default function FinanceiroEmpresaView() {
           resultado.errors.join(" ") || "Falha ao carregar projetos.",
         );
       setProjetos(resultado.value?.items || []);
-      const { data: lista, error: listaErro } = await supabase
+      const tenantId = getCurrentTenantId();
+      let lancamentosQuery = supabase
         .from("financeiro_lancamentos")
         .select("id,tipo,descricao,valor,vencimento,status")
         .order("vencimento", { ascending: false });
+      if (tenantId)
+        lancamentosQuery = lancamentosQuery.eq("tenant_id", tenantId);
+      const { data: lista, error: listaErro } = await lancamentosQuery;
       if (listaErro) throw listaErro;
       setLancamentos(lista || []);
       const { data: resumo, error: resumoErro } = await supabase.rpc(
