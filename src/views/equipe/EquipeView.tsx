@@ -27,11 +27,17 @@ export default function EquipeView() {
     setCarregando(true);
     setErro(null);
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      setErro("Sessão sem empresa vinculada. Faça login novamente.");
+      setPerfis([]);
+      setCarregando(false);
+      return;
+    }
     let query = supabase
       .from("profiles")
       .select("id,nome_completo,email,papel,ativo")
       .order("nome_completo");
-    if (tenantId) query = query.eq("tenant_id", tenantId);
+    query = query.eq("tenant_id", tenantId);
     const result = await query;
     if (result.error) {
       setErro(

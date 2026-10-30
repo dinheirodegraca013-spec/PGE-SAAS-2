@@ -45,12 +45,14 @@ export default function FinanceiroEmpresaView() {
         );
       setProjetos(resultado.value?.items || []);
       const tenantId = getCurrentTenantId();
+      if (!tenantId) {
+        throw new Error("Sessão sem empresa vinculada. Faça login novamente.");
+      }
       let lancamentosQuery = supabase
         .from("financeiro_lancamentos")
         .select("id,tipo,descricao,valor,vencimento,status")
         .order("vencimento", { ascending: false });
-      if (tenantId)
-        lancamentosQuery = lancamentosQuery.eq("tenant_id", tenantId);
+      lancamentosQuery = lancamentosQuery.eq("tenant_id", tenantId);
       const { data: lista, error: listaErro } = await lancamentosQuery;
       if (listaErro) throw listaErro;
       setLancamentos(lista || []);

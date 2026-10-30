@@ -58,11 +58,18 @@ export default function EstoqueView() {
     setCarregando(true);
     setErro("");
     const tenantId = getCurrentTenantId();
+    if (!tenantId) {
+      setErro("Sessão sem empresa vinculada. Faça login novamente.");
+      setItens([]);
+      setProjetos([]);
+      setCarregando(false);
+      return;
+    }
     let itensQuery = supabase
       .from("estoque_itens")
       .select("id,nome,codigo,unidade,estoque_minimo,saldo")
       .order("nome");
-    if (tenantId) itensQuery = itensQuery.eq("tenant_id", tenantId);
+    itensQuery = itensQuery.eq("tenant_id", tenantId);
     const r = await itensQuery;
     if (r.error) {
       setErro(
@@ -76,7 +83,7 @@ export default function EstoqueView() {
       .from("projetos_marcenaria")
       .select("id,titulo,nome")
       .order("created_at", { ascending: false });
-    if (tenantId) projetosQuery = projetosQuery.eq("tenant_id", tenantId);
+    projetosQuery = projetosQuery.eq("tenant_id", tenantId);
     const p = await projetosQuery;
     if (!p.error) setProjetos((p.data || []) as Projeto[]);
     setCarregando(false);

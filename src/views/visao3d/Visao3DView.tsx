@@ -61,6 +61,14 @@ export default function Visao3DView() {
     setErro(null);
     try {
       const tenantId = getCurrentTenantId();
+      if (!tenantId) {
+        setErro("Sessão sem empresa vinculada. Faça login novamente.");
+        setItens([]);
+        setProjetos([]);
+        setTrabalhadores([]);
+        setCarregando(false);
+        return;
+      }
       let estoqueQuery = supabase
         .from("estoque_itens")
         .select("id,nome,saldo,estoque_minimo,unidade")
@@ -69,10 +77,8 @@ export default function Visao3DView() {
         .from("profiles")
         .select("id,nome_completo,ativo")
         .order("nome_completo");
-      if (tenantId) {
-        estoqueQuery = estoqueQuery.eq("tenant_id", tenantId);
-        perfisQuery = perfisQuery.eq("tenant_id", tenantId);
-      }
+      estoqueQuery = estoqueQuery.eq("tenant_id", tenantId);
+      perfisQuery = perfisQuery.eq("tenant_id", tenantId);
       const [estoque, projetosResult] = await Promise.all([
         estoqueQuery,
         projetosService.listar(),
