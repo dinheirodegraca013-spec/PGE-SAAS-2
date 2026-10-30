@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MessageCircle, Check, X, Phone, ArrowRight, UserPlus } from 'lucide-react';
-import EmptyState from '@/components/shared/EmptyState';
-import { conversasPendentesService } from '../services/conversasPendentes.service';
-import type { ConversaPendente } from '../types/conversaPendente';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  MessageCircle,
+  X,
+  Phone,
+  UserPlus,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
+import EmptyState from "@/components/shared/EmptyState";
+import { conversasPendentesService } from "../services/conversasPendentes.service";
+import type { ConversaPendente } from "../types/conversaPendente";
 
 export default function ConversasPendentesView() {
   const navigate = useNavigate();
@@ -12,8 +19,10 @@ export default function ConversasPendentesView() {
   const [erro, setErro] = useState<string | null>(null);
 
   // Controle de aprovação
-  const [conversaEmAprovacao, setConversaEmAprovacao] = useState<string | null>(null);
-  const [nomeCliente, setNomeCliente] = useState('');
+  const [conversaEmAprovacao, setConversaEmAprovacao] = useState<string | null>(
+    null,
+  );
+  const [nomeCliente, setNomeCliente] = useState("");
   const [processando, setProcessando] = useState<string | null>(null);
   const [sucessoMsg, setSucessoMsg] = useState<string | null>(null);
 
@@ -21,14 +30,17 @@ export default function ConversasPendentesView() {
     setCarregando(true);
     setErro(null);
     try {
-      const resultado = await conversasPendentesService.listar('Pendente');
+      const resultado = await conversasPendentesService.listar("Pendente");
       if (resultado.succeeded && resultado.value) {
         setConversas(resultado.value);
       } else {
-        setErro(resultado.errors.join(' ') || 'Não foi possível carregar as conversas.');
+        setErro(
+          resultado.errors.join(" ") ||
+            "Não foi possível carregar as conversas.",
+        );
       }
     } catch {
-      setErro('Não foi possível conectar à API.');
+      setErro("Não foi possível conectar à API.");
     } finally {
       setCarregando(false);
     }
@@ -40,12 +52,12 @@ export default function ConversasPendentesView() {
 
   const abrirAprovacao = (conversa: ConversaPendente) => {
     setConversaEmAprovacao(conversa.id);
-    setNomeCliente('');
+    setNomeCliente("");
   };
 
   const cancelarAprovacao = () => {
     setConversaEmAprovacao(null);
-    setNomeCliente('');
+    setNomeCliente("");
   };
 
   const confirmarAprovacao = async (id: string) => {
@@ -58,10 +70,14 @@ export default function ConversasPendentesView() {
       if (resultado.succeeded && resultado.value) {
         setConversas((prev) => prev.filter((c) => c.id !== id));
         setConversaEmAprovacao(null);
-        setSucessoMsg('Conversa aprovada! Cliente e atendimento criados com sucesso.');
+        setSucessoMsg(
+          "Conversa aprovada! Cliente e atendimento criados com sucesso.",
+        );
         setTimeout(() => setSucessoMsg(null), 4000);
       } else {
-        setErro(resultado.errors.join(' ') || 'Não foi possível aprovar a conversa.');
+        setErro(
+          resultado.errors.join(" ") || "Não foi possível aprovar a conversa.",
+        );
       }
     } finally {
       setProcessando(null);
@@ -75,7 +91,9 @@ export default function ConversasPendentesView() {
       if (resultado.succeeded) {
         setConversas((prev) => prev.filter((c) => c.id !== id));
       } else {
-        setErro(resultado.errors.join(' ') || 'Não foi possível ignorar a conversa.');
+        setErro(
+          resultado.errors.join(" ") || "Não foi possível ignorar a conversa.",
+        );
       }
     } finally {
       setProcessando(null);
@@ -83,21 +101,24 @@ export default function ConversasPendentesView() {
   };
 
   const formatarData = (iso: string) => {
-    return new Date(iso).toLocaleString('pt-BR');
+    return new Date(iso).toLocaleString("pt-BR");
   };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900">Conversas WhatsApp</h2>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900">
+            Conversas WhatsApp
+          </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Mensagens recebidas de números desconhecidos. Aprove para criar o cliente e abrir um serviço automaticamente.
+            Mensagens recebidas de números desconhecidos. Aprove para criar o
+            cliente e abrir um serviço automaticamente.
           </p>
         </div>
         <button
           type="button"
-          onClick={() => navigate('/whatsapp/configuracao')}
+          onClick={() => navigate("/whatsapp/configuracao")}
           className="btn-secondary gap-2 self-start sm:self-auto text-xs"
         >
           <Phone className="h-3.5 w-3.5 text-slate-500" />
@@ -112,35 +133,65 @@ export default function ConversasPendentesView() {
       )}
 
       {carregando ? (
-        <div className="card p-8 text-center text-sm text-slate-500">Carregando mensagens recebidas...</div>
-      ) : erro || conversas.length === 0 ? (
+        <div className="card p-8 text-center text-sm text-slate-500">
+          Carregando mensagens recebidas...
+        </div>
+      ) : erro ? (
+        <div
+          role="alert"
+          className="card border-red-200 bg-red-50 p-6 text-center"
+        >
+          <AlertCircle className="mx-auto h-8 w-8 text-red-500" />
+          <h3 className="mt-3 text-sm font-semibold text-red-900">
+            Não foi possível carregar as conversas
+          </h3>
+          <p className="mt-1 text-sm text-red-700">{erro}</p>
+          <button
+            type="button"
+            onClick={carregar}
+            className="btn-secondary mt-4 gap-2 text-xs"
+          >
+            <RefreshCw className="h-3.5 w-3.5" />
+            Tentar novamente
+          </button>
+        </div>
+      ) : conversas.length === 0 ? (
         <EmptyState
           icon={MessageCircle}
           title="Nenhuma conversa pendente"
-          description={erro ?? 'Quando alguém mandar mensagem para o seu número WhatsApp conectado, ela aparecerá aqui para triagem.'}
+          description={
+            erro ??
+            "Quando alguém mandar mensagem para o seu número WhatsApp conectado, ela aparecerá aqui para triagem."
+          }
         />
       ) : (
         <div className="space-y-3">
           {conversas.map((conversa) => (
-            <div key={conversa.id} className="card p-5 border-slate-200 hover:border-slate-300 transition-colors">
+            <div
+              key={conversa.id}
+              className="card p-5 border-slate-200 hover:border-slate-300 transition-colors"
+            >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
                       <Phone className="h-3.5 w-3.5" />
                     </span>
-                    <p className="font-bold text-slate-900 text-base">{conversa.telefoneOrigemE164}</p>
+                    <p className="font-bold text-slate-900 text-base">
+                      {conversa.telefoneOrigemE164}
+                    </p>
                     <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-600/20">
                       Pendente de Triagem
                     </span>
                   </div>
 
                   <p className="mt-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-3 border border-slate-100">
-                    "{conversa.ultimaMensagemTexto || '(mensagem sem texto)'}"
+                    "{conversa.ultimaMensagemTexto || "(mensagem sem texto)"}"
                   </p>
 
                   <p className="mt-2 text-xs text-slate-400">
-                    {conversa.quantidadeMensagens} mensagem(ns) · Recebida em {formatarData(conversa.ultimaMensagemEmUtc)}
+                    {conversa.quantidadeMensagens} mensagem(ns) · Recebida em{" "}
+                    {formatarData(conversa.ultimaMensagemEmUtc)}
                   </p>
                 </div>
 
@@ -188,7 +239,9 @@ export default function ConversasPendentesView() {
                       disabled={processando === conversa.id}
                       onClick={() => confirmarAprovacao(conversa.id)}
                     >
-                      {processando === conversa.id ? 'Aprovando...' : 'Confirmar e Criar Atendimento'}
+                      {processando === conversa.id
+                        ? "Aprovando..."
+                        : "Confirmar e Criar Atendimento"}
                     </button>
                     <button
                       type="button"
@@ -207,3 +260,4 @@ export default function ConversasPendentesView() {
     </div>
   );
 }
+
