@@ -239,10 +239,21 @@ export default function ThreeOperationalMap({
     people.name = "colaboradores-ativos";
     const activeWorkers = trabalhadores.filter((worker) => worker.ativo);
     activeWorkers.forEach((worker, index) => {
-      const sectorIndex = index % Math.max(setores.length - 2, 1);
-      const x = ((sectorIndex % 3) - 1) * 4 + (index % 2 ? 0.5 : -0.5);
+      const sectorCount = Math.max(setores.length - 2, 1);
+      const sectorIndex = index % sectorCount;
+      const positionInSector = Math.floor(index / sectorCount);
+      const sectorPopulation = Math.ceil(
+        (activeWorkers.length - sectorIndex) / sectorCount,
+      );
+      const columns = Math.min(sectorPopulation, 4);
+      const x =
+        ((sectorIndex % 3) - 1) * 4 +
+        ((positionInSector % columns) - (columns - 1) / 2) * 0.6;
       // Posiciona o colaborador sobre o setor, como no protótipo 3D de referência.
-      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 0.85;
+      const z =
+        (Math.floor(sectorIndex / 3) - 0.5) * 4 +
+        0.25 +
+        Math.floor(positionInSector / columns) * 0.55;
       const person = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
