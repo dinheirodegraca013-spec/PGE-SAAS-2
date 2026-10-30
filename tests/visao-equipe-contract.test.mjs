@@ -39,7 +39,7 @@ test("Visão 3D usa renderização WebGL real com fallback", () => {
   assert.match(mapa3d, /OrbitControls/);
   assert.match(mapa3d, /activeWorkers/);
   assert.match(mapa3d, /workerName/);
-  assert.match(mapa3d, /Seu navegador não conseguiu abrir o modo 3D/);
+  assert.match(mapa3d, /O modo 3D não está disponível neste navegador/);
   assert.match(mapa3d, /setClearColor\(0xf8fafc, 1\)/);
   assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
 });
@@ -64,3 +64,4 @@ test("dashboard oferece resumo para Visão 3D e Equipe", () => {
   assert.match(dashboard, /to="\/visao-3d"/);
   assert.match(dashboard, /to="\/equipe"/);
 });
+

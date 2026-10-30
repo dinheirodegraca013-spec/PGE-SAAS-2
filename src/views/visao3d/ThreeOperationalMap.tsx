@@ -34,7 +34,11 @@ function createLabel(text: string, color: string) {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   const sprite = new THREE.Sprite(
-    new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }),
+    new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+    }),
   );
   sprite.scale.set(2.55, 0.64, 1);
   sprite.userData.labelTexture = texture;
@@ -69,8 +73,16 @@ export default function ThreeOperationalMap({
     renderer.shadowMap.enabled = true;
     renderer.domElement.className = "absolute inset-0 h-full w-full";
     host.insertBefore(renderer.domElement, host.firstChild);
-    renderer.domElement.setAttribute("aria-label", "Mapa operacional 3D da empresa");
+    renderer.domElement.setAttribute(
+      "aria-label",
+      "Mapa operacional 3D da empresa",
+    );
     renderer.domElement.setAttribute("role", "img");
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      setIndisponivel(true);
+    };
+    renderer.domElement.addEventListener("webglcontextlost", handleContextLost);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
@@ -93,7 +105,7 @@ export default function ThreeOperationalMap({
     const groups: THREE.Group[] = [];
     setores.forEach((setor, index) => {
       const group = new THREE.Group();
-      const x = (index % 3 - 1) * 4;
+      const x = ((index % 3) - 1) * 4;
       const z = (Math.floor(index / 3) - 0.5) * 4;
       group.position.set(x, 0, z);
       const material = new THREE.MeshStandardMaterial({
@@ -103,18 +115,28 @@ export default function ThreeOperationalMap({
         transparent: setor.estado === "sem-dados",
         opacity: setor.estado === "sem-dados" ? 0.45 : 1,
       });
-      const block = new THREE.Mesh(new THREE.BoxGeometry(3.1, 1.3, 2.5), material);
+      const block = new THREE.Mesh(
+        new THREE.BoxGeometry(3.1, 1.3, 2.5),
+        material,
+      );
       block.position.y = 0.7;
       block.castShadow = true;
       group.add(block);
-      const label = createLabel(setor.nome, setor.estado === "critico" ? "#fecdd3" : "#e2e8f0");
+      const label = createLabel(
+        setor.nome,
+        setor.estado === "critico" ? "#fecdd3" : "#e2e8f0",
+      );
       if (label) {
-        label.position.set(0, 1.65, 0);
+        label.position.set(0, 2.05, 0);
         group.add(label);
       }
       const edge = new THREE.LineSegments(
         new THREE.EdgesGeometry(block.geometry),
-        new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 }),
+        new THREE.LineBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.85,
+        }),
       );
       edge.position.copy(block.position);
       group.add(edge);
@@ -127,9 +149,10 @@ export default function ThreeOperationalMap({
     const activeWorkers = trabalhadores.filter((worker) => worker.ativo);
     activeWorkers.forEach((worker, index) => {
       const sectorIndex = index % Math.max(setores.length - 2, 1);
-      const x = (sectorIndex % 3 - 1) * 4 + (index % 2 ? 0.5 : -0.5);
-      // Mantém o colaborador no piso, junto à frente do setor, sem ficar atrás ou sobre o bloco.
-      const z = (Math.floor(sectorIndex / 3) - 0.5) * 4 + 1.55;
+      const x = ((sectorIndex % 3) - 1) * 4 + (index % 2 ? 0.5 : -0.5);
+      // Posiciona o colaborador sobre o setor, como no protótipo 3D de referência.
+      const z =
+        (Math.floor(sectorIndex / 3) - 0.5) * 4 + (index % 2 ? 0.45 : -0.45);
       const person = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
@@ -142,7 +165,7 @@ export default function ThreeOperationalMap({
       );
       head.position.y = 0.98;
       person.add(body, head);
-      person.position.set(x, 0, z);
+      person.position.set(x, 1.35, z);
       person.scale.setScalar(0.9);
       person.userData.workerId = worker.id;
       person.userData.workerName = worker.nome;
@@ -188,26 +211,96 @@ export default function ThreeOperationalMap({
           const material = object.material as THREE.SpriteMaterial;
           material.map?.dispose();
         }
-        if (object instanceof THREE.Mesh || object instanceof THREE.LineSegments) {
+        if (
+          object instanceof THREE.Mesh ||
+          object instanceof THREE.LineSegments
+        ) {
           object.geometry.dispose();
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          const materials = Array.isArray(object.material)
+            ? object.material
+            : [object.material];
           materials.forEach((material) => material.dispose());
         }
       });
       renderer.dispose();
+      renderer.domElement.removeEventListener(
+        "webglcontextlost",
+        handleContextLost,
+      );
       renderer.domElement.remove();
     };
   }, [resetKey, setores, trabalhadores]);
 
   if (indisponivel) {
     return (
-      <div className="flex min-h-[430px] items-center justify-center rounded-xl bg-slate-100 p-6 text-center text-sm text-slate-600">
-        Seu navegador não conseguiu abrir o modo 3D. Os setores continuam disponíveis nos painéis laterais.
+      <div
+        role="region"
+        aria-label="Mapa operacional em modo compatível"
+        className="min-h-[430px] bg-slate-50 p-5"
+      >
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+          O modo 3D não está disponível neste navegador. Exibindo o mapa
+          operacional em modo compatível.
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {setores.map((setor) => (
+            <div
+              key={setor.id}
+              className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm"
+            >
+              <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                <span
+                  aria-hidden="true"
+                  className={`h-2.5 w-2.5 rounded-full ${
+                    setor.estado === "critico"
+                      ? "bg-rose-500"
+                      : setor.estado === "atencao"
+                        ? "bg-amber-500"
+                        : setor.estado === "sem-dados"
+                          ? "bg-slate-400"
+                          : "bg-emerald-500"
+                  }`}
+                />
+                {setor.nome}
+              </div>
+              <p className="mt-2 text-xs text-slate-500">
+                {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Colaboradores ativos
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {trabalhadores
+              .filter((worker) => worker.ativo)
+              .map((worker) => (
+                <span
+                  key={worker.id}
+                  className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-800"
+                >
+                  {worker.nome}
+                </span>
+              ))}
+            {!trabalhadores.some((worker) => worker.ativo) && (
+              <span className="text-xs text-slate-500">
+                Nenhum colaborador ativo cadastrado.
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
   return (
-    <div ref={hostRef} role="region" aria-label="Mapa operacional 3D" className="relative h-full w-full overflow-hidden bg-slate-50" />
+    <div
+      ref={hostRef}
+      role="region"
+      aria-label="Mapa operacional 3D"
+      className="relative h-full w-full overflow-hidden bg-slate-50"
+    />
   );
 }
 
