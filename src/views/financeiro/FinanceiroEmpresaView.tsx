@@ -202,10 +202,10 @@ export default function FinanceiroEmpresaView() {
         <input
           aria-label="Valor"
           required
-          type="number"
-          min="0.01"
-          step="0.01"
-          placeholder="Valor"
+          type="text"
+          inputMode="decimal"
+          autoComplete="off"
+          placeholder="Valor (ex.: 39,90)"
           value={valor}
           onChange={(e) => setValor(e.target.value)}
           className="rounded border p-2"
