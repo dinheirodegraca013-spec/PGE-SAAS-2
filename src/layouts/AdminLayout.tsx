@@ -89,7 +89,7 @@ export default function AdminLayout() {
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <aside
-        className={`gestio-sidebar fixed inset-y-0 left-0 z-50 flex w-[286px] shrink-0 flex-col text-slate-200 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+        className={`gestio-sidebar fixed inset-y-0 left-0 z-50 flex w-[254px] shrink-0 flex-col text-slate-200 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
           sidebarOpen
             ? "translate-x-0"
             : "-translate-x-0 sm:-translate-x-full lg:translate-x-0"
@@ -227,7 +227,7 @@ export default function AdminLayout() {
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Topbar */}
-        <header className="gestio-topbar flex min-h-[72px] shrink-0 items-center justify-between gap-4 border-b border-slate-200/80 px-4 sm:px-6 lg:px-8">
+        <header className="gestio-topbar flex min-h-[77px] shrink-0 items-center justify-between gap-4 border-b border-slate-200/80 px-4 sm:px-6 lg:px-9">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -282,7 +282,7 @@ export default function AdminLayout() {
         </header>
 
         {/* View Content */}
-        <main className="gestio-content flex-1 overflow-y-auto px-4 pb-6 pt-5 sm:px-6 lg:px-8 lg:pb-8">
+        <main className="gestio-content flex-1 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 lg:px-9 lg:pb-8">
           <Outlet />
         </main>
       </div>
