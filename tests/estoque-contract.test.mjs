@@ -42,8 +42,9 @@ test('movement validates quantity and allowed types', () => {
 });
 
 test('frontend uses RPC and never writes stock tables directly', () => {
-  assert.match(view, /supabase\.rpc\('estoque_registrar_movimento'/);
+  assert.match(view, /supabase\.rpc\((['"])estoque_registrar_movimento\1/);
   assert.match(view, /p_projeto_id: projetoSelecionado \|\| null/);
   assert.match(view, /projetos_marcenaria/);
   assert.doesNotMatch(view, /\.from\('estoque_(itens|movimentacoes)'\)\.(insert|update|delete)/);
 });
+
