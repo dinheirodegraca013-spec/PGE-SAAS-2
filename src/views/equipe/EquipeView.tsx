@@ -8,6 +8,7 @@ import {
   UserX,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { getCurrentTenantId } from "@/services/api/client";
 
 type Perfil = {
   id: string;
@@ -25,10 +26,13 @@ export default function EquipeView() {
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
-    const result = await supabase
+    const tenantId = getCurrentTenantId();
+    let query = supabase
       .from("profiles")
       .select("id,nome_completo,email,papel,ativo")
       .order("nome_completo");
+    if (tenantId) query = query.eq("tenant_id", tenantId);
+    const result = await query;
     if (result.error) {
       setErro(
         "A equipe não pôde ser carregada. Verifique a permissão do administrador da empresa.",
