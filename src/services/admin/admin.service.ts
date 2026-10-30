@@ -138,7 +138,6 @@ export const adminService = {
             inicioUtilizacao: t.inicio_utilizacao || undefined,
             createdAt: t.created_at,
             totalUsuarios: totalUsers,
-            totalProjetos: 0,
             assinaturaStatus:
               assinatura?.status ||
               (t.status === "ativo" ? "ativa" : "pendente"),

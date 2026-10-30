@@ -2,7 +2,7 @@
 -- Tipos exclusivos dos módulos Administrativo e Financeiro do PGE SAAS 2
 */
 
-export type SaaSPapelInterno = 'SuperAdmin' | 'SaaSFinanceiro' | 'SaaSConsulta';
+export type SaaSPapelInterno = "SuperAdmin" | "SaaSFinanceiro" | "SaaSConsulta";
 
 export interface SaaSUsuarioInterno {
   id: string;
@@ -26,8 +26,8 @@ export interface SaaSPlano {
   nome: string;
   descricao?: string;
   preco: number;
-  periodicidade: 'mensal' | 'trimestral' | 'semestral' | 'anual';
-  status: 'ativo' | 'inativo';
+  periodicidade: "mensal" | "trimestral" | "semestral" | "anual";
+  status: "ativo" | "inativo";
   recursos: string[];
   ordem: number;
   createdAt?: string;
@@ -38,10 +38,10 @@ export interface SaaSPlanoLink {
   id: string;
   planoId: string;
   planoNome?: string;
-  provedor: 'MercadoPago' | 'InfinitePay' | 'Manual' | 'Outro';
+  provedor: "MercadoPago" | "InfinitePay" | "Manual" | "Outro";
   urlCheckout: string;
   periodicidade: string;
-  status: 'ativo' | 'inativo';
+  status: "ativo" | "inativo";
   idExterno?: string;
   observacoes?: string;
   createdAt: string;
@@ -51,7 +51,7 @@ export interface SaaSAssinatura {
   id: string;
   tenantId: string;
   planoId?: string;
-  status: 'ativa' | 'pendente' | 'suspensa' | 'cancelada' | 'vencida';
+  status: "ativa" | "pendente" | "suspensa" | "cancelada" | "vencida";
   valor: number;
   periodicidade: string;
   dataInicio: string;
@@ -70,7 +70,7 @@ export interface SaaSCobranca {
   assinaturaId?: string;
   valor: number;
   dataVencimento: string;
-  status: 'pendente' | 'paga' | 'vencida' | 'cancelada';
+  status: "pendente" | "paga" | "vencida" | "cancelada";
   linkPagamentoUtilizado?: string;
   provedor?: string;
   descricao?: string;
@@ -86,8 +86,9 @@ export interface SaaSPagamento {
   assinaturaId?: string;
   valor: number;
   dataPagamento: string;
-  formaPagamento: 'PIX' | 'Boleto' | 'Cartao' | 'Transferencia' | 'Dinheiro' | 'Outro';
-  status: 'confirmado' | 'pendente' | 'estornado' | 'rejeitado';
+  formaPagamento:
+    "PIX" | "Boleto" | "Cartao" | "Transferencia" | "Dinheiro" | "Outro";
+  status: "confirmado" | "pendente" | "estornado" | "rejeitado";
   comprovanteReferencia?: string;
   descontoAjuste: number;
   registradoPor?: string;
@@ -101,9 +102,9 @@ export interface SaaSPagamento {
 
 export interface SaaSGatewayConfig {
   id: string;
-  provedor: 'MercadoPago' | 'InfinitePay';
+  provedor: "MercadoPago" | "InfinitePay";
   ativo: boolean;
-  modoAmbiente: 'sandbox' | 'producao';
+  modoAmbiente: "sandbox" | "producao";
   publicKey?: string;
   accessTokenMascarado?: string;
   webhookSecretMascarado?: string;
@@ -117,7 +118,13 @@ export interface SaaSAuditLog {
   usuarioEmail?: string;
   papelOperador?: string;
   acao: string;
-  modulo: 'Administracao' | 'Financeiro' | 'Planos' | 'Assinaturas' | 'Seguranca' | 'Gateways';
+  modulo:
+    | "Administracao"
+    | "Financeiro"
+    | "Planos"
+    | "Assinaturas"
+    | "Seguranca"
+    | "Gateways";
   registroId?: string;
   detalhes?: any;
   createdAt: string;
@@ -129,14 +136,14 @@ export interface SaaSEmpresaItem {
   nomeFantasia?: string;
   documento?: string;
   plano: string;
-  status: 'ativo' | 'suspenso' | 'cancelado';
+  status: "ativo" | "suspenso" | "cancelado";
   planoSolicitadoId?: string;
   dataContratacao?: string;
   inicioUtilizacao?: string;
   createdAt: string;
   totalUsuarios: number;
-  totalProjetos: number;
   assinaturaStatus?: string;
   valorAssinatura?: number;
   dataVencimento?: string;
 }
+

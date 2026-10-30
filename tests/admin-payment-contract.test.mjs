@@ -16,5 +16,6 @@ test("pagamento manual grava a coluna forma_pagamento do Supabase", () => {
     service,
     /\n\s*formaPagamento:\s* dados\.formaPagamento \|\| ["']PIX["']/,
   );
+  assert.doesNotMatch(service, /totalProjetos:\s*0/);
 });
 
