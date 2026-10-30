@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
+import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
 import ThreeOperationalMap from "./ThreeOperationalMap";
 import {
@@ -59,17 +60,24 @@ export default function Visao3DView() {
     setCarregando(true);
     setErro(null);
     try {
-      const [estoque, projetosResult] = await Promise.all([
-        supabase
-          .from("estoque_itens")
-          .select("id,nome,saldo,estoque_minimo,unidade")
-          .order("nome"),
-        projetosService.listar(),
-      ]);
-      const perfisResult = await supabase
+      const tenantId = getCurrentTenantId();
+      let estoqueQuery = supabase
+        .from("estoque_itens")
+        .select("id,nome,saldo,estoque_minimo,unidade")
+        .order("nome");
+      let perfisQuery = supabase
         .from("profiles")
         .select("id,nome_completo,ativo")
         .order("nome_completo");
+      if (tenantId) {
+        estoqueQuery = estoqueQuery.eq("tenant_id", tenantId);
+        perfisQuery = perfisQuery.eq("tenant_id", tenantId);
+      }
+      const [estoque, projetosResult] = await Promise.all([
+        estoqueQuery,
+        projetosService.listar(),
+      ]);
+      const perfisResult = await perfisQuery;
       const mensagens: string[] = [];
       if (estoque.error) mensagens.push("Estoque indisponível no momento.");
       else setItens((estoque.data || []) as EstoqueItem[]);
@@ -203,8 +211,12 @@ export default function Visao3DView() {
       <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_410px]">
         <div className="relative isolate h-[56vh] min-h-[460px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm xl:h-[calc(100vh-150px)] xl:max-h-[760px]">
           <div className="pointer-events-none absolute left-4 top-4 z-20">
-            <h2 className="text-lg font-extrabold text-slate-900">Planta operacional</h2>
-            <p className="text-xs text-slate-500">Clique em um setor para abrir o módulo correspondente.</p>
+            <h2 className="text-lg font-extrabold text-slate-900">
+              Planta operacional
+            </h2>
+            <p className="text-xs text-slate-500">
+              Clique em um setor para abrir o módulo correspondente.
+            </p>
           </div>
           <span className="pointer-events-none absolute right-4 top-4 z-20 rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">
             Dados do GESTIO
@@ -222,14 +234,26 @@ export default function Visao3DView() {
             resetKey={cameraReset}
           />
           <p className="pointer-events-none absolute bottom-3 left-4 z-20 text-xs text-slate-500">
-            Arraste para girar · role para aproximar · toque numa sala para abrir o módulo
+            Arraste para girar · role para aproximar · toque numa sala para
+            abrir o módulo
           </p>
         </div>
         <aside className="space-y-4">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-2">
             {setores.map((setor) => (
-              <Link key={setor.id} to={setor.id === "estoque" ? "/estoque" : setor.id === "financeiro" ? "/meu-financeiro" : "/projetos"} className={`rounded-lg border px-3 py-2 text-xs font-semibold ${statusClasses[setor.estado]}`}>
-                {setor.nome} · {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
+              <Link
+                key={setor.id}
+                to={
+                  setor.id === "estoque"
+                    ? "/estoque"
+                    : setor.id === "financeiro"
+                      ? "/meu-financeiro"
+                      : "/projetos"
+                }
+                className={`rounded-lg border px-3 py-2 text-xs font-semibold ${statusClasses[setor.estado]}`}
+              >
+                {setor.nome} ·{" "}
+                {setor.estado === "sem-dados" ? "Sem dados" : setor.estado}
               </Link>
             ))}
           </div>
@@ -307,7 +331,8 @@ export default function Visao3DView() {
                 : "Nenhum colaborador cadastrado."}
             </p>
             <p className="mt-2 text-xs text-slate-400">
-              A presença diária não está registrada; os avatares representam apenas o cadastro real.
+              A presença diária não está registrada; os avatares representam
+              apenas o cadastro real.
             </p>
           </div>
           <div className="card p-5">
