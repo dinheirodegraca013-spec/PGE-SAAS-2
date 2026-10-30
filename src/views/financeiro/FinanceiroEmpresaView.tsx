@@ -281,7 +281,7 @@ export default function FinanceiroEmpresaView() {
               if (
                 !Number.isFinite(valorNumero) ||
                 valorNumero <= 0 ||
-                !/^\\d+(?:[.,]\\d{1,2})?$/.test(valor.trim()) ||
+                !/^\d+(?:[.,]\d{1,2})?$/.test(valor.trim()) ||
                 !descricao.trim() ||
                 !vencimento
               ) {
@@ -395,7 +395,7 @@ export default function FinanceiroEmpresaView() {
                           if (
                             !Number.isFinite(valorBaixa) ||
                             valorBaixa <= 0 ||
-                            Math.round(valorBaixa * 100) !== valorBaixa * 100
+                            !/^\d+(?:[.,]\d{1,2})?$/.test(quantia.trim())
                           ) {
                             setMensagem(
                               "Informe um valor positivo com até duas casas decimais.",
