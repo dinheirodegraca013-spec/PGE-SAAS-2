@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -39,6 +39,7 @@ const statusClass: Record<Status, string> = {
 const fmt = (v: number) => Number(v).toLocaleString("pt-BR");
 
 export default function EstoqueView() {
+  const movementFormRef = useRef<HTMLFormElement>(null);
   const [itens, setItens] = useState<Item[]>([]),
     [projetos, setProjetos] = useState<Projeto[]>([]);
   const [aba, setAba] = useState<"mapa" | "relatorio">("mapa"),
@@ -104,6 +105,18 @@ export default function EstoqueView() {
     [itens],
   );
   const projetoNome = projetos[0]?.titulo || projetos[0]?.nome || "Empresa";
+  const detalhe = itens.find((item) => item.id === itemSelecionado);
+  const prepararMovimento = (movimento: "entrada" | "saida", valor: string) => {
+    setTipo(movimento);
+    setQuantidade(valor);
+    movementFormRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+    movementFormRef.current
+      ?.querySelector<HTMLInputElement>('input[aria-label="Quantidade"]')
+      ?.focus({ preventScroll: true });
+  };
   async function cadastrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setOperando(true);
@@ -257,22 +270,82 @@ export default function EstoqueView() {
                 {[...resumo.criticos, ...resumo.atencao]
                   .slice(0, 6)
                   .map((i) => (
-                    <div
+                    <button
                       key={i.id}
-                      className={`mb-2 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm ${statusClass[statusFor(i)]}`}
+                      type="button"
+                      aria-pressed={itemSelecionado === i.id}
+                      onClick={() => setItemSelecionado(i.id)}
+                      className={`mb-2 flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600 ${statusClass[statusFor(i)]}`}
                     >
                       <span className="truncate">{i.nome}</span>
                       <span className="shrink-0 text-xs">
                         {fmt(Number(i.saldo))} / mín.{" "}
                         {fmt(Number(i.estoque_minimo))}
                       </span>
-                    </div>
+                    </button>
                   ))}
                 {!resumo.criticos.length && !resumo.atencao.length && (
                   <p className="flex items-center gap-2 text-sm text-emerald-700">
                     <CheckCircle2 className="h-4 w-4" />
                     Nenhum alerta no momento.
                   </p>
+                )}
+              </div>
+              <div className="card p-5" aria-live="polite">
+                {detalhe ? (
+                  <>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="text-base font-bold">{detalhe.nome}</h2>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${statusClass[statusFor(detalhe)]}`}
+                      >
+                        {statusLabel[statusFor(detalhe)]}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-slate-500">
+                      Saldo: {fmt(Number(detalhe.saldo))} {detalhe.unidade} ·
+                      Mínimo: {fmt(Number(detalhe.estoque_minimo))}{" "}
+                      {detalhe.unidade}
+                    </p>
+                    <div className="my-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full ${statusFor(detalhe) === "critico" ? "bg-rose-500" : statusFor(detalhe) === "atencao" ? "bg-amber-500" : "bg-emerald-500"}`}
+                        style={{
+                          width: `${Number(detalhe.estoque_minimo) > 0 ? Math.max(0, Math.min(100, (Number(detalhe.saldo) / (Number(detalhe.estoque_minimo) * 3)) * 100)) : Number(detalhe.saldo) > 0 ? 100 : 0}%`,
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className="btn-secondary text-xs"
+                        onClick={() => prepararMovimento("saida", "1")}
+                      >
+                        Dar baixa (−1)
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-secondary text-xs"
+                        onClick={() => prepararMovimento("saida", "3")}
+                      >
+                        Dar baixa (−3)
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-primary text-xs"
+                        onClick={() => prepararMovimento("entrada", "5")}
+                      >
+                        Registrar entrada (+5)
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-base font-bold">Detalhes do item</h2>
+                    <p className="mt-2 text-sm text-slate-500">
+                      Selecione um item no mapa ou nos alertas.
+                    </p>
+                  </>
                 )}
               </div>
               <div className="card p-5">
@@ -428,6 +501,7 @@ export default function EstoqueView() {
           </button>
         </form>
         <form
+          ref={movementFormRef}
           onSubmit={registrar}
           className="card grid gap-3 p-5 sm:grid-cols-2"
         >
@@ -464,6 +538,7 @@ export default function EstoqueView() {
           <label className="text-sm">
             Quantidade
             <input
+              aria-label="Quantidade"
               required
               type="text"
               inputMode="decimal"
