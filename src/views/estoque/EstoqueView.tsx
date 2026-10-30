@@ -111,11 +111,12 @@ export default function EstoqueView() {
   async function cadastrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setOperando(true);
+    const estoqueMinimo = Number(novoMinimo.trim().replace(",", "."));
     const r = await supabase.rpc("estoque_cadastrar_item", {
       p_nome: novoNome,
       p_codigo: novoCodigo || null,
       p_unidade: "un",
-      p_estoque_minimo: Number(novoMinimo),
+      p_estoque_minimo: estoqueMinimo,
     });
     setOperando(false);
     if (r.error) {
@@ -130,11 +131,12 @@ export default function EstoqueView() {
   }
   async function registrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const quantidadeNormalizada = Number(quantidade.trim().replace(",", "."));
     if (
       !itemSelecionado ||
       !motivo.trim() ||
-      !Number.isFinite(Number(quantidade)) ||
-      Number(quantidade) <= 0
+      !Number.isFinite(quantidadeNormalizada) ||
+      quantidadeNormalizada <= 0
     ) {
       setErro("Preencha item, quantidade positiva e motivo.");
       return;
@@ -144,7 +146,7 @@ export default function EstoqueView() {
     const r = await supabase.rpc("estoque_registrar_movimento", {
       p_item_id: itemSelecionado,
       p_tipo: tipo,
-      p_quantidade: Number(quantidade),
+      p_quantidade: quantidadeNormalizada,
       p_motivo: motivo.trim(),
       p_projeto_id: projetoSelecionado || null,
     });
@@ -498,9 +500,9 @@ export default function EstoqueView() {
           />
           <input
             aria-label="Estoque mínimo"
-            type="number"
-            min="0"
-            step="0.001"
+            type="text"
+            inputMode="decimal"
+            placeholder="Ex.: 1,500"
             value={novoMinimo}
             onChange={(e) => setNovoMinimo(e.target.value)}
             className="input-field"
@@ -547,9 +549,9 @@ export default function EstoqueView() {
             Quantidade
             <input
               required
-              type="number"
-              min="0.001"
-              step="0.001"
+              type="text"
+              inputMode="decimal"
+              placeholder="Ex.: 1,500"
               value={quantidade}
               onChange={(e) => setQuantidade(e.target.value)}
               className="input-field mt-1"
