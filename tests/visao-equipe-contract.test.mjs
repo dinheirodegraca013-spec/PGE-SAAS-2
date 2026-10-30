@@ -39,6 +39,7 @@ test("Visão 3D usa renderização WebGL real com fallback", () => {
   assert.match(mapa3d, /OrbitControls/);
   assert.match(mapa3d, /activeWorkers/);
   assert.match(mapa3d, /workerName/);
+  assert.match(mapa3d, /onSectorSelect/);
   assert.match(mapa3d, /O modo 3D não está disponível neste navegador/);
   assert.match(mapa3d, /setClearColor\(0xf8fafc, 1\)/);
   assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
@@ -52,6 +53,7 @@ test("Visão 3D mantém o painel lateral com alertas e equipe sem inventar prese
   assert.match(visao, /Equipe/);
   assert.match(visao, /Presença diária não registrada/);
   assert.match(visao, /value="nao-registrada"/);
+  assert.match(visao, /onSectorSelect={abrirSetor}/);
 });
 
 test("equipe consulta profiles do tenant e explicita presença não registrada", () => {

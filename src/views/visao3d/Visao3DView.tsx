@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -7,7 +7,7 @@ import {
   RefreshCw,
   UsersRound,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
@@ -49,12 +49,21 @@ const setorCores = [
 ];
 
 export default function Visao3DView() {
+  const navigate = useNavigate();
   const [itens, setItens] = useState<EstoqueItem[]>([]);
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [trabalhadores, setTrabalhadores] = useState<Trabalhador[]>([]);
   const [cameraReset, setCameraReset] = useState(0);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const abrirSetor = useCallback(
+    (sectorId: string) => {
+      if (sectorId === "estoque") navigate("/estoque");
+      else if (sectorId === "financeiro") navigate("/meu-financeiro");
+      else navigate("/projetos");
+    },
+    [navigate],
+  );
 
   const carregar = async () => {
     setCarregando(true);
@@ -238,6 +247,7 @@ export default function Visao3DView() {
             setores={setores}
             trabalhadores={trabalhadores}
             resetKey={cameraReset}
+            onSectorSelect={abrirSetor}
           />
           <p className="pointer-events-none absolute bottom-3 left-4 z-20 text-xs text-slate-500">
             Arraste para girar · role para aproximar · toque numa sala para

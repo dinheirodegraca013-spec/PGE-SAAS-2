@@ -49,10 +49,12 @@ export default function ThreeOperationalMap({
   setores,
   trabalhadores,
   resetKey,
+  onSectorSelect,
 }: {
   setores: MapSector[];
   trabalhadores: Worker[];
   resetKey: number;
+  onSectorSelect?: (sectorId: string) => void;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const [indisponivel, setIndisponivel] = useState(false);
@@ -108,6 +110,7 @@ export default function ThreeOperationalMap({
       const x = ((index % 3) - 1) * 4;
       const z = (Math.floor(index / 3) - 0.5) * 4;
       group.position.set(x, 0, z);
+      group.userData.sectorId = setor.id;
       const material = new THREE.MeshStandardMaterial({
         color: colors[setor.estado],
         roughness: 0.62,
@@ -179,6 +182,35 @@ export default function ThreeOperationalMap({
     controls.minDistance = 8;
     controls.maxDistance = 22;
     controls.target.set(0, 0.4, 0);
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let pointerDown = { x: 0, y: 0 };
+    const updatePointer = (event: PointerEvent) => {
+      const bounds = renderer.domElement.getBoundingClientRect();
+      pointer.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+      pointer.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+    };
+    const handlePointerDown = (event: PointerEvent) => {
+      pointerDown = { x: event.clientX, y: event.clientY };
+    };
+    const handlePointerUp = (event: PointerEvent) => {
+      if (!onSectorSelect) return;
+      const moved = Math.hypot(
+        event.clientX - pointerDown.x,
+        event.clientY - pointerDown.y,
+      );
+      if (moved > 8) return;
+      updatePointer(event);
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(groups, true)[0];
+      let current: THREE.Object3D | null | undefined = hit?.object;
+      while (current && !current.userData.sectorId) current = current.parent;
+      const sectorId = current?.userData.sectorId as string | undefined;
+      if (sectorId) onSectorSelect(sectorId);
+    };
+    renderer.domElement.addEventListener("pointerdown", handlePointerDown);
+    renderer.domElement.addEventListener("pointerup", handlePointerUp);
+    renderer.domElement.style.cursor = "pointer";
 
     const resize = () => {
       const width = host.clientWidth || 640;
@@ -227,9 +259,11 @@ export default function ThreeOperationalMap({
         "webglcontextlost",
         handleContextLost,
       );
+      renderer.domElement.removeEventListener("pointerdown", handlePointerDown);
+      renderer.domElement.removeEventListener("pointerup", handlePointerUp);
       renderer.domElement.remove();
     };
-  }, [resetKey, setores, trabalhadores]);
+  }, [onSectorSelect, resetKey, setores, trabalhadores]);
 
   if (indisponivel) {
     return (
