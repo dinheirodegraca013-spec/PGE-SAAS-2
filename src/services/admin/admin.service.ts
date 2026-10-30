@@ -141,13 +141,7 @@ export const adminService = {
             assinaturaStatus:
               assinatura?.status ||
               (t.status === "ativo" ? "ativa" : "pendente"),
-            valorAssinatura: assinatura
-              ? Number(assinatura.valor)
-              : Number(
-                  (planosData || []).find(
-                    (p: any) => p.id === t.plano_solicitado_id,
-                  )?.preco || 0,
-                ),
+            valorAssinatura: assinatura ? Number(assinatura.valor) : undefined,
             dataVencimento: assinatura?.data_proximo_vencimento || undefined,
           };
         });
