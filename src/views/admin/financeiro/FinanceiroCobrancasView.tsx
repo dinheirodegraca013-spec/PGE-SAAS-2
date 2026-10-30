@@ -285,7 +285,7 @@ export default function FinanceiroCobrancasView() {
                     step="0.01"
                     required
                     value={valor}
-                    onChange={(e) => setValor(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => setValor(Number(e.target.value.replace(',', '.')) || 0)}
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   />
                 </div>
@@ -353,3 +353,4 @@ export default function FinanceiroCobrancasView() {
     </div>
   );
 }
+

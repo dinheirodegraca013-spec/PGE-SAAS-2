@@ -24,7 +24,7 @@ export default function AdminPlanosView() {
   const [planoEmEdicao, setPlanoEmEdicao] = useState<Partial<SaaSPlano>>({
     nome: '',
     descricao: '',
-    preco: 89.9,
+    preco: 0,
     periodicidade: 'mensal',
     status: 'ativo',
     recursos: [],
@@ -57,7 +57,7 @@ export default function AdminPlanosView() {
     setPlanoEmEdicao({
       nome: '',
       descricao: '',
-      preco: 99.0,
+      preco: 0,
       periodicidade: 'mensal',
       status: 'ativo',
       recursos: [],
@@ -314,7 +314,10 @@ export default function AdminPlanosView() {
                     required
                     value={planoEmEdicao.preco}
                     onChange={(e) =>
-                      setPlanoEmEdicao({ ...planoEmEdicao, preco: parseFloat(e.target.value) || 0 })
+                      setPlanoEmEdicao({
+                        ...planoEmEdicao,
+                        preco: Number(e.target.value.replace(',', '.')) || 0,
+                      })
                     }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   />
@@ -439,3 +442,4 @@ export default function AdminPlanosView() {
     </div>
   );
 }
+
