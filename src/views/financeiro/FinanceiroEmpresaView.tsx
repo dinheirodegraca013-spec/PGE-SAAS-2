@@ -21,6 +21,7 @@ export default function FinanceiroEmpresaView() {
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [erroLancamentos, setErroLancamentos] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [lancamentos, setLancamentos] = useState<any[]>([]);
   const [lancamentosDisponiveis, setLancamentosDisponiveis] = useState(false);
@@ -36,7 +37,9 @@ export default function FinanceiroEmpresaView() {
   const carregar = async () => {
     setCarregando(true);
     setErro(null);
+    setErroLancamentos(null);
     setLancamentosDisponiveis(false);
+    let projetosCarregados = false;
     try {
       const resultado = await projetosService.listar();
       if (!resultado.succeeded)
@@ -44,6 +47,7 @@ export default function FinanceiroEmpresaView() {
           resultado.errors.join(" ") || "Falha ao carregar projetos.",
         );
       setProjetos(resultado.value?.items || []);
+      projetosCarregados = true;
       const tenantId = getCurrentTenantId();
       if (!tenantId) {
         throw new Error("Sessão sem empresa vinculada. Faça login novamente.");
@@ -79,8 +83,17 @@ export default function FinanceiroEmpresaView() {
         );
       }
     } catch (e) {
-      setProjetos([]);
-      setErro(e instanceof Error ? e.message : "Falha na consulta financeira.");
+      const mensagemErro =
+        e instanceof Error ? e.message : "Falha na consulta financeira.";
+      if (projetosCarregados) {
+        setLancamentos([]);
+        setReceitas(null);
+        setDespesas(null);
+        setErroLancamentos(mensagemErro);
+      } else {
+        setProjetos([]);
+        setErro(mensagemErro);
+      }
     } finally {
       setCarregando(false);
     }
@@ -233,8 +246,9 @@ export default function FinanceiroEmpresaView() {
       <section className="rounded-xl border p-4">
         <h2 className="mb-3 font-bold">Lançamentos financeiros</h2>
         {!lancamentosDisponiveis ? (
-          <p className="text-sm text-slate-500">
-            Não foi possível consultar os lançamentos agora.
+          <p role="alert" className="text-sm text-amber-700">
+            {erroLancamentos ||
+              "Não foi possível consultar os lançamentos agora."}
           </p>
         ) : lancamentos.length === 0 ? (
           <p className="text-sm text-slate-500">

@@ -14,3 +14,10 @@ test("financeiro aceita valores decimais no padrão brasileiro", () => {
   assert.match(view, /Valor \(ex\.\: 39,90\)/);
 });
 
+test("falha nos lançamentos não apaga projetos já carregados", () => {
+  assert.match(view, /erroLancamentos/);
+  assert.match(view, /let projetosCarregados = false/);
+  assert.match(view, /if \(projetosCarregados\)/);
+  assert.match(view, /setErroLancamentos\(mensagemErro\)/);
+});
+
