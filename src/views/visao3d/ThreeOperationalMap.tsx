@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -128,6 +129,11 @@ export default function ThreeOperationalMap({
   const [indisponivel, setIndisponivel] = useState(false);
 
   useEffect(() => {
+    setIndisponivel(false);
+  }, [resetKey]);
+
+  useEffect(() => {
+    if (indisponivel) return;
     const host = hostRef.current;
     if (!host) return;
     let renderer: THREE.WebGLRenderer;
@@ -368,7 +374,7 @@ export default function ThreeOperationalMap({
       renderer.domElement.removeEventListener("pointerup", handlePointerUp);
       renderer.domElement.remove();
     };
-  }, [onSectorSelect, resetKey, setores, trabalhadores]);
+  }, [indisponivel, onSectorSelect, resetKey, setores, trabalhadores]);
 
   if (indisponivel) {
     return (
