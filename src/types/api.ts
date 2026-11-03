@@ -51,6 +51,7 @@ export enum TenantPlano {
 export interface UsuarioAutenticado {
   usuarioId: string;
   tenantId: string;
+  empresaNome?: string | null;
   nomeCompleto: string;
   email: string;
   /** O backend serializa o enum PapelUsuario como string (ex.: "AdministradorTenant"), não como número. */

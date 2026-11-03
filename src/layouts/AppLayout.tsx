@@ -6,7 +6,6 @@ import {
   X,
   Shield,
   Bell,
-  Search,
   Crown,
   ArrowRight,
 } from "lucide-react";
@@ -40,6 +39,8 @@ export default function AppLayout() {
   const auth = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
+  const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
   const gruposVisiveis = auth.usuario?.setor
     ? [{ title: 'Meu trabalho', items: [
       { label: 'Meu setor', path: '/meu-setor', icon: Shield },
@@ -52,8 +53,8 @@ export default function AppLayout() {
     navigate("/login");
   };
 
-  let currentTitle = "Início";
-  for (const group of navGroups) {
+  let currentTitle = "Visão geral";
+  for (const group of gruposVisiveis) {
     for (const item of group.items) {
       if (item.path === location.pathname) currentTitle = item.label;
     }
@@ -78,6 +79,7 @@ export default function AppLayout() {
       )}
 
       <aside
+        data-menu-open={mobileMenuOpen}
         className={`gestio-sidebar fixed inset-y-0 left-0 z-50 flex w-[254px] shrink-0 flex-col transition-transform duration-300 md:static md:translate-x-0 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="gestio-brand flex h-[102px] shrink-0 items-center gap-3 border-b border-white/10 px-7">
@@ -104,7 +106,11 @@ export default function AppLayout() {
           </button>
         </div>
 
-        <nav className="gestio-nav flex-1 space-y-6 overflow-y-auto px-4 py-6">
+        <div className="mx-5 mb-2 mt-6 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[.02] px-3 py-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-800 text-xs font-bold text-slate-200">{empresaIniciais}</span>
+          <div className="min-w-0"><p className="truncate text-xs font-semibold text-slate-100" title={empresaNome}>{empresaNome}</p><p className="mt-1 text-[10px] text-slate-400">Espaço de trabalho</p></div>
+        </div>
+        <nav aria-label="Menu principal" className="gestio-nav flex-1 space-y-6 overflow-y-auto px-4 py-6">
           {gruposVisiveis.map((group) => (
             <div key={group.title}>
               <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[.18em] text-slate-500">
@@ -211,12 +217,10 @@ export default function AppLayout() {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <div className="hidden w-full max-w-[420px] items-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-3.5 py-2.5 text-slate-400 shadow-sm sm:flex">
-              <Search className="h-4 w-4 shrink-0" />
-              <span className="truncate text-xs">
-                Gestão inteligente para sua empresa
-              </span>
-            </div>
+            <nav aria-label="Caminho de navegação" className="hidden min-w-0 items-center gap-4 text-[11px] text-slate-400 sm:flex">
+              <span>Workspace</span><span aria-hidden="true" className="text-slate-300">/</span>
+              <span aria-current="page" className="truncate font-semibold text-slate-600">{currentTitle}</span>
+            </nav>
             <div className="sm:hidden">
               <p className="text-xs font-semibold uppercase tracking-wider text-cyan-700">
                 GESTIO
@@ -265,30 +269,10 @@ export default function AppLayout() {
 
         <main className="gestio-content flex-1 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 lg:px-9 lg:pb-8">
           <Outlet />
-          <div className="gestio-footer-banner mt-7 flex flex-col gap-4 rounded-2xl border border-cyan-400/30 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
-            <div className="flex items-center gap-3">
-              <img
-                src="/gestio-mark.png"
-                alt=""
-                className="h-12 w-12 object-contain"
-              />
-              <div>
-                <p className="text-lg font-black tracking-tight text-white">
-                  GESTIO
-                </p>
-                <p className="text-xs text-slate-300">
-                  Gestão inteligente para quem faz acontecer.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-200">
-              <span>Mais controle</span>
-              <span className="text-cyan-300">✦</span>
-              <span>Mais produtividade</span>
-              <span className="text-violet-300">✦</span>
-              <span>Mais resultados</span>
-            </div>
-          </div>
+          <footer className="mt-7 flex flex-wrap items-center justify-between gap-3 pb-1 text-[10px] text-slate-400">
+            <span>GESTIO · Gestão inteligente para quem faz acontecer.</span>
+            <span>{empresaNome}</span>
+          </footer>
         </main>
       </div>
     </div>
