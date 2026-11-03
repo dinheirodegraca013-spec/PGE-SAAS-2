@@ -30,6 +30,8 @@ export interface SaaSPlano {
   status: "ativo" | "inativo";
   recursos: string[];
   ordem: number;
+  limite_sublogins?: number;
+  limite_dispositivos?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -146,4 +148,3 @@ export interface SaaSEmpresaItem {
   valorAssinatura?: number;
   dataVencimento?: string;
 }
-

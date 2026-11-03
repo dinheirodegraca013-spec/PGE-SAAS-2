@@ -2475,6 +2475,8 @@ export default function SettingsView() {
                       </div>
 
                       <div className="space-y-2.5 border-t border-slate-100 pt-4 text-xs text-slate-700">
+                        {typeof p.limite_sublogins === 'number' && <p className="font-semibold">Até {p.limite_sublogins} funcionários + conta principal</p>}
+                        {typeof p.limite_dispositivos === 'number' && <p>{p.limite_dispositivos} dispositivo(s) por login</p>}
                         {p.recursos.map((rec, i) => (
                           <div key={i} className="flex items-start gap-2">
                             <Check className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -2621,4 +2623,3 @@ export default function SettingsView() {
     </div>
   );
 }
-
