@@ -24,6 +24,7 @@ await db.exec(`
   GRANT USAGE ON SCHEMA public,auth,private TO authenticated;
   GRANT SELECT,UPDATE ON public.profiles TO authenticated;
   GRANT SELECT ON public.projetos_marcenaria,public.financeiro_lancamentos,public.estoque_itens,public.estoque_movimentacoes TO authenticated;
+  GRANT INSERT,UPDATE,DELETE ON public.projetos_marcenaria TO authenticated;
   ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
   CREATE POLICY legacy_profiles ON public.profiles FOR ALL TO authenticated USING(tenant_id=private.current_tenant_id()) WITH CHECK(tenant_id=private.current_tenant_id());
   CREATE POLICY legacy_projects ON public.projetos_marcenaria FOR ALL TO authenticated USING(tenant_id=private.current_tenant_id());
@@ -39,6 +40,7 @@ await db.exec(`
   INSERT INTO estoque_movimentacoes VALUES(1,'${tid(1)}'),(2,'${tid(2)}');
 `);
 await db.exec(await readFile(new URL('../../supabase/migrations/20261103132337_funcionarios_por_setor.sql',import.meta.url),'utf8'));
+await db.exec(await readFile(new URL('../../supabase/migrations/20261103134501_employee_projects_read_only.sql',import.meta.url),'utf8'));
 async function asUser(n, action) {
   await db.exec(`SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','${uid(n)}',false); SELECT set_config('request.jwt.claim.role','authenticated',false);`);
   try { return await action(); } finally { await db.exec('RESET ROLE'); }
@@ -64,6 +66,11 @@ assert.equal((await asUser(5,()=>db.query('SELECT * FROM estoque_movimentacoes')
 assert.equal((await asUser(5,()=>db.query('SELECT * FROM financeiro_lancamentos'))).rows.length,0);
 assert.equal((await asUser(6,()=>db.query('SELECT * FROM financeiro_lancamentos'))).rows.length,1);
 assert.equal((await asUser(6,()=>db.query('SELECT * FROM estoque_itens'))).rows.length,0);
+assert.equal((await asUser(6,()=>db.query('SELECT * FROM projetos_marcenaria'))).rows.length,1,'finance can read its company projects');
+assert.equal((await asUser(6,()=>db.query(`UPDATE projetos_marcenaria SET titulo='Changed by finance' WHERE id=$1 RETURNING id`,[tid(11)]))).rows.length,0,'finance must not edit projects');
+assert.equal((await asUser(6,()=>db.query(`DELETE FROM projetos_marcenaria WHERE id=$1 RETURNING id`,[tid(11)]))).rows.length,0,'finance must not delete projects');
+await assert.rejects(asUser(6,()=>db.query(`INSERT INTO projetos_marcenaria(id,tenant_id,titulo) VALUES($1,$2,'Finance project')`,[tid(13),tid(1)])));
+assert.equal((await asUser(1,()=>db.query(`UPDATE projetos_marcenaria SET titulo='Updated by administrator' WHERE id=$1 RETURNING id`,[tid(11)]))).rows.length,1,'administrator keeps project management');
 await db.exec(`UPDATE profiles SET ativo=false WHERE id='${uid(3)}'`);
 assert.equal((await asUser(3,()=>db.query('SELECT * FROM meu_setor_projetos()'))).rows.length,0);
 assert.equal((await asUser(3,()=>db.query('SELECT * FROM profiles'))).rows.length,0);
