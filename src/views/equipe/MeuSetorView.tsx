@@ -11,22 +11,32 @@ export default function MeuSetorView() {
   const [projetos, setProjetos] = useState<ProjetoSetor[]>([]);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
+  const [atualizacao, setAtualizacao] = useState(0);
   const setor = usuario?.setor;
   useEffect(() => {
     let mounted = true;
     setCarregando(true);
-    supabase.rpc('meu_setor_projetos').then(({ data, error }) => {
-      if (!mounted) return;
-      setErro(error ? 'Não foi possível carregar os projetos do setor. Tente novamente.' : '');
-      setProjetos(error ? [] : data || []);
-      setCarregando(false);
-    });
+    setErro('');
+    setProjetos([]);
+    async function carregar() {
+      try {
+        const { data, error } = await supabase.rpc('meu_setor_projetos');
+        if (error) throw error;
+        if (mounted) setProjetos(data || []);
+      } catch {
+        if (mounted) setErro('Não foi possível carregar os projetos do setor. Tente novamente.');
+      } finally {
+        if (mounted) setCarregando(false);
+      }
+    }
+    void carregar();
     return () => { mounted = false; };
-  }, [setor]);
+  }, [setor, usuario?.usuarioId, usuario?.tenantId, atualizacao]);
   return <div className="space-y-5">
-    <header><p className="text-sm text-cyan-700">Meu setor</p>
+    <header className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-sm text-cyan-700">Meu setor</p>
       <h1 className="text-3xl font-bold">{isSetor(setor) ? setores[setor] : 'Setor não atribuído'}</h1>
       <p className="mt-2 text-slate-500">Olá, {usuario?.nomeCompleto}. Acompanhe o trabalho destinado ao seu setor.</p>
+      </div><button type="button" className="btn-secondary" disabled={carregando} onClick={() => setAtualizacao(value => value + 1)}>{carregando ? 'Atualizando…' : 'Atualizar'}</button>
     </header>
     {erro && <p role="alert" className="rounded-xl bg-rose-50 p-4 text-rose-800">{erro}</p>}
     {setor === 'estoque' && <Link className="btn-primary inline-flex" to="/estoque">Abrir painel de estoque</Link>}

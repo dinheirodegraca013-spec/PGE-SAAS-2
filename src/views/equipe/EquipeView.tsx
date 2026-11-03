@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import { useAuthStore } from '@/stores/auth';
 import { isSetor, setores, podeCadastrarFuncionario } from '@/lib/setores';
+import { mensagemErroFuncao } from '@/services/api/function-errors';
 
 type Perfil = {
   id: string;
@@ -41,7 +42,10 @@ export default function EquipeView() {
       const { data, error } = await supabase.functions.invoke('cadastrar-funcionario', {
         body: { nome: nome.trim(), email: email.trim(), setor },
       });
-      if (error || !data?.success) throw new Error(data?.error || 'Não foi possível cadastrar. Confira se a função de cadastro está disponível.');
+      if (error || !data?.success) {
+        const fallback = data?.error || 'Não foi possível cadastrar. Tente novamente mais tarde.';
+        throw new Error(await mensagemErroFuncao(error, fallback));
+      }
       setSucesso('Funcionário cadastrado. O link para definir a senha foi enviado por e-mail.');
       setNovo(false); setNome(''); setEmail('');
       await carregar();
