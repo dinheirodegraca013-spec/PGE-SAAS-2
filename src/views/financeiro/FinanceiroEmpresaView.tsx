@@ -12,6 +12,8 @@ import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
 import type { ProjetoMovelPlanejado } from "@/modules/furniture/types/projeto";
 import FinancialCalendar from "./FinancialCalendar";
+import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
+import { hasPermission } from '@/modules/workforce/lib/access';
 
 const moeda = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
@@ -19,6 +21,10 @@ const moeda = (v: number) =>
   );
 
 export default function FinanceiroEmpresaView() {
+  const { context }=useWorkforceAccess();
+  const canCreate=hasPermission(context,'financeiro','criar');
+  const canReport=hasPermission(context,'financeiro','relatorios');
+  const canExport=hasPermission(context,'financeiro','exportar');
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -166,16 +172,16 @@ export default function FinanceiroEmpresaView() {
         >
           Painel
         </button>
-        <button
+        {canReport&&<button
           type="button"
           aria-pressed={aba === "relatorio"}
           onClick={() => setAba("relatorio")}
           className={`gestio-tab ${aba === "relatorio" ? "gestio-tab-active" : "gestio-tab-inactive"}`}
         >
           Relatório
-        </button>
+        </button>}
       </div>
-      {aba === "relatorio" ? (
+      {aba === "relatorio"&&canReport ? (
         <section className="card p-5" id="gestio-financial-report">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -184,13 +190,13 @@ export default function FinanceiroEmpresaView() {
                 Gerado em {new Date().toLocaleDateString("pt-BR")}
               </p>
             </div>
-            <button
+            {canExport&&<button
               type="button"
               className="btn-primary print:hidden"
               onClick={() => window.print()}
             >
               Imprimir ou salvar PDF
-            </button>
+            </button>}
           </div>
           <h3 className="mb-3 mt-6 font-bold">Resumo</h3>
           <dl className="divide-y divide-slate-100">
@@ -271,10 +277,11 @@ export default function FinanceiroEmpresaView() {
             <FinancialCalendar entries={lancamentos} />
           )}
 
-          <form
+          {canCreate&&<form
             className="card grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-6"
             onSubmit={async (e) => {
               e.preventDefault();
+              if(!canCreate)return;
               if (salvando) return;
               setMensagem("");
               const valorNormalizado = valor.trim().replace(",", ".");
@@ -387,7 +394,7 @@ export default function FinanceiroEmpresaView() {
             >
               {salvando ? "Salvando..." : "Cadastrar"}
             </button>
-          </form>
+          </form>}
           {mensagem && (
             <p role="status" className="text-sm">
               {mensagem}
@@ -420,7 +427,7 @@ export default function FinanceiroEmpresaView() {
                         </span>
                       )}
                     </span>
-                    {l.status !== "quitado" && l.status !== "cancelado" && (
+                    {l.status !== "quitado" && l.status !== "cancelado" && hasPermission(context,'financeiro',l.tipo==='despesa'?'registrar_pagamento':'registrar_recebimento') && (
                       <button
                         className="rounded border px-3 py-1"
                         onClick={async () => {

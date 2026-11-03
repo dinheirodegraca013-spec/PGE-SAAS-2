@@ -25,6 +25,8 @@ function setup({ project = 'project-a', failure = false } = {}) {
     if (name === 'react') return { __esModule: true, default: react, ...react };
     if (name === 'lucide-react') return new Proxy({}, { get: () => () => null });
     if (name === '@/lib/supabase') return { supabase };
+    if (name.includes('WorkforceAccessContext')) return { useWorkforceAccess:()=>({context:{proprietario:true,permissoes:[{modulo:'financeiro',operacao:'criar'},{modulo:'financeiro',operacao:'visualizar'},{modulo:'financeiro',operacao:'relatorios'},{modulo:'financeiro',operacao:'exportar'},{modulo:'financeiro',operacao:'registrar_pagamento'},{modulo:'financeiro',operacao:'registrar_recebimento'}]}}) };
+    if (name.includes('workforce/lib/access')) return { hasPermission:(ctx,module,op='visualizar')=>ctx.permissoes.some(p=>p.modulo===module&&p.operacao===op) };
     if (name === '@/services/api/client') return { getCurrentTenantId: () => 'tenant-a' };
     if (name.includes('projetos.service')) return { projetosService: { listar: async () => ({ succeeded: true, value: { items: values[0] } }) } };
     if (name.includes('FinancialCalendar')) return { __esModule: true, default: () => null };

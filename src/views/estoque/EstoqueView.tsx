@@ -9,6 +9,8 @@ import {
 import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import StockMap from "./StockMap";
+import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
+import { hasPermission } from '@/modules/workforce/lib/access';
 
 export type Item = {
   id: string;
@@ -39,6 +41,11 @@ const statusClass: Record<Status, string> = {
 const fmt = (v: number) => Number(v).toLocaleString("pt-BR");
 
 export default function EstoqueView() {
+  const { context }=useWorkforceAccess();
+  const canCreate=hasPermission(context,'estoque','criar');
+  const canReport=hasPermission(context,'relatorios');
+  const canMovement=(type:string)=>hasPermission(context,'estoque',type==='entrada'?'registrar_entrada':type==='saida'?'registrar_saida':'registrar_ajuste');
+  const allowedMovements=['entrada','saida','ajuste_entrada','ajuste_saida'].filter(canMovement);
   const movementFormRef = useRef<HTMLFormElement>(null);
   const [itens, setItens] = useState<Item[]>([]),
     [projetos, setProjetos] = useState<Projeto[]>([]);
@@ -55,6 +62,7 @@ export default function EstoqueView() {
     [quantidade, setQuantidade] = useState(""),
     [motivo, setMotivo] = useState(""),
     [operando, setOperando] = useState(false);
+  useEffect(()=>{if(!allowedMovements.includes(tipo))setTipo(allowedMovements[0]||'entrada');},[allowedMovements.join(',')]);
   async function carregar() {
     setCarregando(true);
     setErro("");
@@ -119,6 +127,8 @@ export default function EstoqueView() {
   };
   async function cadastrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if(!canCreate||operando)return;
+    if(!novoNome.trim()||!/^\d+(?:[.,]\d{1,3})?$/.test(novoMinimo.trim())){setErro('Informe nome e estoque mínimo válido com até três casas decimais.');return;}
     setOperando(true);
     const estoqueMinimo = Number(novoMinimo.trim().replace(",", "."));
     const r = await supabase.rpc("estoque_cadastrar_item", {
@@ -140,6 +150,7 @@ export default function EstoqueView() {
   }
   async function registrar(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if(!canMovement(tipo)||operando)return;
     const quantidadeNormalizada = Number(quantidade.trim().replace(",", "."));
     if (
       !itemSelecionado ||
@@ -203,14 +214,14 @@ export default function EstoqueView() {
         >
           Mapa do estoque
         </button>
-        <button
+        {canReport&&<button
           type="button"
           onClick={() => setAba("relatorio")}
           className={`gestio-tab ${aba === "relatorio" ? "gestio-tab-active" : "gestio-tab-inactive"}`}
         >
           <BarChart3 className="mr-1 inline h-4 w-4" />
           Relatório
-        </button>
+        </button>}
       </div>
       {mensagem && (
         <p
@@ -230,7 +241,7 @@ export default function EstoqueView() {
       )}
       {carregando ? (
         <p>Carregando estoque...</p>
-      ) : aba === "mapa" ? (
+    ) : aba === "mapa"||!canReport ? (
         <>
           <section className="grid gap-5 xl:grid-cols-[1.7fr_1fr]">
             <div className="card p-5">
@@ -316,27 +327,27 @@ export default function EstoqueView() {
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <button
+                      {canMovement('saida')&&<button
                         type="button"
                         className="btn-secondary text-xs"
                         onClick={() => prepararMovimento("saida", "1")}
                       >
                         Dar baixa (−1)
-                      </button>
-                      <button
+                      </button>}
+                      {canMovement('saida')&&<button
                         type="button"
                         className="btn-secondary text-xs"
                         onClick={() => prepararMovimento("saida", "3")}
                       >
                         Dar baixa (−3)
-                      </button>
-                      <button
+                      </button>}
+                      {canMovement('entrada')&&<button
                         type="button"
                         className="btn-primary text-xs"
                         onClick={() => prepararMovimento("entrada", "5")}
                       >
                         Registrar entrada (+5)
-                      </button>
+                      </button>}
                     </div>
                   </>
                 ) : (
@@ -467,7 +478,7 @@ export default function EstoqueView() {
         </section>
       )}
       <section className="grid gap-5 lg:grid-cols-2">
-        <form
+        {canCreate&&<form
           className="card grid gap-3 p-5 sm:grid-cols-4"
           onSubmit={cadastrar}
         >
@@ -499,8 +510,8 @@ export default function EstoqueView() {
           <button disabled={operando} className="btn-primary sm:col-span-4">
             Cadastrar
           </button>
-        </form>
-        <form
+        </form>}
+        {allowedMovements.length>0&&<form
           ref={movementFormRef}
           onSubmit={registrar}
           className="card grid gap-3 p-5 sm:grid-cols-2"
@@ -529,10 +540,10 @@ export default function EstoqueView() {
               onChange={(e) => setTipo(e.target.value)}
               className="input-field mt-1"
             >
-              <option value="entrada">Entrada</option>
-              <option value="saida">Saída</option>
-              <option value="ajuste_entrada">Ajuste positivo</option>
-              <option value="ajuste_saida">Ajuste negativo</option>
+              {canMovement('entrada')&&<option value="entrada">Entrada</option>}
+              {canMovement('saida')&&<option value="saida">Saída</option>}
+              {canMovement('ajuste_entrada')&&<option value="ajuste_entrada">Ajuste positivo</option>}
+              {canMovement('ajuste_saida')&&<option value="ajuste_saida">Ajuste negativo</option>}
             </select>
           </label>
           <label className="text-sm">
@@ -574,15 +585,14 @@ export default function EstoqueView() {
             </select>
           </label>
           <button
-            disabled={operando || !itens.length}
+            disabled={operando || !itens.length || !canMovement(tipo)}
             type="submit"
             className="btn-primary sm:col-span-2"
           >
             {operando ? "Registrando..." : "Registrar"}
           </button>
-        </form>
+        </form>}
       </section>
     </main>
   );
 }
-

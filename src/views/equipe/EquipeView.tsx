@@ -14,6 +14,7 @@ import { isSetor, setores, podeCadastrarFuncionario } from '@/lib/setores';
 import { mensagemErroFuncao } from '@/services/api/function-errors';
 import { Link } from 'react-router-dom';
 import DeviceManager from '@/components/DeviceManager';
+import EmployeeAccessEditor from '@/modules/workforce/components/EmployeeAccessEditor';
 
 type Perfil = {
   id: string;
@@ -22,6 +23,8 @@ type Perfil = {
   papel: string | null;
   ativo: boolean | null;
   setor: string | null;
+  cargo: string | null;
+  suspenso: boolean;
 };
 type Limits = { plan: string; sublogin_limit: number; device_limit: number; sublogins_active: number; sublogins_available: number; sublogins_suspended: number; owner_id: string; suspended_ids: string[] };
 const actionLabels: Record<string,string> = {account_created:'Conta criada',account_changed:'Acesso alterado',device_authorized:'Dispositivo autorizado',device_revoked:'Dispositivo revogado',plan_changed:'Plano alterado',plan_limits_changed:'Limites do plano alterados'};
@@ -43,6 +46,7 @@ export default function EquipeView() {
   const [editActive, setEditActive] = useState(true);
   const [deviceUser, setDeviceUser] = useState<string | undefined>();
   const [audit, setAudit] = useState<{id: number;action: string;subject_id: string | null;created_at: string}[]>([]);
+  const [accessUser,setAccessUser]=useState<string|null>(null);
   const cadastrar = async (event: React.FormEvent) => {
     event.preventDefault();
     if (salvando) return;
@@ -96,7 +100,7 @@ export default function EquipeView() {
     try {
     let query = supabase
       .from("profiles")
-      .select("id,nome_completo,email,papel,ativo,setor")
+      .select("id,nome_completo,email,papel,ativo,setor,cargo,suspenso")
       .order("nome_completo");
     query = query.eq("tenant_id", tenantId);
     const result = await query;
@@ -178,6 +182,7 @@ export default function EquipeView() {
         <Link to="/configuracoes?tab=assinatura" className="inline-block text-sm font-semibold text-cyan-700">Ver planos e opções de upgrade →</Link>
       </section>}
       {sucesso && <p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{sucesso}</p>}
+      {accessUser&&<EmployeeAccessEditor userId={accessUser} onCancel={()=>setAccessUser(null)} onSaved={()=>{setAccessUser(null);setSucesso('Setores e permissões atualizados.');void carregar();}}/>}
       {novo && administrador && <form onSubmit={cadastrar} className="card space-y-4 p-5">
         <h2 className="text-lg font-bold">{editingId ? 'Editar funcionário' : 'Cadastrar funcionário'}</h2>
         <p className="text-sm text-slate-500">O funcionário recebe acesso somente ao setor escolhido e define a própria senha por e-mail.</p>
@@ -284,7 +289,7 @@ export default function EquipeView() {
                       </span>
                     </td>
                     <td className="p-3">
-                      {perfil.papel || "Perfil não informado"}
+                      {perfil.cargo || perfil.papel || "Perfil não informado"}
                     </td>
                     <td className="p-3 text-xs text-slate-500">
                       {isSetor(perfil.setor) ? setores[perfil.setor] : 'Não informado no cadastro'}
@@ -293,7 +298,7 @@ export default function EquipeView() {
                       <span
                         className={`rounded-full px-2 py-1 text-xs font-bold ${perfil.ativo ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}
                       >
-                        {!perfil.ativo ? 'Inativo' : limits?.suspended_ids.includes(perfil.id) ? 'Suspenso pelo plano' : 'Ativo'}
+                        {perfil.suspenso ? 'Suspenso' : !perfil.ativo ? 'Inativo' : limits?.suspended_ids.includes(perfil.id) ? 'Suspenso pelo plano' : 'Ativo'}
                       </span>
                     </td>
                     <td className="p-3 text-xs text-slate-500">
@@ -301,6 +306,7 @@ export default function EquipeView() {
                     </td>
                     {administrador && <td className="p-3"><div className="flex flex-wrap gap-2">
                       {limits && perfil.id !== limits.owner_id && <button className="btn-secondary" onClick={() => { setEditingId(perfil.id); setNome(perfil.nome_completo || ''); setEmail(perfil.email || ''); setSetor(perfil.setor || 'corte'); setEditActive(Boolean(perfil.ativo)); setNovo(true); }}>Editar acesso</button>}
+                      {limits&&perfil.id!==limits.owner_id&&limits.owner_id===usuario?.usuarioId&&<button className="btn-secondary" onClick={()=>{setNovo(false);setAccessUser(perfil.id);}}>Setores e permissões</button>}
                       <button className="btn-secondary" onClick={() => setDeviceUser(perfil.id)}>Dispositivos</button>
                     </div></td>}
                   </tr>

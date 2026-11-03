@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { navGroups } from "./navigation";
-import { caminhoPermitido } from "@/lib/setores";
+import { workforcePathAllowed } from '@/modules/workforce/lib/access';
+import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
 
 function getPapelVisivel(papel?: string | null) {
   const normalizado = String(papel || "")
@@ -37,14 +38,15 @@ function getPapelVisivel(papel?: string | null) {
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const auth = useAuthStore();
+  const work = useWorkforceAccess();
   const navigate = useNavigate();
   const location = useLocation();
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
-  const gruposVisiveis = auth.usuario?.setor
+  const gruposVisiveis = work.context && !work.context.proprietario
     ? [{ title: 'Meu trabalho', items: [
-      { label: 'Meu setor', path: '/meu-setor', icon: Shield },
-      ...navGroups.flatMap(group => group.items).filter(item => caminhoPermitido(auth.usuario?.setor, item.path)),
+      ...(workforcePathAllowed(work.context,'/meu-setor') ? [{ label: 'Meu setor', path: '/meu-setor', icon: Shield }] : []),
+      ...navGroups.flatMap(group => group.items).filter(item => workforcePathAllowed(work.context, item.path)),
     ] }]
     : navGroups;
 

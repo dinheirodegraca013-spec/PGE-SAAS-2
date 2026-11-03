@@ -17,6 +17,8 @@ import DashboardView from './views/dashboard/DashboardView';
 import LoginView from './views/auth/LoginView';
 import ResetPasswordView from './views/auth/ResetPasswordView';
 import DevicesView from './views/auth/DevicesView';
+import { WorkforceAccessProvider, useWorkforceAccess } from './modules/workforce/context/WorkforceAccessContext';
+import { workforcePathAllowed } from './modules/workforce/lib/access';
 import RegisterView from './views/auth/RegisterView';
 import ClientesListView from './modules/clientes/views/ClientesListView';
 import ProjetosListView from './modules/furniture/views/ProjetosListView';
@@ -33,7 +35,6 @@ import EstoqueView from './views/estoque/EstoqueView';
 const Visao3DView = lazy(() => import('./views/visao3d/Visao3DView'));
 import EquipeView from './views/equipe/EquipeView';
 import MeuSetorView from './views/equipe/MeuSetorView';
-import { caminhoPermitido } from './lib/setores';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -53,6 +54,7 @@ import LandingPage from './views/public/LandingPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const auth = useAuthStore();
+  const work = useWorkforceAccess();
   const location = useLocation();
 
   if (auth.isLoading) {
@@ -72,7 +74,10 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
-  if (auth.usuario?.setor && !caminhoPermitido(auth.usuario.setor, location.pathname)) {
+  if(work.loading&&!work.context)return <div role="status" className="p-6">Validando suas permissões…</div>;
+  if(work.error||!work.context)return <div className="mx-auto max-w-xl space-y-4 p-6"><p role="alert">{work.error||'Não foi possível validar suas permissões de trabalho.'}</p><button className="btn-primary" onClick={()=>void work.reload()}>Tentar novamente</button><button className="btn-secondary ml-3" onClick={()=>void auth.logout()}>Sair</button></div>;
+  if (!work.context.proprietario && !workforcePathAllowed(work.context,location.pathname)) {
+    if(location.pathname==='/meu-setor')return <div className="space-y-3 p-6"><p role="alert">Nenhuma ferramenta de trabalho foi liberada para sua conta. Fale com o administrador.</p><button className="btn-secondary" onClick={()=>void auth.logout()}>Sair</button></div>;
     return <Navigate to="/meu-setor" replace />;
   }
   return <>{children}</>;
@@ -99,6 +104,7 @@ function PublicOnly({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <AuthProvider>
+      <WorkforceAccessProvider>
       <BrowserRouter>
         <Routes>
           {/* Rotas Públicas */}
@@ -255,6 +261,7 @@ export default function App() {
           <Route path="*" element={<NotFoundView />} />
         </Routes>
       </BrowserRouter>
+      </WorkforceAccessProvider>
     </AuthProvider>
   );
 }
