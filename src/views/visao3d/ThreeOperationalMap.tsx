@@ -9,10 +9,14 @@ type MapSector = {
 };
 type Worker = { id: string; nome: string; ativo: boolean; setor: string | null };
 
+const sectorColors = [0xc98a4b, 0x6f9bd1, 0xa77bd1, 0x5fb58a, 0xd1b24f, 0x7a8794];
+// The supplied HTML uses Three r128, before automatic sRGB input conversion.
+const referenceColor = (hex: number) => new THREE.Color().setHex(hex, THREE.LinearSRGBColorSpace);
+
 // Geometria do modelo HTML aprovado, reduzida para a escala do mapa.
 function addWorkshopFurniture(group: THREE.Group, sectorId: string) {
   const material = (color: number) =>
-    new THREE.MeshStandardMaterial({ color, roughness: 0.7 });
+    new THREE.MeshStandardMaterial({ color: referenceColor(color), roughness: 0.7 });
   const wood = material(0x8a5a2b),
     gray = material(0x555e66),
     white = material(0xf2f2f2);
@@ -44,7 +48,7 @@ function addWorkshopFurniture(group: THREE.Group, sectorId: string) {
     box(1, 1.1, 0.7, material(0xb98a5a), 1.6, 0.7, -1.2);
   } else if (sectorId === "acabamento") {
     const booth = new THREE.MeshStandardMaterial({
-      color: 0xcdb6ee,
+      color: referenceColor(0xcdb6ee),
       roughness: 0.7,
       transparent: true,
       opacity: 0.4,
@@ -99,7 +103,7 @@ function createLabel(text: string, color: string) {
   context.textBaseline = "middle";
   context.fillText(text, canvas.width / 2, canvas.height / 2);
   const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.colorSpace = THREE.LinearSRGBColorSpace;
   const sprite = new THREE.Sprite(
     new THREE.SpriteMaterial({
       map: texture,
@@ -144,7 +148,8 @@ export default function ThreeOperationalMap({
     }
     setIndisponivel(false);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0xf8fafc, 1);
+    renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    renderer.setClearColor(0xffffff, 1);
     renderer.shadowMap.enabled = true;
     renderer.domElement.className = "absolute inset-0 h-full w-full";
     host.insertBefore(renderer.domElement, host.firstChild);
@@ -160,22 +165,23 @@ export default function ThreeOperationalMap({
     renderer.domElement.addEventListener("webglcontextlost", handleContextLost);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-    camera.position.set(2, 11, 15);
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    // Same spherical angle as the approved HTML scene, at the map's 0.55 scale.
+    const cameraDirection = new THREE.Vector3().setFromSphericalCoords(1, 0.95, 0.5);
+    camera.position.copy(cameraDirection).multiplyScalar(14.85);
     camera.lookAt(0, 0, 0);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x94a3b8, 2));
-    const light = new THREE.DirectionalLight(0xffffff, 2.5);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x667788, 0.95 * Math.PI));
+    const light = new THREE.DirectionalLight(0xffffff, 0.7 * Math.PI);
     light.position.set(5, 12, 8);
     scene.add(light);
 
     const floor = new THREE.Mesh(
       new THREE.BoxGeometry(13, 0.25, 9),
-      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.85 }),
+      new THREE.MeshStandardMaterial({ color: referenceColor(0xc9d0d8), roughness: 0.85 }),
     );
     floor.position.y = -0.2;
     floor.receiveShadow = true;
     scene.add(floor);
-    scene.add(new THREE.GridHelper(13, 13, 0xcbd5e1, 0xe2e8f0));
 
     const groups: THREE.Group[] = [];
     setores.forEach((setor, index) => {
@@ -184,11 +190,9 @@ export default function ThreeOperationalMap({
       const z = (Math.floor(index / 3) - 0.5) * 4;
       group.position.set(x, 0, z);
       group.userData.sectorId = setor.id;
-      const roomColor = [
-        0xc98a4b, 0x6f9bd1, 0xa77bd1, 0x5fb58a, 0xd1b24f, 0x7a8794,
-      ][index % 6];
+      const roomColor = sectorColors[index % sectorColors.length];
       const material = new THREE.MeshStandardMaterial({
-        color: roomColor,
+        color: referenceColor(roomColor),
         roughness: 0.62,
         metalness: 0.05,
       });
@@ -204,7 +208,7 @@ export default function ThreeOperationalMap({
       const wall = new THREE.Mesh(
         new THREE.BoxGeometry(6, 1.4, 0.15),
         new THREE.MeshStandardMaterial({
-          color: roomColor,
+          color: referenceColor(roomColor),
           transparent: true,
           opacity: 0.35,
           roughness: 0.7,
@@ -265,17 +269,17 @@ export default function ThreeOperationalMap({
       // Posiciona o colaborador sobre o setor, como no protótipo 3D de referência.
       const z =
         (Math.floor(sectorIndex / 3) - 0.5) * 4 +
-        0.25 +
+        0.825 +
         Math.floor(positionInSector / columns) * 0.55;
       const person = new THREE.Group();
       const body = new THREE.Mesh(
         new THREE.CylinderGeometry(0.2, 0.25, 0.75, 12),
-        new THREE.MeshStandardMaterial({ color: 0x0e7490, roughness: 0.65 }),
+        new THREE.MeshStandardMaterial({ color: referenceColor(sectorColors[sectorIndex % sectorColors.length]).multiplyScalar(0.55), roughness: 0.65 }),
       );
       body.position.y = 0.42;
       const head = new THREE.Mesh(
         new THREE.SphereGeometry(0.2, 14, 12),
-        new THREE.MeshStandardMaterial({ color: 0xf0c9a0, roughness: 0.8 }),
+        new THREE.MeshStandardMaterial({ color: referenceColor(0xf0c9a0), roughness: 0.8 }),
       );
       head.position.y = 0.98;
       person.add(body, head);
@@ -330,12 +334,12 @@ export default function ThreeOperationalMap({
       // Fit the full workshop horizontally on narrow containers.
       const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
       const distance = Math.max(
-        18.7,
+        14.85,
         7.2 / (Math.tan(halfFov) * camera.aspect),
       );
       camera.position
         .copy(controls.target)
-        .add(new THREE.Vector3(2, 11, 15).normalize().multiplyScalar(distance));
+        .add(cameraDirection.clone().multiplyScalar(distance));
       controls.maxDistance = Math.max(22, distance * 1.5);
       controls.update();
       camera.updateProjectionMatrix();
