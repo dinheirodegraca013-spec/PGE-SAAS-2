@@ -49,6 +49,23 @@ for (const [n,setor] of [[3,'corte'],[4,'montagem'],[5,'estoque'],[6,'financeiro
   await db.query(`INSERT INTO auth.users(id,email,raw_app_meta_data,raw_user_meta_data) VALUES($1,$2,$3,$4)`,[uid(n),`p${n}@example.test`,{gestio_employee:true,gestio_criado_por:uid(1),gestio_tenant_id:tid(1),gestio_setor:setor},{nome_completo:`Pessoa ${n}`}]);
 }
 assert.equal((await db.query(`SELECT count(*)::int n FROM tenants`)).rows[0].n,2,'employee signup must not create a tenant');
+// Reproduce Auth's actual order: INSERT with provider metadata, then UPDATE with
+// server-only invitation claims. The former insert-only test missed this sequence.
+const invitation = {gestio_employee:true,gestio_criado_por:uid(1),gestio_tenant_id:tid(1),gestio_setor:'corte'};
+await db.query(`INSERT INTO auth.users(id,email) VALUES($1,'legacy@example.test')`,[uid(8)]);
+await db.query(`INSERT INTO profiles(id,tenant_id,papel) VALUES($1,$2,'AdministradorTenant')`,[uid(8),tid(2)]);
+await db.query(`UPDATE auth.users SET raw_app_meta_data=$2 WHERE id=$1`,[uid(8),invitation]);
+await db.exec(await readFile(new URL('../../supabase/migrations/20261103201901_employee_deferred_app_metadata.sql',import.meta.url),'utf8'));
+assert.equal((await db.query(`SELECT tenant_id FROM profiles WHERE id=$1`,[uid(8)])).rows[0].tenant_id,tid(1),'migration repairs already issued employee invitations');
+await db.query(`INSERT INTO auth.users(id,email) VALUES($1,'deferred@example.test')`,[uid(9)]);
+await db.query(`INSERT INTO profiles(id,tenant_id,papel) VALUES($1,$2,'AdministradorTenant')`,[uid(9),tid(2)]);
+await db.query(`UPDATE auth.users SET raw_app_meta_data=$2 WHERE id=$1`,[uid(9),invitation]);
+assert.deepEqual((await db.query(`SELECT tenant_id,papel,setor FROM profiles WHERE id=$1`,[uid(9)])).rows[0],{tenant_id:tid(1),papel:'Instalador',setor:'corte'},'deferred app metadata binds to the inviting company and sector');
+assert.notEqual((await db.query(`SELECT auth.role() AS role`)).rows[0].role,'service_role','private synchronization restores caller claims');
+await db.query(`INSERT INTO auth.users(id) VALUES($1)`,[uid(10)]);
+await db.query(`INSERT INTO profiles(id,tenant_id,papel) VALUES($1,$2,'AdministradorTenant')`,[uid(10),tid(2)]);
+await assert.rejects(db.query(`UPDATE auth.users SET raw_app_meta_data=$2 WHERE id=$1`,[uid(10),{...invitation,gestio_criado_por:uid(2)}]));
+assert.equal((await db.query(`SELECT tenant_id FROM profiles WHERE id=$1`,[uid(10)])).rows[0].tenant_id,tid(2),'invalid invitation does not reassign an account');
 await assert.rejects(db.query(`INSERT INTO auth.users(id,raw_app_meta_data) VALUES($1,$2)`,[uid(7),{gestio_employee:true,gestio_criado_por:uid(2),gestio_tenant_id:tid(1),gestio_setor:'corte'}]));
 await asUser(1,()=>db.query(`SELECT encaminhar_projeto_setor($1,'corte')`,[tid(11)]));
 await assert.rejects(asUser(2,()=>db.query(`SELECT encaminhar_projeto_setor($1,'montagem')`,[tid(11)])));
