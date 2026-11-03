@@ -32,13 +32,19 @@ Deno.serve(async request => {
     }
     // Random password is never returned or persisted. Trusted app_metadata makes the
     // Auth trigger provision the correct tenant atomically, without an owner signup.
-    const password = Array.from(crypto.getRandomValues(new Uint8Array(48)), byte => byte.toString(16).padStart(2, '0')).join('');
+    // 68 ASCII bytes: retain 256 random bits while respecting Auth's 72-byte limit.
+    const password = 'Aa1!' + Array.from(crypto.getRandomValues(new Uint8Array(32)), byte => byte.toString(16).padStart(2, '0')).join('');
     const { data: created, error: createError } = await admin.auth.admin.createUser({
       email, password, email_confirm: true,
       user_metadata: { nome_completo: nome },
       app_metadata: { gestio_employee: true, gestio_criado_por: user.id, gestio_tenant_id: perfil.tenant_id, gestio_setor: setor },
     });
-    if (createError || !created.user) return reply(409, { error: 'Não foi possível criar este acesso. O e-mail pode já estar cadastrado.' });
+    if (createError || !created.user) {
+      const duplicate = ['email_exists', 'user_already_exists'].includes(createError?.code || '');
+      if (duplicate) return reply(409, { error: 'Este e-mail já está cadastrado. Use outro e-mail ou recupere o acesso existente.' });
+      console.error('employee_create_failed', { code: createError?.code || 'unknown', status: createError?.status || 500 });
+      return reply(502, { error: 'Não foi possível criar o acesso agora. Tente novamente mais tarde ou contate o suporte.' });
+    }
     const { error: mailError } = await admin.auth.resetPasswordForEmail(email, { redirectTo: `${origin}/redefinir-senha` });
     if (mailError) {
       // Compensate an email failure so retrying does not leave an inaccessible account.
