@@ -50,7 +50,7 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, tenant_id, nome_completo, email, papel, ativo, tenants(id, plano, ativo)')
+      .select('id, tenant_id, nome_completo, email, papel, ativo, setor, tenants(id, plano, ativo)')
       .eq('id', userId)
       .maybeSingle();
 
@@ -119,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       nomeCompleto,
       email: user.email || '',
       papel,
+      setor: profile.setor || null,
       plano,
       avatarUrl: profile.avatar_url || null,
       logoUrl: null,
@@ -168,6 +169,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const atualizado: UsuarioAutenticado = {
           ...usuario,
           nomeCompleto: profile.nome_completo || usuario.nomeCompleto,
+          papel: profile.papel,
+          setor: profile.setor || null,
           plano,
           avatarUrl: profile.avatar_url || null,
           logoUrl: null,

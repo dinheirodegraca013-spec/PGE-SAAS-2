@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuthStore } from './stores/auth';
 import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
 import AdminGuard from './components/auth/AdminGuard';
 import FinanceiroGuard from './components/auth/FinanceiroGuard';
+import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // Views do Painel do Cliente (Existentes - 100% preservadas)
 import DashboardView from './views/dashboard/DashboardView';
@@ -28,8 +29,10 @@ import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
 import EstoqueView from './views/estoque/EstoqueView';
-import Visao3DView from './views/visao3d/Visao3DView';
+const Visao3DView = lazy(() => import('./views/visao3d/Visao3DView'));
 import EquipeView from './views/equipe/EquipeView';
+import MeuSetorView from './views/equipe/MeuSetorView';
+import { caminhoPermitido } from './lib/setores';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -67,6 +70,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
+  if (auth.usuario?.setor && !caminhoPermitido(auth.usuario.setor, location.pathname)) {
+    return <Navigate to="/meu-setor" replace />;
+  }
   return <>{children}</>;
 }
 
@@ -147,10 +153,15 @@ export default function App() {
             <Route path="configuracoes" element={<SettingsView />} />
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
             <Route path="estoque" element={<EstoqueView />} />
-            <Route path="visao-3d" element={<Visao3DView />} />
+            <Route path="visao-3d" element={
+              <RouteErrorBoundary><Suspense fallback={<div role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Carregando a Visão 3D…</div>}>
+                <Visao3DView />
+              </Suspense></RouteErrorBoundary>
+            } />
             {/* Alias compatível com links antigos e com o protótipo ERP 3D. */}
             <Route path="visao3d" element={<Navigate to="/visao-3d" replace />} />
             <Route path="equipe" element={<EquipeView />} />
+            <Route path="meu-setor" element={<MeuSetorView />} />
           </Route>
 
           {/* =============================================================== */}
@@ -244,4 +255,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-

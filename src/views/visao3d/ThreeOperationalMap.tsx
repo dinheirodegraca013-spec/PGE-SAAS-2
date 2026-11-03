@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -8,7 +7,7 @@ type MapSector = {
   nome: string;
   estado: "normal" | "atencao" | "critico" | "sem-dados";
 };
-type Worker = { id: string; nome: string; ativo: boolean };
+type Worker = { id: string; nome: string; ativo: boolean; setor: string | null };
 
 // Geometria do modelo HTML aprovado, reduzida para a escala do mapa.
 function addWorkshopFurniture(group: THREE.Group, sectorId: string) {
@@ -254,14 +253,11 @@ export default function ThreeOperationalMap({
 
     const people = new THREE.Group();
     people.name = "colaboradores-ativos";
-    const activeWorkers = trabalhadores.filter((worker) => worker.ativo);
+    const activeWorkers = trabalhadores.filter((worker) => worker.ativo && setores.some(setor => setor.id === worker.setor));
     activeWorkers.forEach((worker, index) => {
-      const sectorCount = Math.max(setores.length - 2, 1);
-      const sectorIndex = index % sectorCount;
-      const positionInSector = Math.floor(index / sectorCount);
-      const sectorPopulation = Math.ceil(
-        (activeWorkers.length - sectorIndex) / sectorCount,
-      );
+      const sectorIndex = setores.findIndex(setor => setor.id === worker.setor);
+      const positionInSector = activeWorkers.slice(0, index).filter(person => person.setor === worker.setor).length;
+      const sectorPopulation = activeWorkers.filter(person => person.setor === worker.setor).length;
       const columns = Math.min(sectorPopulation, 4);
       const x =
         ((sectorIndex % 3) - 1) * 4 +
@@ -331,6 +327,17 @@ export default function ThreeOperationalMap({
       const width = host.clientWidth || 640;
       const height = Math.max(host.clientHeight, 420);
       camera.aspect = width / height;
+      // Fit the full workshop horizontally on narrow containers.
+      const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
+      const distance = Math.max(
+        18.7,
+        7.2 / (Math.tan(halfFov) * camera.aspect),
+      );
+      camera.position
+        .copy(controls.target)
+        .add(new THREE.Vector3(2, 11, 15).normalize().multiplyScalar(distance));
+      controls.maxDistance = Math.max(22, distance * 1.5);
+      controls.update();
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
     };
@@ -448,4 +455,3 @@ export default function ThreeOperationalMap({
     />
   );
 }
-

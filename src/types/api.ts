@@ -55,6 +55,8 @@ export interface UsuarioAutenticado {
   email: string;
   /** O backend serializa o enum PapelUsuario como string (ex.: "AdministradorTenant"), não como número. */
   papel: string;
+  /** Setor atribuído exclusivamente pelo administrador da empresa. */
+  setor?: string | null;
   /** O backend serializa o enum TenantPlano como string (ex.: "Profissional"), não como número. */
   plano: string;
   /** URL pública da foto de perfil do usuário */

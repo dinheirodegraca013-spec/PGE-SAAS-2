@@ -263,7 +263,7 @@ export default function DashboardView() {
         </div>
       )}
 
-      <section className="relative overflow-hidden rounded-2xl bg-[#08142f] px-6 py-8 text-white shadow-lg sm:px-10 sm:py-10">
+      <section className="relative grid overflow-hidden rounded-2xl border border-[#162b44] bg-[#0c1427] px-6 py-8 text-white sm:px-10 sm:py-10 lg:grid-cols-2">
         <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_78%_40%,rgba(56,189,248,.32),transparent_28%),linear-gradient(135deg,transparent_50%,rgba(99,102,241,.18))]" />
         <div className="relative z-10 max-w-xl">
           <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-cyan-300">
@@ -285,22 +285,39 @@ export default function DashboardView() {
             Explorar operação 3D <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="pointer-events-none absolute right-4 top-1/2 hidden h-44 w-[45%] -translate-y-1/2 rotate-[-12deg] gap-2 opacity-80 lg:grid lg:grid-cols-3">
-          {[
-            "Corte",
-            "Montagem",
-            "Acabamento",
-            "Instalação",
-            "Estoque",
-            "Financeiro",
-          ].map((setor, i) => (
-            <div
-              key={setor}
-              className={`rounded-lg border border-white/20 p-3 text-[9px] font-bold uppercase tracking-wide shadow-inner ${i === 4 ? "bg-amber-300/25" : "bg-cyan-200/20"}`}
-            >
-              {setor}
+        <div className="gestio-overview-scene" aria-hidden="true">
+          <div className="gestio-overview-orbit" />
+          <div className="gestio-overview-model">
+            <div className="gestio-overview-floor">
+              {[
+                "Corte",
+                "Montagem",
+                "Acabamento",
+                "Instalação",
+                "Estoque",
+                "Financeiro",
+              ].map((setor, i) => (
+                <div
+                  key={setor}
+                  className={`gestio-overview-room gestio-overview-room-${i + 1}`}
+                >
+                  <b>{setor}</b>
+                  <span
+                    className={
+                      i === 4
+                        ? "gestio-overview-material"
+                        : i === 0 || i === 2
+                          ? "gestio-overview-machine"
+                          : "gestio-overview-bench"
+                    }
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+          <span className="gestio-overview-tag">
+            Sua oficina em outra dimensão
+          </span>
         </div>
       </section>
 

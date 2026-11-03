@@ -24,7 +24,7 @@ type EstoqueItem = {
   estoque_minimo: number;
   unidade: string;
 };
-type Trabalhador = { id: string; nome: string; ativo: boolean };
+type Trabalhador = { id: string; nome: string; ativo: boolean; setor: string | null };
 type Setor = {
   id: string;
   nome: string;
@@ -88,7 +88,7 @@ export default function Visao3DView() {
         .order("nome");
       let perfisQuery = supabase
         .from("profiles")
-        .select("id,nome_completo,ativo")
+        .select("id,nome_completo,ativo,setor")
         .order("nome_completo");
       estoqueQuery = estoqueQuery.eq("tenant_id", tenantId);
       perfisQuery = perfisQuery.eq("tenant_id", tenantId);
@@ -114,6 +114,7 @@ export default function Visao3DView() {
             id: perfil.id,
             nome: perfil.nome_completo || "Colaborador sem nome",
             ativo: perfil.ativo !== false,
+            setor: perfil.setor,
           })),
         );
       }
@@ -473,4 +474,3 @@ export default function Visao3DView() {
     </div>
   );
 }
-

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/stores/auth";
 import { navGroups } from "./navigation";
+import { caminhoPermitido } from "@/lib/setores";
 
 function getPapelVisivel(papel?: string | null) {
   const normalizado = String(papel || "")
@@ -39,6 +40,12 @@ export default function AppLayout() {
   const auth = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const gruposVisiveis = auth.usuario?.setor
+    ? [{ title: 'Meu trabalho', items: [
+      { label: 'Meu setor', path: '/meu-setor', icon: Shield },
+      ...navGroups.flatMap(group => group.items).filter(item => caminhoPermitido(auth.usuario?.setor, item.path)),
+    ] }]
+    : navGroups;
 
   const handleLogout = () => {
     auth.logout();
@@ -98,7 +105,7 @@ export default function AppLayout() {
         </div>
 
         <nav className="gestio-nav flex-1 space-y-6 overflow-y-auto px-4 py-6">
-          {navGroups.map((group) => (
+          {gruposVisiveis.map((group) => (
             <div key={group.title}>
               <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[.18em] text-slate-500">
                 {group.title}
@@ -287,4 +294,3 @@ export default function AppLayout() {
     </div>
   );
 }
-

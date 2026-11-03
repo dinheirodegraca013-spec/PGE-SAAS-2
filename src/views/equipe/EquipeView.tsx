@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
+import { useAuthStore } from '@/stores/auth';
+import { isSetor, setores, podeCadastrarFuncionario } from '@/lib/setores';
 
 type Perfil = {
   id: string;
@@ -16,9 +18,47 @@ type Perfil = {
   email: string | null;
   papel: string | null;
   ativo: boolean | null;
+  setor: string | null;
 };
 
 export default function EquipeView() {
+  const { usuario } = useAuthStore();
+  const [novo, setNovo] = useState(false);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [setor, setSetor] = useState('corte');
+  const [salvando, setSalvando] = useState(false);
+  const [sucesso, setSucesso] = useState('');
+  const [projetoId, setProjetoId] = useState('');
+  const [projetos, setProjetos] = useState<{id: string; titulo: string}[]>([]);
+  const [setorProjeto, setSetorProjeto] = useState('corte');
+  const administrador = podeCadastrarFuncionario(usuario?.papel);
+  const cadastrar = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (salvando) return;
+    setSalvando(true); setErro(null); setSucesso('');
+    try {
+      const { data, error } = await supabase.functions.invoke('cadastrar-funcionario', {
+        body: { nome: nome.trim(), email: email.trim(), setor },
+      });
+      if (error || !data?.success) throw new Error(data?.error || 'Não foi possível cadastrar. Confira se a função de cadastro está disponível.');
+      setSucesso('Funcionário cadastrado. O link para definir a senha foi enviado por e-mail.');
+      setNovo(false); setNome(''); setEmail('');
+      await carregar();
+    } catch (error) { setErro(error instanceof Error ? error.message : 'Falha ao cadastrar funcionário.'); }
+    finally { setSalvando(false); }
+  };
+  const encaminhar = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (salvando) return;
+    setSalvando(true); setErro(null); setSucesso('');
+    try {
+      const { error } = await supabase.rpc('encaminhar_projeto_setor', { p_projeto_id: projetoId, p_setor: setorProjeto });
+      if (error) throw error;
+      setSucesso('Projeto encaminhado para o painel do setor.'); setProjetoId('');
+    } catch { setErro('Não foi possível encaminhar o projeto. Verifique o projeto e a sua permissão.'); }
+    finally { setSalvando(false); }
+  };
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -35,7 +75,7 @@ export default function EquipeView() {
     }
     let query = supabase
       .from("profiles")
-      .select("id,nome_completo,email,papel,ativo")
+      .select("id,nome_completo,email,papel,ativo,setor")
       .order("nome_completo");
     query = query.eq("tenant_id", tenantId);
     const result = await query;
@@ -50,6 +90,13 @@ export default function EquipeView() {
   useEffect(() => {
     void carregar();
   }, []);
+  useEffect(() => {
+    if (!administrador || !usuario?.tenantId) return;
+    let mounted = true;
+    supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo')
+      .then(({ data, error }) => { if (mounted) setProjetos(error ? [] : data || []); });
+    return () => { mounted = false; };
+  }, [administrador, usuario?.tenantId]);
 
   const ativos = perfis.filter((perfil) => perfil.ativo).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
@@ -77,6 +124,8 @@ export default function EquipeView() {
             Colaboradores da empresa e situação de acesso.
           </p>
         </div>
+        <div className="flex flex-wrap gap-2">
+        {administrador && <button type="button" className="btn-primary" onClick={() => { setNovo(!novo); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
           onClick={() => void carregar()}
@@ -88,7 +137,22 @@ export default function EquipeView() {
           />
           Atualizar
         </button>
+        </div>
       </header>
+      {sucesso && <p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{sucesso}</p>}
+      {novo && administrador && <form onSubmit={cadastrar} className="card space-y-4 p-5">
+        <h2 className="text-lg font-bold">Cadastrar funcionário</h2>
+        <p className="text-sm text-slate-500">O funcionário recebe acesso somente ao setor escolhido e define a própria senha por e-mail.</p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <label className="text-sm">Nome completo<input required minLength={2} maxLength={120} autoComplete="name" className="input-field mt-1" value={nome} onChange={e => setNome(e.target.value)} disabled={salvando} /></label>
+          <label className="text-sm">E-mail<input required type="email" maxLength={254} autoComplete="email" className="input-field mt-1" value={email} onChange={e => setEmail(e.target.value)} disabled={salvando} /></label>
+          <label className="text-sm">Setor<select className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
+        </div><div className="flex gap-2"><button type="submit" className="btn-primary" disabled={salvando}>{salvando ? 'Cadastrando…' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
+      </form>}
+      {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5"><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
+        <div className="grid gap-3 sm:grid-cols-3"><label className="text-sm">Projeto<select required className="input-field mt-1" value={projetoId} onChange={e => setProjetoId(e.target.value)}><option value="">Selecione um projeto</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}</select></label>
+        <label className="text-sm">Setor<select className="input-field mt-1" value={setorProjeto} onChange={e => setSetorProjeto(e.target.value)}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
+        <button type="submit" disabled={salvando || !projetoId} className="btn-primary self-end">Encaminhar</button></div></form>}
       <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-900">
         A presença diária ainda não está registrada no banco. Por isso, esta
         tela mostra apenas o status cadastral real e não inventa presença.
@@ -183,7 +247,7 @@ export default function EquipeView() {
                       {perfil.papel || "Perfil não informado"}
                     </td>
                     <td className="p-3 text-xs text-slate-500">
-                      Não informado no cadastro
+                      {isSetor(perfil.setor) ? setores[perfil.setor] : 'Não informado no cadastro'}
                     </td>
                     <td className="p-3">
                       <span
@@ -205,4 +269,3 @@ export default function EquipeView() {
     </div>
   );
 }
-
