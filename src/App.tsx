@@ -16,6 +16,7 @@ import RouteErrorBoundary from './components/RouteErrorBoundary';
 import DashboardView from './views/dashboard/DashboardView';
 import LoginView from './views/auth/LoginView';
 import ResetPasswordView from './views/auth/ResetPasswordView';
+import DevicesView from './views/auth/DevicesView';
 import RegisterView from './views/auth/RegisterView';
 import ClientesListView from './modules/clientes/views/ClientesListView';
 import ProjetosListView from './modules/furniture/views/ProjetosListView';
@@ -66,6 +67,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   if (!auth.isAuthenticated) {
+    if (auth.deviceError) return <Navigate to="/dispositivos" replace />;
     if (location.pathname === '/') return <LandingPage />;
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
@@ -117,6 +119,7 @@ export default function App() {
             }
           />
           <Route path="/redefinir-senha" element={<ResetPasswordView />} />
+          <Route path="/dispositivos" element={<DevicesView />} />
 
           {/* Página de Acesso Restrito / Negado */}
           <Route path="/acesso-negado" element={<AcessoNegadoView />} />

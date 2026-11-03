@@ -4,11 +4,13 @@ import { readFile } from 'node:fs/promises';
 import { transform } from 'esbuild';
 const source = (await readFile(new URL('../supabase/functions/cadastrar-funcionario/index.ts',import.meta.url),'utf8')).replace(/^import[^\n]+\n/,'');
 const { code } = await transform(source,{loader:'ts',target:'es2022',format:'cjs'});
-function setup({ role='AdministradorTenant',active=true,mailFailure=false,createFailure=null,enforcePasswordLimit=false }={}) {
+function setup({ role='AdministradorTenant',active=true,mailFailure=false,createFailure=null,enforcePasswordLimit=false,slots=2,deviceAllowed=true,loseRace=false }={}) {
   let handler;
   const calls=[];
-  const profile={tenant_id:'trusted-company',papel:role,ativo:active,setor:null,tenants:{ativo:true}};
+  const profile={tenant_id:'trusted-company',papel:role,ativo:active,setor:null,tenants:{ativo:true,principal_usuario_id:'trusted-admin'}};
+  let quotaCalls=0;
   const admin={
+    rpc:async()=>({data:deviceAllowed?{sublogins_available:loseRace&&quotaCalls++>0?0:slots}:null,error:deviceAllowed?null:{message:'Dispositivo não autorizado.'}}),
     from:()=>({select:()=>({eq:()=>({single:async()=>({data:profile,error:null})})})}),
     auth:{getUser:async()=>({data:{user:{id:'trusted-admin'}}}),
       admin:{createUser:async body=>{calls.push(['create',body]);const error=createFailure||(enforcePasswordLimit&&Buffer.byteLength(body.password,'utf8')>72?{code:'validation_failed',status:400}:null);return error?{data:{user:null},error}:{data:{user:{id:'employee'}}};},deleteUser:async id=>{calls.push(['delete',id]);return {}; }},
@@ -21,6 +23,18 @@ const body={nome:'Pessoa Teste',email:'pessoa@example.test',setor:'corte',tenant
 test('cadastro exige token e administrador ativo',async()=>{
   for(const scenario of [{role:'Instalador'},{active:false}]){const s=setup(scenario);assert.equal((await s.run(body)).status,403);assert.equal(s.calls.length,0);}
   const s=setup();assert.equal((await s.run(body,false)).status,401);assert.equal(s.calls.length,0);
+});
+test('limite de sublogins e dispositivo bloqueado impedem criação no servidor',async()=>{
+  for(const scenario of [{slots:0},{deviceAllowed:false}]) {
+    const s=setup(scenario);assert.equal((await s.run(body)).status,scenario.deviceAllowed===false?403:409);
+    assert.equal(s.calls.length,0);
+  }
+});
+test('concorrente que perde a última vaga recebe mensagem de limite sem enviar e-mail',async()=>{
+  const s=setup({loseRace:true,createFailure:{code:'unexpected_failure',status:500}});
+  const response=await s.run(body);assert.equal(response.status,409);
+  assert.match((await response.json()).error,/Limite de sublogins/);
+  assert.equal(s.calls.some(call=>call[0]==='mail'),false);
 });
 test('cadastro ignora empresa e papel enviados pelo navegador',async()=>{
   const s=setup();const response=await s.run(body);assert.equal(response.status,201);

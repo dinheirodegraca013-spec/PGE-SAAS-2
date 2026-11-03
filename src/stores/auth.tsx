@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import type { ApiResult, UsuarioAutenticado } from '@/types/api';
+import { authorizeDevice } from '@/services/api/device-access';
 
 export interface RegisterPayload {
   razaoSocial: string;
@@ -24,6 +25,7 @@ interface AuthContextType {
   usuario: UsuarioAutenticado | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  deviceError: string | null;
   isLiveSupabase: boolean;
   login: (email: string, senha: string) => Promise<ApiResult<void>>;
   register: (payload: RegisterPayload) => Promise<ApiResult<{ confirmationRequired?: boolean }>>;
@@ -92,10 +94,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [usuario, setUsuario] = useState<UsuarioAutenticado | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [deviceError, setDeviceError] = useState<string | null>(null);
   const [isLiveSupabase] = useState<boolean>(isSupabaseConfigured);
 
   const applySession = async (session: any): Promise<boolean> => {
     const user = session.user;
+    try {
+      await authorizeDevice();
+      setDeviceError(null);
+    } catch (error) {
+      clearAuthState();
+      const message = error instanceof Error ? error.message : 'Dispositivo não autorizado.';
+      setDeviceError(message);
+      throw new Error(message);
+    }
     // O perfil e o tenant são carregados exclusivamente do banco.
     // 1. Busca perfil real na tabela 'profiles'
     const { profile, isActive, internalRole } = await fetchUserProfile(user.id);
@@ -247,7 +259,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let authListener: { subscription: { unsubscribe: () => void } } | null = null;
 
     if (isSupabaseConfigured) {
-      const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
         if (!mounted) return;
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
@@ -256,7 +268,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setAccessToken(session.access_token);
               setRefreshToken(session.refresh_token || null);
             } else {
-              await applySession(session);
+              // Run Auth/API work outside the Auth listener lock.
+              window.setTimeout(() => { void applySession(session).catch(() => {}); }, 0);
             }
           }
         } else if (event === 'SIGNED_OUT') {
@@ -273,6 +286,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!usuario?.usuarioId || !isSupabaseConfigured) return;
+    let mounted = true;
+    const check = async () => {
+      const { data, error } = await supabase.rpc('sessao_autorizada');
+      if (mounted && !error && data === false) {
+        clearAuthState();
+        setDeviceError('Acesso suspenso ou dispositivo revogado. Gerencie os dispositivos ou fale com o administrador.');
+      }
+    };
+    const visible = () => { if (document.visibilityState === 'visible') void check().catch(() => {}); };
+    const timer = window.setInterval(() => void check().catch(() => {}), 30000);
+    document.addEventListener('visibilitychange', visible);
+    return () => { mounted = false; window.clearInterval(timer); document.removeEventListener('visibilitychange', visible); };
+  }, [usuario?.usuarioId]);
 
   const login = async (email: string, senha: string): Promise<ApiResult<void>> => {
     if (!isSupabaseConfigured) {
@@ -407,6 +436,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     clearAuthState();
+    setDeviceError(null);
   };
 
   return (
@@ -421,6 +451,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         usuario,
         isAuthenticated: !!accessToken && !!usuario,
         isLoading,
+        deviceError,
         isLiveSupabase,
         login,
         register,
