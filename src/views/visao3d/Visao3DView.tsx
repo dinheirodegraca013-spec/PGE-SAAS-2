@@ -58,6 +58,8 @@ export default function Visao3DView() {
   const [erro, setErro] = useState<string | null>(null);
   const [estoqueDisponivel, setEstoqueDisponivel] = useState(false);
   const [equipeDisponivel, setEquipeDisponivel] = useState(false);
+  const [financeiroDisponivel, setFinanceiroDisponivel] = useState(false);
+  const [contasVencidas, setContasVencidas] = useState(0);
   const abrirSetor = useCallback(
     (sectorId: string) => {
       if (sectorId === "estoque") navigate("/estoque");
@@ -72,6 +74,8 @@ export default function Visao3DView() {
     setErro(null);
     setEstoqueDisponivel(false);
     setEquipeDisponivel(false);
+    setFinanceiroDisponivel(false);
+    setContasVencidas(0);
     try {
       const tenantId = getCurrentTenantId();
       if (!tenantId) {
@@ -92,12 +96,25 @@ export default function Visao3DView() {
         .order("nome_completo");
       estoqueQuery = estoqueQuery.eq("tenant_id", tenantId);
       perfisQuery = perfisQuery.eq("tenant_id", tenantId);
-      const [estoque, projetosResult] = await Promise.all([
+      const hoje = new Date();
+      const dataHoje = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}-${String(hoje.getDate()).padStart(2, "0")}`;
+      const financeiroQuery = supabase.from("financeiro_lancamentos")
+        .select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenantId).eq("tipo", "despesa")
+        .not("status", "in", "(quitado,cancelado)").lt("vencimento", dataHoje);
+      const [estoque, projetosResult, financeiro] = await Promise.all([
         estoqueQuery,
         projetosService.listar(),
+        financeiroQuery,
       ]);
       const perfisResult = await perfisQuery;
       const mensagens: string[] = [];
+      if (financeiro.error || typeof financeiro.count !== "number") {
+        mensagens.push("Financeiro indisponível no momento.");
+      } else {
+        setFinanceiroDisponivel(true);
+        setContasVencidas(financeiro.count);
+      }
       if (estoque.error) mensagens.push("Estoque indisponível no momento.");
       else {
         setItens((estoque.data || []) as EstoqueItem[]);
@@ -133,9 +150,9 @@ export default function Visao3DView() {
     (p) =>
       ![StatusProjeto.Entregue, StatusProjeto.Cancelado].includes(p.status),
   );
-  const estoqueCritico = itens.filter(
+  const estoqueCritico = estoqueDisponivel ? itens.filter(
     (item) => Number(item.saldo) <= Number(item.estoque_minimo),
-  );
+  ) : [];
   const trabalhadoresAtivos = trabalhadores.filter(
     (trabalhador) => trabalhador.ativo,
   );
@@ -196,12 +213,12 @@ export default function Visao3DView() {
       {
         id: "financeiro",
         nome: "Escritório e financeiro",
-        detalhe: "Consulte o módulo financeiro",
-        estado: "sem-dados",
+        detalhe: !financeiroDisponivel ? "Financeiro indisponível" : contasVencidas ? `${contasVencidas} conta(s) vencida(s)` : "Nenhuma conta vencida",
+        estado: !financeiroDisponivel ? "sem-dados" : contasVencidas ? "critico" : "normal",
         cor: setorCores[5],
       },
     ],
-    [ativos.length, estoqueCritico.length, itens.length, estoqueDisponivel],
+    [ativos.length, estoqueCritico.length, itens.length, estoqueDisponivel, financeiroDisponivel, contasVencidas],
   );
 
   return (
@@ -303,9 +320,9 @@ export default function Visao3DView() {
               </b>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-3">
-              <small className="text-xs text-slate-500">Setores</small>
-              <b className="mt-1 block text-xl text-slate-900">
-                {setores.length}
+              <small className="text-xs text-slate-500">Contas vencidas</small>
+              <b className="mt-1 block text-xl text-rose-600">
+                {financeiroDisponivel ? contasVencidas : "—"}
               </b>
             </div>
           </div>
@@ -333,28 +350,35 @@ export default function Visao3DView() {
               </Link>
             ))}
           </div>
-          {estoqueDisponivel && (
+          {(estoqueDisponivel || financeiroDisponivel) && (
             <div
-              className={`rounded-2xl border-2 p-4 ${estoqueCritico.length ? "border-rose-300 bg-rose-50 text-rose-900" : "border-emerald-300 bg-emerald-50 text-emerald-900"}`}
+              className={`rounded-2xl border-2 p-4 ${estoqueCritico.length || contasVencidas ? "border-rose-300 bg-rose-50 text-rose-900" : "border-slate-200 bg-slate-50 text-slate-700"}`}
             >
               <div className="flex items-center gap-2 font-bold">
-                {estoqueCritico.length ? (
+                {estoqueCritico.length || contasVencidas ? (
                   <AlertTriangle className="h-5 w-5" />
                 ) : (
                   <CircleCheck className="h-5 w-5" />
                 )}
-                {estoqueCritico.length ? "Atenção operacional" : "Tudo certo"}
+                {estoqueCritico.length || contasVencidas ? "Atenção operacional" : estoqueDisponivel && financeiroDisponivel ? "Tudo certo" : "Consulta parcial"}
               </div>
               <p className="mt-1 text-sm">
-                {estoqueCritico.length
-                  ? "Há itens que precisam de acompanhamento."
-                  : "Nenhum alerta crítico foi encontrado nos dados disponíveis."}
+                {estoqueCritico.length || contasVencidas
+                  ? "Há pendências que precisam de acompanhamento."
+                  : estoqueDisponivel && financeiroDisponivel ? "Nenhum alerta de estoque ou conta vencida foi encontrado." : "Parte dos dados está indisponível. Atualize para tentar novamente."}
               </p>
             </div>
           )}
           <div className="card p-5">
             <h2 className="gestio-section-title">O que fazer agora</h2>
             <div className="mt-4 space-y-3">
+              {financeiroDisponivel && contasVencidas > 0 && (
+                <div className="rounded-xl border border-rose-100 bg-rose-50 p-3 text-sm text-rose-900">
+                  <b>{contasVencidas} conta(s) vencida(s)</b>
+                  <p className="mt-1">Confira os valores e vencimentos no painel financeiro.</p>
+                  <Link to="/meu-financeiro" className="mt-2 inline-flex items-center gap-1 font-bold text-cyan-700">Abrir financeiro <ArrowRight className="h-4 w-4" /></Link>
+                </div>
+              )}
               {estoqueDisponivel &&
                 estoqueCritico.slice(0, 4).map((item) => (
                   <div
@@ -467,7 +491,7 @@ export default function Visao3DView() {
       </section>
       {!carregando && (
         <p className="text-xs text-slate-500">
-          O mapa usa projetos e estoque carregados do GESTIO. Setores sem fonte
+          O mapa usa projetos, estoque e contas carregados do GESTIO. Setores sem fonte
           de dados exibem “Sem dados”.
         </p>
       )}
