@@ -31,6 +31,7 @@ export default function FinanceiroEmpresaView() {
   const [descricao, setDescricao] = useState("");
   const [valor, setValor] = useState("");
   const [vencimento, setVencimento] = useState("");
+  const [projetoId, setProjetoId] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [receitas, setReceitas] = useState<number | null>(null);
@@ -56,7 +57,7 @@ export default function FinanceiroEmpresaView() {
       }
       let lancamentosQuery = supabase
         .from("financeiro_lancamentos")
-        .select("id,tipo,descricao,valor,vencimento,status")
+        .select("id,tipo,descricao,valor,vencimento,status,projeto_id")
         .order("vencimento", { ascending: false });
       lancamentosQuery = lancamentosQuery.eq("tenant_id", tenantId);
       const { data: lista, error: listaErro } = await lancamentosQuery;
@@ -271,7 +272,7 @@ export default function FinanceiroEmpresaView() {
           )}
 
           <form
-            className="card grid gap-3 p-4 sm:grid-cols-5"
+            className="card grid gap-3 p-4 sm:grid-cols-2 xl:grid-cols-6"
             onSubmit={async (e) => {
               e.preventDefault();
               if (salvando) return;
@@ -290,29 +291,46 @@ export default function FinanceiroEmpresaView() {
                 );
                 return;
               }
-              setSalvando(true);
-              const { error } = await supabase.rpc(
-                "financeiro_criar_lancamento",
-                {
-                  p_tipo: tipo,
-                  p_descricao: descricao,
-                  p_valor: valorNumero,
-                  p_vencimento: vencimento,
-                  p_projeto_id: null,
-                },
-              );
-              setSalvando(false);
-              if (error) {
-                setMensagem(error.message);
+              if (
+                projetoId &&
+                !projetos.some((projeto) => projeto.id === projetoId)
+              ) {
+                setMensagem(
+                  "Selecione um projeto disponível ou escolha Sem projeto.",
+                );
                 return;
               }
-              setDescricao("");
-              setValor("");
-              await carregar();
-              setMensagem("Lançamento registrado.");
+              setSalvando(true);
+              try {
+                const { error } = await supabase.rpc(
+                  "financeiro_criar_lancamento",
+                  {
+                    p_tipo: tipo,
+                    p_descricao: descricao,
+                    p_valor: valorNumero,
+                    p_vencimento: vencimento,
+                    p_projeto_id: projetoId || null,
+                  },
+                );
+                if (error) {
+                  setMensagem(error.message);
+                  return;
+                }
+                setDescricao("");
+                setValor("");
+                setProjetoId("");
+                await carregar();
+                setMensagem("Lançamento registrado.");
+              } catch {
+                setMensagem("Não foi possível confirmar o lançamento. Atualize a lista antes de tentar novamente para evitar duplicidade.");
+              } finally {
+                setSalvando(false);
+              }
             }}
           >
-            <h2 className="font-bold sm:col-span-5">Novo lançamento</h2>
+            <h2 className="font-bold sm:col-span-2 xl:col-span-6">
+              Novo lançamento
+            </h2>
             <select
               aria-label="Tipo"
               value={tipo}
@@ -349,6 +367,20 @@ export default function FinanceiroEmpresaView() {
               onChange={(e) => setVencimento(e.target.value)}
               className="rounded border p-2"
             />
+            <select
+              aria-label="Projeto do lançamento"
+              value={projetoId}
+              onChange={(event) => setProjetoId(event.target.value)}
+              disabled={carregando || !!erro}
+              className="rounded border p-2"
+            >
+              <option value="">Sem projeto</option>
+              {projetosValidos.map((projeto) => (
+                <option key={projeto.id} value={projeto.id}>
+                  {projeto.titulo}
+                </option>
+              ))}
+            </select>
             <button
               disabled={salvando}
               className="rounded bg-slate-900 p-2 text-white disabled:opacity-50"
@@ -382,6 +414,11 @@ export default function FinanceiroEmpresaView() {
                     <span>
                       {l.tipo === "receita" ? "Receber" : "Pagar"} —{" "}
                       {l.descricao} — {moeda(Number(l.valor))} — {l.status}
+                      {l.projeto_id && (
+                        <span className="block text-xs text-slate-500">
+                          Projeto: {projetosValidos.find(projeto => projeto.id === l.projeto_id)?.titulo || 'Projeto indisponível'}
+                        </span>
+                      )}
                     </span>
                     {l.status !== "quitado" && l.status !== "cancelado" && (
                       <button
@@ -622,4 +659,3 @@ export default function FinanceiroEmpresaView() {
     </div>
   );
 }
-
