@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
@@ -13,6 +13,29 @@ export default function ResetPasswordView() {
   const [enviando, setEnviando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [sessaoValidada, setSessaoValidada] = useState(false);
+  const [verificandoLink, setVerificandoLink] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setSessaoValidada(Boolean(session));
+      if (session?.user.email) setEmail(session.user.email);
+    });
+    // getSession aguarda a inicialização que processa o link recebido por e-mail.
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!mounted) return;
+      setSessaoValidada(!error && Boolean(data.session));
+      if (data.session?.user.email) setEmail(data.session.user.email);
+      if (error) setErro('Não foi possível validar o link. Abra o e-mail mais recente ou solicite outro acesso.');
+    }).catch(() => {
+      if (mounted) setErro('Não foi possível validar o link. Confira sua conexão e abra o link novamente.');
+    }).finally(() => {
+      if (mounted) setVerificandoLink(false);
+    });
+    return () => { mounted = false; subscription.unsubscribe(); };
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -20,16 +43,20 @@ export default function ResetPasswordView() {
 
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedCode = codigo.trim().replace(/\s/g, '');
-    if (!normalizedEmail) {
+    if (!sessaoValidada && !normalizedEmail) {
       setErro('Informe o e-mail que recebeu o código.');
       return;
     }
-    if (!normalizedCode) {
+    if (!sessaoValidada && !normalizedCode) {
       setErro('Informe o código recebido por e-mail.');
       return;
     }
     if (senha.length < 8) {
       setErro('A senha deve ter pelo menos 8 caracteres.');
+      return;
+    }
+    if (new TextEncoder().encode(senha).length > 72) {
+      setErro('A senha deve ter no máximo 72 bytes. Acentos e símbolos podem ocupar mais de um byte.');
       return;
     }
     if (senha !== confirmarSenha) {
@@ -39,22 +66,25 @@ export default function ResetPasswordView() {
 
     setEnviando(true);
     try {
-      // Validar o código diretamente evita que verificadores de links consumam o token.
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        email: normalizedEmail,
-        token: normalizedCode,
-        type: 'recovery',
-      });
-      if (verifyError) {
-        setErro('Código inválido ou expirado. Confira o código do e-mail mais recente e tente novamente.');
-        return;
+      if (!sessaoValidada) {
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+          email: normalizedEmail,
+          token: normalizedCode,
+          type: 'recovery',
+        });
+        if (verifyError) {
+          setErro('Código inválido ou expirado. Confira o e-mail mais recente ou solicite um novo acesso.');
+          return;
+        }
       }
 
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !sessionData.session) {
-        setErro('O código foi validado, mas a sessão não foi criada. Solicite um novo código.');
+        setSessaoValidada(false);
+        setErro('O acesso expirou. Abra o link do e-mail mais recente ou solicite um novo acesso.');
         return;
       }
+      setSessaoValidada(true);
 
       const { error: updateError } = await supabase.auth.updateUser({ password: senha });
       if (updateError) {
@@ -80,7 +110,7 @@ export default function ResetPasswordView() {
             <KeyRound className="h-6 w-6" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Redefinir senha</h1>
-          <p className="mt-1 text-sm text-slate-500">Informe o código enviado por e-mail e crie uma nova senha.</p>
+          <p className="mt-1 text-sm text-slate-500">{verificandoLink ? 'Validando seu link de acesso...' : sessaoValidada ? 'Acesso confirmado. Crie sua nova senha.' : 'Abra o link do e-mail mais recente para criar sua senha.'}</p>
         </div>
 
         <div className="card space-y-4 p-6 shadow-sm">
@@ -90,8 +120,12 @@ export default function ResetPasswordView() {
               <p className="font-semibold text-slate-900">Senha alterada com sucesso!</p>
               <p className="text-sm text-slate-500">Você será redirecionado para entrar com a nova senha.</p>
             </div>
+          ) : verificandoLink ? (
+            <p role="status" className="text-sm text-slate-500">Aguarde a validação do link.</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {!sessaoValidada && <>
+              <p className="text-sm text-slate-500">Se seu e-mail contém um código, você também pode informá-lo abaixo.</p>
               <div>
                 <label htmlFor="emailRecuperacao" className="label-field">E-mail da conta</label>
                 <input
@@ -118,6 +152,7 @@ export default function ResetPasswordView() {
                   required
                 />
               </div>
+              </>}
               <div>
                 <label htmlFor="novaSenha" className="label-field">Nova senha</label>
                 <input
@@ -146,7 +181,7 @@ export default function ResetPasswordView() {
               </div>
               {erro && <p role="alert" className="text-xs font-medium text-red-600">{erro}</p>}
               <button type="submit" className="btn-primary w-full" disabled={enviando}>
-                {enviando ? 'Validando código...' : 'Salvar nova senha'}
+                {enviando ? 'Salvando nova senha...' : 'Salvar nova senha'}
               </button>
             </form>
           )}
