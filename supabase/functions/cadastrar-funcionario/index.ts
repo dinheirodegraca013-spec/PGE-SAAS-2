@@ -38,6 +38,12 @@ Deno.serve(async request => {
     const { data: limits, error: accessError } = await caller.rpc('limites_acesso');
     if (accessError || !limits) return reply(403, { error: accessError?.message || 'Dispositivo não autorizado.' });
     if (limits.sublogins_available <= 0) return reply(409, { error: 'Limite de sublogins atingido. Desative um funcionário ou faça upgrade.' });
+    if (identificadorInterno) {
+      const { data: duplicateIdentifier, error: identifierError } = await admin.from('profiles').select('id')
+        .eq('tenant_id', perfil.tenant_id).ilike('identificador_interno', identificadorInterno).maybeSingle();
+      if (identifierError) return reply(500, { error: 'Não foi possível validar o identificador interno.' });
+      if (duplicateIdentifier) return reply(409, { error: 'Este identificador interno já está em uso nesta empresa.' });
+    }
     // Random password is never returned or persisted. Trusted app_metadata makes the
     // Auth trigger provision the correct tenant atomically, without an owner signup.
     // 68 ASCII bytes: retain 256 random bits while respecting Auth's 72-byte limit.
