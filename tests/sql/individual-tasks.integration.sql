@@ -54,6 +54,8 @@ BEGIN
   IF EXISTS(SELECT 1 FROM jsonb_array_elements(result->'itens') item JOIN public.audit_logs a ON a.id=(item->>'id')::bigint WHERE a.actor_id<>worker OR item ? 'detalhes') THEN
     RAISE EXCEPTION 'Histórico revelou outro ator ou conteúdo sensível';
   END IF;
+  result:=public.minha_agenda(current_date,current_date+30);
+  IF jsonb_typeof(result->'itens') IS DISTINCT FROM 'array' THEN RAISE EXCEPTION 'Agenda pessoal inválida'; END IF;
   PERFORM set_config('request.jwt.claim.sub',owner_id::text,true);PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','session_id',owner_session)::text,true);
   PERFORM public.ficha_execucao_atualizar(service,'corte','concluir',3);
   IF public.meu_resumo_operacional()->'tarefas'->>'total'<>'0' THEN RAISE EXCEPTION 'Resumo pessoal incluiu tarefas de outro funcionário'; END IF;

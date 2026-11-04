@@ -10,6 +10,7 @@ import WorkNotifications from '@/modules/workforce/components/WorkNotifications'
 import MyTasks from '@/modules/workforce/components/MyTasks';
 import PersonalWorkSummary from '@/modules/workforce/components/PersonalWorkSummary';
 import MyActivityHistory from '@/modules/workforce/components/MyActivityHistory';
+import AgendaPanel from '@/modules/workforce/components/AgendaPanel';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 
@@ -53,6 +54,7 @@ export default function MeuSetorView() {
     {sectorList.includes('estoque')&&hasPermission(context,'estoque')&&<Link className="btn-primary inline-flex" to="/estoque">Abrir painel de estoque</Link>}
     {sectorList.includes('financeiro')&&hasPermission(context,'financeiro')&&<Link className="btn-primary inline-flex" to="/meu-financeiro">Abrir painel financeiro</Link>}
     {(hasPermission(context,'tarefas') || hasPermission(context,'ordens')) && <PersonalWorkSummary />}
+    {hasPermission(context,'agenda') && <AgendaPanel />}
     {hasPermission(context,'tarefas') && <MyTasks />}
     {hasPermission(context,'notificacoes') && <WorkNotifications />}
     {hasPermission(context,'ordens') && <MyServiceSheets />}
