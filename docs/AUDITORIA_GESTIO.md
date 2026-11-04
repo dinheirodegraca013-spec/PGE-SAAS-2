@@ -30,3 +30,21 @@ Data: 27/10/2026
 - O bundle continua acima de 500 kB por incluir Three.js; não bloqueia o funcionamento, mas pode ser otimizado com code splitting em uma etapa posterior.
 - Não foram feitas alterações no Supabase nem em permissões/RLS nesta auditoria.
 
+## Reauditoria de produção — 04/11/2026
+
+- Rotas públicas e protegidas: 11/11 responderam HTTP 200 no domínio oficial; rotas protegidas redirecionam para login quando sem sessão.
+- Headers obrigatórios: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy e Permissions-Policy presentes.
+- Assets publicados: todos os bundles referenciados pelo HTML responderam HTTP 200.
+- Edge Functions: `cadastrar-funcionario` e `validar-anexo` rejeitam chamadas sem sessão (401); `public-orcamento` mantém contrato público com payload inválido (400); métodos HTTP inválidos foram rejeitados (405).
+- RPCs sensíveis `limites_acesso` e `meu_contexto_operacional` rejeitaram chamadas anônimas (401).
+- `npm test`: 101 testes aprovados; CI e quality gate do commit de produção aprovados.
+
+### Correção aplicada
+
+`validar-anexo` estava presente no repositório, mas ausente no projeto Supabase publicado (404). A função foi implantada como versão 1, com JWT obrigatório e dependência de validação de conteúdo incluída; a auditoria passou após a publicação.
+
+### Pendência externa
+
+- A proteção contra senhas vazadas permanece desativada no painel do Supabase; requer ativação administrativa no projeto, sem alteração automática nesta sessão.
+
+
