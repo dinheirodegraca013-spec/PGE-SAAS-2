@@ -39,6 +39,7 @@ const endpointSmoke = [];
 if (supabaseUrl && supabaseKey) {
   const checks = [
     ['edge:cadastrar-funcionario', `${supabaseUrl}/functions/v1/cadastrar-funcionario`, 401],
+    ['edge:validar-anexo', `${supabaseUrl}/functions/v1/validar-anexo`, 401],
     ['edge:public-orcamento', `${supabaseUrl}/functions/v1/public-orcamento`, 400],
     ['rpc:limites_acesso', `${supabaseUrl}/rest/v1/rpc/limites_acesso`, 401],
     ['rpc:meu_contexto_operacional', `${supabaseUrl}/rest/v1/rpc/meu_contexto_operacional`, 401],
@@ -49,7 +50,21 @@ if (supabaseUrl && supabaseKey) {
     endpointSmoke.push({ name, status, expectedStatus, ok: status === expectedStatus });
   }
 }
-const report = { baseUrl, routes: results, headers, missingHeaders, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke } };
+const methodChecks = [];
+if (supabaseUrl && supabaseKey) {
+  const checks = [
+    ['edge:cadastrar-funcionario:GET', `${supabaseUrl}/functions/v1/cadastrar-funcionario`, 405],
+    ['edge:validar-anexo:GET', `${supabaseUrl}/functions/v1/validar-anexo`, 405],
+    ['edge:public-orcamento:GET-sem-token', `${supabaseUrl}/functions/v1/public-orcamento`, 400],
+  ];
+  for (const [name, url, expectedStatus] of checks) {
+    const result = await request(url, { method: 'GET', headers: { apikey: supabaseKey } });
+    const status = result.response?.status ?? 0;
+    methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus });
+  }
+}
+const report = { baseUrl, routes: results, headers, missingHeaders, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || missingHeaders.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || missingHeaders.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+
