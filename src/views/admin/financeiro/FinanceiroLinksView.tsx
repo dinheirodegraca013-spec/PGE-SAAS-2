@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Link as LinkIcon,
   Plus,
@@ -10,9 +10,9 @@ import {
   ShieldCheck,
   AlertCircle,
   RefreshCw,
-} from 'lucide-react';
-import { adminService } from '@/services/admin/admin.service';
-import { SaaSPlanoLink, SaaSPlano } from '@/types/admin';
+} from "lucide-react";
+import { adminService } from "@/services/admin/admin.service";
+import { SaaSPlanoLink, SaaSPlano } from "@/types/admin";
 
 export default function FinanceiroLinksView() {
   const [links, setLinks] = useState<SaaSPlanoLink[]>([]);
@@ -23,12 +23,12 @@ export default function FinanceiroLinksView() {
   // Modal Novo / Editar Link
   const [modalAberto, setModalAberto] = useState(false);
   const [linkEmEdicao, setLinkEmEdicao] = useState<Partial<SaaSPlanoLink>>({
-    planoId: '',
-    provedor: 'MercadoPago',
-    urlCheckout: '',
-    periodicidade: 'mensal',
-    status: 'ativo',
-    observacoes: '',
+    planoId: "",
+    provedor: "MercadoPago",
+    urlCheckout: "",
+    periodicidade: "mensal",
+    status: "ativo",
+    observacoes: "",
   });
   const [salvando, setSalvando] = useState(false);
 
@@ -44,7 +44,7 @@ export default function FinanceiroLinksView() {
       if (resLinks.succeeded && resLinks.value) {
         setLinks(resLinks.value);
       } else {
-        setErro(resLinks.errors.join(' '));
+        setErro(resLinks.errors.join(" "));
       }
 
       if (resPlanos.succeeded && resPlanos.value) {
@@ -55,7 +55,7 @@ export default function FinanceiroLinksView() {
         }
       }
     } catch {
-      setErro('Erro ao listar links de pagamento.');
+      setErro("Erro ao listar links de pagamento.");
     } finally {
       setCarregando(false);
     }
@@ -67,8 +67,13 @@ export default function FinanceiroLinksView() {
 
   const handleSalvarLink = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!linkEmEdicao.urlCheckout || !linkEmEdicao.urlCheckout.startsWith('https://')) {
-      alert('A URL de checkout deve ser segura e começar obrigatoriamente com https://');
+    if (
+      !linkEmEdicao.urlCheckout ||
+      !linkEmEdicao.urlCheckout.startsWith("https://")
+    ) {
+      alert(
+        "A URL de checkout deve ser segura e começar obrigatoriamente com https://",
+      );
       return;
     }
 
@@ -78,41 +83,41 @@ export default function FinanceiroLinksView() {
       if (res.succeeded) {
         setModalAberto(false);
         setLinkEmEdicao({
-          planoId: planos[0]?.id || '',
-          provedor: 'MercadoPago',
-          urlCheckout: '',
-          periodicidade: 'mensal',
-          status: 'ativo',
-          observacoes: '',
+          planoId: planos[0]?.id || "",
+          provedor: "MercadoPago",
+          urlCheckout: "",
+          periodicidade: "mensal",
+          status: "ativo",
+          observacoes: "",
         });
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Erro ao salvar link de pagamento.');
+      alert("Erro ao salvar link de pagamento.");
     } finally {
       setSalvando(false);
     }
   };
 
   const handleExcluirLink = async (id: string) => {
-    if (!confirm('Deseja realmente excluir este link de pagamento?')) return;
+    if (!confirm("Deseja realmente excluir este link de pagamento?")) return;
     try {
       const res = await adminService.excluirLinkPagamento(id);
       if (res.succeeded) {
         await carregarDados();
       } else {
-        alert(res.errors.join(' '));
+        alert(res.errors.join(" "));
       }
     } catch {
-      alert('Erro ao excluir link.');
+      alert("Erro ao excluir link.");
     }
   };
 
   const copiarUrl = (url: string) => {
     navigator.clipboard.writeText(url);
-    alert('Link de checkout copiado para a área de transferência!');
+    alert("Link de checkout copiado para a área de transferência!");
   };
 
   return (
@@ -124,19 +129,20 @@ export default function FinanceiroLinksView() {
             Links de Pagamento por Plano
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Cadastre os links externos de checkout para cada plano (Mercado Pago, InfinitePay ou Checkout manual).
+            Cadastre os links externos de checkout para cada plano (Mercado
+            Pago, InfinitePay ou Checkout manual).
           </p>
         </div>
         <button
           type="button"
           onClick={() => {
             setLinkEmEdicao({
-              planoId: planos[0]?.id || '',
-              provedor: 'MercadoPago',
-              urlCheckout: '',
-              periodicidade: 'mensal',
-              status: 'ativo',
-              observacoes: '',
+              planoId: planos[0]?.id || "",
+              provedor: "MercadoPago",
+              urlCheckout: "",
+              periodicidade: "mensal",
+              status: "ativo",
+              observacoes: "",
             });
             setModalAberto(true);
           }}
@@ -157,17 +163,21 @@ export default function FinanceiroLinksView() {
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700 flex items-center gap-2">
         <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
         <span>
-          Apenas URLs com criptografia <strong>HTTPS</strong> são aceitas para redirecionamento seguro dos clientes.
+          Apenas URLs com criptografia <strong>HTTPS</strong> são aceitas para
+          redirecionamento seguro dos clientes.
         </span>
       </div>
 
       {/* Tabela de Links */}
       <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs">
         {carregando ? (
-          <div className="p-12 text-center text-xs text-slate-400">Carregando links de pagamento...</div>
+          <div className="p-12 text-center text-xs text-slate-400">
+            Carregando links de pagamento...
+          </div>
         ) : links.length === 0 ? (
           <div className="p-12 text-center text-xs text-slate-400">
-            Nenhum link de pagamento cadastrado ainda. Clique em "Novo Link de Checkout".
+            Nenhum link de pagamento cadastrado ainda. Clique em "Novo Link de
+            Checkout".
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -184,9 +194,16 @@ export default function FinanceiroLinksView() {
               </thead>
               <tbody className="divide-y divide-slate-100 bg-white">
                 {links.map((link) => (
-                  <tr key={link.id} className="hover:bg-slate-50/70 transition-colors">
-                    <td className="px-5 py-4 font-bold text-slate-900">{link.planoNome}</td>
-                    <td className="px-5 py-4 font-semibold text-slate-700">{link.provedor}</td>
+                  <tr
+                    key={link.id}
+                    className="hover:bg-slate-50/70 transition-colors"
+                  >
+                    <td className="px-5 py-4 font-bold text-slate-900">
+                      {link.planoNome}
+                    </td>
+                    <td className="px-5 py-4 font-semibold text-slate-700">
+                      {link.provedor}
+                    </td>
                     <td className="px-5 py-4 font-mono text-[11px] text-slate-600 max-w-xs truncate">
                       {link.urlCheckout}
                     </td>
@@ -196,15 +213,17 @@ export default function FinanceiroLinksView() {
                     <td className="px-5 py-4">
                       <span
                         className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
-                          link.status === 'ativo' ? 'text-emerald-700' : 'text-slate-400'
+                          link.status === "ativo"
+                            ? "text-emerald-700"
+                            : "text-slate-400"
                         }`}
                       >
-                        {link.status === 'ativo' ? (
+                        {link.status === "ativo" ? (
                           <CheckCircle2 className="h-3 w-3 text-emerald-600" />
                         ) : (
                           <XCircle className="h-3 w-3" />
                         )}
-                        {link.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                        {link.status === "ativo" ? "Ativo" : "Inativo"}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-right">
@@ -248,9 +267,12 @@ export default function FinanceiroLinksView() {
       {modalAberto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl border border-slate-200">
-            <h3 className="text-base font-bold text-slate-900 mb-1">Cadastrar Link de Checkout</h3>
+            <h3 className="text-base font-bold text-slate-900 mb-1">
+              Cadastrar Link de Checkout
+            </h3>
             <p className="text-xs text-slate-500 mb-4">
-              Vincule um link de cobrança oficial gerado no Mercado Pago, InfinitePay ou provedor customizado.
+              Vincule um link de cobrança oficial gerado no Mercado Pago,
+              InfinitePay ou provedor customizado.
             </p>
 
             <form onSubmit={handleSalvarLink} className="space-y-4">
@@ -261,12 +283,22 @@ export default function FinanceiroLinksView() {
                 <select
                   required
                   value={linkEmEdicao.planoId}
-                  onChange={(e) => setLinkEmEdicao({ ...linkEmEdicao, planoId: e.target.value })}
+                  onChange={(e) =>
+                    setLinkEmEdicao({
+                      ...linkEmEdicao,
+                      planoId: e.target.value,
+                    })
+                  }
                   className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                 >
                   {planos.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.nome} (R$ {p.preco.toFixed(2)} / {p.periodicidade})
+                      {p.nome} (R${" "}
+                      {p.preco.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      / {p.periodicidade})
                     </option>
                   ))}
                 </select>
@@ -278,11 +310,20 @@ export default function FinanceiroLinksView() {
                 </label>
                 <select
                   value={linkEmEdicao.provedor}
-                  onChange={(e) => setLinkEmEdicao({ ...linkEmEdicao, provedor: e.target.value as any })}
+                  onChange={(e) =>
+                    setLinkEmEdicao({
+                      ...linkEmEdicao,
+                      provedor: e.target.value as any,
+                    })
+                  }
                   className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                 >
-                  <option value="MercadoPago">Mercado Pago (Checkout Pro / Link)</option>
-                  <option value="InfinitePay">InfinitePay (Link Inteligente / PIX)</option>
+                  <option value="MercadoPago">
+                    Mercado Pago (Checkout Pro / Link)
+                  </option>
+                  <option value="InfinitePay">
+                    InfinitePay (Link Inteligente / PIX)
+                  </option>
                   <option value="Manual">Pagamento Manual / Chave PIX</option>
                   <option value="Outro">Outro Provedor</option>
                 </select>
@@ -297,7 +338,12 @@ export default function FinanceiroLinksView() {
                   required
                   placeholder="https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=..."
                   value={linkEmEdicao.urlCheckout}
-                  onChange={(e) => setLinkEmEdicao({ ...linkEmEdicao, urlCheckout: e.target.value })}
+                  onChange={(e) =>
+                    setLinkEmEdicao({
+                      ...linkEmEdicao,
+                      urlCheckout: e.target.value,
+                    })
+                  }
                   className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                 />
               </div>
@@ -309,7 +355,12 @@ export default function FinanceiroLinksView() {
                   </label>
                   <select
                     value={linkEmEdicao.periodicidade}
-                    onChange={(e) => setLinkEmEdicao({ ...linkEmEdicao, periodicidade: e.target.value })}
+                    onChange={(e) =>
+                      setLinkEmEdicao({
+                        ...linkEmEdicao,
+                        periodicidade: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="mensal">Mensal</option>
@@ -325,7 +376,12 @@ export default function FinanceiroLinksView() {
                   </label>
                   <select
                     value={linkEmEdicao.status}
-                    onChange={(e) => setLinkEmEdicao({ ...linkEmEdicao, status: e.target.value as any })}
+                    onChange={(e) =>
+                      setLinkEmEdicao({
+                        ...linkEmEdicao,
+                        status: e.target.value as any,
+                      })
+                    }
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="ativo">Ativo</option>
@@ -347,7 +403,7 @@ export default function FinanceiroLinksView() {
                   disabled={salvando}
                   className="rounded-lg bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-700 cursor-pointer"
                 >
-                  {salvando ? 'Salvando...' : 'Salvar Link'}
+                  {salvando ? "Salvando..." : "Salvar Link"}
                 </button>
               </div>
             </form>
@@ -357,3 +413,4 @@ export default function FinanceiroLinksView() {
     </div>
   );
 }
+

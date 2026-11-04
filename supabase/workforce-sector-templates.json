@@ -1,0 +1,211 @@
+[
+  {
+    "setor":"corte","versao":1,"titulo":"Ficha técnica de corte",
+    "campos":[
+      {"key":"pecas","label":"Peças do plano de corte","type":"table","unique_key":"codigo","columns":[
+        {"key":"codigo","label":"Código da peça","type":"text","required":true},
+        {"key":"descricao","label":"Descrição da peça","type":"text"},
+        {"key":"material","label":"Material utilizado","type":"text"},
+        {"key":"tipo_material","label":"Tipo de material","type":"text"},
+        {"key":"espessura","label":"Espessura (mm)","type":"number"},
+        {"key":"comprimento","label":"Comprimento (mm)","type":"number"},
+        {"key":"largura","label":"Largura (mm)","type":"number"},
+        {"key":"quantidade","label":"Quantidade de peças","type":"integer","required":true},
+        {"key":"unidade","label":"Unidade de medida","type":"text"},
+        {"key":"sentido_veio","label":"Sentido do veio","type":"text"},
+        {"key":"tipo_corte","label":"Tipo de corte","type":"text"},
+        {"key":"tolerancia","label":"Tolerância dimensional (mm)","type":"number"},
+        {"key":"chapa_lote","label":"Identificação da chapa ou lote","type":"text"}
+      ]},
+      {"key":"maquina","label":"Máquina utilizada","type":"text"},
+      {"key":"plano_corte","label":"Plano de corte","type":"file"},
+      {"key":"desenho_tecnico","label":"Desenho técnico","type":"file"},
+      {"key":"observacoes","label":"Observações técnicas","type":"textarea"}
+    ],
+    "checklist":[
+      {"key":"material_conferido","label":"Material e lote conferidos"},
+      {"key":"plano_conferido","label":"Plano de corte e sentido do veio conferidos"},
+      {"key":"medidas_conferidas","label":"Medidas e tolerâncias conferidas"},
+      {"key":"pecas_identificadas","label":"Peças identificadas e quantidades conferidas"},
+      {"key":"qualidade_aprovada","label":"Checklist de qualidade aprovado"}
+    ]
+  },
+  {
+    "setor":"montagem","versao":1,"titulo":"Ficha técnica de montagem",
+    "campos":[
+      {"key":"produto","label":"Nome do produto","type":"text"},
+      {"key":"codigo_produto","label":"Código do produto","type":"text"},
+      {"key":"quantidade","label":"Quantidade de unidades","type":"integer"},
+      {"key":"componentes","label":"Componentes e peças recebidas","type":"table","unique_key":"codigo","columns":[
+        {"key":"codigo","label":"Código do componente","type":"text","required":true},
+        {"key":"descricao","label":"Descrição","type":"text"},
+        {"key":"quantidade","label":"Quantidade necessária","type":"number"},
+        {"key":"recebida","label":"Quantidade de peças recebidas","type":"number"}
+      ]},
+      {"key":"estrutura","label":"Tipo de estrutura","type":"text"},
+      {"key":"fixacao","label":"Tipo de fixação","type":"text"},
+      {"key":"ferragens","label":"Ferragens necessárias","type":"textarea"},
+      {"key":"parafusos_conectores","label":"Parafusos e conectores","type":"textarea"},
+      {"key":"dobradicas","label":"Dobradiças","type":"text"},
+      {"key":"corredicas","label":"Corrediças","type":"text"},
+      {"key":"acessorios","label":"Acessórios","type":"textarea"},
+      {"key":"ferramentas","label":"Ferramentas necessárias","type":"textarea"},
+      {"key":"desenho_tecnico","label":"Desenho técnico","type":"file"},
+      {"key":"manual","label":"Manual ou instruções de montagem","type":"file"},
+      {"key":"observacoes","label":"Observações do projeto","type":"textarea"}
+    ],
+    "checklist":[
+      {"key":"pecas","label":"Conferência das peças recebidas"},
+      {"key":"medidas","label":"Verificação das medidas"},
+      {"key":"componentes","label":"Conferência dos componentes"},
+      {"key":"ferragens","label":"Verificação das ferragens"},
+      {"key":"alinhamento","label":"Alinhamento da estrutura"},
+      {"key":"fixacao","label":"Fixação dos componentes"},
+      {"key":"funcionamento","label":"Teste de funcionamento"},
+      {"key":"inspecao","label":"Inspeção visual"},
+      {"key":"aprovacao","label":"Aprovação para próxima etapa"}
+    ]
+  },
+  {
+    "setor":"acabamento","versao":1,"titulo":"Ficha técnica de acabamento",
+    "campos":[
+      {"key":"produto","label":"Produto","type":"text"},
+      {"key":"tipo_acabamento","label":"Tipo de acabamento","type":"text"},
+      {"key":"cor","label":"Cor especificada","type":"text"},
+      {"key":"codigo_cor","label":"Código da cor","type":"text"},
+      {"key":"textura","label":"Textura","type":"text"},
+      {"key":"tinta_verniz","label":"Tipo de tinta ou verniz","type":"text"},
+      {"key":"fabricante","label":"Fabricante do produto","type":"text"},
+      {"key":"codigo_material","label":"Código do material","type":"text"},
+      {"key":"lote","label":"Lote utilizado","type":"text"},
+      {"key":"quantidade_aplicada","label":"Quantidade de produto aplicada","type":"number"},
+      {"key":"unidade_aplicacao","label":"Unidade do produto aplicado","type":"text"},
+      {"key":"lixamento","label":"Tipo de lixamento","type":"text"},
+      {"key":"granulacao","label":"Granulação da lixa","type":"text"},
+      {"key":"metodo","label":"Método de aplicação","type":"text"},
+      {"key":"equipamento","label":"Equipamento utilizado","type":"text"},
+      {"key":"demaos","label":"Quantidade de demãos","type":"integer"},
+      {"key":"intervalo_minutos","label":"Intervalo entre aplicações (minutos)","type":"integer"},
+      {"key":"secagem_minutos","label":"Tempo previsto de secagem (minutos)","type":"integer"},
+      {"key":"condicoes_ambientais","label":"Temperatura ou condições ambientais","type":"textarea"},
+      {"key":"observacoes","label":"Observações técnicas","type":"textarea"}
+    ],
+    "checklist":[
+      {"key":"superficie","label":"Preparação da superfície"},
+      {"key":"lixamento","label":"Lixamento realizado"},
+      {"key":"limpeza","label":"Limpeza da peça"},
+      {"key":"primeira_demao","label":"Aplicação da primeira demão"},
+      {"key":"demaos_adicionais","label":"Aplicação das demãos adicionais"},
+      {"key":"secagem","label":"Tempo de secagem respeitado"},
+      {"key":"cor","label":"Conferência da cor"},
+      {"key":"textura","label":"Conferência da textura"},
+      {"key":"manchas","label":"Ausência de manchas"},
+      {"key":"bolhas","label":"Ausência de bolhas"},
+      {"key":"imperfeicoes","label":"Ausência de imperfeições"},
+      {"key":"inspecao_final","label":"Inspeção final"}
+    ]
+  },
+  {
+    "setor":"instalacao","versao":1,"titulo":"Ficha técnica de instalação",
+    "campos":[
+      {"key":"endereco","label":"Endereço da instalação","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"numero","label":"Número","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"complemento","label":"Complemento","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"bairro","label":"Bairro","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"cidade","label":"Cidade","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"cep","label":"CEP","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"referencia","label":"Ponto de referência","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"contato","label":"Contato autorizado do cliente","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"telefone","label":"Telefone de contato","type":"text","section":"Local do serviço","privacy":"cliente"},
+      {"key":"localizacao_link","label":"Link de localização do serviço","type":"url","section":"Local do serviço","privacy":"cliente"},
+      {"key":"produto","label":"Produto a instalar","type":"text"},
+      {"key":"quantidade","label":"Quantidade de itens","type":"integer"},
+      {"key":"dimensoes","label":"Dimensões","type":"text"},
+      {"key":"local_instalacao","label":"Local de instalação","type":"text"},
+      {"key":"superficie","label":"Tipo de superfície","type":"text"},
+      {"key":"fixacao","label":"Método de fixação","type":"text"},
+      {"key":"ferramentas","label":"Ferramentas necessárias","type":"textarea"},
+      {"key":"materiais","label":"Materiais necessários","type":"textarea"},
+      {"key":"acessorios","label":"Acessórios","type":"textarea"},
+      {"key":"desenho_tecnico","label":"Desenho técnico","type":"file"},
+      {"key":"instrucoes","label":"Instruções específicas","type":"textarea"},
+      {"key":"restricoes","label":"Restrições de acesso ao local","type":"textarea"}
+    ],
+    "checklist":[
+      {"key":"produtos","label":"Produtos conferidos","section":"Antes da saída"},
+      {"key":"materiais","label":"Materiais separados","section":"Antes da saída"},
+      {"key":"ferramentas","label":"Ferramentas conferidas","section":"Antes da saída"},
+      {"key":"acessorios","label":"Acessórios conferidos","section":"Antes da saída"},
+      {"key":"endereco","label":"Endereço confirmado","section":"Antes da saída"},
+      {"key":"agendamento","label":"Agendamento confirmado","section":"Antes da saída"},
+      {"key":"ambiente","label":"Conferência do ambiente","section":"Durante a instalação"},
+      {"key":"medidas","label":"Verificação das medidas","section":"Durante a instalação"},
+      {"key":"posicionamento","label":"Posicionamento do produto","section":"Durante a instalação"},
+      {"key":"fixacao","label":"Fixação","section":"Durante a instalação"},
+      {"key":"nivelamento","label":"Nivelamento","section":"Durante a instalação"},
+      {"key":"ajustes","label":"Ajustes","section":"Durante a instalação"},
+      {"key":"testes","label":"Testes de funcionamento","section":"Durante a instalação"},
+      {"key":"limpeza","label":"Limpeza do ambiente","section":"Finalização"},
+      {"key":"qualidade","label":"Conferência de qualidade","section":"Finalização"},
+      {"key":"fotografias","label":"Fotografias do serviço","section":"Finalização"},
+      {"key":"pendencias","label":"Registro de pendências","section":"Finalização"},
+      {"key":"entrega","label":"Confirmação de entrega","section":"Finalização"},
+      {"key":"aceite_cliente","label":"Aceite do cliente","section":"Finalização","automatic":true}
+    ]
+  },
+  {
+    "setor":"estoque","versao":1,"titulo":"Ficha técnica de material",
+    "campos":[
+      {"key":"codigo","label":"Código interno","type":"text","source":"codigo"},
+      {"key":"nome","label":"Nome do material","type":"text","source":"nome"},
+      {"key":"unidade","label":"Unidade de medida","type":"text","source":"unidade"},
+      {"key":"saldo","label":"Quantidade disponível","type":"number","source":"saldo","readOnly":true},
+      {"key":"reservada","label":"Quantidade reservada","type":"number","source":"reservada","readOnly":true},
+      {"key":"minimo","label":"Quantidade mínima","type":"number","source":"estoque_minimo"},
+      {"key":"sku","label":"SKU","type":"text"},
+      {"key":"categoria","label":"Categoria","type":"text"},
+      {"key":"subcategoria","label":"Subcategoria","type":"text"},
+      {"key":"descricao","label":"Descrição técnica","type":"textarea"},
+      {"key":"marca","label":"Marca","type":"text"},
+      {"key":"fabricante","label":"Fabricante","type":"text"},
+      {"key":"modelo","label":"Modelo","type":"text"},
+      {"key":"maximo","label":"Quantidade máxima","type":"number"},
+      {"key":"localizacao","label":"Localização no estoque","type":"text"},
+      {"key":"prateleira","label":"Prateleira ou posição","type":"text"},
+      {"key":"lote","label":"Número do lote","type":"text"},
+      {"key":"validade","label":"Data de validade","type":"date"},
+      {"key":"fornecedor","label":"Fornecedor","type":"text"},
+      {"key":"custo_unitario","label":"Custo unitário","type":"number","privacy":"estrategico"},
+      {"key":"observacoes","label":"Observações","type":"textarea"},
+      {"key":"foto","label":"Foto do material","type":"file"}
+    ],
+    "checklist":[
+      {"key":"material","label":"Material e unidade conferidos"},
+      {"key":"quantidade","label":"Quantidade e reserva conferidas"},
+      {"key":"lote","label":"Lote e validade conferidos"},
+      {"key":"registro","label":"Movimentação registrada com motivo e responsável"}
+    ]
+  },
+  {
+    "setor":"financeiro","versao":1,"titulo":"Ficha administrativa da ordem",
+    "campos":[
+      {"key":"produto_servico","label":"Produto ou serviço","type":"text"},
+      {"key":"descricao","label":"Descrição do pedido","type":"textarea"},
+      {"key":"quantidade","label":"Quantidade","type":"number"},
+      {"key":"unidade","label":"Unidade","type":"text"},
+      {"key":"instrucoes_producao","label":"Instruções para produção","type":"textarea"},
+      {"key":"condicoes_comerciais","label":"Condições comerciais autorizadas","type":"textarea","privacy":"comercial"},
+      {"key":"condicoes_pagamento","label":"Condições de pagamento","type":"textarea","privacy":"comercial"},
+      {"key":"validade_proposta","label":"Validade da proposta","type":"date","privacy":"comercial"},
+      {"key":"observacoes","label":"Observações administrativas","type":"textarea"}
+    ],
+    "checklist":[
+      {"key":"cadastro","label":"Cadastro e contato autorizados conferidos"},
+      {"key":"projeto","label":"Projeto e especificações conferidos"},
+      {"key":"aprovacao","label":"Pedido e alterações aprovados"},
+      {"key":"prazo","label":"Prazo e prioridade definidos"},
+      {"key":"documentos","label":"Documentos técnicos anexados"},
+      {"key":"liberacao","label":"Liberação para produção autorizada"}
+    ]
+  }
+]

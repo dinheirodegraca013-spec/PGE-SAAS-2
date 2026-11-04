@@ -1,4 +1,4 @@
-import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, Wallet, Package, LucideIcon } from 'lucide-react';
+import { Home, Users, MessageCircle, Sofa, Settings, Briefcase, Phone, Wallet, Package, Boxes, UserRoundCheck, LucideIcon } from 'lucide-react';
 
 export interface NavItem {
   label: string;
@@ -16,12 +16,14 @@ export interface NavGroup {
  */
 export const navGroups: NavGroup[] = [
   {
-    title: 'Geral',
+    title: 'Espaço de trabalho',
     items: [
-      { label: 'Início', path: '/', icon: Home },
+      { label: 'Visão geral', path: '/', icon: Home },
       { label: 'Clientes', path: '/clientes', icon: Users },
       { label: 'Serviços', path: '/servicos', icon: Briefcase },
-      { label: 'Meu Financeiro', path: '/meu-financeiro', icon: Wallet },
+      { label: 'Financeiro', path: '/meu-financeiro', icon: Wallet },
+      { label: 'Operação 3D', path: '/visao-3d', icon: Boxes },
+      { label: 'Equipe', path: '/equipe', icon: UserRoundCheck },
       // Módulo WhatsApp temporariamente oculto do menu
       // { label: 'Conversas WhatsApp', path: '/whatsapp', icon: MessageCircle },
     ],

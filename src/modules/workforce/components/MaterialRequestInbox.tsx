@@ -1,0 +1,21 @@
+import React,{useEffect,useState} from 'react';
+import {useWorkforceAccess} from '../context/WorkforceAccessContext';
+import {hasPermission} from '../lib/access';
+import {technicalSheets,type MaterialStockRequest} from '../services/technical-sheet.service';
+
+const labels={pendente:'Pendente',aprovada:'Aprovada',recusada:'Recusada',atendida:'Atendida',cancelada:'Cancelada'};
+export default function MaterialRequestInbox(){
+  const {context}=useWorkforceAccess();
+  const allowed=hasPermission(context,'estoque','visualizar');
+  const canDecide=hasPermission(context,'estoque','aprovar');
+  const canAttend=hasPermission(context,'estoque','registrar_saida');
+  const [status,setStatus]=useState('');const [items,setItems]=useState<MaterialStockRequest[]>([]);const [loading,setLoading]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
+  async function load(){if(!allowed)return;setLoading(true);setError('');try{setItems(await technicalSheets.materialStockRequests(status||null));}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível carregar as solicitações.');}finally{setLoading(false);}}
+  useEffect(()=>{void load();},[status,allowed,context?.funcionario.id,context?.funcionario.versao]);
+  if(!allowed)return null;
+  return <section className="card space-y-4 p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-bold">Solicitações de material</h2><p className="text-sm text-slate-500">Aprove, recuse e atenda pedidos enviados pelas equipes.</p></div><div className="flex gap-2"><select aria-label="Filtrar status" className="input-field" value={status} onChange={event=>setStatus(event.target.value)}><option value="">Todas</option>{Object.entries(labels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select><button type="button" className="btn-secondary" disabled={loading} onClick={()=>void load()}>Atualizar</button></div></div>
+    {loading&&<p role="status">Carregando solicitações…</p>}{error&&<p role="alert" className="text-sm text-red-700">{error}</p>}{message&&<p role="status" className="text-sm text-emerald-700">{message}</p>}
+    {!loading&&!error&&!items.length&&<p className="text-sm text-slate-500">Nenhuma solicitação encontrada.</p>}
+    <div className="space-y-3">{items.map(item=><article key={`${item.id}:${item.versao}`} className="rounded-xl border border-slate-200 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{item.item_nome} · {item.quantidade.toLocaleString('pt-BR')} {item.unidade}</h3><p className="text-xs text-slate-500">{item.servico_nome} · {item.setor_solicitante} · solicitado por {item.solicitante_nome}</p></div><span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold">{labels[item.status]}</span></div><p className="mt-2 text-sm">{item.motivo}</p><div className="mt-3 flex flex-wrap gap-2">{canDecide&&item.status==='pendente'&&<><button type="button" className="btn-primary text-sm" onClick={async()=>{try{await technicalSheets.materialRequestUpdate(item.id,'aprovar',item.versao);setMessage('Solicitação aprovada.');await load();}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível aprovar.');}}}>Aprovar</button><button type="button" className="btn-secondary text-sm" onClick={async()=>{const reason=window.prompt('Motivo da recusa:','');if(reason===null)return;try{await technicalSheets.materialRequestUpdate(item.id,'recusar',item.versao,reason);setMessage('Solicitação recusada.');await load();}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível recusar.');}}}>Recusar</button></>}{canAttend&&item.status==='aprovada'&&<button type="button" className="btn-primary text-sm" onClick={async()=>{try{await technicalSheets.materialRequestUpdate(item.id,'atender',item.versao);setMessage('Solicitação atendida e saída registrada.');await load();}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível atender.');}}}>Atender e dar saída</button>}</div></article>)}</div>
+  </section>;
+}

@@ -3,18 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuthStore } from './stores/auth';
 import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
 import AdminGuard from './components/auth/AdminGuard';
 import FinanceiroGuard from './components/auth/FinanceiroGuard';
+import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // Views do Painel do Cliente (Existentes - 100% preservadas)
 import DashboardView from './views/dashboard/DashboardView';
 import LoginView from './views/auth/LoginView';
 import ResetPasswordView from './views/auth/ResetPasswordView';
+import DevicesView from './views/auth/DevicesView';
+import { WorkforceAccessProvider, useWorkforceAccess } from './modules/workforce/context/WorkforceAccessContext';
+import { workforcePathAllowed } from './modules/workforce/lib/access';
 import RegisterView from './views/auth/RegisterView';
 import ClientesListView from './modules/clientes/views/ClientesListView';
 import ProjetosListView from './modules/furniture/views/ProjetosListView';
@@ -28,6 +32,9 @@ import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
 import SettingsView from './views/settings/SettingsView';
 import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
 import EstoqueView from './views/estoque/EstoqueView';
+const Visao3DView = lazy(() => import('./views/visao3d/Visao3DView'));
+import EquipeView from './views/equipe/EquipeView';
+import MeuSetorView from './views/equipe/MeuSetorView';
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -47,6 +54,7 @@ import LandingPage from './views/public/LandingPage';
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const auth = useAuthStore();
+  const work = useWorkforceAccess();
   const location = useLocation();
 
   if (auth.isLoading) {
@@ -61,10 +69,17 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   if (!auth.isAuthenticated) {
+    if (auth.deviceError) return <Navigate to="/dispositivos" replace />;
     if (location.pathname === '/') return <LandingPage />;
     return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />;
   }
 
+  if(work.loading&&!work.context)return <div role="status" className="p-6">Validando suas permissões…</div>;
+  if(work.error||!work.context)return <div className="mx-auto max-w-xl space-y-4 p-6"><p role="alert">{work.error||'Não foi possível validar suas permissões de trabalho.'}</p><button className="btn-primary" onClick={()=>void work.reload()}>Tentar novamente</button><button className="btn-secondary ml-3" onClick={()=>void auth.logout()}>Sair</button></div>;
+  if (!work.context.proprietario && !workforcePathAllowed(work.context,location.pathname)) {
+    if(location.pathname==='/meu-setor')return <div className="space-y-3 p-6"><p role="alert">Nenhuma ferramenta de trabalho foi liberada para sua conta. Fale com o administrador.</p><button className="btn-secondary" onClick={()=>void auth.logout()}>Sair</button></div>;
+    return <Navigate to="/meu-setor" replace />;
+  }
   return <>{children}</>;
 }
 
@@ -89,6 +104,7 @@ function PublicOnly({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <AuthProvider>
+      <WorkforceAccessProvider>
       <BrowserRouter>
         <Routes>
           {/* Rotas Públicas */}
@@ -109,6 +125,7 @@ export default function App() {
             }
           />
           <Route path="/redefinir-senha" element={<ResetPasswordView />} />
+          <Route path="/dispositivos" element={<DevicesView />} />
 
           {/* Página de Acesso Restrito / Negado */}
           <Route path="/acesso-negado" element={<AcessoNegadoView />} />
@@ -145,6 +162,15 @@ export default function App() {
             <Route path="configuracoes" element={<SettingsView />} />
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
             <Route path="estoque" element={<EstoqueView />} />
+            <Route path="visao-3d" element={
+              <RouteErrorBoundary><Suspense fallback={<div role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Carregando a Visão 3D…</div>}>
+                <Visao3DView />
+              </Suspense></RouteErrorBoundary>
+            } />
+            {/* Alias compatível com links antigos e com o protótipo ERP 3D. */}
+            <Route path="visao3d" element={<Navigate to="/visao-3d" replace />} />
+            <Route path="equipe" element={<EquipeView />} />
+            <Route path="meu-setor" element={<MeuSetorView />} />
           </Route>
 
           {/* =============================================================== */}
@@ -235,6 +261,7 @@ export default function App() {
           <Route path="*" element={<NotFoundView />} />
         </Routes>
       </BrowserRouter>
+      </WorkforceAccessProvider>
     </AuthProvider>
   );
 }

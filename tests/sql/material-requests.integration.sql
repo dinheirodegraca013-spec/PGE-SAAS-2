@@ -1,0 +1,35 @@
+DO $$
+DECLARE owner_id uuid:=gen_random_uuid();company uuid;service uuid:=gen_random_uuid();item uuid:=gen_random_uuid();request_id uuid:=gen_random_uuid();request_two uuid:=gen_random_uuid();created_id uuid;result jsonb;version integer;balance numeric;
+BEGIN
+  PERFORM set_config('request.jwt.claim.sub','',true);PERFORM set_config('request.jwt.claim.role','service_role',true);PERFORM set_config('request.jwt.claims','{"role":"service_role"}',true);
+  INSERT INTO auth.users(id,email,raw_user_meta_data) VALUES(owner_id,'materials-'||owner_id||'@example.test','{"nome_completo":"Materials owner","razao_social":"Materials fixture"}');
+  SELECT tenant_id INTO company FROM public.profiles WHERE id=owner_id;
+  INSERT INTO public.estoque_itens(id,tenant_id,nome,unidade,estoque_minimo,ativo,saldo) VALUES(item,company,'Cola fixture','un',1,true,5);
+  PERFORM set_config('request.jwt.claim.sub',owner_id::text,true);PERFORM set_config('request.jwt.claim.role','authenticated',true);PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','session_id',gen_random_uuid())::text,true);
+  PERFORM public.autorizar_dispositivo(gen_random_uuid(),'Materials fixture');
+  INSERT INTO public.servicos(id,tenant_id,nome,created_by) VALUES(service,company,'Materials service',owner_id);
+  PERFORM public.ficha_servico_salvar(service,'corte','{}',0);
+  result:=public.material_solicitacao_materiais(service,'corte');
+  IF jsonb_array_length(result)<>1 OR result->0->>'unidade'<>'un' THEN RAISE EXCEPTION 'Catálogo de materiais não disponível'; END IF;
+  result:=public.material_solicitacao_criar(request_id,service,'corte',item,2,'un','Necessária para o lote');
+  IF result->>'status'<>'pendente' THEN RAISE EXCEPTION 'Solicitação não criada'; END IF;
+  created_id:=(result->>'id')::uuid;
+  result:=public.material_solicitacao_listar(service,'corte');
+  IF jsonb_array_length(result)<>1 OR result->0->>'status'<>'pendente' THEN RAISE EXCEPTION 'Lista de solicitações incompleta'; END IF;
+  result:=public.material_solicitacao_painel_estoque('pendente');
+  IF jsonb_array_length(result)<>1 OR result->0->>'item_nome'<>'Cola fixture' THEN RAISE EXCEPTION 'Painel do estoque não exibiu a solicitação'; END IF;
+  result:=public.material_solicitacao_atualizar(created_id,'aprovar',1);
+  IF result->>'status'<>'aprovada' THEN RAISE EXCEPTION 'Reserva não aprovada'; END IF;
+  SELECT saldo INTO balance FROM public.estoque_itens WHERE id=item;
+  IF balance<>5 THEN RAISE EXCEPTION 'Aprovação alterou saldo sem saída'; END IF;
+  result:=public.material_solicitacao_atualizar(created_id,'atender',2);
+  IF result->>'status'<>'atendida' THEN RAISE EXCEPTION 'Solicitação não atendida'; END IF;
+  SELECT saldo INTO balance FROM public.estoque_itens WHERE id=item;
+  IF balance<>3 THEN RAISE EXCEPTION 'Saída não foi atômica'; END IF;
+  result:=public.material_solicitacao_criar(request_id,service,'corte',item,2,'un','Necessária para o lote');
+  IF result->>'repetida'<>'true' THEN RAISE EXCEPTION 'Repetição não idempotente'; END IF;
+  result:=public.material_solicitacao_criar(request_two,service,'corte',item,4,'un','Outra necessidade válida');
+  BEGIN PERFORM public.material_solicitacao_atualizar((result->>'id')::uuid,'aprovar',1);RAISE EXCEPTION 'Reserva acima do saldo aceita';EXCEPTION WHEN check_violation THEN NULL;END;
+END;
+$$;
+SELECT 'PASS: solicitações de material, reserva, atendimento atômico e idempotência' AS result;

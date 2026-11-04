@@ -10,9 +10,9 @@ import type { Cliente, ClienteCreateInput } from '../types/cliente';
 export default function ClientesListView() {
   const auth = useAuthStore();
   const [clientes, setClientes] = useState<Cliente[]>([]);
-  const isPlanoFree = auth.usuario?.plano === 'Free';
+  const isPlanoBasico = auth.usuario?.plano === 'Básico';
   const [limiteClientes, setLimiteClientes] = useState<number | null>(null);
-  const limiteAtingido = isPlanoFree && limiteClientes !== null && clientes.length >= limiteClientes;
+  const limiteAtingido = isPlanoBasico && limiteClientes !== null && clientes.length >= limiteClientes;
   const [carregandoLista, setCarregandoLista] = useState(true);
   const [erroLista, setErroLista] = useState<string | null>(null);
   const [busca, setBusca] = useState('');
@@ -124,8 +124,8 @@ export default function ClientesListView() {
 
   return (
     <div className="space-y-6">
-      {/* Alerta de Limite do Plano Free */}
-      {isPlanoFree && limiteClientes !== null && (
+      {/* Alerta de limite cadastrado no plano Básico */}
+      {isPlanoBasico && limiteClientes !== null && (
         <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl border ${
           limiteAtingido ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-slate-200 bg-white text-slate-700'
         } shadow-xs`}>
@@ -135,12 +135,12 @@ export default function ClientesListView() {
             </div>
             <div>
               <p className="text-sm font-semibold">
-                Plano Free: {clientes.length} de {limiteClientes} clientes cadastrados
+                Plano Básico: {clientes.length} de {limiteClientes} clientes cadastrados
               </p>
               <p className="text-xs text-slate-500">
                 {limiteAtingido
                   ? 'Você atingiu o limite de clientes do plano gratuito. Nenhum dado foi excluído.'
-                  : `Seu plano gratuito permite cadastrar até ${limiteClientes} clientes.`}
+                  : `Seu plano Básico permite cadastrar até ${limiteClientes} clientes.`}
               </p>
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function ClientesListView() {
           className="btn-primary gap-2 self-start sm:self-auto cursor-pointer"
           onClick={() => {
             if (limiteAtingido && !mostrarFormulario) {
-              setErroFormulario(`Limite de ${limiteClientes} clientes do Plano Free atingido. Para cadastrar novos clientes, mude para o plano Standard ou Empresarial.`);
+              setErroFormulario(`Limite de ${limiteClientes} clientes do Plano Básico atingido. Para cadastrar novos clientes, mude para o plano Profissional ou Premium/Plus.`);
             }
             setMostrarFormulario(!mostrarFormulario);
           }}
@@ -376,3 +376,4 @@ export default function ClientesListView() {
     </div>
   );
 }
+
