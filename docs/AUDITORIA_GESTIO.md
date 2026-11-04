@@ -89,4 +89,10 @@ Data: 27/10/2026
 - O auditor agora também compara valores exatos dos headers de segurança e valida CORS dos endpoints autenticados (`https://gestio.dev.br`, somente POST/OPTIONS).
 - Resultado: `npm run audit:production` aprovado, sem segredos expostos, com Edge Functions/RPCs e preflight conforme contrato.
 
+### Endurecimento do orçamento público — 04/11/2026
+
+- `public-orcamento` foi atualizado para a versão 4 no Supabase, com `supabase-js` fixado em `2.117.3`.
+- O corpo POST agora é limitado a 16 KiB, com resposta `413` para payload excedente; requisições inválidas continuam respondendo `400`.
+- Verificação direta: payload inválido `400`, payload de 17 KiB `413` e auditoria de produção completa aprovada.
+
 
