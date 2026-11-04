@@ -42,6 +42,7 @@ test('cadastro ignora empresa e papel enviados pelo navegador',async()=>{
   assert.deepEqual(await response.json(),{success:true});assert.equal(s.calls[1][2].redirectTo,'https://gestio.dev.br/redefinir-senha');
 });
 test('setor inválido é recusado antes da criação',async()=>{const s=setup();assert.equal((await s.run({...body,setor:'admin'})).status,400);assert.equal(s.calls.length,0);});
+test('cadastro preserva cargo e identificador interno em metadados confiáveis',async()=>{const s=setup();assert.equal((await s.run({...body,cargo:'Montador',identificador_interno:'FUNC-007'})).status,201);const created=s.calls[0][1];assert.equal(created.app_metadata.gestio_cargo,'Montador');assert.equal(created.app_metadata.gestio_identificador_interno,'FUNC-007');});
 test('falha de e-mail desfaz somente a conta recém-criada',async()=>{const s=setup({mailFailure:true});assert.equal((await s.run(body)).status,502);assert.deepEqual(s.calls.at(-1),['delete','employee']);});
 test('senha temporária respeita o limite real do Supabase e contém todas as classes',async()=>{
   const s=setup({enforcePasswordLimit:true});assert.equal((await s.run(body)).status,201);
@@ -56,3 +57,4 @@ test('só conflito confirmado é apresentado como e-mail já cadastrado',async()
   assert.equal(response.status,502);assert.doesNotMatch((await response.json()).error,/já.*cadastrado/);
   assert.equal(failed.calls.some(call=>call[0]==='mail'),false);
 });
+
