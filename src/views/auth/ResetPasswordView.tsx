@@ -18,13 +18,35 @@ export default function ResetPasswordView() {
 
   useEffect(() => {
     let mounted = true;
+    const limparTokensDaUrl = () => {
+      if (window.location.hash || window.location.search.includes('code=')) {
+        window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search.replace(/([?&])code=[^&]*/i, '').replace(/[?&]$/, '')}`);
+      }
+    };
+    const prepararSessaoDeRecuperacao = async () => {
+      const code = searchParams.get('code');
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) throw error;
+        limparTokensDaUrl();
+        return;
+      }
+      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const accessToken = hash.get('access_token');
+      const refreshToken = hash.get('refresh_token');
+      if (accessToken && refreshToken) {
+        const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        if (error) throw error;
+        limparTokensDaUrl();
+      }
+    };
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
       setSessaoValidada(Boolean(session));
       if (session?.user.email) setEmail(session.user.email);
     });
-    // getSession aguarda a inicialização que processa o link recebido por e-mail.
-    supabase.auth.getSession().then(({ data, error }) => {
+    // Aceita os formatos atuais do Supabase (PKCE `code` e tokens no hash), além da sessão persistida.
+    prepararSessaoDeRecuperacao().then(() => supabase.auth.getSession()).then(({ data, error }) => {
       if (!mounted) return;
       setSessaoValidada(!error && Boolean(data.session));
       if (data.session?.user.email) setEmail(data.session.user.email);
@@ -35,7 +57,7 @@ export default function ResetPasswordView() {
       if (mounted) setVerificandoLink(false);
     });
     return () => { mounted = false; subscription.unsubscribe(); };
-  }, []);
+  }, [searchParams]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -193,3 +215,4 @@ export default function ResetPasswordView() {
     </div>
   );
 }
+
