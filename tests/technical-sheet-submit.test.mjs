@@ -5,7 +5,7 @@ import { transform } from 'esbuild';
 import React from 'react';
 const {code} = await transform(await readFile(new URL('../src/modules/workforce/components/ServiceTechnicalSheet.tsx',import.meta.url),'utf8'),{loader:'tsx',format:'cjs'});
 function setup({dirty=false,blocked=false}={}) {
-  const sheet = {versao:3,status:blocked?'pendente':'em_andamento',inicio_liberado:!blocked,bloqueio_fluxo:blocked?'etapa_anterior':null,modelo:{titulo:'Corte',campos:[],checklist:[{key:'medidas',label:'Medidas conferidas'}]},dados:{maquina:'Serra'},privacidade_autorizada:[],checklist:{}};
+  const sheet = {versao:3,pode_editar:true,acoes_execucao:['iniciar','pausar','concluir'],status:blocked?'pendente':'em_andamento',inicio_liberado:!blocked,bloqueio_fluxo:blocked?'etapa_anterior':null,modelo:{titulo:'Corte',campos:[],checklist:[{key:'medidas',label:'Medidas conferidas'}]},dados:{maquina:'Serra'},privacidade_autorizada:[],checklist:{}};
   const states = [sheet,dirty?{maquina:'Alteração não salva'}:sheet.dados,false,'',0,false,false];
   let index = 0;
   const changes = []; const calls = [];
@@ -21,6 +21,12 @@ function setup({dirty=false,blocked=false}={}) {
     if(name==='./TechnicalSheetForm')return {__esModule:true,default:Form};
     if(name==='./SheetAssignmentEditor')return {__esModule:true,default:()=>null};
     if(name==='./TaskCreationForm')return {__esModule:true,default:()=>null};
+    if(name==='./SheetAttachments')return {__esModule:true,default:()=>null};
+    if(name==='./SheetIncidents')return {__esModule:true,default:()=>null};
+    if(name==='./InstallationAcceptanceForm')return {__esModule:true,default:()=>null};
+    if(name==='./FinishingDryingControl')return {__esModule:true,default:()=>null};
+    if(name==='./ProductionLog')return {__esModule:true,default:()=>null};
+    if(name.includes('installation.service'))return {installation:{}};
     if(name.includes('technical-sheet.service'))return {technicalSheets:{save:async(...args)=>{calls.push(['save',...args]);await pending;return 4;},checklist:async(...args)=>{calls.push(['checklist',...args]);await pending;return {versao:4,checklist:{medidas:true}};}}};
     throw new Error(name);
   },module,module.exports);

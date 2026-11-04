@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 import { hasPermission } from '../lib/access';
-import { technicalSheets, type ServiceSheet } from '../services/technical-sheet.service';
+import { technicalSheets, type FinishingDryingState, type ProductionState, type ServiceSheet } from '../services/technical-sheet.service';
 import TechnicalSheetForm from './TechnicalSheetForm';
 import SheetAssignmentEditor from './SheetAssignmentEditor';
 import TaskCreationForm from './TaskCreationForm';
+import SheetAttachments from './SheetAttachments';
+import SheetIncidents from './SheetIncidents';
+import InstallationAcceptanceForm from './InstallationAcceptanceForm';
+import {installation} from '../services/installation.service';
+import FinishingDryingControl from './FinishingDryingControl';
+import ProductionLog from './ProductionLog';
 
 export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId: string; sector: string }) {
   const { context } = useWorkforceAccess();
@@ -15,17 +21,33 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const [reload, setReload] = useState(0);
   const [checklistBusy, setChecklistBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [attachmentOptions,setAttachmentOptions] = useState<{id:string;nome:string}[]>([]);
+  const [drying, setDrying] = useState<FinishingDryingState | null>(null);
+  const [dryingError, setDryingError] = useState('');
+  const [production, setProduction] = useState<ProductionState | null>(null);
+  const [productionError, setProductionError] = useState('');
   const mutation = useRef(false);
   const generation = useRef(0);
   useEffect(() => {
     const request = ++generation.current;
-    setSheet(null); setValues({}); setError(''); setLoading(true);
-    technicalSheets.load(serviceId, sector).then(result => {
-      if (request !== generation.current) return;
-      setSheet(result); setValues(result.dados);
-    }).catch(cause => {
-      if (request === generation.current) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar a ficha.');
-    }).finally(() => { if (request === generation.current) setLoading(false); });
+    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setError(''); setLoading(true);
+    (async () => {
+      try {
+        const result = await technicalSheets.load(serviceId, sector);
+        if (request !== generation.current) return;
+        setSheet(result); setValues(result.dados);
+        if (sector === 'acabamento') {
+          try { setDrying(await technicalSheets.dryingLoad(serviceId)); }
+          catch (cause) { if (request === generation.current) setDryingError(cause instanceof Error ? cause.message : 'Não foi possível consultar a secagem.'); }
+        }
+        if (sector === 'corte' || sector === 'montagem') {
+          try { setProduction(await technicalSheets.productionLoad(serviceId, sector)); }
+          catch (cause) { if (request === generation.current) setProductionError(cause instanceof Error ? cause.message : 'Não foi possível consultar a produção.'); }
+        }
+      } catch (cause) {
+        if (request === generation.current) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar a ficha.');
+      } finally { if (request === generation.current) setLoading(false); }
+    })();
     return () => { generation.current++; };
   }, [serviceId, sector, reload, context?.funcionario.versao]);
   if (loading) return <p role="status">Carregando ficha técnica…</p>;
@@ -41,7 +63,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   return <section className="space-y-4">
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Pendente'}</span>
-      {(['iniciar','pausar','concluir'] as const).filter(action=>hasPermission(context,'ordens',action) &&
+      {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
         (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary" disabled={saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
           if(mutation.current)return;
           if(action==='iniciar' && !sheet.inicio_liberado)return;
@@ -72,8 +94,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         if(request===generation.current)setSheet(current=>current?{...current,...result}:current);
       }finally{mutation.current=false;setSaving(false);}
     }} />}
-    <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada}
-      disabled={sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
+    <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada} attachmentOptions={attachmentOptions} canLinkAttachments={sheet.pode_anexar}
+      disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
         if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
         mutation.current = true; setSaving(true);
         const request = generation.current;
@@ -83,7 +105,28 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           setSheet(current => current ? { ...current, dados: { ...current.dados, ...data }, versao: version } : current);
         } finally { mutation.current = false; setSaving(false); }
       }} />
-    <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
+    {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setDryingError('');
+      const request = generation.current;
+      try {
+        const result = await technicalSheets.dryingRegister(serviceId, minutes, sheet.versao);
+        if (request === generation.current) {
+          setDrying(current => current ? { ...current, ...result } : current);
+          setSheet(current => current ? { ...current, versao: result.versao } : current);
+        }
+      } finally { mutation.current = false; setSaving(false); }
+    }} />}
+    {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setProductionError('');
+      const request = generation.current;
+      try {
+        const result = await technicalSheets.productionRegister(serviceId, sector, input, sheet.versao);
+        if (request === generation.current) { setProduction(result); setSheet(current => current ? { ...current, versao: result.versao } : current); }
+      } finally { mutation.current = false; setSaving(false); }
+    }} />}
+    <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
       <legend className="px-1 font-semibold">Checklist operacional</legend>
       <p className="text-sm text-slate-500">Cada marcação é salva individualmente.</p>
       {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm">
@@ -102,6 +145,15 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         <span>{item.label}{item.automatic && <span className="block text-xs text-slate-500">Atualizado após registro da evidência.</span>}</span>
       </label>)}
     </fieldset>
+    <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions}/>
+    {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
+    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
+      if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current=true;setSaving(true);
+      try{await installation.accept(serviceId,sheet.versao,input);setReload(n=>n+1);}
+      finally{mutation.current=false;setSaving(false);}
+    }}/>}
+    <SheetIncidents serviceId={serviceId} sector={sector} canCreate={sheet.pode_comunicar}/>
     {sheet.status!=='concluida' && <TaskCreationForm serviceId={serviceId} sector={sector}/>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
   </section>;
