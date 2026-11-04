@@ -3,6 +3,7 @@ import {isSetor,setores} from '@/lib/setores';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {workNotifications,type NotificationPage,type WorkNotification} from '../services/notifications.service';
 import ServiceTechnicalSheet from './ServiceTechnicalSheet';
+import TaskDetails from './TaskDetails';
 
 export default function WorkNotifications(){
   const {context}=useWorkforceAccess();
@@ -28,12 +29,12 @@ export default function WorkNotifications(){
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
-      <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
+      <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='tarefa_atribuida'?'Nova tarefa atribuída':item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
       <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{new Date(item.criada_em).toLocaleString('pt-BR')}</time>
       <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
         setSelected(item);
-      }}>Abrir ficha relacionada</button>
+      }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>
       {!item.lida_em && <button type="button" className="btn-secondary" disabled={!!busy} onClick={async()=>{
         if(reading.current)return;reading.current=true;setBusy(item.id);setError('');const request=generation.current;
         try{const result=await workNotifications.read(item.id);if(request===generation.current)setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);}
@@ -42,6 +43,6 @@ export default function WorkNotifications(){
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>
     </li>)}</ul>}
     {data && <div className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></div>}
-    {selected && <ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>}
+    {selected?.tarefa_id?<TaskDetails key={selected.tarefa_id} taskId={selected.tarefa_id}/>:selected?.servico_id?<ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>:null}
   </section>;
 }

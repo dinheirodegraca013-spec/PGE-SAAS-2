@@ -6,11 +6,13 @@ type Props = {
   value: Record<string, unknown>;
   allowedPrivacy?: readonly string[];
   disabled?: boolean;
+  attachmentOptions?: {id:string;nome:string}[];
+  canLinkAttachments?: boolean;
   onChange: (value: Record<string, unknown>) => void;
   onSave: (value: Record<string, unknown>) => Promise<void>;
 };
 
-export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [], disabled = false, onChange, onSave }: Props) {
+export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [], disabled = false, attachmentOptions = [], canLinkAttachments = false, onChange, onSave }: Props) {
   const id = useId();
   const [issues, setIssues] = useState<SheetIssue[]>([]);
   const [busy, setBusy] = useState(false);
@@ -43,8 +45,16 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
         {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
       </fieldset>;
     }
-    // Anexos exigem o fluxo privado de upload; não aceitar URLs públicas ou UUIDs digitados.
-    if (field.type === 'file') return <div key={path} className="text-sm"><span className="font-medium">{field.label}</span><p className="text-slate-500">{current ? 'Anexo vinculado à ordem.' : 'Nenhum anexo vinculado.'}</p></div>;
+    // Only server-listed private attachments may be selected; never typed URLs or IDs.
+    if (field.type === 'file') return <div key={path} className="text-sm">
+      <label htmlFor={controlId} className="mb-1 block font-medium">{field.label}</label>
+      {canLinkAttachments?<><select {...common} value={typeof current==='string'?current:''} onChange={event=>update(event.target.value||null)}>
+        <option value="">Sem anexo vinculado</option>
+        {typeof current==='string' && current && !attachmentOptions.some(item=>item.id===current) && <option value={current}>Anexo atual (fora da página de anexos)</option>}
+        {attachmentOptions.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}
+      </select><p className="mt-1 text-xs text-slate-500">Opções da página atual em Anexos privados. Envie arquivos ou mude a página nessa seção e salve a ficha após selecionar.</p></>:<p className="text-slate-500">{current ? 'Anexo vinculado à ordem.' : 'Nenhum anexo vinculado.'}</p>}
+      {error && <p id={`${controlId}-error`} role="alert" className="text-sm text-red-700">{error}</p>}
+    </div>;
     return <div key={path} className="min-w-0">
       <label htmlFor={controlId} className="mb-1 block text-sm font-medium">{field.label}{field.required ? ' *' : ''}</label>
       {field.type === 'textarea'

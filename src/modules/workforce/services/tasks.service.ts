@@ -4,6 +4,10 @@ export type TaskStatus=keyof typeof taskStatusLabels;
 export type WorkTask={id:string;servico_id:string|null;setor:string;titulo:string;descricao:string;responsavel_id:string;criado_por:string;criada_em:string;iniciada_em:string|null;prazo:string|null;prioridade:'baixa'|'normal'|'alta'|'urgente';status:TaskStatus;progresso:number;obrigatoria:boolean;observacoes:string;versao:number};
 export type TaskPage={itens:WorkTask[];tem_mais:boolean};
 export const workTasks={
+  async load(id:string):Promise<WorkTask>{
+    const {data,error}=await supabase.rpc('tarefa_consultar',{p_tarefa:id});
+    if(error || !data)throw new Error(error?.message||'Não foi possível carregar a tarefa.');return data;
+  },
   async create(input:{request:string;sector:string;title:string;description:string;employee:string;service:string|null;deadline:string|null;priority:WorkTask['prioridade'];mandatory:boolean}):Promise<{id:string;versao:number;repetida:boolean}>{
     const {data,error}=await supabase.rpc('tarefa_criar',{p_requisicao:input.request,p_setor:input.sector,p_titulo:input.title,p_descricao:input.description,p_responsavel:input.employee,p_servico:input.service,p_prazo:input.deadline,p_prioridade:input.priority,p_obrigatoria:input.mandatory});
     if(error || !data)throw new Error(error?.message||'Não foi possível criar a tarefa.');return data;

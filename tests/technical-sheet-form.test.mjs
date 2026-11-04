@@ -27,3 +27,13 @@ test('listas exibem campos rotulados e campos calculados ficam desabilitados', (
   assert.ok(html.includes('Adicionar item'));
   assert.ok(html.includes('value="P1"'));
 });
+test('campo técnico seleciona somente anexos listados e conserva referência fora da página',()=>{
+  const fields=[{key:'plano',label:'Plano de corte',type:'file'}];
+  const html=render({fields,value:{plano:'12345678-1234-1234-1234-123456789012'},canLinkAttachments:true,attachmentOptions:[{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',nome:'Plano validado.pdf'}]});
+  assert.ok(html.includes('<select'));
+  assert.ok(html.includes('Plano validado.pdf'));
+  assert.ok(html.includes('Anexo atual (fora da página de anexos)'));
+  assert.ok(!html.includes('<input'));
+  const denied=render({fields,value:{},attachmentOptions:[{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',nome:'Plano validado.pdf'}]});
+  assert.ok(!denied.includes('<select'));assert.ok(!denied.includes('Plano validado.pdf'));
+});

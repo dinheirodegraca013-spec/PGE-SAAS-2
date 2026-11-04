@@ -1,5 +1,5 @@
 import {supabase} from '@/lib/supabase';
-export type WorkNotification={id:string;servico_id:string;setor:string;evento:'ficha_atribuida'|'etapa_liberada';criada_em:string;lida_em:string|null};
+export type WorkNotification={id:string;servico_id:string|null;tarefa_id:string|null;setor:string;evento:'ficha_atribuida'|'etapa_liberada'|'tarefa_atribuida';criada_em:string;lida_em:string|null};
 export type NotificationPage={itens:WorkNotification[];tem_mais:boolean;nao_lidas:number};
 export const workNotifications={
   async list(page:number):Promise<NotificationPage>{

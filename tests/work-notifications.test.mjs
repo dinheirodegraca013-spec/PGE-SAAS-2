@@ -16,6 +16,7 @@ function setup({failure=false}={}){
     if(name.includes('WorkforceAccessContext'))return {useWorkforceAccess:()=>({context:{funcionario:{id:'worker',versao:1}}})};
     if(name.includes('notifications.service'))return {workNotifications:{read:async id=>{calls.push(id);await pending;if(failure)throw new Error('Acesso revogado');return {id,lida_em:'2026-11-04T01:00:00Z'};}}};
     if(name==='./ServiceTechnicalSheet')return {__esModule:true,default:()=>null};
+    if(name==='./TaskDetails')return {__esModule:true,default:()=>null};
     throw new Error(name);
   },module,module.exports);
   const tree=module.exports.default();

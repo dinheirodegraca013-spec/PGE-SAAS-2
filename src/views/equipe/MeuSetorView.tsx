@@ -9,6 +9,7 @@ import MyServiceSheets from '@/modules/workforce/components/MyServiceSheets';
 import WorkNotifications from '@/modules/workforce/components/WorkNotifications';
 import MyTasks from '@/modules/workforce/components/MyTasks';
 import PersonalWorkSummary from '@/modules/workforce/components/PersonalWorkSummary';
+import MyActivityHistory from '@/modules/workforce/components/MyActivityHistory';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 
@@ -55,6 +56,7 @@ export default function MeuSetorView() {
     {hasPermission(context,'tarefas') && <MyTasks />}
     {hasPermission(context,'notificacoes') && <WorkNotifications />}
     {hasPermission(context,'ordens') && <MyServiceSheets />}
+    {hasPermission(context,'atividades') && <MyActivityHistory />}
     <section className="card p-5"><h2 className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p>
       {carregando ? <p role="status" className="py-6">Carregando…</p> : !erro && !projetos.length ?

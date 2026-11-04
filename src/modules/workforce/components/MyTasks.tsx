@@ -4,7 +4,7 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
 import {workTasks,taskStatusLabels,type TaskPage,type WorkTask,type TaskStatus} from '../services/tasks.service';
 
-function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
+export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const {context}=useWorkforceAccess();const id=useId();
   const [status,setStatus]=useState<TaskStatus>(task.status);
   const [progress,setProgress]=useState(task.progresso);

@@ -25,6 +25,16 @@ BEGIN
   PERFORM public.autorizar_dispositivo(gen_random_uuid(),'Tasks worker');
   result:=public.minhas_tarefas();
   IF jsonb_array_length(result->'itens')<>2 THEN RAISE EXCEPTION 'Tarefas atribuídas não exibidas'; END IF;
+  IF public.ficha_servico_consultar(service,'corte')->>'servico_id'<>service::text THEN RAISE EXCEPTION 'Tarefa não liberou consulta técnica autorizada'; END IF;
+  result:=public.ficha_servico_consultar(service,'corte');
+  IF result->>'pode_editar'<>'false' OR result->'acoes_execucao'<>'[]'::jsonb THEN RAISE EXCEPTION 'Consulta técnica anunciou ações indevidas'; END IF;
+  IF jsonb_array_length(public.minhas_fichas_servicos(0,'')->'itens')<>1 THEN RAISE EXCEPTION 'Ficha da tarefa não apareceu na lista'; END IF;
+  BEGIN PERFORM public.ficha_servico_salvar(service,'corte','{"maquina":"Escalation"}',3);RAISE EXCEPTION 'Tarefa liberou edição da ficha';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
+  BEGIN PERFORM public.ficha_execucao_atualizar(service,'corte','pausar',3);RAISE EXCEPTION 'Tarefa liberou controle da etapa';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
+  result:=public.tarefa_consultar(task);
+  IF result->>'id'<>task::text OR result ? 'requisicao' THEN RAISE EXCEPTION 'Detalhe da tarefa inválido'; END IF;
+  result:=public.minhas_notificacoes();
+  IF jsonb_array_length(result->'itens')<>2 OR EXISTS(SELECT 1 FROM jsonb_array_elements(result->'itens') n WHERE n->>'evento'<>'tarefa_atribuida' OR n->>'tarefa_id' IS NULL) THEN RAISE EXCEPTION 'Notificações de tarefas incompletas'; END IF;
   IF public.meu_resumo_operacional()->'tarefas'->>'total'<>'2' OR public.meu_resumo_operacional()->'tarefas'->>'pendentes'<>'2' THEN RAISE EXCEPTION 'Indicadores pessoais incorretos'; END IF;
   BEGIN PERFORM public.tarefa_criar(gen_random_uuid(),'corte','Não autorizado','',worker);RAISE EXCEPTION 'Funcionário criou tarefa sem permissão';EXCEPTION WHEN insufficient_privilege THEN NULL;END;
   BEGIN PERFORM public.tarefa_atualizar(task,'concluida',1);RAISE EXCEPTION 'Concluiu tarefa sem iniciar';EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL;END;
@@ -39,6 +49,11 @@ BEGIN
   PERFORM public.tarefa_atualizar(required_task,'em_andamento',1);
   PERFORM public.tarefa_atualizar(required_task,'concluida',2);
   IF public.meu_resumo_operacional()->'tarefas'->>'concluidas'<>'2' THEN RAISE EXCEPTION 'Indicadores não refletiram conclusões'; END IF;
+  result:=public.minhas_atividades();
+  IF jsonb_array_length(result->'itens')=0 THEN RAISE EXCEPTION 'Histórico pessoal não exibido'; END IF;
+  IF EXISTS(SELECT 1 FROM jsonb_array_elements(result->'itens') item JOIN public.audit_logs a ON a.id=(item->>'id')::bigint WHERE a.actor_id<>worker OR item ? 'detalhes') THEN
+    RAISE EXCEPTION 'Histórico revelou outro ator ou conteúdo sensível';
+  END IF;
   PERFORM set_config('request.jwt.claim.sub',owner_id::text,true);PERFORM set_config('request.jwt.claims',jsonb_build_object('sub',owner_id,'role','authenticated','session_id',owner_session)::text,true);
   PERFORM public.ficha_execucao_atualizar(service,'corte','concluir',3);
   IF public.meu_resumo_operacional()->'tarefas'->>'total'<>'0' THEN RAISE EXCEPTION 'Resumo pessoal incluiu tarefas de outro funcionário'; END IF;
