@@ -1,3 +1,4 @@
+
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -6,7 +7,7 @@ import React from 'react';
 
 const { code } = await transform(await readFile(new URL('../src/views/auth/ResetPasswordView.tsx', import.meta.url), 'utf8'), { loader: 'tsx', format: 'cjs', jsx: 'transform' });
 function setup(password, { link = false, expired = false } = {}) {
-  const values = [link ? '' : 'employee@example.com', link ? '' : '123456', password, password, false, false, null, link, false];
+  const values = [link ? '' : 'employee@example.com', link ? '' : '123456', password, password, false, false, false, null, null, link, false];
   const changes = [], calls = [];
   let index = 0;
   const react = { ...React, useEffect() {}, useState(initial) { const key = index++; return [key < values.length ? values[key] : initial, value => changes.push([key, value])]; } };
@@ -59,3 +60,4 @@ test('senhas de até 72 bytes seguem para validação do código', async () => {
     assert.deepEqual(s.calls, ['verify']);
   }
 });
+
