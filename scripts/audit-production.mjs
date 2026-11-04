@@ -1,6 +1,6 @@
 const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$/, '');
 const routes = ['/', '/login', '/dashboard', '/funcionarios', '/estoque', '/financeiro', '/erp'];
-const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy'];
+const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
 
 const results = [];
 for (const route of routes) {
