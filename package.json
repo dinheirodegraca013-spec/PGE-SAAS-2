@@ -10,7 +10,8 @@
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
-    "audit:production": "node scripts/audit-production.mjs"
+    "audit:production": "node scripts/audit-production.mjs",
+    "audit:sql-security": "node scripts/audit-sql-security.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -45,3 +46,4 @@
     "follow-redirects": "^1.16.2"
   }
 }
+
