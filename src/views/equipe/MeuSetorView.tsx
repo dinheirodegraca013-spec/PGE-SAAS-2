@@ -5,6 +5,10 @@ import { supabase } from '@/lib/supabase';
 import { isSetor, setores } from '@/lib/setores';
 import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
 import { authorizedSectors,hasPermission } from '@/modules/workforce/lib/access';
+import MyServiceSheets from '@/modules/workforce/components/MyServiceSheets';
+import WorkNotifications from '@/modules/workforce/components/WorkNotifications';
+import MyTasks from '@/modules/workforce/components/MyTasks';
+import PersonalWorkSummary from '@/modules/workforce/components/PersonalWorkSummary';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 
@@ -47,6 +51,10 @@ export default function MeuSetorView() {
     {erro && <p role="alert" className="rounded-xl bg-rose-50 p-4 text-rose-800">{erro}</p>}
     {sectorList.includes('estoque')&&hasPermission(context,'estoque')&&<Link className="btn-primary inline-flex" to="/estoque">Abrir painel de estoque</Link>}
     {sectorList.includes('financeiro')&&hasPermission(context,'financeiro')&&<Link className="btn-primary inline-flex" to="/meu-financeiro">Abrir painel financeiro</Link>}
+    {(hasPermission(context,'tarefas') || hasPermission(context,'ordens')) && <PersonalWorkSummary />}
+    {hasPermission(context,'tarefas') && <MyTasks />}
+    {hasPermission(context,'notificacoes') && <WorkNotifications />}
+    {hasPermission(context,'ordens') && <MyServiceSheets />}
     <section className="card p-5"><h2 className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p>
       {carregando ? <p role="status" className="py-6">Carregando…</p> : !erro && !projetos.length ?

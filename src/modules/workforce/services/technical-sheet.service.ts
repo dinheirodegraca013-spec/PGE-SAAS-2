@@ -1,0 +1,56 @@
+import { supabase } from '@/lib/supabase';
+import type { TechnicalField } from '../lib/technical-sheet';
+
+export type ServiceSheet = {
+  servico_id: string;
+  setor: string;
+  versao: number;
+  responsavel_id: string | null;
+  status: 'pendente' | 'em_andamento' | 'pausada' | 'concluida';
+  iniciada_em: string | null;
+  concluida_em: string | null;
+  inicio_liberado: boolean;
+  bloqueio_fluxo: 'fora_fluxo' | 'etapa_anterior' | null;
+  modelo: { titulo: string; campos: TechnicalField[]; checklist: {key:string;label:string;automatic?:boolean}[] };
+  checklist: Record<string, boolean>;
+  dados: Record<string, unknown>;
+  privacidade_autorizada: string[];
+};
+
+export const technicalSheets = {
+  async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
+    const {data,error}=await supabase.rpc('ficha_execucao_atualizar',{p_servico:service,p_setor:sector,p_acao:action,p_versao:version});
+    if(error || !data)throw new Error(error?.code==='40001'?'A ficha foi alterada. Recarregue antes de continuar.':error?.message||'Não foi possível atualizar a execução.');
+    return data;
+  },
+  async candidates(service: string, sector: string): Promise<{id:string;nome:string;cargo:string|null}[]> {
+    const { data, error } = await supabase.rpc('ficha_responsaveis_disponiveis', {p_servico:service,p_setor:sector});
+    if (error || !data) throw new Error(error?.message || 'Não foi possível carregar os responsáveis.');
+    return data;
+  },
+  async assign(service: string, sector: string, employee: string | null, version: number): Promise<{responsavel_id:string|null;versao:number}> {
+    const { data, error } = await supabase.rpc('ficha_responsavel_definir', {p_servico:service,p_setor:sector,p_responsavel:employee,p_versao:version});
+    if (error || !data) throw new Error(error?.code === '40001' ? 'A ficha foi alterada. Recarregue antes de atribuir o responsável.' : error?.message || 'Não foi possível atualizar o responsável.');
+    return data;
+  },
+  async checklist(service: string, sector: string, items: Record<string, boolean>, version: number): Promise<{versao:number;checklist:Record<string,boolean>}> {
+    const { data, error } = await supabase.rpc('ficha_checklist_salvar', {p_servico:service,p_setor:sector,p_itens:items,p_versao:version});
+    if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de continuar.' : error?.message || 'Não foi possível salvar o checklist.');
+    return data;
+  },
+  async list(page: number, search: string): Promise<{itens: {servico_id:string;titulo:string;setor:string;versao:number;atualizado_em:string}[];tem_mais:boolean;pagina:number}> {
+    const { data, error } = await supabase.rpc('minhas_fichas_servicos', { p_pagina: page, p_busca: search });
+    if (error || !data) throw new Error(error?.message || 'Não foi possível carregar suas fichas.');
+    return data;
+  },
+  async load(service: string, sector: string): Promise<ServiceSheet> {
+    const { data, error } = await supabase.rpc('ficha_execucao_consultar', { p_servico: service, p_setor: sector });
+    if (error || !data) throw new Error(error?.message || 'Não foi possível carregar a ficha técnica.');
+    return data;
+  },
+  async save(service: string, sector: string, values: Record<string, unknown>, version: number): Promise<number> {
+    const { data, error } = await supabase.rpc('ficha_servico_salvar', { p_servico: service, p_setor: sector, p_dados: values, p_versao: version });
+    if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de salvar novamente.' : error?.message || 'Não foi possível salvar a ficha técnica.');
+    return data.versao;
+  },
+};

@@ -13,6 +13,9 @@ import StatusServicoBadge from "../components/StatusServicoBadge";
 import { servicosService } from "../services/servicos.service";
 import { StatusServico, statusServicoLabel } from "../types/servico";
 import type { Servico } from "../types/servico";
+import ServiceTechnicalSheet from '@/modules/workforce/components/ServiceTechnicalSheet';
+import ServicePipelineEditor from '@/modules/workforce/components/ServicePipelineEditor';
+import { setores } from '@/lib/setores';
 import { orcamentosService } from "@/modules/orcamentos/services/orcamentos.service";
 import type {
   Orcamento,
@@ -26,6 +29,7 @@ function orcamentoServiceUrl(token?: string): string {
 export default function ServicoDetalheView() {
   const { id } = useParams<{ id: string }>();
   const servicoId = id || "";
+  const [setorFicha, setSetorFicha] = useState('corte');
 
   // Serviço
   const [servico, setServico] = useState<Servico | null>(null);
@@ -234,6 +238,7 @@ export default function ServicoDetalheView() {
       </div>
 
       {/* Escopo do Serviço */}
+      <ServicePipelineEditor key={servicoId} serviceId={servicoId} />
       <div className="card space-y-4 p-6">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-slate-900">
@@ -295,6 +300,14 @@ export default function ServicoDetalheView() {
             </select>
           </div>
         </div>
+      </div>
+
+      <div className="card space-y-4 p-6">
+        <label htmlFor="setor-ficha-servico" className="label-field">Ficha técnica por setor</label>
+        <select id="setor-ficha-servico" className="input-field" value={setorFicha} onChange={event => setSetorFicha(event.target.value)}>
+          {Object.entries(setores).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+        </select>
+        <ServiceTechnicalSheet key={`${servicoId}:${setorFicha}`} serviceId={servicoId} sector={setorFicha} />
       </div>
 
       {/* Orçamentos do Serviço */}
@@ -500,4 +513,3 @@ export default function ServicoDetalheView() {
     </div>
   );
 }
-
