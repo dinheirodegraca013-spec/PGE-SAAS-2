@@ -12,11 +12,12 @@ export const workforceAccess = {
     if (error || !data) throw new Error(error?.message || 'Funcionário não disponível.');
     return data;
   },
-  async save(input: {id:string;nome:string;cargo:string;setor:string;setores_adicionais:string[];status:string;permissoes:AccessGrant[];versao:number}): Promise<EmployeeConfiguration> {
+  async save(input: {id:string;nome:string;cargo:string;identificador_interno:string;setor:string;setores_adicionais:string[];status:string;permissoes:AccessGrant[];versao:number}): Promise<EmployeeConfiguration> {
     const { data,error } = await supabase.rpc('funcionario_configurar',{
-      p_usuario_id:input.id,p_nome:input.nome.trim(),p_cargo:input.cargo.trim(),p_setor:input.setor,p_setores_adicionais:input.setores_adicionais,p_status:input.status,p_permissoes:input.permissoes,p_versao:input.versao,
+      p_usuario_id:input.id,p_nome:input.nome.trim(),p_cargo:input.cargo.trim(),p_setor:input.setor,p_setores_adicionais:input.setores_adicionais,p_status:input.status,p_permissoes:input.permissoes,p_versao:input.versao,p_identificador_interno:input.identificador_interno.trim()||null,
     });
     if(error || !data) throw new Error(error?.message || 'Não foi possível atualizar o acesso.');
     return data;
   },
 };
+
