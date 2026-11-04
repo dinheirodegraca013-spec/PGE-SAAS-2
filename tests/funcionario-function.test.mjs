@@ -4,14 +4,14 @@ import { readFile } from 'node:fs/promises';
 import { transform } from 'esbuild';
 const source = (await readFile(new URL('../supabase/functions/cadastrar-funcionario/index.ts',import.meta.url),'utf8')).replace(/^import[^\n]+\n/,'');
 const { code } = await transform(source,{loader:'ts',target:'es2022',format:'cjs'});
-function setup({ role='AdministradorTenant',active=true,mailFailure=false,createFailure=null,enforcePasswordLimit=false,slots=2,deviceAllowed=true,loseRace=false }={}) {
+function setup({ role='AdministradorTenant',active=true,mailFailure=false,createFailure=null,enforcePasswordLimit=false,slots=2,deviceAllowed=true,loseRace=false,duplicateIdentifier=false }={}) {
   let handler;
   const calls=[];
   const profile={tenant_id:'trusted-company',papel:role,ativo:active,setor:null,tenants:{ativo:true,principal_usuario_id:'trusted-admin'}};
   let quotaCalls=0;
   const admin={
     rpc:async()=>({data:deviceAllowed?{sublogins_available:loseRace&&quotaCalls++>0?0:slots}:null,error:deviceAllowed?null:{message:'Dispositivo não autorizado.'}}),
-    from:()=>({select:()=>({eq:(column,value)=>({eq:()=>({ilike:()=>({maybeSingle:async()=>({data:null,error:null})})}),ilike:()=>({maybeSingle:async()=>({data:null,error:null})}),single:async()=>({data:profile,error:null}),maybeSingle:async()=>({data:null,error:null})})})}),
+    from:()=>({select:()=>({eq:(column,value)=>({eq:()=>({ilike:()=>({maybeSingle:async()=>({data:duplicateIdentifier?{id:'existing'}:null,error:null})})}),ilike:()=>({maybeSingle:async()=>({data:duplicateIdentifier?{id:'existing'}:null,error:null})}),single:async()=>({data:profile,error:null}),maybeSingle:async()=>({data:duplicateIdentifier?{id:'existing'}:null,error:null})})})}),
     auth:{getUser:async()=>({data:{user:{id:'trusted-admin'}}}),
       admin:{createUser:async body=>{calls.push(['create',body]);const error=createFailure||(enforcePasswordLimit&&Buffer.byteLength(body.password,'utf8')>72?{code:'validation_failed',status:400}:null);return error?{data:{user:null},error}:{data:{user:{id:'employee'}}};},deleteUser:async id=>{calls.push(['delete',id]);return {}; }},
       resetPasswordForEmail:async(email,options)=>{calls.push(['mail',email,options]);return {error:mailFailure?new Error('mail failed'):null};}},
@@ -43,6 +43,7 @@ test('cadastro ignora empresa e papel enviados pelo navegador',async()=>{
 });
 test('setor inválido é recusado antes da criação',async()=>{const s=setup();assert.equal((await s.run({...body,setor:'admin'})).status,400);assert.equal(s.calls.length,0);});
 test('cadastro preserva cargo e identificador interno em metadados confiáveis',async()=>{const s=setup();assert.equal((await s.run({...body,cargo:'Montador',identificador_interno:'FUNC-007'})).status,201);const created=s.calls[0][1];assert.equal(created.app_metadata.gestio_cargo,'Montador');assert.equal(created.app_metadata.gestio_identificador_interno,'FUNC-007');});
+test('identificador interno duplicado é recusado antes de criar conta',async()=>{const s=setup({duplicateIdentifier:true});const response=await s.run({...body,identificador_interno:'FUNC-007'});assert.equal(response.status,409);assert.equal(s.calls.some(call=>call[0]==='create'),false);});
 test('falha de e-mail desfaz somente a conta recém-criada',async()=>{const s=setup({mailFailure:true});assert.equal((await s.run(body)).status,502);assert.deepEqual(s.calls.at(-1),['delete','employee']);});
 test('senha temporária respeita o limite real do Supabase e contém todas as classes',async()=>{
   const s=setup({enforcePasswordLimit:true});assert.equal((await s.run(body)).status,201);
