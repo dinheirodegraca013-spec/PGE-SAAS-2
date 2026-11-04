@@ -20,6 +20,17 @@ export type Item = {
   unidade: string;
   estoque_minimo: number;
   saldo: number;
+  sku?: string | null;
+  categoria?: string | null;
+  marca?: string | null;
+  fabricante?: string | null;
+  localizacao?: string | null;
+  prateleira?: string | null;
+  lote?: string | null;
+  validade?: string | null;
+  fornecedor?: string | null;
+  estoque_maximo?: number | null;
+  observacoes?: string | null;
 };
 type Projeto = { id: string; titulo: string | null; nome: string | null };
 type Status = "critico" | "atencao" | "normal";
@@ -44,6 +55,7 @@ const fmt = (v: number) => Number(v).toLocaleString("pt-BR");
 export default function EstoqueView() {
   const { context }=useWorkforceAccess();
   const canCreate=hasPermission(context,'estoque','criar');
+  const canEdit=hasPermission(context,'estoque','editar');
   const canReport=hasPermission(context,'relatorios');
   const canMovement=(type:string)=>hasPermission(context,'estoque',type==='entrada'?'registrar_entrada':type==='saida'?'registrar_saida':'registrar_ajuste');
   const allowedMovements=['entrada','saida','ajuste_entrada','ajuste_saida'].filter(canMovement);
@@ -77,7 +89,7 @@ export default function EstoqueView() {
     }
     let itensQuery = supabase
       .from("estoque_itens")
-      .select("id,nome,codigo,unidade,estoque_minimo,saldo")
+      .select("id,nome,codigo,unidade,estoque_minimo,saldo,sku,categoria,marca,fabricante,localizacao,prateleira,lote,validade,fornecedor,estoque_maximo,observacoes")
       .order("nome");
     itensQuery = itensQuery.eq("tenant_id", tenantId);
     const r = await itensQuery;
@@ -181,6 +193,20 @@ export default function EstoqueView() {
     setMensagem("Movimentação registrada.");
     setQuantidade("");
     setMotivo("");
+    await carregar();
+  }
+  async function salvarDadosTecnicos(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!detalhe || !canEdit || operando) return;
+    const form = new FormData(e.currentTarget);
+    setOperando(true); setErro("");
+    const r = await supabase.rpc("estoque_atualizar_dados_tecnicos", {
+      p_item_id: detalhe.id,
+      p_dados: Object.fromEntries(form.entries()),
+    });
+    setOperando(false);
+    if (r.error) { setErro(r.error.message); return; }
+    setMensagem("Dados técnicos atualizados.");
     await carregar();
   }
 
@@ -351,6 +377,12 @@ export default function EstoqueView() {
                         Registrar entrada (+5)
                       </button>}
                     </div>
+                    {canEdit && <form onSubmit={salvarDadosTecnicos} className="mt-4 grid gap-2 border-t border-slate-100 pt-4 sm:grid-cols-2">
+                      <h3 className="font-bold sm:col-span-2">Dados técnicos</h3>
+                      {([['sku','SKU'],['categoria','Categoria'],['marca','Marca'],['fabricante','Fabricante'],['localizacao','Localização'],['prateleira','Prateleira'],['lote','Lote'],['validade','Validade'],['fornecedor','Fornecedor'],['estoque_maximo','Estoque máximo']] as const).map(([name,label]) => <input key={name} name={name} type={name==='validade'?'date':name==='estoque_maximo'?'number':'text'} step={name==='estoque_maximo'?'0.001':undefined} defaultValue={detalhe[name] == null ? '' : String(detalhe[name])} placeholder={label} className="input-field text-xs" />)}
+                      <textarea name="observacoes" defaultValue={detalhe.observacoes || ''} placeholder="Observações" className="input-field sm:col-span-2" rows={2} />
+                      <button disabled={operando} className="btn-primary sm:col-span-2">Salvar dados técnicos</button>
+                    </form>}
                   </>
                 ) : (
                   <>
@@ -598,3 +630,4 @@ export default function EstoqueView() {
     </main>
   );
 }
+
