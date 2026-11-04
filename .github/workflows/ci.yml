@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
       - name: TypeScript check
         run: bun run lint
       - name: Offline inventory contract tests
