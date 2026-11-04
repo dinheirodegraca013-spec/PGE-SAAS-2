@@ -27,7 +27,9 @@ Deno.serve(async request => {
     const nome = typeof body?.nome === 'string' ? body.nome.trim() : '';
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
     const setor = body?.setor;
-    if (nome.length < 2 || nome.length > 120 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !setores.has(setor)) {
+    const cargo = typeof body?.cargo === 'string' ? body.cargo.trim() : '';
+    const identificadorInterno = typeof body?.identificador_interno === 'string' ? body.identificador_interno.trim() : '';
+    if (nome.length < 2 || nome.length > 120 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !setores.has(setor) || cargo.length > 120 || (identificadorInterno && !/^[A-Za-z0-9][A-Za-z0-9._\/-]{0,39}$/.test(identificadorInterno))) {
       return reply(400, { error: 'Informe nome, e-mail válido e setor.' });
     }
     const caller = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
@@ -43,7 +45,7 @@ Deno.serve(async request => {
     const { data: created, error: createError } = await admin.auth.admin.createUser({
       email, password, email_confirm: true,
       user_metadata: { nome_completo: nome },
-      app_metadata: { gestio_employee: true, gestio_criado_por: user.id, gestio_tenant_id: perfil.tenant_id, gestio_setor: setor },
+      app_metadata: { gestio_employee: true, gestio_criado_por: user.id, gestio_tenant_id: perfil.tenant_id, gestio_setor: setor, gestio_cargo: cargo || null, gestio_identificador_interno: identificadorInterno || null },
     });
     if (createError || !created.user) {
       const duplicate = ['email_exists', 'user_already_exists'].includes(createError?.code || '');
@@ -66,3 +68,4 @@ Deno.serve(async request => {
     return reply(500, { error: 'Cadastro indisponível no momento. Tente novamente.' });
   }
 });
+
