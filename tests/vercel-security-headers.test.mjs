@@ -9,3 +9,9 @@ test('vercel preserva o rewrite da SPA e declara Permissions-Policy restritiva',
   const policy = headers.find((header) => header.key.toLowerCase() === 'permissions-policy');
   assert.equal(policy?.value, 'camera=(), microphone=(), geolocation=()');
 });
+
+test('Supabase exige JWT no cadastro de funcionários e mantém orçamento público explícito', async () => {
+  const config = await readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8');
+  assert.match(config, /\[functions\.cadastrar-funcionario\][\s\S]*verify_jwt\s*=\s*true/);
+  assert.match(config, /\[functions\.public-orcamento\][\s\S]*verify_jwt\s*=\s*false/);
+});
