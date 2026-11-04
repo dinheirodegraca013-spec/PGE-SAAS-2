@@ -95,5 +95,6 @@ Data: 27/10/2026
 - O corpo POST agora é limitado a 16 KiB, com resposta `413` para payload excedente; requisições inválidas continuam respondendo `400`.
 - Verificação direta: payload inválido `400`, payload de 17 KiB `413` e auditoria de produção completa aprovada.
 - Pós-deploy: os únicos dois `500` registrados foram testes da versão 3 durante a publicação incorreta do pacote; ambos ocorreram às 07:14 UTC. Após a versão 4, não houve `5xx` no intervalo monitorado até 07:30 UTC.
+- O `audit:production` passou a testar permanentemente o limite de payload (`17 KiB` deve retornar `413`), além dos contratos de rota, headers e CORS.
 
 
