@@ -16,9 +16,9 @@
     "@supabase/supabase-js": "^2.117.3",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",
-    "axios": "^1.20.0",
+    "axios": "^1.21.0",
     "dotenv": "^17.2.3",
-    "express": "^4.21.2",
+    "express": "^4.22.3",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "react": "^19.0.1",
@@ -36,5 +36,9 @@
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
     "@types/express": "^4.17.21"
+  },
+  "overrides": {
+    "body-parser": "^1.20.9",
+    "follow-redirects": "^1.16.2"
   }
 }
