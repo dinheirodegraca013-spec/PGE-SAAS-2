@@ -11,7 +11,7 @@ function setup({ role='AdministradorTenant',active=true,mailFailure=false,create
   let quotaCalls=0;
   const admin={
     rpc:async()=>({data:deviceAllowed?{sublogins_available:loseRace&&quotaCalls++>0?0:slots}:null,error:deviceAllowed?null:{message:'Dispositivo não autorizado.'}}),
-    from:()=>({select:()=>({eq:()=>({single:async()=>({data:profile,error:null})})})}),
+    from:()=>({select:()=>({eq:(column,value)=>({eq:()=>({ilike:()=>({maybeSingle:async()=>({data:null,error:null})})}),ilike:()=>({maybeSingle:async()=>({data:null,error:null})}),single:async()=>({data:profile,error:null}),maybeSingle:async()=>({data:null,error:null})})})}),
     auth:{getUser:async()=>({data:{user:{id:'trusted-admin'}}}),
       admin:{createUser:async body=>{calls.push(['create',body]);const error=createFailure||(enforcePasswordLimit&&Buffer.byteLength(body.password,'utf8')>72?{code:'validation_failed',status:400}:null);return error?{data:{user:null},error}:{data:{user:{id:'employee'}}};},deleteUser:async id=>{calls.push(['delete',id]);return {}; }},
       resetPasswordForEmail:async(email,options)=>{calls.push(['mail',email,options]);return {error:mailFailure?new Error('mail failed'):null};}},
