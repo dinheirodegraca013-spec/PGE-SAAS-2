@@ -11,6 +11,8 @@ test('recuperação aceita callback PKCE e tokens no hash sem exigir código ind
   assert.match(view, /setSession\(\{ access_token: accessToken, refresh_token: refreshToken \}\)/);
   assert.match(view, /resetPasswordForEmail\(normalizedEmail/);
   assert.match(view, /Reenviar link de redefinição/);
+  assert.match(view, /aria-live="polite"/);
+  assert.match(view, /aria-live="assertive"/);
   assert.match(client, /detectSessionInUrl:\s*true/);
 });
 
