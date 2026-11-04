@@ -1,6 +1,11 @@
 const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$/, '');
 const routes = ['/', '/login', '/cadastro', '/redefinir-senha', '/estoque', '/meu-financeiro', '/visao-3d', '/equipe', '/meu-setor', '/admin', '/financeiro'];
 const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
+const expectedHeaderValues = {
+  'x-frame-options': 'DENY',
+  'x-content-type-options': 'nosniff',
+  'referrer-policy': 'strict-origin-when-cross-origin',
+};
 const request = async (url, init) => {
   try {
     const response = await fetch(url, { ...init, redirect: 'follow', signal: AbortSignal.timeout(15000) });
@@ -19,6 +24,9 @@ for (const route of routes) {
 const page = await request(baseUrl);
 const headers = Object.fromEntries(requiredHeaders.map((name) => [name, page.response?.headers.get(name) ?? null]));
 const missingHeaders = requiredHeaders.filter((name) => !headers[name]);
+const mismatchedHeaders = Object.entries(expectedHeaderValues)
+  .filter(([name, value]) => (headers[name] || '').toLowerCase() !== value.toLowerCase())
+  .map(([name, value]) => ({ name, expected: value, actual: headers[name] }));
 const contentType = page.response?.headers.get('content-type') ?? null;
 const contentTypeOk = Boolean(contentType?.toLowerCase().startsWith('text/html'));
 const html = page.response ? await page.response.text() : '';
@@ -70,11 +78,17 @@ if (supabaseUrl && supabaseKey) {
     const method = name.endsWith(':OPTIONS') ? 'OPTIONS' : 'GET';
     const result = await request(url, { method, headers: { apikey: supabaseKey, origin: baseUrl, 'access-control-request-method': 'POST' } });
     const status = result.response?.status ?? 0;
-    methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus });
+    const allowOrigin = result.response?.headers.get('access-control-allow-origin') ?? null;
+    const allowMethods = result.response?.headers.get('access-control-allow-methods') ?? null;
+    const corsOk = name.includes('cadastrar-funcionario') || name.includes('validar-anexo')
+      ? allowOrigin === baseUrl && allowMethods?.includes('POST') === true
+      : true;
+    methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus && corsOk,
+      ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk } } : {}) });
   }
 }
-const report = { baseUrl, routes: results, headers, missingHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, routes: results, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || missingHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || missingHeaders.length || mismatchedHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
