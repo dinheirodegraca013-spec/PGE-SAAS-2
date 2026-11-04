@@ -230,8 +230,8 @@ export default function ResetPasswordView() {
                   required
                 />
               </div>
-              {mensagem && <p role="status" className="text-xs font-medium text-emerald-700">{mensagem}</p>}
-              {erro && <p role="alert" className="text-xs font-medium text-red-600">{erro}</p>}
+              {mensagem && <p role="status" aria-live="polite" className="text-xs font-medium text-emerald-700">{mensagem}</p>}
+              {erro && <p role="alert" aria-live="assertive" className="text-xs font-medium text-red-600">{erro}</p>}
               <button type="submit" className="btn-primary w-full" disabled={enviando}>
                 {enviando ? 'Salvando nova senha...' : 'Salvar nova senha'}
               </button>
