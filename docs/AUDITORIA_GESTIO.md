@@ -49,6 +49,7 @@ Data: 27/10/2026
 - O status `Vercel` do commit mais recente permanece falho por `build-rate-limit`/cota diária; o código não foi promovido automaticamente para produção.
 - Advisors Supabase pós-migração: todas as tabelas `public` continuam com RLS e políticas; nenhuma função `public` é executável por `anon`. Permanece somente o aviso de configuração `auth_leaked_password_protection`, que exige habilitação no painel Auth do projeto.
 - Auditoria externa repetida em 04/11/2026: 11 rotas publicadas, headers de segurança, assets, ausência de segredos no bundle, funções Edge e RPCs passaram; nenhum ajuste de produção foi necessário nesta execução.
+- O build Vercel `dpl_2C1MhuLf5CAKHwKp75tqbMwk7xEx` falhou por corrupção do `src/App.tsx` na sincronização do GitHub (`Get-Content:` no arquivo). O arquivo foi restaurado e conferido no GitHub; nova publicação segue bloqueada pela cota diária.
 
 - Rotas públicas e protegidas: 11/11 responderam HTTP 200 no domínio oficial; rotas protegidas redirecionam para login quando sem sessão.
 - Headers obrigatórios: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy e Permissions-Policy presentes.
