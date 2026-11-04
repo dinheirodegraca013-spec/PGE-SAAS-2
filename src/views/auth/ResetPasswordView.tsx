@@ -11,8 +11,10 @@ export default function ResetPasswordView() {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [reenviandoLink, setReenviandoLink] = useState(false);
   const [sucesso, setSucesso] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [mensagem, setMensagem] = useState<string | null>(null);
   const [sessaoValidada, setSessaoValidada] = useState(false);
   const [verificandoLink, setVerificandoLink] = useState(true);
 
@@ -62,6 +64,7 @@ export default function ResetPasswordView() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErro(null);
+    setMensagem(null);
 
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedCode = codigo.trim().replace(/\s/g, '');
@@ -124,6 +127,29 @@ export default function ResetPasswordView() {
     }
   };
 
+  const handleReenviarLink = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      setErro('Informe o e-mail da conta para receber um novo link.');
+      return;
+    }
+    setErro(null);
+    setMensagem(null);
+    setReenviandoLink(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+        redirectTo: `${window.location.origin}/redefinir-senha`,
+      });
+      if (error) throw error;
+      setCodigo('');
+      setMensagem('Novo link enviado. Abra o e-mail mais recente para continuar.');
+    } catch (cause: any) {
+      setErro(cause?.message || 'Não foi possível reenviar o link agora.');
+    } finally {
+      setReenviandoLink(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-surface px-4 py-12">
       <div className="w-full max-w-sm">
@@ -174,6 +200,9 @@ export default function ResetPasswordView() {
                   required
                 />
               </div>
+              <button type="button" className="text-xs font-semibold text-cyan-700 hover:text-violet-700 disabled:opacity-50" onClick={handleReenviarLink} disabled={reenviandoLink}>
+                {reenviandoLink ? 'Enviando novo link...' : 'Reenviar link de redefinição'}
+              </button>
               </>}
               <div>
                 <label htmlFor="novaSenha" className="label-field">Nova senha</label>
@@ -201,6 +230,7 @@ export default function ResetPasswordView() {
                   required
                 />
               </div>
+              {mensagem && <p role="status" className="text-xs font-medium text-emerald-700">{mensagem}</p>}
               {erro && <p role="alert" className="text-xs font-medium text-red-600">{erro}</p>}
               <button type="submit" className="btn-primary w-full" disabled={enviando}>
                 {enviando ? 'Salvando nova senha...' : 'Salvar nova senha'}
