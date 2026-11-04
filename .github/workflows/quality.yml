@@ -30,6 +30,8 @@ jobs:
         run: npm run lint
       - name: SQL security audit
         run: npm run audit:sql-security
+      - name: Repository integrity
+        run: npm run verify:integrity
       - name: Build
         run: npm run build
       - name: Production smoke audit
