@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 import { hasPermission } from '../lib/access';
-import { technicalSheets, type FinishingDryingState, type ProductionState, type ServiceSheet } from '../services/technical-sheet.service';
+import { technicalSheets, type FinishingDryingState, type MaterialOption, type MaterialRequest, type ProductionState, type ServiceSheet } from '../services/technical-sheet.service';
 import TechnicalSheetForm from './TechnicalSheetForm';
 import SheetAssignmentEditor from './SheetAssignmentEditor';
 import TaskCreationForm from './TaskCreationForm';
@@ -11,6 +11,7 @@ import InstallationAcceptanceForm from './InstallationAcceptanceForm';
 import {installation} from '../services/installation.service';
 import FinishingDryingControl from './FinishingDryingControl';
 import ProductionLog from './ProductionLog';
+import MaterialRequestPanel from './MaterialRequestPanel';
 
 export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId: string; sector: string }) {
   const { context } = useWorkforceAccess();
@@ -26,11 +27,14 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const [dryingError, setDryingError] = useState('');
   const [production, setProduction] = useState<ProductionState | null>(null);
   const [productionError, setProductionError] = useState('');
+  const [materialOptions, setMaterialOptions] = useState<MaterialOption[]>([]);
+  const [materialRequests, setMaterialRequests] = useState<MaterialRequest[]>([]);
+  const [materialError, setMaterialError] = useState('');
   const mutation = useRef(false);
   const generation = useRef(0);
   useEffect(() => {
     const request = ++generation.current;
-    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setError(''); setLoading(true);
+    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError(''); setLoading(true);
     (async () => {
       try {
         const result = await technicalSheets.load(serviceId, sector);
@@ -43,6 +47,10 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         if (sector === 'corte' || sector === 'montagem') {
           try { setProduction(await technicalSheets.productionLoad(serviceId, sector)); }
           catch (cause) { if (request === generation.current) setProductionError(cause instanceof Error ? cause.message : 'Não foi possível consultar a produção.'); }
+        }
+        if (['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar')) {
+          try { const [options, requests] = await Promise.all([technicalSheets.materialOptions(serviceId, sector), technicalSheets.materialRequests(serviceId, sector)]); if (request === generation.current) { setMaterialOptions(options); setMaterialRequests(requests); } }
+          catch (cause) { if (request === generation.current) setMaterialError(cause instanceof Error ? cause.message : 'Não foi possível consultar as solicitações de material.'); }
         }
       } catch (cause) {
         if (request === generation.current) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar a ficha.');
@@ -125,6 +133,17 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         const result = await technicalSheets.productionRegister(serviceId, sector, input, sheet.versao);
         if (request === generation.current) { setProduction(result); setSheet(current => current ? { ...current, versao: result.versao } : current); }
       } finally { mutation.current = false; setSaving(false); }
+    }} />}
+    {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setMaterialError('');
+      try { await technicalSheets.materialRequestCreate(serviceId, sector, input); setReload(n => n + 1); }
+      finally { mutation.current = false; setSaving(false); }
+    }} onCancel={async requestItem => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setMaterialError('');
+      try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
+      finally { mutation.current = false; setSaving(false); }
     }} />}
     <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
       <legend className="px-1 font-semibold">Checklist operacional</legend>

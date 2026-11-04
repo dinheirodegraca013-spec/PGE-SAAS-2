@@ -26,6 +26,7 @@ function setup({dirty=false,blocked=false}={}) {
     if(name==='./InstallationAcceptanceForm')return {__esModule:true,default:()=>null};
     if(name==='./FinishingDryingControl')return {__esModule:true,default:()=>null};
     if(name==='./ProductionLog')return {__esModule:true,default:()=>null};
+    if(name==='./MaterialRequestPanel')return {__esModule:true,default:()=>null};
     if(name.includes('installation.service'))return {installation:{}};
     if(name.includes('technical-sheet.service'))return {technicalSheets:{save:async(...args)=>{calls.push(['save',...args]);await pending;return 4;},checklist:async(...args)=>{calls.push(['checklist',...args]);await pending;return {versao:4,checklist:{medidas:true}};}}};
     throw new Error(name);
