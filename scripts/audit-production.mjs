@@ -20,7 +20,7 @@ const page = await request(baseUrl);
 const headers = Object.fromEntries(requiredHeaders.map((name) => [name, page.response?.headers.get(name) ?? null]));
 const missingHeaders = requiredHeaders.filter((name) => !headers[name]);
 const html = page.response ? await page.response.text() : '';
-const assetPaths = [...html.matchAll(/(?:src|href)=[\"'](\\/assets\\/[^\"']+)[\"']/g)].map((match) => match[1]);
+const assetPaths = [...html.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map((match) => match[1]);
 const uniqueAssetPaths = [...new Set(assetPaths)];
 const assets = await Promise.all(uniqueAssetPaths.map(async (asset) => {
   const result = await request(`${baseUrl}${asset}`);
