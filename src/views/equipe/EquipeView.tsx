@@ -34,6 +34,8 @@ export default function EquipeView() {
   const [novo, setNovo] = useState(false);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [identificadorInterno, setIdentificadorInterno] = useState('');
   const [setor, setSetor] = useState('corte');
   const [salvando, setSalvando] = useState(false);
   const [sucesso, setSucesso] = useState('');
@@ -60,14 +62,14 @@ export default function EquipeView() {
       }
       if (!limits || limits.sublogins_available <= 0) throw new Error('Limite de sublogins atingido ou indisponível. Atualize a tela ou veja as opções de upgrade.');
       const { data, error } = await supabase.functions.invoke('cadastrar-funcionario', {
-        body: { nome: nome.trim(), email: email.trim(), setor },
+        body: { nome: nome.trim(), email: email.trim(), setor, cargo: cargo.trim(), identificador_interno: identificadorInterno.trim() },
       });
       if (error || !data?.success) {
         const fallback = data?.error || 'Não foi possível cadastrar. Tente novamente mais tarde.';
         throw new Error(await mensagemErroFuncao(error, fallback));
       }
       setSucesso('Funcionário cadastrado. O link para definir a senha foi enviado por e-mail.');
-      setNovo(false); setNome(''); setEmail('');
+      setNovo(false); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno('');
       await carregar();
     } catch (error) { setErro(error instanceof Error ? error.message : 'Falha ao cadastrar funcionário.'); }
     finally { setSalvando(false); }
@@ -159,7 +161,7 @@ export default function EquipeView() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-        {administrador && <button type="button" className="btn-primary" disabled={!limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
+        {administrador && <button type="button" className="btn-primary" disabled={!limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
           onClick={() => void carregar()}
@@ -189,6 +191,7 @@ export default function EquipeView() {
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-sm">Nome completo<input required minLength={2} maxLength={120} autoComplete="name" className="input-field mt-1" value={nome} onChange={e => setNome(e.target.value)} disabled={salvando} /></label>
           <label className="text-sm">E-mail<input required type="email" maxLength={254} autoComplete="email" className="input-field mt-1" value={email} onChange={e => setEmail(e.target.value)} disabled={salvando || Boolean(editingId)} /></label>
+          {!editingId && <><label className="text-sm">Cargo ou função<input className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm">Identificador interno<input className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label></>}
           <label className="text-sm">Setor<select className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
         </div>{editingId && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editActive} onChange={e => setEditActive(e.target.checked)} disabled={salvando} /> Acesso ativo</label>}
         <div className="flex gap-2"><button type="submit" className="btn-primary" disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
@@ -321,3 +324,4 @@ export default function EquipeView() {
     </div>
   );
 }
+
