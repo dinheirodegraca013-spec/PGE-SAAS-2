@@ -11,7 +11,14 @@ for (const route of routes) {
 const response = await fetch(baseUrl, { redirect: 'follow' });
 const headers = Object.fromEntries(requiredHeaders.map((name) => [name, response.headers.get(name)]));
 const missingHeaders = requiredHeaders.filter((name) => !headers[name]);
-const report = { baseUrl, routes: results, headers, missingHeaders };
+const html = await response.text();
+const assetPaths = [...html.matchAll(/(?:src|href)=[\"'](\\/assets\\/[^\"']+)[\"']/g)].map((match) => match[1]);
+const uniqueAssetPaths = [...new Set(assetPaths)];
+const assets = await Promise.all(uniqueAssetPaths.map(async (asset) => {
+  const assetResponse = await fetch(`${baseUrl}${asset}`, { redirect: 'follow' });
+  return { asset, status: assetResponse.status, ok: assetResponse.ok };
+}));
+const report = { baseUrl, routes: results, headers, missingHeaders, assets };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || missingHeaders.length) process.exitCode = 1;
+if (results.some((item) => !item.ok) || missingHeaders.length || assets.some((item) => !item.ok)) process.exitCode = 1;
