@@ -27,11 +27,11 @@ import ServicosListView from './modules/servicos/views/ServicosListView';
 import ServicoDetalheView from './modules/servicos/views/ServicoDetalheView';
 import OrcamentoPublicoView from './modules/orcamentos/views/OrcamentoPublicoView';
 import ConversasPendentesView from './modules/whatsapp/views/ConversasPendentesView';
-import WhatsAppConfiguracaoView from './modules/whatsapp/views/WhatsAppConfiguracaoView';
-import WhatsAppInboxView from './modules/whatsapp/views/WhatsAppInboxView';
-import SettingsView from './views/settings/SettingsView';
-import FinanceiroEmpresaView from './views/financeiro/FinanceiroEmpresaView';
-import EstoqueView from './views/estoque/EstoqueView';
+const WhatsAppConfiguracaoView = lazy(() => import('./modules/whatsapp/views/WhatsAppConfiguracaoView'));
+const WhatsAppInboxView = lazy(() => import('./modules/whatsapp/views/WhatsAppInboxView'));
+const SettingsView = lazy(() => import('./views/settings/SettingsView'));
+const FinanceiroEmpresaView = lazy(() => import('./views/financeiro/FinanceiroEmpresaView'));
+const EstoqueView = lazy(() => import('./views/estoque/EstoqueView'));
 const Visao3DView = lazy(() => import('./views/visao3d/Visao3DView'));
 import EquipeView from './views/equipe/EquipeView';
 import MeuSetorView from './views/equipe/MeuSetorView';
@@ -39,16 +39,16 @@ import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
 // Views dos Novos Painéis do SaaS (Super Admin & Financeiro)
-import AdminDashboardView from './views/admin/AdminDashboardView';
-import AdminEmpresasView from './views/admin/AdminEmpresasView';
-import AdminPlanosView from './views/admin/AdminPlanosView';
-import AdminAssinaturasView from './views/admin/AdminAssinaturasView';
-import AdminUsuariosView from './views/admin/AdminUsuariosView';
-import FinanceiroDashboardView from './views/admin/financeiro/FinanceiroDashboardView';
-import FinanceiroCobrancasView from './views/admin/financeiro/FinanceiroCobrancasView';
-import FinanceiroPagamentosView from './views/admin/financeiro/FinanceiroPagamentosView';
-import FinanceiroLinksView from './views/admin/financeiro/FinanceiroLinksView';
-import FinanceiroRelatoriosView from './views/admin/financeiro/FinanceiroRelatoriosView';
+const AdminDashboardView = lazy(() => import('./views/admin/AdminDashboardView'));
+const AdminEmpresasView = lazy(() => import('./views/admin/AdminEmpresasView'));
+const AdminPlanosView = lazy(() => import('./views/admin/AdminPlanosView'));
+const AdminAssinaturasView = lazy(() => import('./views/admin/AdminAssinaturasView'));
+const AdminUsuariosView = lazy(() => import('./views/admin/AdminUsuariosView'));
+const FinanceiroDashboardView = lazy(() => import('./views/admin/financeiro/FinanceiroDashboardView'));
+const FinanceiroCobrancasView = lazy(() => import('./views/admin/financeiro/FinanceiroCobrancasView'));
+const FinanceiroPagamentosView = lazy(() => import('./views/admin/financeiro/FinanceiroPagamentosView'));
+const FinanceiroLinksView = lazy(() => import('./views/admin/financeiro/FinanceiroLinksView'));
+const FinanceiroRelatoriosView = lazy(() => import('./views/admin/financeiro/FinanceiroRelatoriosView'));
 import AcessoNegadoView from './views/admin/AcessoNegadoView';
 import LandingPage from './views/public/LandingPage';
 
@@ -106,6 +106,7 @@ export default function App() {
     <AuthProvider>
       <WorkforceAccessProvider>
       <BrowserRouter>
+        <Suspense fallback={<div role="status" className="flex min-h-screen items-center justify-center bg-surface p-6 text-sm text-slate-600">Carregando módulo…</div>}>
         <Routes>
           {/* Rotas Públicas */}
           <Route
@@ -260,8 +261,10 @@ export default function App() {
           {/* 404 Not Found */}
           <Route path="*" element={<NotFoundView />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
       </WorkforceAccessProvider>
     </AuthProvider>
   );
 }
+
