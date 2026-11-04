@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION public.estoque_atualizar_dados_tecnicos(
   p_item_id uuid, p_dados jsonb
 ) RETURNS void
 LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
-DECLARE company uuid;
+DECLARE company uuid; old_data jsonb;
 BEGIN
   PERFORM private.require_authorized_session();
   company := private.current_tenant_id();
@@ -39,6 +39,9 @@ BEGIN
   IF p_dados IS NULL OR jsonb_typeof(p_dados) <> 'object' THEN
     RAISE EXCEPTION 'Dados técnicos inválidos.' USING ERRCODE='22023';
   END IF;
+  SELECT to_jsonb(i) INTO old_data FROM public.estoque_itens i
+    WHERE i.id = p_item_id AND i.tenant_id = company AND i.ativo FOR UPDATE;
+  IF old_data IS NULL THEN RAISE EXCEPTION 'Material não encontrado.' USING ERRCODE='P0002'; END IF;
   UPDATE public.estoque_itens
   SET sku = nullif(trim(p_dados->>'sku'),''),
       categoria = nullif(trim(p_dados->>'categoria'),''),
@@ -56,7 +59,9 @@ BEGIN
       custo_unitario = nullif(p_dados->>'custo_unitario','')::numeric,
       observacoes = nullif(trim(p_dados->>'observacoes'),'')
   WHERE id = p_item_id AND tenant_id = company;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Material não encontrado.' USING ERRCODE='P0002'; END IF;
+  INSERT INTO public.audit_logs(tenant_id,actor_id,acao,tabela,registro_id,detalhes)
+    VALUES(company,auth.uid(),'material_dados_tecnicos_atualizados','estoque_itens',p_item_id::text,
+      jsonb_build_object('antes',old_data,'campos',p_dados));
 END $$;
 REVOKE ALL ON FUNCTION public.estoque_atualizar_dados_tecnicos(uuid,jsonb) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.estoque_atualizar_dados_tecnicos(uuid,jsonb) TO authenticated;
