@@ -71,4 +71,22 @@ Data: 27/10/2026
 - O quality gate agora executa `npm run audit:sql-security`, cobrindo 46 migrations e falhando se encontrar `SECURITY DEFINER` sem `search_path` fixo ou concessão de execução anônima em funções públicas.
 - Resultado atual: nenhum achado.
 
+### Fechamento de auditoria aprofundada — 04/11/2026
+
+- `npm test -- --runInBand`: 105 aprovados, 0 falhas.
+- `npm run lint`, `npm run build` e `npm run verify:integrity`: aprovados; integridade do repositório sem achados.
+- `npm run audit:production`: 11/11 rotas HTTP 200, headers obrigatórios presentes, assets 200, bundle sem segredos expostos, Edge Functions/RPCs e preflight OPTIONS conforme contrato.
+- Vercel: o último deploy READY ainda aponta para o commit anterior; o commit mais novo está bloqueado pela cota diária `api-deployments-free-per-day`, não por falha de código.
+- Parecer: **PASS técnico local e de endpoints públicos; BLOCKED somente para promoção automática da revisão mais nova pela cota externa da Vercel**.
+- Consulta direta ao catálogo do Supabase: 62 funções públicas, 0 `SECURITY DEFINER` sem `search_path` fixo e 0 funções públicas executáveis por `anon`; os avisos restantes são os RPCs autenticados intencionais e a proteção de senhas vazadas desativada.
+- Nova falha de build identificada na Vercel: `src/components/RouteErrorBoundary.tsx` havia sido sincronizado como texto de erro do PowerShell. O arquivo foi restaurado no `main` do GitHub e conferido via raw; o build local permanece aprovado.
+- A varredura remota encontrou e restaurou também a migration `20261104090000_restrict_internal_trigger_functions.sql` e `tests/sql-public-grants.test.mjs`; o gate `verify:integrity` passou a proteger os cinco arquivos críticos contra esse tipo de corrupção.
+
+### Publicação e reauditoria final — 04/11/2026
+
+- O commit `140bdf583569cf9b2fc72b3fbd493caaef4070c5` foi publicado pela Vercel em produção (`dpl_CiQb5VBbhy8XYt9MSKobC7EuyZDa`) com estado **READY**.
+- O domínio `https://gestio.dev.br` foi revalidado após a publicação: 11/11 rotas, assets e headers aprovados.
+- O auditor agora também compara valores exatos dos headers de segurança e valida CORS dos endpoints autenticados (`https://gestio.dev.br`, somente POST/OPTIONS).
+- Resultado: `npm run audit:production` aprovado, sem segredos expostos, com Edge Functions/RPCs e preflight conforme contrato.
+
 
