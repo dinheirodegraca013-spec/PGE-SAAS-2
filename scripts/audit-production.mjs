@@ -86,6 +86,13 @@ if (supabaseUrl && supabaseKey) {
     methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus && corsOk,
       ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk } } : {}) });
   }
+  const oversized = await request(`${supabaseUrl}/functions/v1/public-orcamento`, {
+    method: 'POST',
+    headers: { apikey: supabaseKey, 'content-type': 'application/json' },
+    body: 'x'.repeat(17000),
+  });
+  methodChecks.push({ name: 'edge:public-orcamento:payload-limit', status: oversized.response?.status ?? 0,
+    expectedStatus: 413, ok: oversized.response?.status === 413 });
 }
 const report = { baseUrl, routes: results, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
