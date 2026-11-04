@@ -16,6 +16,8 @@ BEGIN
   created_id:=(result->>'id')::uuid;
   result:=public.material_solicitacao_listar(service,'corte');
   IF jsonb_array_length(result)<>1 OR result->0->>'status'<>'pendente' THEN RAISE EXCEPTION 'Lista de solicitações incompleta'; END IF;
+  result:=public.material_solicitacao_painel_estoque('pendente');
+  IF jsonb_array_length(result)<>1 OR result->0->>'item_nome'<>'Cola fixture' THEN RAISE EXCEPTION 'Painel do estoque não exibiu a solicitação'; END IF;
   result:=public.material_solicitacao_atualizar(created_id,'aprovar',1);
   IF result->>'status'<>'aprovada' THEN RAISE EXCEPTION 'Reserva não aprovada'; END IF;
   SELECT saldo INTO balance FROM public.estoque_itens WHERE id=item;

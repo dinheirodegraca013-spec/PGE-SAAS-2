@@ -11,6 +11,7 @@ import { getCurrentTenantId } from "@/services/api/client";
 import StockMap from "./StockMap";
 import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
 import { hasPermission } from '@/modules/workforce/lib/access';
+import MaterialRequestInbox from '@/modules/workforce/components/MaterialRequestInbox';
 
 export type Item = {
   id: string;
@@ -239,6 +240,7 @@ export default function EstoqueView() {
           {erro}
         </p>
       )}
+      <MaterialRequestInbox />
       {carregando ? (
         <p>Carregando estoque...</p>
     ) : aba === "mapa"||!canReport ? (

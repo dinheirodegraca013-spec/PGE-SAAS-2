@@ -60,6 +60,7 @@ export type MaterialRequest = {
   decidido_em: string | null;
   atendido_em: string | null;
 };
+export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
@@ -125,13 +126,18 @@ export const technicalSheets = {
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações de material.');
     return data;
   },
+  async materialStockRequests(status: string|null = null): Promise<MaterialStockRequest[]> {
+    const { data, error } = await supabase.rpc('material_solicitacao_painel_estoque', { p_status: status });
+    if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações do estoque.');
+    return data;
+  },
   async materialRequestCreate(service: string, sector: string, input: { request: string; item: string; quantity: number; unit: string; reason: string }): Promise<{ id: string; status: string; versao: number; repetida?: boolean }> {
     const { data, error } = await supabase.rpc('material_solicitacao_criar', { p_requisicao: input.request, p_servico: service, p_setor: sector, p_item_id: input.item, p_quantidade: input.quantity, p_unidade: input.unit, p_motivo: input.reason });
     if (error || !data) throw new Error(error?.code === '23505' ? 'Esta solicitação já foi enviada com outros dados.' : error?.message || 'Não foi possível solicitar o material.');
     return data;
   },
-  async materialRequestUpdate(id: string, action: 'cancelar', version: number): Promise<{ id: string; status: string; versao: number }> {
-    const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: null });
+  async materialRequestUpdate(id: string, action: 'cancelar'|'aprovar'|'recusar'|'atender', version: number, reason?: string): Promise<{ id: string; status: string; versao: number }> {
+    const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: reason ?? null });
     if (error || !data) throw new Error(error?.code === '40001' ? 'A solicitação foi alterada. Atualize a lista.' : error?.message || 'Não foi possível atualizar a solicitação.');
     return data;
   },
