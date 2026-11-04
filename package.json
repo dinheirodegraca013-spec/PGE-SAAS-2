@@ -14,11 +14,11 @@
     "audit:sql-security": "node scripts/audit-sql-security.mjs"
   },
   "dependencies": {
-    "@google/genai": "^2.4.0",
+    "@google/genai": "^2.32.0",
     "@supabase/supabase-js": "^2.117.3",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.4",
     "@types/three": "^0.186.0",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@vitejs/plugin-react": "^6.2.1",
     "axios": "^1.21.0",
     "dotenv": "^17.2.3",
     "express": "^4.22.3",
@@ -26,18 +26,18 @@
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "react-router-dom": "^7.18.4",
+    "react-router-dom": "^7.18.5",
     "three": "^0.186.1",
-    "vite": "^8.3.0"
+    "vite": "^8.3.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.6.2",
     "esbuild": "^0.28.2",
-    "tailwindcss": "^4.3.3",
+    "tailwindcss": "^4.3.4",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2"
   },
