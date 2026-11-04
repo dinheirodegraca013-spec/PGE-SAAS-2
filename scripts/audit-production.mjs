@@ -64,6 +64,7 @@ if (supabaseUrl && supabaseKey) {
     ['edge:public-orcamento:GET-sem-token', `${supabaseUrl}/functions/v1/public-orcamento`, 400],
     ['edge:cadastrar-funcionario:OPTIONS', `${supabaseUrl}/functions/v1/cadastrar-funcionario`, 204],
     ['edge:validar-anexo:OPTIONS', `${supabaseUrl}/functions/v1/validar-anexo`, 204],
+    ['edge:public-orcamento:OPTIONS', `${supabaseUrl}/functions/v1/public-orcamento`, 200],
   ];
   for (const [name, url, expectedStatus] of checks) {
     const method = name.endsWith(':OPTIONS') ? 'OPTIONS' : 'GET';
