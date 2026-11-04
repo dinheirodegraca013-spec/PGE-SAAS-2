@@ -2,8 +2,11 @@ import { readFile } from 'node:fs/promises';
 
 const checks = [
   ['src/App.tsx', value => value.startsWith('/**') && value.includes('export default function App')],
+  ['src/components/RouteErrorBoundary.tsx', value => value.startsWith('import { Component') && value.includes('export default class RouteErrorBoundary')],
   ['package.json', value => { JSON.parse(value); return true; }],
   ['scripts/audit-production.mjs', value => value.startsWith('const baseUrl')],
+  ['supabase/migrations/20261104090000_restrict_internal_trigger_functions.sql', value => value.startsWith('-- Internal compatibility')],
+  ['tests/sql-public-grants.test.mjs', value => value.startsWith("import test from 'node:test'")],
 ];
 
 const findings = [];
