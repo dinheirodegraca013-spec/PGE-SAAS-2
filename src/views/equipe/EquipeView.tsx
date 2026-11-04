@@ -24,6 +24,7 @@ type Perfil = {
   ativo: boolean | null;
   setor: string | null;
   cargo: string | null;
+  identificador_interno: string | null;
   suspenso: boolean;
 };
 type Limits = { plan: string; sublogin_limit: number; device_limit: number; sublogins_active: number; sublogins_available: number; sublogins_suspended: number; owner_id: string; suspended_ids: string[] };
@@ -102,7 +103,7 @@ export default function EquipeView() {
     try {
     let query = supabase
       .from("profiles")
-      .select("id,nome_completo,email,papel,ativo,setor,cargo,suspenso")
+      .select("id,nome_completo,email,papel,ativo,setor,cargo,identificador_interno,suspenso")
       .order("nome_completo");
     query = query.eq("tenant_id", tenantId);
     const result = await query;
@@ -140,7 +141,7 @@ export default function EquipeView() {
     const termo = busca.trim().toLowerCase();
     if (!termo) return perfis;
     return perfis.filter((perfil) =>
-      [perfil.nome_completo, perfil.email, perfil.papel]
+      [perfil.nome_completo, perfil.email, perfil.papel, perfil.identificador_interno]
         .filter(Boolean)
         .some((valor) => String(valor).toLowerCase().includes(termo)),
     );
@@ -287,9 +288,8 @@ export default function EquipeView() {
                     <td className="p-3">
                       <b>{perfil.nome_completo || "Nome não informado"}</b>
                       <br />
-                      <span className="text-xs text-slate-500">
-                        {perfil.email || "E-mail não informado"}
-                      </span>
+                      <span className="text-xs text-slate-500">{perfil.email || "E-mail não informado"}</span>
+                      {perfil.identificador_interno && <span className="mt-1 block text-xs font-semibold text-cyan-700">ID interno: {perfil.identificador_interno}</span>}
                     </td>
                     <td className="p-3">
                       {perfil.cargo || perfil.papel || "Perfil não informado"}
