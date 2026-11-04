@@ -6,6 +6,13 @@ Data: 27/10/2026
 
 **PASS técnico; homologação visual final pendente.** A Visão 3D usa somente o canvas WebGL Three.js, seguindo o HTML de referência; não há camada fixa sobre o canvas. Quando WebGL não renderiza, o sistema exibe uma mensagem de compatibilidade.
 
+## Reauditoria de recuperação de senha — 04/11/2026
+
+- Corrigido o callback de recuperação para aceitar PKCE (`code`) e tokens legados no hash (`access_token`/`refresh_token`).
+- Tokens são removidos da barra de endereço após a sessão ser estabelecida.
+- Verificações: `npm test -- --runInBand` (104 aprovados), `npm run lint` e `npm run build`.
+- Publicação automática da nova revisão ficou pendente por limite diário da Vercel (`api-deployments-free-per-day`, retry informado de 24h); código já está no `main` do GitHub.
+
 ## Evidências executadas
 
 - `npm run lint` — aprovado.
