@@ -1,5 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,6 +14,30 @@ if (!supabaseUrl || !serviceRoleKey) throw new Error("Missing Supabase Edge Func
 const db = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
 function reply(status: number, body: unknown) {
   return new Response(JSON.stringify(body), { status, headers: corsHeaders });
+}
+async function readBody(request: Request): Promise<Record<string, unknown>> {
+  const declaredLength = Number(request.headers.get("content-length") || 0);
+  if (declaredLength > 16384) throw new RangeError("payload_too_large");
+  const reader = request.body?.getReader();
+  if (!reader) return {};
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 16384) {
+      await reader.cancel();
+      throw new RangeError("payload_too_large");
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  const body = new TextDecoder().decode(bytes);
+  const parsed = JSON.parse(body || "{}");
+  return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as Record<string, unknown> : {};
 }
 function publicShape(row: Record<string, any>) {
   return {
@@ -39,7 +63,10 @@ Deno.serve(async (req: Request) => {
   try {
     const url = new URL(req.url);
     let body: Record<string, unknown> = {};
-    if (req.method === "POST") body = await req.json().catch(() => ({}));
+    if (req.method === "POST") {
+      try { body = await readBody(req); }
+      catch (error) { return reply(error instanceof RangeError ? 413 : 400, { error: error instanceof RangeError ? "Requisição acima do limite." : "Dados inválidos." }); }
+    }
     let token = req.method === "GET" ? url.searchParams.get("token") ?? "" : String(body.token ?? "");
     token = token.trim();
     if (!token || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token)) {
@@ -88,3 +115,4 @@ Deno.serve(async (req: Request) => {
     return reply(500, { error: "Não foi possível processar o orçamento neste momento." });
   }
 });
+
