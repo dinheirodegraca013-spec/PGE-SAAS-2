@@ -47,4 +47,9 @@ Data: 27/10/2026
 
 - A proteção contra senhas vazadas permanece desativada no painel do Supabase; requer ativação administrativa no projeto, sem alteração automática nesta sessão.
 
+### Guarda preventiva adicionada
+
+- O quality gate agora executa `npm run audit:sql-security`, cobrindo 46 migrations e falhando se encontrar `SECURITY DEFINER` sem `search_path` fixo ou concessão de execução anônima em funções públicas.
+- Resultado atual: nenhum achado.
+
 
