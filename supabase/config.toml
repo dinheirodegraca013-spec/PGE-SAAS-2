@@ -1,0 +1,5 @@
+[functions.cadastrar-funcionario]
+verify_jwt = true
+
+[functions.public-orcamento]
+verify_jwt = false
