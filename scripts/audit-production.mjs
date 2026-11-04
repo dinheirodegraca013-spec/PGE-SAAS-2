@@ -19,6 +19,8 @@ for (const route of routes) {
 const page = await request(baseUrl);
 const headers = Object.fromEntries(requiredHeaders.map((name) => [name, page.response?.headers.get(name) ?? null]));
 const missingHeaders = requiredHeaders.filter((name) => !headers[name]);
+const contentType = page.response?.headers.get('content-type') ?? null;
+const contentTypeOk = Boolean(contentType?.toLowerCase().startsWith('text/html'));
 const html = page.response ? await page.response.text() : '';
 const assetPaths = [...html.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map((match) => match[1]);
 const uniqueAssetPaths = [...new Set(assetPaths)];
@@ -33,6 +35,10 @@ const scriptBodies = await Promise.all(scriptAssets.map(async (asset) => {
   return result.response ? await result.response.text() : '';
 }));
 const bundleText = scriptBodies.join('\n');
+const exposedSecrets = [
+  { name: 'service_role', pattern: /service[_-]?role/i },
+  { name: 'secret_key', pattern: /(?:secret|private)[_-]?key\s*[:=]/i },
+].filter((entry) => entry.pattern.test(bundleText)).map((entry) => entry.name);
 const supabaseUrl = bundleText.match(/https:\/\/[a-z0-9-]+\.supabase\.co/)?.[0] ?? null;
 const supabaseKey = bundleText.match(/sb_(?:publishable|anon)_[A-Za-z0-9_-]+/)?.[0] ?? null;
 const endpointSmoke = [];
@@ -63,8 +69,8 @@ if (supabaseUrl && supabaseKey) {
     methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus });
   }
 }
-const report = { baseUrl, routes: results, headers, missingHeaders, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, routes: results, headers, missingHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || missingHeaders.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || missingHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
