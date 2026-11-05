@@ -35,6 +35,7 @@ export default function MeuSetorView() {
     setCarregando(true);
     setErro('');
     setProjetos([]);
+    setAtualizadoEm(null);
     async function carregar() {
       try {
         const { data, error } = await supabase.rpc('meu_setor_projetos');
