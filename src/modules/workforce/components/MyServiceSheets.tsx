@@ -25,8 +25,8 @@ export default function MyServiceSheets() {
   }, [page, query, refresh, context?.funcionario.id, context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-busy={loading}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Minhas fichas de serviço</h2><span className="text-xs text-slate-500" aria-live="polite">{loading?'Atualizando fichas…':'Fichas sincronizadas'}</span></div>
-    <form className="flex flex-wrap gap-2" onSubmit={event => { event.preventDefault(); setPage(0); setQuery(search.trim()); setRefresh(n => n + 1); }}>
-      <label className="min-w-0 flex-1"><span className="sr-only">Pesquisar serviço</span><input className="input-field" maxLength={120} value={search} onChange={event => setSearch(event.target.value)} placeholder="Pesquisar serviço" /></label>
+    <form className="flex flex-wrap gap-2" aria-busy={loading} onSubmit={event => { event.preventDefault(); if (loading) return; setPage(0); setQuery(search.trim()); setRefresh(n => n + 1); }}>
+      <label className="min-w-0 flex-1"><span className="sr-only">Pesquisar serviço</span><input className="input-field" maxLength={120} disabled={loading} value={search} onChange={event => setSearch(event.target.value)} placeholder="Pesquisar serviço" /></label>
       <button className="btn-secondary" type="submit" disabled={loading}>{loading?'Pesquisando…':'Pesquisar'}</button>
     </form>
     {loading && <p role="status" aria-live="polite">Carregando fichas…</p>}
