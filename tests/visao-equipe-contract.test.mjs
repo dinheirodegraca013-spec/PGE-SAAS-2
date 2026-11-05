@@ -278,6 +278,11 @@ test("agenda limpa o erro ao corrigir o período", () => {
   assert.match(agendaFuncionario, /setEnd\(event\.target\.value\);setError\('\'\)/);
 });
 
+test("detalhes abertos oferecem fechamento explícito", () => {
+  assert.match(notificacoesFuncionario, /onClick=\{\(\)=>setSelected\(null\)\}>Fechar detalhe/);
+  assert.match(fichasFuncionario, /onClick=\{\(\) => setSelected\(null\)\}>Fechar ficha/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
