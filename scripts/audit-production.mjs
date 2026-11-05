@@ -1,9 +1,11 @@
 const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$/, '');
 const routes = ['/', '/login', '/cadastro', '/redefinir-senha', '/estoque', '/meu-financeiro', '/visao-3d', '/equipe', '/meu-setor', '/admin', '/financeiro'];
-const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
+const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'cross-origin-opener-policy', 'cross-origin-resource-policy', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
 const expectedHeaderValues = {
   'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; frame-src 'none'; form-action 'self'; object-src 'none'; base-uri 'self'",
   'x-frame-options': 'DENY',
+  'cross-origin-opener-policy': 'same-origin',
+  'cross-origin-resource-policy': 'same-origin',
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'strict-origin-when-cross-origin',
 };
