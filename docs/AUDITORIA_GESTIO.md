@@ -7,6 +7,13 @@
 - As duas RPCs foram criadas com `SECURITY DEFINER`, `search_path` fixo, validação de autorização e execução negada a `anon`.
 - Resultado: 120 testes aprovados, lint aprovado, integridade aprovada e privilégios confirmados no Supabase (`anon=false`, `authenticated=true`).
 
+## Auditoria de RLS — 05/11/2026 (ciclo adicional)
+
+- Foi identificado que `authorized_login_session` estava como política permissiva; isso poderia transformar uma sessão válida em bypass das demais políticas.
+- As 18 políticas foram recriadas como `RESTRICTIVE`, mantendo a validação de dispositivo como condição obrigatória.
+- As políticas financeiras genéricas por `tenant_id` foram removidas; leituras agora dependem do escopo de permissão financeira por registro.
+- Verificação no banco confirmou todas as políticas de sessão como `RESTRICTIVE`; suíte passou para 122 testes.
+
 ## Verificação de navegador em produção — 05/11/2026
 
 - Navegação read-only executada no domínio oficial com o navegador: `/login`, `/cadastro`, `/redefinir-senha` e rota protegida `/visao-3d`.
