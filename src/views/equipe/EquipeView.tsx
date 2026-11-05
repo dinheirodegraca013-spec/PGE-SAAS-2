@@ -309,9 +309,9 @@ export default function EquipeView() {
                       Presença não registrada
                     </td>
                     {administrador && <td className="p-3"><div className="flex flex-wrap gap-2">
-                      {limits && perfil.id !== limits.owner_id && <button className="btn-secondary" onClick={() => { setEditingId(perfil.id); setNome(perfil.nome_completo || ''); setEmail(perfil.email || ''); setSetor(perfil.setor || 'corte'); setEditActive(Boolean(perfil.ativo)); setNovo(true); }}>Editar acesso</button>}
-                      {limits&&perfil.id!==limits.owner_id&&limits.owner_id===usuario?.usuarioId&&<button className="btn-secondary" onClick={()=>{setNovo(false);setAccessUser(perfil.id);}}>Setores e permissões</button>}
-                      <button className="btn-secondary" onClick={() => setDeviceUser(perfil.id)}>Dispositivos</button>
+                      {limits && perfil.id !== limits.owner_id && <button type="button" className="btn-secondary" aria-label={`Editar acesso de ${perfil.nome_completo || 'colaborador'}`} onClick={() => { setEditingId(perfil.id); setNome(perfil.nome_completo || ''); setEmail(perfil.email || ''); setSetor(perfil.setor || 'corte'); setEditActive(Boolean(perfil.ativo)); setNovo(true); }}>Editar acesso</button>}
+                      {limits&&perfil.id!==limits.owner_id&&limits.owner_id===usuario?.usuarioId&&<button type="button" className="btn-secondary" aria-label={`Gerenciar setores e permissões de ${perfil.nome_completo || 'colaborador'}`} onClick={()=>{setNovo(false);setAccessUser(perfil.id);}}>Setores e permissões</button>}
+                      <button type="button" className="btn-secondary" aria-label={`Gerenciar dispositivos de ${perfil.nome_completo || 'colaborador'}`} onClick={() => setDeviceUser(perfil.id)}>Dispositivos</button>
                     </div></td>}
                   </tr>
                 ))}
