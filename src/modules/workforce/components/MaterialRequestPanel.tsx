@@ -30,7 +30,7 @@ export default function MaterialRequestPanel({
   const [message, setMessage] = useState('');
   const request = useRef<{ payload: string; id: string } | null>(null);
   const selected = options.find(option => option.id === item);
-  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h4 className="font-semibold">Solicitações ao Estoque</h4><p className="text-sm text-slate-500">Peça materiais para esta ordem e acompanhe o atendimento.</p></div><button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar</button></div>
     {canRequest && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" onSubmit={async event => {
       event.preventDefault(); const value = Number(quantity); const text = reason.trim();
@@ -44,7 +44,8 @@ export default function MaterialRequestPanel({
       <label className="block text-sm sm:col-span-2">Motivo<textarea className="input-field mt-1" rows={2} minLength={3} maxLength={1000} value={reason} onChange={event => setReason(event.target.value)} disabled={disabled || busy}/></label>
       <button type="submit" className="btn-primary sm:col-span-2" disabled={disabled || busy || !options.length}>{busy ? 'Enviando…' : 'Solicitar material'}</button>
     </form>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}{message && <p role={message==='Solicitação enviada.' ? 'status' : 'alert'} className="text-sm text-slate-700">{message}</p>}
+    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}{message && <p role={message==='Solicitação enviada.' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     {!!requests.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Solicitações desta ordem</h5>{requests.map(requestItem => <div key={requestItem.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 p-2 text-sm"><span><strong>{requestItem.item_nome}</strong> · {qtyFormat.format(requestItem.quantidade)} {requestItem.unidade}<span className="block text-xs text-slate-500">{requestItem.motivo}</span></span><span className="flex items-center gap-2"><span className="rounded-full bg-white px-2 py-1 text-xs">{statusLabels[requestItem.status]}</span>{canRequest && ['pendente','aprovada'].includes(requestItem.status) && <button type="button" className="btn-secondary" disabled={disabled || busy} onClick={async () => { setBusy(true); try { await onCancel(requestItem); } catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível cancelar a solicitação.'); } finally { setBusy(false); } }}>Cancelar</button>}</span></div>)}</div>}
   </section>;
 }
+
