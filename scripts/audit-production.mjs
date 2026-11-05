@@ -61,7 +61,9 @@ if (supabaseUrl && supabaseKey) {
   for (const [name, url, expectedStatus] of checks) {
     const result = await request(url, { method: 'POST', headers: { apikey: supabaseKey, 'content-type': 'application/json' }, body: '{}' });
     const status = result.response?.status ?? 0;
-    endpointSmoke.push({ name, status, expectedStatus, ok: status === expectedStatus });
+    const cacheControl = result.response?.headers.get('cache-control') ?? null;
+    const cacheOk = name.startsWith('edge:') ? cacheControl?.includes('no-store') === true : true;
+    endpointSmoke.push({ name, status, expectedStatus, cacheControl, ok: status === expectedStatus && cacheOk });
   }
 }
 const methodChecks = [];
