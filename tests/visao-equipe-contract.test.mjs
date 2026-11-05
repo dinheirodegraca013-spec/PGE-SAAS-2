@@ -256,6 +256,11 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
 
+test("inbox de estoque informa atualização no botão", () => {
+  assert.match(inboxMateriais, /aria-label=\{loading\?'Atualizando solicitações':'Atualizar solicitações'\}/);
+  assert.match(inboxMateriais, /\{loading\?'Atualizando…':'Atualizar'\}/);
+});
+
 test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
   assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
   assert.match(criacaoTarefa, /aria-live="polite"/);
@@ -283,6 +288,11 @@ test("cartão de tarefa sinaliza atualização concorrente", () => {
 test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
   assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
+});
+
+test("notificações informam atualização no botão", () => {
+  assert.match(notificacoesFuncionario, /aria-label=\{loading\?'Atualizando notificações':'Atualizar notificações'\}/);
+  assert.match(notificacoesFuncionario, /\{loading\?'Atualizando…':'Atualizar notificações'\}/);
 });
 
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
