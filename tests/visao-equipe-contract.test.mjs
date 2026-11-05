@@ -347,6 +347,11 @@ test("ficha técnica e resolução de ocorrência anunciam estados críticos", (
   assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
 });
 
+test("ficha técnica ignora respostas antigas de secagem e produção", () => {
+  assert.match(fichaTecnica, /const result = await technicalSheets\.dryingLoad\(serviceId\); if \(request === generation\.current\) setDrying\(result\)/);
+  assert.match(fichaTecnica, /const result = await technicalSheets\.productionLoad\(serviceId, sector\); if \(request === generation\.current\) setProduction\(result\)/);
+});
+
 test("cartão de tarefa sinaliza atualização concorrente", () => {
   assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
 });
