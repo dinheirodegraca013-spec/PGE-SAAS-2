@@ -130,3 +130,7 @@ test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /Tentar novamente/);
 });
 
+test("equipe recarrega após a sessão e o tenant ficarem disponíveis", () => {
+  assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
+});
+
