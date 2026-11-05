@@ -108,3 +108,10 @@ test('suspended profiles fail the server-side session gate', async () => {
   assert.match(sql, /revoke all on function private\.user_within_plan\(uuid\)/i);
 });
 
+test('frontend auth also rejects suspended profiles', async () => {
+  const source = await readFile(new URL('../src/stores/auth.tsx', import.meta.url), 'utf8');
+  assert.match(source, /papel, ativo, suspenso, setor, avatar_url/);
+  assert.match(source, /data\.ativo\s*===\s*true\s*&&\s*data\.suspenso\s*!==\s*true/);
+  assert.match(source, /if \(!isActive \|\| !profile\) \{[\s\S]*?supabase\.auth\.signOut\(\)/);
+});
+
