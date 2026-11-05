@@ -244,6 +244,8 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(inboxMateriais, /aria-busy=\{loading\}/);
   assert.match(inboxMateriais, /Tentar novamente/);
   assert.match(inboxMateriais, /aria-live="polite"/);
+  assert.match(inboxMateriais, /actionBusy/);
+  assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\}/);
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
 
