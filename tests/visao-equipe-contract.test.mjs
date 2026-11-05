@@ -31,6 +31,8 @@ const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTe
 const ocorrencias = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 const anexos = readOptional("../src/modules/workforce/components/SheetAttachments.tsx");
 const aceiteInstalacao = readOptional("../src/modules/workforce/components/InstallationAcceptanceForm.tsx");
+const solicitacaoMaterial = readOptional("../src/modules/workforce/components/MaterialRequestPanel.tsx");
+const registroProducao = readOptional("../src/modules/workforce/components/ProductionLog.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -221,5 +223,12 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
+});
+
+test("produção e estoque sinalizam operações e mensagens ao funcionário", () => {
+  assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
+  assert.match(solicitacaoMaterial, /aria-live="polite"/);
+  assert.match(registroProducao, /aria-busy=\{busy\}/);
+  assert.match(registroProducao, /aria-live="polite"/);
 });
 
