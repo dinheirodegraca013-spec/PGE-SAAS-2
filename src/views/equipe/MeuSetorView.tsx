@@ -62,6 +62,7 @@ export default function MeuSetorView() {
     hasPermission(context, 'ordens') && { href: '#ordens', label: 'Ordens de serviço', detail: 'Consulte as ordens atribuídas' },
     hasPermission(context, 'agenda') && { href: '#agenda', label: 'Agenda', detail: 'Veja os próximos prazos' },
     hasPermission(context, 'notificacoes') && { href: '#notificacoes', label: 'Notificações', detail: 'Confira avisos recentes' },
+    hasPermission(context, 'atividades') && { href: '#atividades', label: 'Histórico', detail: 'Consulte suas últimas ações' },
   ].filter(Boolean) as { href: string; label: string; detail: string }[];
   return <div className="space-y-6">
     <header className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 p-6 text-white shadow-sm sm:p-8">
@@ -97,7 +98,7 @@ export default function MeuSetorView() {
     {hasPermission(context,'tarefas') && <div id="tarefas"><MyTasks /></div>}
     {hasPermission(context,'notificacoes') && <div id="notificacoes"><WorkNotifications /></div>}
     {hasPermission(context,'ordens') && <div id="ordens"><MyServiceSheets /></div>}
-    {hasPermission(context,'atividades') && <MyActivityHistory />}
+    {hasPermission(context,'atividades') && <div id="atividades"><MyActivityHistory /></div>}
     <section className="card p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{carregando ? '…' : erro ? 'Indisponível' : `${projetos.length} ${projetos.length === 1 ? 'projeto' : 'projetos'}`}</span></div>
       {carregando ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro ?
