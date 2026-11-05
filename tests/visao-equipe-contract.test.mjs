@@ -113,6 +113,10 @@ test("painel não transforma carregamento ou erro de projetos em zero", () => {
   assert.match(meuSetor, /carregando \? '…' : erro \? 'Indisponível'/);
 });
 
+test("painel nomeia a atualização dos projetos", () => {
+  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : 'Atualizar projetos'\}/);
+});
+
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {
   assert.match(minhasTarefas, /Tentar novamente/);
   assert.match(minhasTarefas, /aria-live="polite"/);
