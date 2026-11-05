@@ -46,7 +46,9 @@ async function readBody(request: Request): Promise<Record<string, unknown>> {
 }
 function publicShape(row: Record<string, any>) {
   return {
-    id: row.id, servico_id: row.servico_id, itens: Array.isArray(row.itens) ? row.itens : [],
+    // The public token is sufficient for the customer flow; never expose the
+    // internal service UUID in a response intended for unauthenticated clients.
+    id: row.id, itens: Array.isArray(row.itens) ? row.itens : [],
     valor_total: Number(row.valor_total) || 0, data_validade: row.data_validade,
     observacoes_gerais: row.observacoes_gerais, status: row.status,
     tem_pdf_assinado: Boolean(row.tem_pdf_assinado), assinado_por_nome: row.assinado_por_nome,
