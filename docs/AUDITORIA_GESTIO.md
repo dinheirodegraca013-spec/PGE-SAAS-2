@@ -231,3 +231,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - A alteração de frontend foi sincronizada no `main` remoto e publicada pela Vercel no deploy `dpl_7dYXfRizVFRxPDxG9E2tFZ4EwbEU`, estado **READY**, commit `e451835`.
 - Smoke test no navegador real confirmou que um visitante sem sessão em `/configuracoes` é redirecionado para `/login?redirect=/configuracoes`; nenhum conteúdo administrativo foi renderizado.
 
+### Revalidação integral pós-publicação — 05/11/2026 (ciclo adicional)
+
+- `npm run verify:release` aprovado novamente: 125 testes, typecheck, build, integridade, auditoria SQL e dependências sem vulnerabilidades.
+- Auditoria externa repetida nos domínios principal e alternativo: 12/12 rotas, headers, assets, CORS, métodos HTTP, limite de payload e endpoints Supabase aprovados.
+- Os smoke tests anônimos continuam retornando somente os estados esperados (`401`, `400` ou `404` conforme o contrato); não há referências a endpoints locais ou segredos expostos.
+- A produção continua no deploy READY `dpl_7dYXfRizVFRxPDxG9E2tFZ4EwbEU` (commit `e451835`); a mudança posterior apenas no script do auditor aguarda a liberação da cota diária de deploy da Vercel.
+
