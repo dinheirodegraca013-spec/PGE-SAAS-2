@@ -66,3 +66,9 @@ test('device session RLS is restrictive and financial reads stay permission-scop
   assert.match(financial, /drop policy if exists employee_sector_boundary on public\.financeiro_baixas/i);
 });
 
+test('company commercial data is administrative-only', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105130000_tenant_commercial_data_scope.sql', import.meta.url), 'utf8');
+  assert.match(sql, /private\.current_user_role\(\) in \('AdministradorTenant', 'SuperAdmin'\)/i);
+  assert.match(sql, /private\.is_saas_super_admin\(\)/i);
+});
+
