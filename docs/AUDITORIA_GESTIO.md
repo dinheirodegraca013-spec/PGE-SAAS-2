@@ -283,4 +283,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - INSERT, UPDATE e DELETE agora exigem o caminho `tenant_id/usuario_id/...` correspondente à sessão autenticada; leitura pública continua somente para exibição das imagens.
 - Migration aplicada no Supabase e políticas conferidas diretamente no catálogo; suíte local: 128 testes, auditoria SQL (58 migrations) e integridade aprovadas.
 
+### Bloqueio de sessões suspensas — 05/11/2026
+
+- A auditoria identificou que `private.user_within_plan` considerava `ativo`, mas não o campo `suspenso` do perfil.
+- A função agora recusa perfis suspensos tanto no acesso individual quanto na contagem de sublogins ativos; a alteração foi aplicada no Supabase.
+- Verificação direta confirmou a definição ativa; suíte local: 129 testes, auditoria SQL (59 migrations) e integridade aprovadas.
+
 
