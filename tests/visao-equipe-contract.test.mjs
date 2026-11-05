@@ -20,6 +20,7 @@ const mapa3d = readOptional("../src/views/visao3d/ThreeOperationalMap.tsx");
 const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
 const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
 const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.tsx");
+const resumoFuncionario = readOptional("../src/modules/workforce/components/PersonalWorkSummary.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -107,5 +108,12 @@ test("tarefas não enviam atualização sem mudança", () => {
 test("tarefas identificam a paginação para tecnologia assistiva", () => {
   assert.match(minhasTarefas, /aria-label="Paginação de tarefas"/);
   assert.match(minhasTarefas, /aria-current="page"/);
+});
+
+test("resumo do funcionário usa cores semânticas nos indicadores", () => {
+  assert.match(resumoFuncionario, /function cardTone/);
+  assert.match(resumoFuncionario, /Atrasadas/);
+  assert.match(resumoFuncionario, /Concluídas/);
+  assert.match(resumoFuncionario, /Em andamento/);
 });
 
