@@ -27,7 +27,7 @@ export default function WorkNotifications(){
     return()=>{generation.current++;};
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-busy={loading || !!busy}>
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Notificações{data?` (${data.nao_lidas} não lidas)`:''}</h2><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Notificações <span aria-live="polite">{data?`(${data.nao_lidas} não lidas)`:''}</span></h2><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
     {loading && <p role="status" aria-live="polite">Carregando notificações…</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
