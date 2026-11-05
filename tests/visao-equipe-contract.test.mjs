@@ -88,3 +88,8 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
   assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
 });
 
+test("tarefas refletem imediatamente status e progresso selecionados", () => {
+  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
+  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
+});
+
