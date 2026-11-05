@@ -111,5 +111,7 @@ Data: 27/10/2026
 - Console do navegador sem erros ou avisos nas telas públicas auditadas.
 - Regressão adicionada para impedir que rotas operacionais sejam expostas sem `RequireAuth` ou que guards administrativos sejam removidos; a suíte passou de 108 para 110 testes.
 - Vercel Runtime Errors: nenhum erro agregado nas últimas 24 horas após o deploy mais recente.
+- As Edge Functions passaram a declarar `X-Content-Type-Options: nosniff` e `Referrer-Policy: no-referrer`; o auditor de produção agora verifica esses headers diretamente. Versões publicadas: `public-orcamento` v9, `cadastrar-funcionario` v9 e `validar-anexo` v4.
+- Reauditoria pós-publicação: 11/11 rotas, assets, headers, CORS, métodos, payload de 17 KiB (`413`) e headers de proteção das funções aprovados.
 
 
