@@ -85,7 +85,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           finally{mutation.current=false;setSaving(false);}
         }}>{action==='iniciar'?(sheet.status==='pausada'?'Retomar':'Iniciar'):action==='pausar'?'Pausar':'Concluir'}</button>)}
     </div>
-    {sheet.bloqueio_fluxo && <p role="status" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
+    {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="font-semibold">{sheet.modelo.titulo}</h3>
       <button type="button" className="btn-secondary" disabled={saving || checklistBusy} onClick={() => {
@@ -165,7 +165,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       </label>)}
     </fieldset>
     <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions}/>
-    {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
+    {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
     {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);
