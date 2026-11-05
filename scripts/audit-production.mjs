@@ -92,13 +92,15 @@ if (supabaseUrl && supabaseKey) {
     const status = result.response?.status ?? 0;
     const allowOrigin = result.response?.headers.get('access-control-allow-origin') ?? null;
     const allowMethods = result.response?.headers.get('access-control-allow-methods') ?? null;
+    const vary = result.response?.headers.get('vary') ?? null;
     const contentTypeOptions = result.response?.headers.get('x-content-type-options') ?? null;
     const referrerPolicy = result.response?.headers.get('referrer-policy') ?? null;
     const corsOk = allowOrigin === baseUrl && allowMethods?.includes(name.includes('public-orcamento') ? 'GET' : 'POST') === true;
     const securityOk = name.endsWith(':OPTIONS')
       ? contentTypeOptions?.toLowerCase() === 'nosniff' && referrerPolicy?.toLowerCase() === 'no-referrer'
+        && (!name.includes('public-orcamento') || vary?.toLowerCase().split(',').map((value) => value.trim()).includes('origin'))
       : true;
-    methodChecks.push({ name, status, expectedStatus, contentTypeOptions, referrerPolicy,
+    methodChecks.push({ name, status, expectedStatus, contentTypeOptions, referrerPolicy, ...(name.endsWith(':OPTIONS') ? { vary } : {}),
       ok: status === expectedStatus && corsOk && securityOk,
       ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk && securityOk } } : {}) });
   }
