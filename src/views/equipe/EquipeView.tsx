@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   CircleAlert,
   CircleCheck,
@@ -50,6 +50,7 @@ export default function EquipeView() {
   const [deviceUser, setDeviceUser] = useState<string | undefined>();
   const [audit, setAudit] = useState<{id: number;action: string;subject_id: string | null;created_at: string}[]>([]);
   const [accessUser,setAccessUser]=useState<string|null>(null);
+  const lastReturnRefresh = useRef(0);
   const cadastrar = async (event: React.FormEvent) => {
     event.preventDefault();
     if (salvando) return;
@@ -126,6 +127,11 @@ export default function EquipeView() {
   };
   useEffect(() => {
     void carregar();
+  }, [administrador, usuario?.tenantId]);
+  useEffect(() => {
+    const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void carregar(); } };
+    window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn);
+    return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); };
   }, [administrador, usuario?.tenantId]);
   useEffect(() => {
     if (!administrador || !usuario?.tenantId) return;
