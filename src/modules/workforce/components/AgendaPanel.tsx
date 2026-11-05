@@ -8,7 +8,8 @@ const isoAfterDays=(days:number)=>{const date=new Date();date.setDate(date.getDa
 export default function AgendaPanel(){
   const {context}=useWorkforceAccess();const allowed=hasPermission(context,'agenda','visualizar');
   const [start,setStart]=useState(isoToday());const [end,setEnd]=useState(()=>isoAfterDays(30));const [items,setItems]=useState<AgendaItem[]>([]);const [loading,setLoading]=useState(false);const [error,setError]=useState('');
-  const generation=useRef(0);
+  const generation=useRef(0);const lastReturnRefresh=useRef(0);
+  useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;void load();}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[allowed,context?.funcionario.id,context?.funcionario.versao,start,end]);
   async function load(){if(!allowed)return;if(!start||!end){setItems([]);setError('Informe o início e o fim do período.');return;}if(end<start){setItems([]);setError('O fim do período não pode ser anterior ao início.');return;}const request=++generation.current;setLoading(true);setError('');setItems([]);try{const result=await agendaService.list(start,end);if(request===generation.current)setItems(result.itens);}catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar a agenda.');}finally{if(request===generation.current)setLoading(false);}}
   useEffect(()=>{void load();return()=>{generation.current++;};},[allowed,context?.funcionario.id,context?.funcionario.versao]);
   if(!allowed)return null;
