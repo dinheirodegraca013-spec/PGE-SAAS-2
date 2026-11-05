@@ -77,5 +77,7 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /additionalSectors/);
   assert.match(meuSetor, /Tentar novamente/);
   assert.match(meuSetor, /aria-live="polite"/);
+  assert.match(meuSetor, /atualizadoEm/);
+  assert.match(meuSetor, /Atualizado às/);
 });
 
