@@ -28,7 +28,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
   }
   const active = devices.filter(d => !d.revoked_at && !d.suspended).length;
   return <section className="card space-y-3 p-5">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Dispositivos autorizados</h2><button className="btn-secondary" disabled={busy} onClick={() => void load()}>Atualizar</button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Dispositivos autorizados</h2><button type="button" className="btn-secondary" disabled={busy} onClick={() => void load()}>Atualizar</button></div>
     {limit !== null && <p className="text-sm text-slate-500">{active} de {limit} utilizados · {Math.max(0, limit - active)} disponíveis por login.</p>}
     <p className="text-sm text-slate-500">Revogar bloqueia as sessões vinculadas a este dispositivo.</p>
     <p className="text-xs text-slate-500">Cada navegador ou perfil conta como um dispositivo. Limpar os dados do navegador cria uma nova identificação.</p>
@@ -37,6 +37,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     <ul className="divide-y divide-slate-100">{devices.map(d => <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div>
       <b className="text-sm">{d.name}{d.current ? ' · Este dispositivo' : ''}</b>
       <p className="text-xs text-slate-500">{d.revoked_at ? 'Revogado' : d.suspended ? 'Suspenso pelo plano' : 'Autorizado'} · Último acesso: {new Date(d.last_seen_at).toLocaleString('pt-BR')}</p>
-    </div>{!d.revoked_at && <button className="btn-secondary text-rose-700" disabled={busy} onClick={() => void revoke(d.id)}>Revogar</button>}</li>)}</ul>
+    </div>{!d.revoked_at && <button type="button" className="btn-secondary text-rose-700" disabled={busy} onClick={() => void revoke(d.id)}>Revogar</button>}</li>)}</ul>
   </section>;
 }
+
