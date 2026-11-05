@@ -20,6 +20,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const [progress,setProgress]=useState(task.progresso);
   const [notes,setNotes]=useState(task.observacoes);
   const [busy,setBusy]=useState(false);const [error,setError]=useState('');const lock=useRef(false);
+  const clearError=()=>setError('');
   const final=['concluida','cancelada'].includes(task.status);
   const operation=(target:TaskStatus)=>target===task.status?'editar':target==='em_andamento'?'iniciar':target==='pausada'?'pausar':target==='concluida'?'concluir':target==='cancelada'?'excluir':'editar';
   const options=(Object.keys(taskStatusLabels) as TaskStatus[]).filter(target=>target===task.status ||
@@ -46,9 +47,9 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
       catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível atualizar a tarefa.');}
       finally{lock.current=false;setBusy(false);}
     }}>
-      <label className="text-sm" htmlFor={`${id}-status`}>Situação<select id={`${id}-status`} className="input-field mt-1" disabled={busy} value={status} onChange={event=>setStatus(event.target.value as TaskStatus)}>{options.map(value=><option key={value} value={value}>{taskStatusLabels[value]}</option>)}</select></label>
-      <label className="text-sm" htmlFor={`${id}-progress`}>Progresso (%)<input id={`${id}-progress`} className="input-field mt-1" type="number" min={0} max={100} step={1} disabled={busy || status==='concluida'} value={status==='concluida'?100:progress} onChange={event=>setProgress(event.target.value===''?NaN:Number(event.target.value))}/></label>
-      <label className="text-sm sm:col-span-2" htmlFor={`${id}-notes`}>Observações ou impedimentos<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={10000} disabled={busy} value={notes} onChange={event=>setNotes(event.target.value)}/></label>
+      <label className="text-sm" htmlFor={`${id}-status`}>Situação<select id={`${id}-status`} className="input-field mt-1" disabled={busy} value={status} onChange={event=>{setStatus(event.target.value as TaskStatus);clearError();}}>{options.map(value=><option key={value} value={value}>{taskStatusLabels[value]}</option>)}</select></label>
+      <label className="text-sm" htmlFor={`${id}-progress`}>Progresso (%)<input id={`${id}-progress`} className="input-field mt-1" type="number" min={0} max={100} step={1} disabled={busy || status==='concluida'} value={status==='concluida'?100:progress} onChange={event=>{setProgress(event.target.value===''?NaN:Number(event.target.value));clearError();}}/></label>
+      <label className="text-sm sm:col-span-2" htmlFor={`${id}-notes`}>Observações ou impedimentos<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={10000} disabled={busy} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/></label>
       {error && <p role="alert" className="text-sm text-red-700 sm:col-span-2">{error}</p>}
       <button type="submit" className="btn-primary" disabled={busy || !dirty || !hasPermission(context,'tarefas',operation(status))} aria-label={busy?'Salvando tarefa':dirty?'Atualizar tarefa':'Sem alterações'}>{busy?'Salvando…':dirty?'Atualizar tarefa':'Sem alterações'}</button>
     </form>}
