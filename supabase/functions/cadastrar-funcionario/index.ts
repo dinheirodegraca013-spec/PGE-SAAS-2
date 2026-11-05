@@ -6,6 +6,30 @@ const origin = new URL(site).origin;
 const headers = { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Content-Type': 'application/json', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store, max-age=0', 'Vary': 'Origin' };
 const reply = (status: number, body: object) => new Response(JSON.stringify(body), { status, headers });
 
+async function readBody(request: Request) {
+  const declaredLength = Number(request.headers.get('content-length') || 0);
+  if (declaredLength > 16_384) throw new RangeError('payload_too_large');
+  const reader = request.body?.getReader();
+  if (!reader) return {};
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 16_384) {
+      await reader.cancel();
+      throw new RangeError('payload_too_large');
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  const text = new TextDecoder().decode(bytes);
+  return JSON.parse(text || '{}');
+}
+
 Deno.serve(async request => {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers });
   if (request.method !== 'POST') return reply(405, { error: 'Método não permitido.' });
@@ -23,7 +47,9 @@ Deno.serve(async request => {
       return reply(403, { error: 'Somente o administrador da empresa pode cadastrar funcionários.' });
     }
     let body;
-    try { body = await request.json(); } catch { return reply(400, { error: 'Dados inválidos.' }); }
+    try { body = await readBody(request); } catch (error) {
+      return reply(error instanceof RangeError ? 413 : 400, { error: error instanceof RangeError ? 'Requisição acima do limite.' : 'Dados inválidos.' });
+    }
     const nome = typeof body?.nome === 'string' ? body.nome.trim() : '';
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
     const setor = body?.setor;
