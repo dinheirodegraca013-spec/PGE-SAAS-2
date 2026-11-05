@@ -322,6 +322,12 @@ test("anexos atualizam ao retornar à aba", () => {
   assert.match(anexos, /addEventListener\('visibilitychange',refreshOnReturn\)/);
 });
 
+test("ocorrências reiniciam página e atualizam ao retornar à aba", () => {
+  assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+  assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(ocorrencias, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
