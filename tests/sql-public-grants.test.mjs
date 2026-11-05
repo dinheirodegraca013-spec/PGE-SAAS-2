@@ -72,3 +72,9 @@ test('company commercial data is administrative-only', async () => {
   assert.match(sql, /private\.is_saas_super_admin\(\)/i);
 });
 
+test('subscription and billing reads are administrative-only', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105140000_saas_billing_scope.sql', import.meta.url), 'utf8');
+  assert.match(sql, /drop policy if exists saas_assinaturas_select/i);
+  assert.match(sql, /drop policy if exists saas_cobrancas_select/i);
+  assert.equal((sql.match(/private\.current_user_role\(\) in \('AdministradorTenant', 'SuperAdmin'\)/gi) || []).length, 2);
+});
