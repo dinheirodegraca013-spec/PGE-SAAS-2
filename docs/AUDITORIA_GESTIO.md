@@ -275,5 +275,6 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - O cliente deixou de obter o `tenant_id` do `localStorage` ao gravar `audit_logs`.
 - O tenant agora é resolvido pelo perfil do usuário autenticado no Supabase antes da inserção; falha de perfil interrompe o registro.
 - Regressão adicionada; suíte local: 127 testes aprovados e typecheck aprovado.
+- A publicação desta revisão foi tentada na Vercel e recusada pela cota `api-deployments-free-per-day` (retentativa indicada em 24h); o código permanece sincronizado no `main` do GitHub e a produção anterior continua READY.
 
 
