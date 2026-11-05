@@ -22,6 +22,7 @@ const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
 const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.tsx");
 const resumoFuncionario = readOptional("../src/modules/workforce/components/PersonalWorkSummary.tsx");
 const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
+const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -132,5 +133,11 @@ test("editor de acesso permite repetir o carregamento", () => {
 
 test("equipe recarrega após a sessão e o tenant ficarem disponíveis", () => {
   assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
+});
+
+test("fichas de serviço expõem carregamento e paginação acessíveis", () => {
+  assert.match(fichasFuncionario, /aria-live="polite"/);
+  assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
+  assert.match(fichasFuncionario, /aria-current="page"/);
 });
 
