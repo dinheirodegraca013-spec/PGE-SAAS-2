@@ -27,12 +27,14 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     (!['pausada','concluida'].includes(target) || task.status==='em_andamento') &&
     (target!=='cancelada' || !task.obrigatoria || hasPermission(context,'tarefas','aprovar')));
   const overdue=task.prazo && !final && new Date(task.prazo).getTime()<Date.now();
+  const displayedStatus=final?task.status:status;
+  const displayedProgress=displayedStatus==='concluida'?100:progress;
   return <li className="space-y-3 rounded-xl border border-slate-200 p-4">
-    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[task.status]}`}>{taskStatusLabels[task.status]}</span></div>
+    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[displayedStatus]}`}>{taskStatusLabels[displayedStatus]}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${new Date(task.prazo).toLocaleString('pt-BR')}`:'Sem prazo definido'}</p>
-    <progress className="w-full" max={100} value={task.progresso} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs">{task.progresso}%</span>
+    <progress className="w-full" max={100} value={displayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{displayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
       if(!Number.isInteger(progress) || progress<0 || progress>100){setError('Informe um progresso entre 0 e 100.');return;}
@@ -44,7 +46,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
       finally{lock.current=false;setBusy(false);}
     }}>
       <label className="text-sm" htmlFor={`${id}-status`}>Situação<select id={`${id}-status`} className="input-field mt-1" disabled={busy} value={status} onChange={event=>setStatus(event.target.value as TaskStatus)}>{options.map(value=><option key={value} value={value}>{taskStatusLabels[value]}</option>)}</select></label>
-      <label className="text-sm" htmlFor={`${id}-progress`}>Progresso (%)<input id={`${id}-progress`} className="input-field mt-1" type="number" min={0} max={99} step={1} disabled={busy || status==='concluida'} value={status==='concluida'?100:progress} onChange={event=>setProgress(event.target.value===''?NaN:Number(event.target.value))}/></label>
+      <label className="text-sm" htmlFor={`${id}-progress`}>Progresso (%)<input id={`${id}-progress`} className="input-field mt-1" type="number" min={0} max={100} step={1} disabled={busy || status==='concluida'} value={status==='concluida'?100:progress} onChange={event=>setProgress(event.target.value===''?NaN:Number(event.target.value))}/></label>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-notes`}>Observações ou impedimentos<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={10000} disabled={busy} value={notes} onChange={event=>setNotes(event.target.value)}/></label>
       {error && <p role="alert" className="text-sm text-red-700 sm:col-span-2">{error}</p>}
       <button type="submit" className="btn-primary" disabled={busy || !hasPermission(context,'tarefas',operation(status))}>{busy?'Salvando…':'Atualizar tarefa'}</button>
