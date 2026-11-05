@@ -113,5 +113,6 @@ test('frontend auth also rejects suspended profiles', async () => {
   assert.match(source, /papel, ativo, suspenso, setor, avatar_url/);
   assert.match(source, /data\.ativo\s*===\s*true\s*&&\s*data\.suspenso\s*!==\s*true/);
   assert.match(source, /if \(!isActive \|\| !profile\) \{[\s\S]*?supabase\.auth\.signOut\(\)/);
+  assert.match(source, /clearAuthState\(\);\s*await supabase\.auth\.signOut\(\)\.catch/);
 });
 
