@@ -26,6 +26,7 @@ export default function ProductionLog({
   const [description, setDescription] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
   const request = useRef<{ payload: string; id: string } | null>(null);
 
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
@@ -40,13 +41,13 @@ export default function ProductionLog({
       event.preventDefault();
       const value = Number(quantity);
       const normalizedUnit = unit.trim();
-      if (!Number.isFinite(value) || value <= 0 || value >= 100000000 || !normalizedUnit || normalizedUnit.length > 40) { setMessage('Informe uma quantidade e unidade válidas.'); return; }
+      if (!Number.isFinite(value) || value <= 0 || value >= 100000000 || !normalizedUnit || normalizedUnit.length > 40) { setMessageKind('error'); setMessage('Informe uma quantidade e unidade válidas.'); return; }
       const data = { type, quantity: value, unit: normalizedUnit, description: description.trim() };
       const payload = JSON.stringify(data);
       if (request.current?.payload !== payload) request.current = { payload, id: crypto.randomUUID() };
       setBusy(true); setMessage('');
-      try { await onRegister({ ...data, request: request.current.id }); request.current = null; setMessage('Registro salvo pelo servidor.'); }
-      catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível salvar o registro.'); }
+      try { await onRegister({ ...data, request: request.current.id }); request.current = null; setMessageKind('status'); setMessage('Registro salvo pelo servidor.'); }
+      catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível salvar o registro.'); }
       finally { setBusy(false); }
     }}>
       <label htmlFor={`${id}-type`} className="block text-sm">Tipo<select id={`${id}-type`} className="input-field mt-1" value={type} onChange={event => { setType(event.target.value as ProductionEntry['tipo']); setMessage(''); }} disabled={disabled || busy}>{(Object.keys(labels) as ProductionEntry['tipo'][]).map(item => <option key={item} value={item}>{labels[item]}</option>)}</select></label>
@@ -56,7 +57,7 @@ export default function ProductionLog({
       <button type="submit" className="btn-primary sm:col-span-2" disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role={message.startsWith('Registro salvo') ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
+    {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     {!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm"><span><strong>{labels[item.tipo]}</strong> · {numberFormat.format(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="text-xs text-slate-500">{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(item.criado_em))}</time></div>)}</div>}
   </section>;
 }
