@@ -21,7 +21,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     return()=>{active=false;};
   },[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao,retry]);
   if(!canCreate)return null;
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(lock.current || loading)return;
     if(!title.trim() || !candidates.some(item=>item.id===employee)){setError('Informe o título e escolha um responsável disponível.');return;}
     const parsed=deadline?new Date(deadline):null;
@@ -43,10 +43,11 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
       <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>setPriority(event.target.value as WorkTask['prioridade'])}>{['baixa','normal','alta','urgente'].map(value=><option key={value} value={value}>{value}</option>)}</select></label>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={event=>setMandatory(event.target.checked)}/>Obrigatória para concluir a etapa</label>
     </fieldset>
-    {loading && <p role="status" className="text-sm">Carregando responsáveis…</p>}
+    {loading && <p role="status" aria-live="polite" className="text-sm">Carregando responsáveis…</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role="status" className="text-sm">{message}</p>}
+    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && !candidates.length && <button type="button" className="btn-secondary" onClick={()=>setRetry(n=>n+1)}>Atualizar responsáveis</button>}
     <button type="submit" className="btn-primary" disabled={busy || loading || !candidates.length}>{busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
+
