@@ -28,3 +28,14 @@ test('frontend e Edge Functions não introduzem sinks HTML executáveis', async 
   assert.deepEqual(unsafe, []);
 });
 
+test('links que abrem nova aba neutralizam window.opener', async () => {
+  const files = await filesIn(fileURLToPath(new URL('../src', import.meta.url)));
+  const unsafe = [];
+  for (const file of files) {
+    const source = await readFile(file, 'utf8');
+    const tags = source.match(/<(?:a|Link)\b[^>]*target\s*=\s*["']_blank["'][^>]*>/g) || [];
+    if (tags.some((tag) => !/rel\s*=\s*["'][^"']*noopener/i.test(tag))) unsafe.push(file);
+  }
+  assert.deepEqual(unsafe, []);
+});
+
