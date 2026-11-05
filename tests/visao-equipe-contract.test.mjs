@@ -275,3 +275,8 @@ test("cartão de tarefa sinaliza atualização concorrente", () => {
   assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
 });
 
+test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
+  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
+  assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
+});
+
