@@ -83,7 +83,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           try{const result=await technicalSheets.execute(serviceId,sector,action,sheet.versao);if(request===generation.current)setSheet(current=>current?{...current,...result}:current);}
           catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível atualizar a execução.');}
           finally{mutation.current=false;setSaving(false);}
-        }}>{action==='iniciar'?(sheet.status==='pausada'?'Retomar':'Iniciar'):action==='pausar'?'Pausar':'Concluir'}</button>)}
+        }}>{saving?'Salvando…':action==='iniciar'?(sheet.status==='pausada'?'Retomar':'Iniciar'):action==='pausar'?'Pausar':'Concluir'}</button>)}
     </div>
     {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
     <div className="flex flex-wrap items-center justify-between gap-3">
