@@ -328,6 +328,11 @@ test("agenda atualiza ao retornar à aba", () => {
   assert.match(agendaFuncionario, /void load\(\)/);
 });
 
+test("histórico atualiza ao retornar à aba", () => {
+  assert.match(historicoFuncionario, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(historicoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
 test("ocorrências reiniciam página e atualizam ao retornar à aba", () => {
   assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
   assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
