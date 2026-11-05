@@ -50,10 +50,17 @@ const contentTypeOk = Boolean(contentType?.toLowerCase().startsWith('text/html')
 const alternateContentType = alternatePage.response?.headers.get('content-type') ?? null;
 const alternateContentTypeOk = Boolean(alternateContentType?.toLowerCase().startsWith('text/html'));
 const html = page.response ? await page.response.text() : '';
+const alternateHtml = alternatePage.response ? await alternatePage.response.text() : '';
 const assetPaths = [...html.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map((match) => match[1]);
 const uniqueAssetPaths = [...new Set(assetPaths)];
 const assets = await Promise.all(uniqueAssetPaths.map(async (asset) => {
   const result = await request(`${baseUrl}${asset}`);
+  return { asset, status: result.response?.status ?? 0, ok: result.response?.ok ?? false, ...(result.error ? { error: result.error } : {}) };
+}));
+const alternateAssetPaths = [...alternateHtml.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map((match) => match[1]);
+const alternateUniqueAssetPaths = [...new Set(alternateAssetPaths)];
+const alternateAssets = await Promise.all(alternateUniqueAssetPaths.map(async (asset) => {
+  const result = await request(`${alternateBaseUrl}${asset}`);
   return { asset, status: result.response?.status ?? 0, ok: result.response?.ok ?? false, ...(result.error ? { error: result.error } : {}) };
 }));
 
@@ -63,10 +70,20 @@ const scriptBodies = await Promise.all(scriptAssets.map(async (asset) => {
   return result.response ? await result.response.text() : '';
 }));
 const bundleText = scriptBodies.join('\n');
+const alternateScriptAssets = alternateUniqueAssetPaths.filter((asset) => asset.endsWith('.js'));
+const alternateScriptBodies = await Promise.all(alternateScriptAssets.map(async (asset) => {
+  const result = await request(`${alternateBaseUrl}${asset}`);
+  return result.response ? await result.response.text() : '';
+}));
+const alternateBundleText = alternateScriptBodies.join('\n');
 const exposedSecrets = [
   { name: 'service_role', pattern: /service[_-]?role/i },
   { name: 'secret_key', pattern: /(?:secret|private)[_-]?key\s*[:=]/i },
 ].filter((entry) => entry.pattern.test(bundleText)).map((entry) => entry.name);
+const alternateExposedSecrets = [
+  { name: 'service_role', pattern: /service[_-]?role/i },
+  { name: 'secret_key', pattern: /(?:secret|private)[_-]?key\s*[:=]/i },
+].filter((entry) => entry.pattern.test(alternateBundleText)).map((entry) => entry.name);
 const supabaseUrl = bundleText.match(/https:\/\/[a-z0-9-]+\.supabase\.co/)?.[0] ?? null;
 const supabaseKey = bundleText.match(/sb_(?:publishable|anon)_[A-Za-z0-9_-]+/)?.[0] ?? null;
 const endpointSmoke = [];
@@ -163,8 +180,8 @@ if (supabaseUrl && supabaseKey) {
     expectedStatus: 200, allowOrigin: foreignAllowOrigin,
     ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
-const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, alternateExposedSecrets, assets, alternateAssets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || alternateExposedSecrets.length || assets.some((item) => !item.ok) || alternateAssets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
