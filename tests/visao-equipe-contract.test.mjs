@@ -439,7 +439,12 @@ test("inbox de estoque ignora respostas de filtros antigos", () => {
 });
 
 test("inbox de estoque limpa dados anteriores durante nova consulta", () => {
-  assert.match(inboxMateriais, /setLoading\(true\);setError\(''\);setMessage\(''\);setItems\(\[\]\)/);
+  assert.match(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
+});
+
+test("inbox preserva feedback após ação concluída", () => {
+  assert.match(inboxMateriais, /async function load\(clearMessage=true\)/);
+  assert.match(inboxMateriais, /setMessage\('Solicitação aprovada\.'\);await load\(false\)/);
 });
 
 test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
