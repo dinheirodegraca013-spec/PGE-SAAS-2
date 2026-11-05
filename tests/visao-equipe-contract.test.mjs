@@ -312,3 +312,9 @@ test("anexos bloqueiam geração simultânea de links temporários", () => {
   assert.match(anexos, /itemBusy\?'Gerando…'/);
 });
 
+test("inbox de estoque ignora respostas de filtros antigos", () => {
+  assert.match(inboxMateriais, /const generation=useRef\(0\)/);
+  assert.match(inboxMateriais, /if\(request===generation\.current\)setItems/);
+  assert.match(inboxMateriais, /return\(\)=>\{generation\.current\+\+;\}/);
+});
+
