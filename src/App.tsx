@@ -10,6 +10,7 @@ import AppLayout from './layouts/AppLayout';
 import AdminLayout from './layouts/AdminLayout';
 import AdminGuard from './components/auth/AdminGuard';
 import FinanceiroGuard from './components/auth/FinanceiroGuard';
+import TenantAdminGuard from './components/auth/TenantAdminGuard';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 
 // Views do Painel do Cliente (Existentes - 100% preservadas)
@@ -161,7 +162,7 @@ export default function App() {
             <Route path="whatsapp" element={<ConversasPendentesView />} />
             <Route path="whatsapp/inbox" element={<WhatsAppInboxView />} />
             <Route path="whatsapp/configuracao" element={<WhatsAppConfiguracaoView />} />
-            <Route path="configuracoes" element={<SettingsView />} />
+            <Route path="configuracoes" element={<TenantAdminGuard><SettingsView /></TenantAdminGuard>} />
             <Route path="meu-financeiro" element={<FinanceiroEmpresaView />} />
             <Route path="estoque" element={<EstoqueView />} />
             <Route path="visao-3d" element={
@@ -269,4 +270,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-
