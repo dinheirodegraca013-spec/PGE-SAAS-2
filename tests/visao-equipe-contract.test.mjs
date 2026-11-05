@@ -19,6 +19,7 @@ const visao = readOptional("../src/views/visao3d/Visao3DView.tsx");
 const mapa3d = readOptional("../src/views/visao3d/ThreeOperationalMap.tsx");
 const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
 const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
+const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -79,5 +80,11 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /aria-live="polite"/);
   assert.match(meuSetor, /atualizadoEm/);
   assert.match(meuSetor, /Atualizado às/);
+});
+
+test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {
+  assert.match(minhasTarefas, /Tentar novamente/);
+  assert.match(minhasTarefas, /aria-live="polite"/);
+  assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
 });
 
