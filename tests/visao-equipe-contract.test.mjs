@@ -316,6 +316,12 @@ test("contador de notificações anuncia mudanças", () => {
   assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
 });
 
+test("anexos atualizam ao retornar à aba", () => {
+  assert.match(anexos, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(anexos, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(anexos, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
