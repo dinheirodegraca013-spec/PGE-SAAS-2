@@ -17,10 +17,11 @@ export default function MyServiceSheets() {
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
   const lastReturnRefresh = useRef(0);
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
+  useEffect(() => { setList(null); setSelected(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
     let active = true;
-    setLoading(true); setError(''); setList(null); setSelected(null);
+    setLoading(true); setError('');
     technicalSheets.list(page, query).then(result => { if (active) setList(result); })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar as fichas.'); })
       .finally(() => { if (active) setLoading(false); });
