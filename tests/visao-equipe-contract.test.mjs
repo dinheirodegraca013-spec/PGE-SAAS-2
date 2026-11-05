@@ -397,6 +397,10 @@ test("agenda ignora respostas de requisições antigas", () => {
   assert.match(agendaFuncionario, /return\(\)=>\{generation\.current\+\+;\}/);
 });
 
+test("agenda limpa atividades anteriores antes de nova consulta", () => {
+  assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);setItems\(\[\]\)/);
+});
+
 test("anexos bloqueiam geração simultânea de links temporários", () => {
   assert.match(anexos, /linkBusy/);
   assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
