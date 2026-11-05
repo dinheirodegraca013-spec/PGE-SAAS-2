@@ -172,5 +172,6 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Suíte local: 117 testes aprovados e lint aprovado; foi adicionada uma guarda contra a reintrodução de URLs de API local no serviço de orçamentos.
 - Advisors Supabase continuam sem achados críticos; permanecem os avisos intencionais de tabelas privadas sem políticas próprias, RPCs `SECURITY DEFINER` autenticados e a proteção de senhas vazadas, que exige habilitação manual no painel Auth.
 - A nova publicação foi tentada, mas a Vercel recusou por cota diária (`api-deployments-free-per-day`); o último deploy publicado permanece `READY`.
+- O auditor de produção passou a falhar se os bundles publicados contiverem o fallback `localhost:5000`; a checagem foi executada nos dois domínios sem referências locais.
 
 
