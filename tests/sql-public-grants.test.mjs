@@ -56,3 +56,10 @@ test('administrative and financial RPCs keep anonymous execution revoked', async
   assert.match(summary, /grant execute on function public\.financeiro_resumo_baixas\(\) to authenticated/i);
 });
 
+test('device session RLS is restrictive and financial reads stay permission-scoped', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105120000_restrictive_session_rls.sql', import.meta.url), 'utf8');
+  assert.equal((sql.match(/as restrictive/gi) || []).length, 18);
+  assert.match(sql, /drop policy if exists financeiro_lancamentos_select/i);
+  assert.match(sql, /drop policy if exists financeiro_baixas_select/i);
+});
+
