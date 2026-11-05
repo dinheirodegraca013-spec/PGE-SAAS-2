@@ -16,5 +16,6 @@ test('orçamento público fixa dependência e limita payloads', async () => {
   assert.match(source, /serviceUpdated/);
   assert.match(source, /linked_service_not_found/);
   assert.match(source, /req\.method !== "GET" && req\.method !== "POST"/);
+  assert.match(source, /Método não permitido/);
 });
 
