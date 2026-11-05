@@ -49,6 +49,7 @@ export default function MeuSetorView() {
     return () => { mounted = false; };
   }, [setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao]);
   const nome = context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador';
+  const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
   const quickActions = [
     hasPermission(context, 'tarefas') && { href: '#tarefas', label: 'Minhas tarefas', detail: 'Atualize andamento e impedimentos' },
     hasPermission(context, 'ordens') && { href: '#ordens', label: 'Ordens de serviço', detail: 'Consulte as ordens atribuídas' },
@@ -70,7 +71,7 @@ export default function MeuSetorView() {
       <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
         <span className="rounded-full bg-cyan-400/15 px-3 py-1.5 font-semibold text-cyan-200">{isSetor(setor) ? setores[setor] : 'Setor não atribuído'}</span>
         {context?.funcionario.cargo && <span className="text-slate-300">{context.funcionario.cargo}</span>}
-        {sectorList.length > 1 && <span className="text-slate-400">Acesso adicional: {sectorList.filter(isSetor).map(s => setores[s]).join(', ')}</span>}
+        {additionalSectors.length > 0 && <span className="text-slate-400">Acesso adicional: {additionalSectors.map(s => setores[s]).join(', ')}</span>}
       </div>
     </header>
     {erro && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{erro}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" onClick={() => setAtualizacao(value => value + 1)}>Tentar novamente</button></div>}
