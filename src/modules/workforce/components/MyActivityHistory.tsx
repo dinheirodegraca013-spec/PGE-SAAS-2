@@ -7,8 +7,9 @@ const labels:Record<string,string>={tarefa_criada:'Tarefa criada',tarefa_atualiz
 export default function MyActivityHistory(){
   const {context}=useWorkforceAccess();const [data,setData]=useState<Page|null>(null);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setError('');},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
-  useEffect(()=>{let active=true;setData(null);setError('');setLoading(true);
+  useEffect(()=>{let active=true;setLoading(true);
     Promise.resolve(supabase.rpc('minhas_atividades',{p_pagina:page})).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar o histórico.');return;}setData(data);})
       .catch(()=>{if(active)setError('Não foi possível carregar o histórico.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
