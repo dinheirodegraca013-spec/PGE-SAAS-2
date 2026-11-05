@@ -117,6 +117,10 @@ test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : 'Atualizar projetos'\}/);
 });
 
+test("painel limpa o horário anterior ao atualizar projetos", () => {
+  assert.match(meuSetor, /setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+});
+
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {
   assert.match(minhasTarefas, /Tentar novamente/);
   assert.match(minhasTarefas, /aria-live="polite"/);
