@@ -38,6 +38,7 @@ const inboxMateriais = readOptional("../src/modules/workforce/components/Materia
 const criacaoTarefa = readOptional("../src/modules/workforce/components/TaskCreationForm.tsx");
 const atribuicaoFicha = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
 const fluxoProducao = readOptional("../src/modules/workforce/components/ServicePipelineEditor.tsx");
+const editorFuncionario = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -253,5 +254,11 @@ test("editores operacionais anunciam carregamento e bloqueiam estados concorrent
   assert.match(atribuicaoFicha, /aria-live="polite"/);
   assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy\}/);
   assert.match(fluxoProducao, /aria-live="polite"/);
+});
+
+test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
+  assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
+  assert.match(editorFuncionario, /role="status" aria-live="polite"/);
+  assert.match(editorFuncionario, /disabled=\{busy\}/);
 });
 
