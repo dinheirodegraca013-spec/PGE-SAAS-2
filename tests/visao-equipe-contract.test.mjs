@@ -342,3 +342,8 @@ test("tarefas informam atualização no botão durante carregamento", () => {
   assert.match(minhasTarefas, /\{loading\?'Atualizando…':'Atualizar tarefas'\}/);
 });
 
+test("tarefas exibem um único bloco de carregamento e erro", () => {
+  assert.equal((minhasTarefas.match(/Carregando tarefas…/g) || []).length, 1);
+  assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
+});
+
