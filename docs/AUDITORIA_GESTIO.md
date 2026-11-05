@@ -198,5 +198,6 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - O aceite de orçamento passou a usar a RPC `assinar_orcamento_publico`, com bloqueio `FOR UPDATE`, atualização do serviço e gravação de `audit_logs` na mesma transação.
 - A função é executável somente por `service_role`; `anon` e `authenticated` não possuem `EXECUTE`.
 - Edge Function `public-orcamento` publicada como versão 16, ACTIVE. Testes direcionados, lint e smoke de produção aprovados.
+- O auditor permanente passou a testar a RPC `assinar_orcamento_publico`; produção respondeu `404` para o cliente anônimo, confirmando que a função não está exposta pelo PostgREST.
 
 
