@@ -14,6 +14,11 @@
 - Deploy Vercel READY em produção (`dpl_HhMp8QRFE4HrYTMWjTmDtuP12YLX`); funções `cadastrar-funcionario`, `validar-anexo` e `public-orcamento` ativas no Supabase.
 - Permanece apenas o aviso externo `auth_leaked_password_protection`, que depende da habilitação no painel Auth do Supabase; não há API disponível no projeto para alterar essa configuração com segurança.
 
+### Logs de produção
+
+- Consulta read-only do período de 04/11/2026 12:00 UTC a 05/11/2026 12:00 UTC: nenhuma resposta HTTP 500 encontrada nos logs.
+- As respostas 401, 400, 405 e 413 observadas correspondem às verificações automatizadas de autenticação, método, payload e CORS; não foram identificados erros 5xx ou exceções de aplicação.
+
 Data: 27/10/2026
 
 ## Resultado
@@ -156,5 +161,3 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 
 - A política agora restringe scripts, fontes, estilos, imagens e conexões às origens necessárias, mantendo Supabase e Google Fonts explicitamente permitidos.
 - O auditor de produção foi atualizado para comparar o novo valor completo; produção respondeu sem divergências, com 11 rotas, assets e endpoints aprovados.
-
-
