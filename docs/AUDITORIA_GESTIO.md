@@ -169,7 +169,7 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - A varredura de produção foi repetida: 11 rotas no domínio principal e no `www`, headers obrigatórios, assets, CORS, métodos HTTP, payload de 17 KiB e RPCs anônimos conforme o contrato.
 - `npm run audit:sql-security` e `npm run verify:integrity` passaram sem achados.
 - Removido do serviço de orçamentos o helper legado que gerava URLs `http://localhost:5000/api`; não havia consumidores nem endpoint correspondente.
-- Suíte local: 116 testes aprovados e lint aprovado.
+- Suíte local: 117 testes aprovados e lint aprovado; foi adicionada uma guarda contra a reintrodução de URLs de API local no serviço de orçamentos.
 - Advisors Supabase continuam sem achados críticos; permanecem os avisos intencionais de tabelas privadas sem políticas próprias, RPCs `SECURITY DEFINER` autenticados e a proteção de senhas vazadas, que exige habilitação manual no painel Auth.
 - A nova publicação foi tentada, mas a Vercel recusou por cota diária (`api-deployments-free-per-day`); o último deploy publicado permanece `READY`.
 
