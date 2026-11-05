@@ -57,7 +57,7 @@ export default function FinishingDryingControl({
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role={message.includes('registrada') ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
-    <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar horário do servidor</button>
+    <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
   </section>;
 }
 
