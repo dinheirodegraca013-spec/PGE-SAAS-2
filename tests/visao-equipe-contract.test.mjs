@@ -320,6 +320,12 @@ test("ações de execução da ficha informam salvamento", () => {
   assert.match(fichaOperacional, /saving\?'Salvando…'/);
 });
 
+test("liberação da ficha bloqueia duplo clique", () => {
+  assert.match(fichaOperacional, /disabled=\{loading\}/);
+  assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
+  assert.match(fichaOperacional, /loading \? 'Liberando…' : 'Liberar ficha deste setor'/);
+});
+
 test("agenda ignora respostas de requisições antigas", () => {
   assert.match(agendaFuncionario, /const generation=useRef\(0\)/);
   assert.match(agendaFuncionario, /if\(request===generation\.current\)setItems/);
