@@ -53,6 +53,7 @@ Data: 27/10/2026
 
 - Rotas públicas e protegidas: 11/11 responderam HTTP 200 no domínio oficial; rotas protegidas redirecionam para login quando sem sessão.
 - Headers obrigatórios: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy e Permissions-Policy presentes.
+- A auditoria agora valida também o valor exato da CSP (`frame-ancestors`, `frame-src`, `form-action`, `object-src` e `base-uri`), evitando regressões por cabeçalho apenas parcialmente configurado.
 - Assets publicados: todos os bundles referenciados pelo HTML responderam HTTP 200.
 - Edge Functions: `cadastrar-funcionario` e `validar-anexo` rejeitam chamadas sem sessão (401); `public-orcamento` mantém contrato público com payload inválido (400); métodos HTTP inválidos foram rejeitados (405).
 - RPCs sensíveis `limites_acesso` e `meu_contexto_operacional` rejeitaram chamadas anônimas (401).
