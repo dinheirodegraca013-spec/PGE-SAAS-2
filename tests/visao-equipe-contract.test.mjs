@@ -257,6 +257,12 @@ test("histórico reinicia a paginação ao trocar de funcionário", () => {
   assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
 });
 
+test("listas do funcionário reiniciam filtros e paginação ao trocar de contexto", () => {
+  assert.match(notificacoesFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+  assert.match(minhasTarefas, /useEffect\(\(\)=>\{setPage\(0\);setFilter\(''\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+  assert.match(fichasFuncionario, /useEffect\(\(\) => \{ setPage\(0\); setSearch\(''\); setQuery\(''\); \}, \[context\?\.funcionario\.id, context\?\.funcionario\.versao\]\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
