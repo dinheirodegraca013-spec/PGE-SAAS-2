@@ -26,6 +26,7 @@ export default function FinishingDryingControl({
   const [minutes, setMinutes] = useState('60');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
 
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -44,10 +45,10 @@ export default function FinishingDryingControl({
     {canRegister && <form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy={busy} onSubmit={async event => {
       event.preventDefault();
       const value = Number(minutes);
-      if (!Number.isInteger(value) || value < 1 || value > 10080) { setMessage('Informe de 1 a 10.080 minutos.'); return; }
+      if (!Number.isInteger(value) || value < 1 || value > 10080) { setMessageKind('error'); setMessage('Informe de 1 a 10.080 minutos.'); return; }
       setBusy(true); setMessage('');
-      try { await onRegister(value); setMessage('Secagem registrada pelo servidor.'); }
-      catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível registrar a secagem.'); }
+      try { await onRegister(value); setMessageKind('status'); setMessage('Secagem registrada pelo servidor.'); }
+      catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível registrar a secagem.'); }
       finally { setBusy(false); }
     }}>
       <label htmlFor={`${id}-minutes`} className="text-sm">Adicionar prazo (minutos)
@@ -56,7 +57,7 @@ export default function FinishingDryingControl({
       <button type="submit" className="btn-primary" disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role={message.includes('registrada') ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
+    {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
   </section>;
 }
