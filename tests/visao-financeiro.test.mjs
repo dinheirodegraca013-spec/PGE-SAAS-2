@@ -8,7 +8,7 @@ const { code } = await transform(await readFile(new URL('../src/views/visao3d/Vi
 async function setup(financeiro) {
   const states=[], effects=[], queries=[];
   let cursor=0, mounted=false;
-  const react={...React,useState(initial){const i=cursor++;if(!(i in states))states[i]=initial;return [states[i],value=>states[i]=typeof value==='function'?value(states[i]):value];},useEffect(fn){if(!mounted)effects.push(fn);},useMemo:fn=>fn(),useCallback:fn=>fn};
+  const react={...React,useState(initial){const i=cursor++;if(!(i in states))states[i]=initial;return [states[i],value=>states[i]=typeof value==='function'?value(states[i]):value];},useEffect(fn){if(!mounted)effects.push(fn);},useMemo:fn=>fn(),useCallback:fn=>fn,lazy:()=>Map,Suspense:({children})=>children};
   const Map=()=>null;
   const supabase={from(table){
     const query={table,filters:[],select(columns,options){this.columns=columns;this.options=options;return this;},order(){return this;},eq(...args){this.filters.push(['eq',...args]);return this;},not(...args){this.filters.push(['not',...args]);return this;},lt(...args){this.filters.push(['lt',...args]);return this;},then(resolve,reject){return Promise.resolve(table==='financeiro_lancamentos'?financeiro:{data:[],error:null}).then(resolve,reject);}};
@@ -53,3 +53,4 @@ test('consulta usa empresa atual, exclui contas quitadas e não transfere valore
   assert.ok(query.filters.some(f=>JSON.stringify(f)===JSON.stringify(['not','status','in','(quitado,cancelado)'])));
   assert.ok(query.filters.some(f=>f[0]==='lt'&&f[1]==='vencimento'&&/^\d{4}-\d{2}-\d{2}$/.test(f[2])));
 });
+
