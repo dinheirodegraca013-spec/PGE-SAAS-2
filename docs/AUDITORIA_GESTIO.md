@@ -256,6 +256,7 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Foi criada a função/trigger `private.protect_employee_profile_fields`, aplicada no Supabase, bloqueando esses campos para não administradores com erro `42501`; nome e avatar continuam editáveis pelo próprio usuário.
 - A trigger está ativa e sua função não possui execução concedida a `anon` ou `authenticated`; administradores e fluxos internos permanecem autorizados.
 - Regressão adicionada; suíte local: 126 testes aprovados, auditoria SQL (57 migrations) sem achados e typecheck aprovado.
+- A proteção foi refinada para aceitar o incremento automático de `acesso_versao` em exatamente `+1`, preservando a edição legítima do nome pelo próprio funcionário e recusando saltos de versão.
 
 ### Advisors e logs após a correção — 05/11/2026
 
