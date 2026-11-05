@@ -10,7 +10,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
   const [error,setError] = useState('');
   const [message,setMessage] = useState('');
   const [retry,setRetry] = useState(0);
-  useEffect(()=>{setSelected(current || '');},[current]);
+  useEffect(()=>{setSelected(current || '');setMessage('');},[current]);
   useEffect(()=>{
     let active=true;
     setLoading(true);setError('');setMessage('');setCandidates([]);
