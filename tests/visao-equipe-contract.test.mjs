@@ -137,6 +137,13 @@ test("equipe recarrega após a sessão e o tenant ficarem disponíveis", () => {
   assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
 });
 
+test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
+  assert.match(equipe, /Tentar novamente/);
+  assert.match(equipe, /aria-busy=\{carregando\}/);
+  assert.match(equipe, /role="status" aria-live="polite"/);
+  assert.match(equipe, /role="status" aria-live="polite" className="rounded-xl/);
+});
+
 test("fichas de serviço expõem carregamento e paginação acessíveis", () => {
   assert.match(fichasFuncionario, /aria-live="polite"/);
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
