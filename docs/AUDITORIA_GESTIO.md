@@ -68,7 +68,7 @@ Data: 27/10/2026
 
 ### Guarda preventiva adicionada
 
-- O quality gate agora executa `npm run audit:sql-security`, cobrindo 46 migrations e falhando se encontrar `SECURITY DEFINER` sem `search_path` fixo ou concessão de execução anônima em funções públicas.
+- O quality gate agora executa `npm run audit:sql-security`, cobrindo 49 migrations e falhando se encontrar `SECURITY DEFINER` sem `search_path` fixo ou concessão de execução anônima em funções públicas.
 - Resultado atual: nenhum achado.
 
 ### Fechamento de auditoria aprofundada — 04/11/2026
