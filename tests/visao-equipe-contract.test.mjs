@@ -39,6 +39,8 @@ const criacaoTarefa = readOptional("../src/modules/workforce/components/TaskCrea
 const atribuicaoFicha = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
 const fluxoProducao = readOptional("../src/modules/workforce/components/ServicePipelineEditor.tsx");
 const editorFuncionario = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
+const fichaOperacional = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
+const ocorrenciasFuncionario = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -262,5 +264,10 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
   assert.match(editorFuncionario, /disabled=\{busy\}/);
+});
+
+test("ficha técnica e resolução de ocorrência anunciam estados críticos", () => {
+  assert.match(fichaOperacional, /role="status" aria-live="polite"/);
+  assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
 });
 
