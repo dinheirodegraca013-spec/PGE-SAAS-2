@@ -18,6 +18,7 @@ const readOptional = (path) =>
 const visao = readOptional("../src/views/visao3d/Visao3DView.tsx");
 const mapa3d = readOptional("../src/views/visao3d/ThreeOperationalMap.tsx");
 const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
+const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -66,3 +67,12 @@ test("dashboard oferece resumo para Visão 3D e Equipe", () => {
   assert.match(dashboard, /to="\/visao-3d"/);
   assert.match(dashboard, /to="\/equipe"/);
 });
+
+test("painel do funcionário mantém ações rápidas e dados reais do setor", () => {
+  assert.match(meuSetor, /Painel do funcionário/);
+  assert.match(meuSetor, /Ações rápidas/);
+  assert.match(meuSetor, /hasPermission\(context, 'tarefas'\)/);
+  assert.match(meuSetor, /meu_setor_projetos/);
+  assert.match(meuSetor, /formatPrazo/);
+});
+
