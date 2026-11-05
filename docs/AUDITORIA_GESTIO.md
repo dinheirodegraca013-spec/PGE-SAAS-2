@@ -163,3 +163,14 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 
 - A política agora restringe scripts, fontes, estilos, imagens e conexões às origens necessárias, mantendo Supabase e Google Fonts explicitamente permitidos.
 - O auditor de produção foi atualizado para comparar o novo valor completo; produção respondeu sem divergências, com 11 rotas, assets e endpoints aprovados.
+
+### Reauditoria contínua — 05/11/2026 (ciclo adicional)
+
+- A varredura de produção foi repetida: 11 rotas no domínio principal e no `www`, headers obrigatórios, assets, CORS, métodos HTTP, payload de 17 KiB e RPCs anônimos conforme o contrato.
+- `npm run audit:sql-security` e `npm run verify:integrity` passaram sem achados.
+- Removido do serviço de orçamentos o helper legado que gerava URLs `http://localhost:5000/api`; não havia consumidores nem endpoint correspondente.
+- Suíte local: 116 testes aprovados e lint aprovado.
+- Advisors Supabase continuam sem achados críticos; permanecem os avisos intencionais de tabelas privadas sem políticas próprias, RPCs `SECURITY DEFINER` autenticados e a proteção de senhas vazadas, que exige habilitação manual no painel Auth.
+- A nova publicação foi tentada, mas a Vercel recusou por cota diária (`api-deployments-free-per-day`); o último deploy publicado permanece `READY`.
+
+
