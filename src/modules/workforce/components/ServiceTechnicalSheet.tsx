@@ -58,7 +58,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     })();
     return () => { generation.current++; };
   }, [serviceId, sector, reload, context?.funcionario.versao]);
-  if (loading) return <p role="status">Carregando ficha técnica…</p>;
+  if (loading) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     <p role="alert" className="text-sm text-red-700">{error}</p>
     <button type="button" className="btn-secondary" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
@@ -68,7 +68,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível liberar a ficha.'); setLoading(false); }
     }}>Liberar ficha deste setor</button>}
   </div>;
-  return <section className="space-y-4">
+  return <section className="space-y-4" aria-busy={saving || checklistBusy}>
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Pendente'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
@@ -177,3 +177,4 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
   </section>;
 }
+
