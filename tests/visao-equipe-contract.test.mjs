@@ -126,6 +126,10 @@ test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /aria-busy=\{loading\}/);
 });
 
+test("tarefas limpam o horário anterior durante nova sincronização", () => {
+  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
+});
+
 test("tarefas não enviam atualização sem mudança", () => {
   assert.match(minhasTarefas, /const dirty=status!==task\.status/);
   assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
