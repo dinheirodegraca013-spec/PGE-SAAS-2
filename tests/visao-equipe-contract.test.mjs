@@ -323,6 +323,10 @@ test("secagem e produção informam atualização nos botões", () => {
   assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualização dos registros':'Atualizar registros'\}/);
 });
 
+test("secagem limpa feedback ao editar o prazo", () => {
+  assert.match(controleSecagem, /setMinutes\(event\.target\.value\); setMessage\(''\)/);
+});
+
 test("cartão de solicitação informa atualização no botão", () => {
   assert.match(solicitacaoMaterial, /aria-label=\{busy\?'Atualizando solicitações':'Atualizar solicitações'\}/);
   assert.match(solicitacaoMaterial, /\{busy\?'Atualizando…':'Atualizar'\}/);
