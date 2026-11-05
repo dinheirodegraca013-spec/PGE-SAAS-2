@@ -55,12 +55,12 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
 }
 
 export default function MyTasks(){
-  const {context}=useWorkforceAccess();const [data,setData]=useState<TaskPage|null>(null);const [page,setPage]=useState(0);const [filter,setFilter]=useState<TaskStatus|''>('');const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const id=useId();
+  const {context}=useWorkforceAccess();const [data,setData]=useState<TaskPage|null>(null);const [page,setPage]=useState(0);const [filter,setFilter]=useState<TaskStatus|''>('');const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [updatedAt,setUpdatedAt]=useState<Date|null>(null);const id=useId();
   useEffect(()=>{let active=true;setLoading(true);setError('');setData(null);
-    workTasks.list(page,filter||null).then(result=>{if(active)setData(result);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar as tarefas.');}).finally(()=>{if(active)setLoading(false);});
+    workTasks.list(page,filter||null).then(result=>{if(active){setData(result);setUpdatedAt(new Date());}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar as tarefas.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[page,filter,refresh,context?.funcionario.id,context?.funcionario.versao]);
-  return <section className="card space-y-4 p-5"><h2 className="text-lg font-bold">Minhas tarefas</h2>
+  return <section className="card space-y-4 p-5" aria-busy={loading}><div className="flex flex-wrap items-center justify-between gap-2"><h2 className="text-lg font-bold">Minhas tarefas</h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Atualizado às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div>
     <label htmlFor={id} className="block text-sm">Filtrar por situação<select id={id} className="input-field mt-1" value={filter} onChange={event=>{setFilter(event.target.value as TaskStatus|'');setPage(0);}}><option value="">Todas as situações</option>{Object.entries(taskStatusLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
     <button type="button" className="btn-secondary" disabled={loading} onClick={()=>setRefresh(n=>n+1)}>Atualizar tarefas</button>
     {loading && <p role="status" aria-live="polite">Carregando tarefas…</p>}{error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
