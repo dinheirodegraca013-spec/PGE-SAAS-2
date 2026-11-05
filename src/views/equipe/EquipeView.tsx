@@ -306,7 +306,7 @@ export default function EquipeView() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`rounded-full px-2 py-1 text-xs font-bold ${perfil.ativo ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}
+                        className={`rounded-full px-2 py-1 text-xs font-bold ${perfil.suspenso || limits?.suspended_ids.includes(perfil.id) ? "bg-amber-50 text-amber-700" : perfil.ativo ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}
                       >
                         {perfil.suspenso ? 'Suspenso' : !perfil.ativo ? 'Inativo' : limits?.suspended_ids.includes(perfil.id) ? 'Suspenso pelo plano' : 'Ativo'}
                       </span>
