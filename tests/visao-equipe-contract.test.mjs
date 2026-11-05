@@ -299,6 +299,10 @@ test("registros operacionais liberam o identificador após sucesso", () => {
   assert.match(solicitacaoMaterial, /await onCreate\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
 });
 
+test("produção limpa o feedback ao editar novo evento", () => {
+  assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
+});
+
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
   assert.match(controleSecagem, /aria-busy=\{busy\}/);
   assert.match(controleSecagem, /aria-live="polite"/);
