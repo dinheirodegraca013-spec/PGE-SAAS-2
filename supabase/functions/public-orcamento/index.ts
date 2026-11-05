@@ -74,13 +74,6 @@ async function getQuote(token: string) {
   if (!["pendente", "enviado", "visualizado", "assinado"].includes(String(data.status).toLowerCase())) return null;
   return data;
 }
-async function rollbackQuote(original: Record<string, any>, signedId: string) {
-  await db.from("orcamentos")
-    .update({ status: original.status, tem_pdf_assinado: original.tem_pdf_assinado,
-      assinado_por_nome: original.assinado_por_nome, assinado_em: original.assinado_em,
-      updated_at: new Date().toISOString() })
-    .eq("id", signedId).eq("tem_pdf_assinado", true);
-}
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
   if (req.method !== "GET" && req.method !== "POST") return reply(req, 405, { error: "Método não permitido." });
@@ -112,30 +105,16 @@ Deno.serve(async (req: Request) => {
       if (!["pendente", "enviado", "visualizado"].includes(String(quote.status).toLowerCase())) {
         return reply(req, 409, { error: "Este orçamento não está disponível para aceite." });
       }
-      const { data: updated, error: updateError } = await db.from("orcamentos")
-        .update({ status: "Assinado", tem_pdf_assinado: true, assinado_por_nome: nome,
-          assinado_em: new Date().toISOString(), updated_at: new Date().toISOString() })
-        .eq("id", quote.id).eq("public_token", token).eq("tem_pdf_assinado", false)
-        .select("id,tenant_id,servico_id,itens,valor_total,data_validade,observacoes_gerais,status,tem_pdf_assinado,assinado_por_nome,assinado_em,public_token")
-        .maybeSingle();
-      if (updateError) throw updateError;
-      if (!updated) return reply(req, 409, { error: "O orçamento já foi assinado ou alterado. Atualize a página." });
-      if (updated.servico_id) {
-        const { data: serviceUpdated, error: serviceError } = await db.from("servicos")
-          .update({ status: "Aprovado", updated_at: new Date().toISOString() })
-          .eq("id", updated.servico_id).eq("tenant_id", updated.tenant_id)
-          .select("id").maybeSingle();
-        if (serviceError || !serviceUpdated) {
-          await rollbackQuote(quote, updated.id);
-          throw serviceError || new Error("linked_service_not_found");
-        }
-      }
-      const { error: auditError } = await db.from("audit_logs").insert({
-        tenant_id: updated.tenant_id, actor_id: null, acao: "ASSINAR_PUBLICO",
-        tabela: "orcamentos", registro_id: String(updated.id), detalhes: { nome, canal: "link_publico" },
+      const { data: signed, error: signingError } = await db.rpc("assinar_orcamento_publico", {
+        p_token: token,
+        p_nome: nome,
       });
-      if (auditError) console.error("Public quote audit log failed:", auditError.message);
-      return reply(req, 200, { quote: publicShape(updated) });
+      if (signingError) {
+        if (signingError.message.includes("quote_unavailable")) return reply(req, 404, { error: "Orçamento não encontrado, expirado ou indisponível." });
+        if (signingError.message.includes("linked_service_not_found")) return reply(req, 409, { error: "O serviço vinculado não está disponível para aceite." });
+        throw signingError;
+      }
+      return reply(req, 200, { quote: signed });
     }
     return reply(req, 405, { error: "Método não permitido." });
   } catch (error) {
