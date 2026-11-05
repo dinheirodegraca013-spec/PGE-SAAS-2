@@ -222,4 +222,11 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - O verificador de integridade passou a rejeitar automaticamente `Warning: truncated output` em arquivos de código e migrations.
 - Após a correção: 119 testes, lint e integridade aprovados; o `main` remoto foi conferido por conteúdo bruto sem marcador de corrupção.
 
+### Escopo administrativo e cobertura de endpoints — 05/11/2026 (ciclo adicional)
+
+- Foram implementadas e aplicadas em produção as RPCs administrativas `admin_excluir_empresa` e `financeiro_resumo_baixas`, com execução anônima revogada e validação de tenant/permissão.
+- As políticas de sessão passaram a ser `RESTRICTIVE`; as políticas financeiras genéricas e o limite de setor amplo foram removidos.
+- Dados comerciais, assinaturas e cobranças do tenant agora exigem papel `AdministradorTenant`/`SuperAdmin`; a rota `/configuracoes` ganhou guarda correspondente.
+- Verificações locais: 124 testes, typecheck, integridade, auditoria SQL e dependências (0 vulnerabilidades) aprovados; auditoria pública continua com 11/11 rotas, headers, CORS, métodos e payloads aprovados nos dois domínios.
+- A alteração de frontend foi sincronizada no `main` remoto. A publicação Vercel ainda aguarda nova janela de cota; o último deploy publicado permanece `READY` no commit `325463c`.
 
