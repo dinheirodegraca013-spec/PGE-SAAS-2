@@ -337,3 +337,8 @@ test("tarefas bloqueiam paginação durante carregamento", () => {
   assert.match(minhasTarefas, /disabled=\{loading \|\| !data\.tem_mais\}/);
 });
 
+test("tarefas informam atualização no botão durante carregamento", () => {
+  assert.match(minhasTarefas, /aria-label=\{loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
+  assert.match(minhasTarefas, /\{loading\?'Atualizando…':'Atualizar tarefas'\}/);
+});
+
