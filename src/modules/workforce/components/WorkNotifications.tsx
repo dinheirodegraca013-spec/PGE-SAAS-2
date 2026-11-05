@@ -46,7 +46,7 @@ export default function WorkNotifications(){
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>
     </li>)}</ul>}
     {data && <nav aria-label="Paginação de notificações" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></nav>}
-    {selected?.tarefa_id?<TaskDetails key={selected.tarefa_id} taskId={selected.tarefa_id}/>:selected?.servico_id?<ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>:null}
+    {selected && <div className="space-y-3"><div className="flex justify-end"><button type="button" className="btn-secondary" onClick={()=>setSelected(null)}>Fechar detalhe</button></div>{selected.tarefa_id?<TaskDetails key={selected.tarefa_id} taskId={selected.tarefa_id}/>:selected.servico_id?<ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>:null}</div>}
   </section>;
 }
 
