@@ -106,5 +106,6 @@ Data: 27/10/2026
 - Auditoria final pós-publicação: 11 rotas, cabeçalhos de segurança, assets, endpoints, métodos, CORS e limite de payload aprovados; suíte com 106 testes, lint, build e integridade aprovados.
 - Guarda preventiva adicionada para manter `cadastrar-funcionario`, `public-orcamento` e `validar-anexo` na mesma versão fixa do cliente Supabase; suíte atualizada para 107 testes aprovados.
 - Respostas das funções autenticadas agora exigem `Cache-Control: no-store, max-age=0`; o auditor de produção valida esse cabeçalho junto com os códigos HTTP e CORS.
+- O fluxo de convite foi verificado no banco: 1 funcionário, 0 sem tenant e 0 divergências entre metadata, empresa e setor; foi criado teste de regressão para o trigger de metadata diferida (108 testes aprovados).
 
 
