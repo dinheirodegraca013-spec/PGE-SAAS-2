@@ -250,3 +250,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Navegador real acessou `/admin` sem sessão e foi redirecionado para `/login?redirect=%2Fadmin`.
 - A página exibida continha somente o formulário de autenticação; nenhum painel ou dado administrativo foi renderizado.
 
+### Correção de elevação por edição do próprio perfil — 05/11/2026
+
+- A auditoria encontrou que `profiles_update_self_or_admin` preservava o papel, mas permitia a um funcionário tentar alterar `setor`, `cargo`, status e identificador interno.
+- Foi criada a função/trigger `private.protect_employee_profile_fields`, aplicada no Supabase, bloqueando esses campos para não administradores com erro `42501`; nome e avatar continuam editáveis pelo próprio usuário.
+- A trigger está ativa e sua função não possui execução concedida a `anon` ou `authenticated`; administradores e fluxos internos permanecem autorizados.
+- Regressão adicionada; suíte local: 126 testes aprovados, auditoria SQL (57 migrations) sem achados e typecheck aprovado.
+
