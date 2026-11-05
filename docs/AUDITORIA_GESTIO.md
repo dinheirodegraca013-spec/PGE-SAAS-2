@@ -117,5 +117,6 @@ Data: 27/10/2026
 - O auditor também verifica `nosniff` e `no-referrer` nas respostas `OPTIONS` de todas as Edge Functions; preflights de produção aprovados.
 - A CSP da aplicação foi endurecida com `frame-src 'none'` e `form-action 'self'`, mantendo o checkout via navegação JavaScript e bloqueando embedding/envio de formulários para origens externas.
 - Varredura preventiva adicionada para bloquear regressões com `dangerouslySetInnerHTML`, `innerHTML`, `insertAdjacentHTML`, `eval` e `new Function`; suíte atual: 113 testes aprovados.
+- O endpoint `public-orcamento` passou a rejeitar `PUT`, `PATCH` e `DELETE` imediatamente com `405`, antes de validar token; o auditor agora cobre `PUT` e `DELETE`. Publicação atual: v11.
 
 
