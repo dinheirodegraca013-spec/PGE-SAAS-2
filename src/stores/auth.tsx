@@ -109,15 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const applySession = async (session: any): Promise<boolean> => {
     const user = session.user;
-    try {
-      await authorizeDevice();
-      setDeviceError(null);
-    } catch (error) {
-      clearAuthState();
-      const message = error instanceof Error ? error.message : 'Dispositivo não autorizado.';
-      setDeviceError(message);
-      throw new Error(message);
-    }
     // O perfil e o tenant são carregados exclusivamente do banco.
     // 1. Busca perfil real na tabela 'profiles'
     const { profile, isActive, internalRole } = await fetchUserProfile(user.id);
@@ -126,6 +117,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearAuthState();
       await supabase.auth.signOut().catch((error) => console.warn('Não foi possível encerrar a sessão remota:', error));
       return false;
+    }
+
+    // Só registra o dispositivo depois de validar o perfil e o tenant.
+    try {
+      await authorizeDevice();
+      setDeviceError(null);
+    } catch (error) {
+      clearAuthState();
+      const message = error instanceof Error ? error.message : 'Dispositivo não autorizado.';
+      setDeviceError(message);
+      throw new Error(message);
     }
 
     // Perfil e tenant vêm exclusivamente do banco, nunca de metadados editáveis pelo usuário.
