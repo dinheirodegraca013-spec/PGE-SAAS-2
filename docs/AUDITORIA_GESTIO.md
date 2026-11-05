@@ -13,3 +13,5 @@ Total output lines: 189
 - A resposta pública de `public-orcamento` deixou de retornar o UUID interno do orçamento; o fluxo continua identificando o registro exclusivamente pelo token público.
 - Regressão adicionada para impedir a reintrodução do campo interno; suíte local: 118 testes aprovados e lint aprovado.
 - Edge Function `public-orcamento` publicada no Supabase como versão 15, estado ACTIVE. Smoke test público com token inválido confirmou `400`, `Cache-Control: no-store` e CORS restrito ao domínio oficial.
+
+- Reexecução de `npm run audit:production` após a publicação: 11/11 rotas nos dois domínios, headers, assets, CORS, métodos e limites de payload aprovados.
