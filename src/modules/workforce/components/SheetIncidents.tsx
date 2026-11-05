@@ -23,6 +23,7 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');const [type,setType]=useState<IncidentType>('outro');const [severity,setSeverity]=useState<IncidentSeverity>('atencao');const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
   const clearFeedback=()=>{setError('');setMessage('');};
+  useEffect(()=>{setTitle('');setDescription('');setType('outro');setSeverity('atencao');setMessage('');receipt.current=null;},[serviceId,sector]);
   useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');setItems([]);
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
