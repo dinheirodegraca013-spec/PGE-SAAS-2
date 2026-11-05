@@ -1,4 +1,3 @@
-
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
@@ -21,3 +20,8 @@ test('rotas administrativas não removem os guards de privilégio', () => {
   assert.match(admin, /<FinanceiroGuard>/);
 });
 
+test('configurações do tenant exigem administrador da empresa', () => {
+  const panel = app.slice(app.indexOf('path="/"'), app.indexOf('DASHBOARD ADMINISTRATIVO'));
+  assert.match(panel, /path="configuracoes"\s+element=\{<TenantAdminGuard><SettingsView \/><\/TenantAdminGuard>\}/);
+  assert.match(app, /import TenantAdminGuard from ['"]\.\/components\/auth\/TenantAdminGuard['"]/);
+});
