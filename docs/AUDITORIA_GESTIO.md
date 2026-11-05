@@ -99,5 +99,6 @@ Data: 27/10/2026
 - Respostas do orçamento público agora enviam `Cache-Control: no-store, max-age=0`; o auditor valida esse cabeçalho junto com o `413`.
 - A versão 6 também compensa a assinatura do orçamento se a atualização do serviço vinculado falhar, evitando estado parcialmente confirmado; teste contratual incluído e suíte com 106 aprovações.
 - Logs de 05/11/2026: versão 6 respondeu ao teste de limite com `413` e não registrou nenhum `5xx`; as respostas observadas das versões anteriores foram `200`, `400` e `413` conforme esperado.
+- Dependência `@supabase/supabase-js` atualizada para `2.119.0`; `npm audit --omit=dev` continua sem vulnerabilidades, com testes, lint e build aprovados.
 
 
