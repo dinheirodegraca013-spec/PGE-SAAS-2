@@ -351,6 +351,10 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /disabled=\{busy\}/);
 });
 
+test("responsável limpa feedback ao recarregar candidatos", () => {
+  assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
+});
+
 test("ficha técnica e resolução de ocorrência anunciam estados críticos", () => {
   assert.match(fichaOperacional, /role="status" aria-live="polite"/);
   assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
