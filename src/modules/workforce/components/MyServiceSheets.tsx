@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import React, { useEffect, useState } from 'react';
 import { isSetor, setores } from '@/lib/setores';
 import { useWorkforceAccess } from '../context/WorkforceAccessContext';
@@ -15,6 +16,7 @@ export default function MyServiceSheets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
+  useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
   useEffect(() => {
     let active = true;
     setLoading(true); setError(''); setList(null); setSelected(null);
