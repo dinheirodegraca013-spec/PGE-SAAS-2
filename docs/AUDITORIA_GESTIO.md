@@ -13,6 +13,7 @@
 - As 18 políticas foram recriadas como `RESTRICTIVE`, mantendo a validação de dispositivo como condição obrigatória.
 - As políticas financeiras genéricas por `tenant_id` foram removidas; leituras agora dependem do escopo de permissão financeira por registro.
 - Verificação no banco confirmou todas as políticas de sessão como `RESTRICTIVE`; suíte passou para 122 testes.
+- Também foi removida a política `employee_sector_boundary` das tabelas financeiras; o acesso agora permanece exclusivamente em `employee_financial_scope` por lançamento/baixa.
 
 ## Verificação de navegador em produção — 05/11/2026
 
