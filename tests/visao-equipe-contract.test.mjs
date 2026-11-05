@@ -181,6 +181,11 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
   assert.match(fichasFuncionario, /Tentar novamente/);
 });
 
+test("pesquisa de fichas informa o estado do botão", () => {
+  assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
+  assert.match(fichasFuncionario, /\{loading\?'Pesquisando…':'Pesquisar'\}/);
+});
+
 test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-live="polite"/);
   assert.match(notificacoesFuncionario, /Tentar novamente/);
