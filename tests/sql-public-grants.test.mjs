@@ -100,3 +100,11 @@ test('avatar storage writes stay inside the authenticated user path', async () =
   assert.equal((sql.match(/split_part\(name, '\/', 2\)\s*=\s*\(select auth\.uid\(\)\)::text/gi) || []).length, 4);
 });
 
+test('suspended profiles fail the server-side session gate', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105170000_block_suspended_profiles.sql', import.meta.url), 'utf8');
+  assert.match(sql, /create or replace function private\.user_within_plan\(p_user uuid\)/i);
+  assert.match(sql, /not coalesce\(p\.suspenso, false\)/i);
+  assert.match(sql, /not coalesce\(other\.suspenso, false\)/i);
+  assert.match(sql, /revoke all on function private\.user_within_plan\(uuid\)/i);
+});
+
