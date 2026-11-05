@@ -62,8 +62,14 @@ if (supabaseUrl && supabaseKey) {
     const result = await request(url, { method: 'POST', headers: { apikey: supabaseKey, 'content-type': 'application/json' }, body: '{}' });
     const status = result.response?.status ?? 0;
     const cacheControl = result.response?.headers.get('cache-control') ?? null;
+    const contentTypeOptions = result.response?.headers.get('x-content-type-options') ?? null;
+    const referrerPolicy = result.response?.headers.get('referrer-policy') ?? null;
     const cacheOk = name.startsWith('edge:') ? cacheControl?.includes('no-store') === true : true;
-    endpointSmoke.push({ name, status, expectedStatus, cacheControl, ok: status === expectedStatus && cacheOk });
+    const edgeHeadersOk = name.startsWith('edge:')
+      ? contentTypeOptions?.toLowerCase() === 'nosniff' && referrerPolicy?.toLowerCase() === 'no-referrer'
+      : true;
+    endpointSmoke.push({ name, status, expectedStatus, cacheControl, contentTypeOptions, referrerPolicy,
+      ok: status === expectedStatus && cacheOk && edgeHeadersOk });
   }
 }
 const methodChecks = [];
@@ -93,9 +99,13 @@ if (supabaseUrl && supabaseKey) {
     headers: { apikey: supabaseKey, 'content-type': 'application/json' },
     body: 'x'.repeat(17000),
   });
+  const oversizedHeadersOk = oversized.response?.headers.get('x-content-type-options')?.toLowerCase() === 'nosniff'
+    && oversized.response?.headers.get('referrer-policy')?.toLowerCase() === 'no-referrer';
   methodChecks.push({ name: 'edge:public-orcamento:payload-limit', status: oversized.response?.status ?? 0,
     expectedStatus: 413, cacheControl: oversized.response?.headers.get('cache-control') ?? null,
-    ok: oversized.response?.status === 413 && oversized.response?.headers.get('cache-control')?.includes('no-store') === true });
+    contentTypeOptions: oversized.response?.headers.get('x-content-type-options') ?? null,
+    referrerPolicy: oversized.response?.headers.get('referrer-policy') ?? null,
+    ok: oversized.response?.status === 413 && oversized.response?.headers.get('cache-control')?.includes('no-store') === true && oversizedHeadersOk });
 }
 const report = { baseUrl, routes: results, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
