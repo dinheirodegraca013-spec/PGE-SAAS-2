@@ -76,7 +76,8 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
     finally { setBusy(false); }
   }} className="space-y-4" aria-busy={busy}>
     <div className="grid min-w-0 gap-4">{fields.map(field => renderField(field, value, onChange))}</div>
-    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
+    {message && <p role={message.startsWith('Não foi') || message.startsWith('Revise') ? 'alert' : 'status'} aria-live="polite" className="text-sm">{message}</p>}
     <button type="submit" disabled={busy || disabled} className="rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
   </form>;
 }
+
