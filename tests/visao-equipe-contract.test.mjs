@@ -176,6 +176,10 @@ test("resumo informa atualização no botão durante carregamento", () => {
   assert.match(resumoFuncionario, /\{loading\?'Atualizando…':'Atualizar indicadores'\}/);
 });
 
+test("resumo nomeia cada indicador para acessibilidade", () => {
+  assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
+});
+
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
