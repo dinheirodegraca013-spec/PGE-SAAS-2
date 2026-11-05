@@ -9,7 +9,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
   const [catalog,setCatalog] = useState<{modulo:string;operacao:string}[]>([]);
   const [name,setName] = useState(''); const [job,setJob] = useState(''); const [internalId,setInternalId] = useState(''); const [sector,setSector] = useState('corte');
   const [additional,setAdditional] = useState<string[]>([]); const [status,setStatus] = useState('ativo');
-  const [grants,setGrants] = useState<AccessGrant[]>([]); const [busy,setBusy] = useState(false); const [error,setError] = useState('');
+  const [grants,setGrants] = useState<AccessGrant[]>([]); const [busy,setBusy] = useState(false); const [error,setError] = useState(''); const [retry,setRetry] = useState(0);
   useEffect(() => {
     let mounted=true; setEmployee(null);setError('');
     Promise.all([workforceAccess.employee(userId),workforceAccess.context()]).then(([p,ctx])=>{
@@ -18,7 +18,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
       setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome);setJob(p.cargo||'');setInternalId(p.identificador_interno||'');setSector(p.setor||'corte');setAdditional(p.setores_adicionais);setStatus(p.status==='suspenso_plano'?'ativo':p.status);setGrants(p.permissoes);
     }).catch(e=>{if(mounted)setError(e.message||'Não foi possível carregar o funcionário.');});
     return()=>{mounted=false;};
-  },[userId]);
+  },[userId,retry]);
   const toggle=(module:string,operation:string,enabled:boolean)=>setGrants(current=>enabled?[...current,{modulo:module,operacao:operation,escopo:module==='estoque'?'setor':'atribuidos'}]:current.filter(g=>g.modulo!==module||g.operacao!==operation));
   async function save(event:React.FormEvent){
     event.preventDefault();if(!employee||busy)return;setBusy(true);setError('');
@@ -27,7 +27,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
   }
   return <section className="card space-y-4 p-5">
     <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Acesso do funcionário</h2><button className="btn-secondary" disabled={busy} onClick={onCancel}>Fechar</button></div>
-    {error&&<p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{error}</p>}
+    {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
     {!employee&&!error&&<p role="status">Carregando acesso…</p>}
     {employee&&<form className="space-y-5" onSubmit={save}>
       <fieldset disabled={busy} className="space-y-5">
