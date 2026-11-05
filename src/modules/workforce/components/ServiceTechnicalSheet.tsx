@@ -41,11 +41,11 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         if (request !== generation.current) return;
         setSheet(result); setValues(result.dados);
         if (sector === 'acabamento') {
-          try { setDrying(await technicalSheets.dryingLoad(serviceId)); }
+          try { const result = await technicalSheets.dryingLoad(serviceId); if (request === generation.current) setDrying(result); }
           catch (cause) { if (request === generation.current) setDryingError(cause instanceof Error ? cause.message : 'Não foi possível consultar a secagem.'); }
         }
         if (sector === 'corte' || sector === 'montagem') {
-          try { setProduction(await technicalSheets.productionLoad(serviceId, sector)); }
+          try { const result = await technicalSheets.productionLoad(serviceId, sector); if (request === generation.current) setProduction(result); }
           catch (cause) { if (request === generation.current) setProductionError(cause instanceof Error ? cause.message : 'Não foi possível consultar a produção.'); }
         }
         if (['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar')) {
