@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import React, { useRef, useState } from 'react';
 import type { MaterialOption, MaterialRequest } from '../services/technical-sheet.service';
 
@@ -38,7 +37,7 @@ export default function MaterialRequestPanel({
       if (!selected || !Number.isFinite(value) || value <= 0 || value >= 100000000 || text.length < 3) { setMessage('Selecione o material, informe a quantidade e explique a necessidade.'); return; }
       const data = { item: selected.id, quantity: value, unit: selected.unidade, reason: text }; const payload = JSON.stringify(data);
       if (request.current?.payload !== payload) request.current = { payload, id: crypto.randomUUID() };
-      setBusy(true); setMessage(''); try { await onCreate({ ...data, request: request.current.id }); setMessage('Solicitação enviada.'); setReason(''); } catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível solicitar o material.'); } finally { setBusy(false); }
+      setBusy(true); setMessage(''); try { await onCreate({ ...data, request: request.current.id }); request.current = null; setMessage('Solicitação enviada.'); setReason(''); } catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível solicitar o material.'); } finally { setBusy(false); }
     }}>
       <label className="block text-sm sm:col-span-2">Material<select className="input-field mt-1" value={item} onChange={event => setItem(event.target.value)} disabled={disabled || busy}><option value="">Selecione um material</option>{options.map(option => <option key={option.id} value={option.id}>{option.nome} · disponível: {qtyFormat.format(option.saldo)} {option.unidade}</option>)}</select></label>
       <label className="block text-sm">Quantidade<input className="input-field mt-1" type="number" min="0.001" max="99999999" step="any" value={quantity} onChange={event => setQuantity(event.target.value)} disabled={disabled || busy}/></label>
