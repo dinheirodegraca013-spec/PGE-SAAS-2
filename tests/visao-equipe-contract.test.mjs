@@ -327,3 +327,8 @@ test("formulário de ocorrência sinaliza o envio em andamento", () => {
   assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
 });
 
+test("histórico bloqueia paginação durante carregamento", () => {
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| page===0\}/);
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| !data\.tem_mais\}/);
+});
+
