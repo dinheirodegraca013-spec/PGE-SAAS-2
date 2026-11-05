@@ -14,7 +14,7 @@ begin
   end if;
 
   actor_role := private.current_user_role();
-  if actor_role in ('AdministradorTenant', 'SuperAdmin') or private.is_saas_interno() then
+  if actor_role in ('AdministradorTenant', 'SuperAdmin') then
     return new;
   end if;
 
