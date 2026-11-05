@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import React, { useRef, useState } from 'react';
 import type { MaterialOption, MaterialRequest } from '../services/technical-sheet.service';
 
@@ -31,7 +32,7 @@ export default function MaterialRequestPanel({
   const request = useRef<{ payload: string; id: string } | null>(null);
   const selected = options.find(option => option.id === item);
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-busy={busy}>
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><h4 className="font-semibold">Solicitações ao Estoque</h4><p className="text-sm text-slate-500">Peça materiais para esta ordem e acompanhe o atendimento.</p></div><button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar</button></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h4 className="font-semibold">Solicitações ao Estoque</h4><p className="text-sm text-slate-500">Peça materiais para esta ordem e acompanhe o atendimento.</p></div><button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Atualizando solicitações':'Atualizar solicitações'}>{busy?'Atualizando…':'Atualizar'}</button></div>
     {canRequest && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" onSubmit={async event => {
       event.preventDefault(); const value = Number(quantity); const text = reason.trim();
       if (!selected || !Number.isFinite(value) || value <= 0 || value >= 100000000 || text.length < 3) { setMessage('Selecione o material, informe a quantidade e explique a necessidade.'); return; }
