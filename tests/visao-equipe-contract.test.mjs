@@ -296,3 +296,7 @@ test("operações de produção e secagem sinalizam o formulário em andamento",
   assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
 });
 
+test("ações de execução da ficha informam salvamento", () => {
+  assert.match(fichaOperacional, /saving\?'Salvando…'/);
+});
+
