@@ -368,6 +368,9 @@ test("criação de tarefa limpa feedback ao trocar o contexto", () => {
 test("criação de tarefa limpa validação ao corrigir campos", () => {
   assert.match(criacaoTarefa, /setTitle\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
   assert.match(criacaoTarefa, /setEmployee\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
+  assert.match(criacaoTarefa, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
+  assert.match(criacaoTarefa, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
+  assert.match(criacaoTarefa, /setDeadline\(event\.target\.value\);clearFeedback\(\)/);
 });
 
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
