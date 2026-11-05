@@ -21,7 +21,7 @@ for (const [path, predicate] of checks) {
   }
 }
 
-const suspiciousMarkers = ['Get-Content:', 'Cannot find path', 'The system cannot find the path'];
+const suspiciousMarkers = ['Get-Content:', 'Cannot find path', 'The system cannot find the path', 'Warning: truncated output'];
 const textExtensions = new Set(['.ts', '.tsx', '.mjs', '.js', '.json', '.yml', '.yaml', '.sql']);
 async function scanDirectory(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
