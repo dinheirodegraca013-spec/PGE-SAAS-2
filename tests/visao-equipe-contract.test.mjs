@@ -204,6 +204,11 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
   assert.match(agendaFuncionario, /!start\|\|!end/);
 });
 
+test("agenda informa atualização no botão", () => {
+  assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
+  assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
+});
+
 test("histórico do funcionário oferece retry e paginação acessível", () => {
   assert.match(historicoFuncionario, /aria-busy=\{loading\}/);
   assert.match(historicoFuncionario, /aria-live="polite"/);
