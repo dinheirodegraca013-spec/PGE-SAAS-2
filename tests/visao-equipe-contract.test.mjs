@@ -253,6 +253,11 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(anexos, /Tentar novamente/);
 });
 
+test("ocorrências informam atualização no botão", () => {
+  assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
+  assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
+});
+
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
