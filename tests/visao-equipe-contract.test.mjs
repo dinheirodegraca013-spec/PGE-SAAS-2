@@ -273,6 +273,11 @@ test("agenda usa datas locais para não deslocar o período no fuso horário", (
   assert.doesNotMatch(agendaFuncionario, /new Date\(\)\.toISOString\(\)\.slice\(0,10\)/);
 });
 
+test("agenda limpa o erro ao corrigir o período", () => {
+  assert.match(agendaFuncionario, /setStart\(event\.target\.value\);setError\('\'\)/);
+  assert.match(agendaFuncionario, /setEnd\(event\.target\.value\);setError\('\'\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
