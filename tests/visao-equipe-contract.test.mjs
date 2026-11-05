@@ -323,3 +323,7 @@ test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
   assert.match(formularioTecnico, /role=\{message\.startsWith\('Não foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
 });
 
+test("formulário de ocorrência sinaliza o envio em andamento", () => {
+  assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
+});
+
