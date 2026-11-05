@@ -294,6 +294,12 @@ test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
 });
 
+test("projetos do setor atualizam ao retornar à aba", () => {
+  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
