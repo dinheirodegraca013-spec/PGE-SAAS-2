@@ -4,7 +4,7 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 export default function SheetAttachments({serviceId,sector,canUpload,onListed}:{serviceId:string;sector:string;canUpload:boolean;onListed?:(items:Attachment[])=>void}){
   const {context}=useWorkforceAccess();const id=useId();
   const [items,setItems]=useState<Attachment[]>([]);const [more,setMore]=useState(false);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);
-  const [file,setFile]=useState<File|null>(null);const [busy,setBusy]=useState(false);const [linkBusy,setLinkBusy]=useState<string|null>(null);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [message,setMessage]=useState('');const [links,setLinks]=useState<Record<string,string>>({});
+  const [file,setFile]=useState<File|null>(null);const [busy,setBusy]=useState(false);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [message,setMessage]=useState('');const [links,setLinks]=useState<Record<string,string>>({});const [linkBusy,setLinkBusy]=useState<string|null>(null);
   const receipt=useRef<UploadReceipt|null>(null);const lock=useRef(false);const generation=useRef(0);const input=useRef<HTMLInputElement>(null);
   useEffect(()=>{const request=++generation.current;setLoading(true);setError('');setItems([]);setLinks({});onListed?.([]);
     attachments.list(serviceId,sector,page).then(result=>{if(request===generation.current){setItems(result.itens);setMore(result.tem_mais);onListed?.(result.itens);}})
