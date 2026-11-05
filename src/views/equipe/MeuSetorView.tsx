@@ -27,6 +27,7 @@ export default function MeuSetorView() {
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [atualizacao, setAtualizacao] = useState(0);
+  const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
   const setor = context?.funcionario.setor || usuario?.setor;
   const sectorList=authorizedSectors(context);
   useEffect(() => {
@@ -38,7 +39,10 @@ export default function MeuSetorView() {
       try {
         const { data, error } = await supabase.rpc('meu_setor_projetos');
         if (error) throw error;
-        if (mounted) setProjetos(data || []);
+        if (mounted) {
+          setProjetos(data || []);
+          setAtualizadoEm(new Date());
+        }
       } catch {
         if (mounted) setErro('Não foi possível carregar os projetos do setor. Tente novamente.');
       } finally {
@@ -64,9 +68,12 @@ export default function MeuSetorView() {
           <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Olá, {nome.split(' ')[0]}.</h1>
           <p className="mt-2 max-w-2xl text-sm text-slate-300">Seu espaço de trabalho para acompanhar prioridades, prazos e atividades autorizadas.</p>
         </div>
-        <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando} onClick={() => setAtualizacao(value => value + 1)}>
-          {carregando ? 'Atualizando…' : 'Atualizar projetos'}
-        </button>
+        <div className="flex flex-col items-end gap-2">
+          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando} onClick={() => setAtualizacao(value => value + 1)}>
+            {carregando ? 'Atualizando…' : 'Atualizar projetos'}
+          </button>
+          <span className="text-xs text-slate-400" aria-live="polite">{atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Aguardando primeira atualização'}</span>
+        </div>
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
         <span className="rounded-full bg-cyan-400/15 px-3 py-1.5 font-semibold text-cyan-200">{isSetor(setor) ? setores[setor] : 'Setor não atribuído'}</span>
