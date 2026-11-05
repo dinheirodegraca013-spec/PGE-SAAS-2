@@ -28,7 +28,7 @@ export default function ProductionLog({
   const [message, setMessage] = useState('');
   const request = useRef<{ payload: string; id: string } | null>(null);
 
-  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`}>
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h4 id={`${id}-title`} className="font-semibold">Produção e perdas</h4><p className="text-sm text-slate-500">Registre peças produzidas, defeitos e desperdícios por evento.</p></div>
       <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar registros</button>
@@ -56,7 +56,8 @@ export default function ProductionLog({
       <button type="submit" className="btn-primary sm:col-span-2" disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role={message.startsWith('Registro salvo') ? 'status' : 'alert'} className="text-sm text-slate-700">{message}</p>}
+    {message && <p role={message.startsWith('Registro salvo') ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     {!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm"><span><strong>{labels[item.tipo]}</strong> · {numberFormat.format(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="text-xs text-slate-500">{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(item.criado_em))}</time></div>)}</div>}
   </section>;
 }
+
