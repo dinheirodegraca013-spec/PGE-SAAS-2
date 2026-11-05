@@ -18,6 +18,7 @@
 
 - Consulta read-only do período de 04/11/2026 12:00 UTC a 05/11/2026 12:00 UTC: nenhuma resposta HTTP 500 encontrada nos logs.
 - As respostas 401, 400, 405 e 413 observadas correspondem às verificações automatizadas de autenticação, método, payload e CORS; não foram identificados erros 5xx ou exceções de aplicação.
+- Vercel Runtime Errors nas últimas 24 horas: nenhum erro agregado no projeto de produção.
 
 Data: 27/10/2026
 
