@@ -104,3 +104,8 @@ test("tarefas não enviam atualização sem mudança", () => {
   assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
 });
 
+test("tarefas identificam a paginação para tecnologia assistiva", () => {
+  assert.match(minhasTarefas, /aria-label="Paginação de tarefas"/);
+  assert.match(minhasTarefas, /aria-current="page"/);
+});
+
