@@ -27,12 +27,21 @@ begin
     or new.setor is distinct from old.setor
     or new.cargo is distinct from old.cargo
     or new.suspenso is distinct from old.suspenso
-    or new.acesso_versao is distinct from old.acesso_versao
     or new.identificador_interno is distinct from old.identificador_interno
   ) then
     raise exception using
       errcode = '42501',
       message = 'Somente administradores podem alterar os campos de autorização do funcionário';
+  end if;
+
+  -- A trigger legada incrementa a versão em exatamente uma unidade quando
+  -- o próprio usuário altera um dado pessoal permitido. Nada além disso é aceito.
+  if auth.uid() = old.id
+    and new.acesso_versao is distinct from old.acesso_versao
+    and new.acesso_versao is distinct from old.acesso_versao + 1 then
+    raise exception using
+      errcode = '42501',
+      message = 'Versão de acesso inválida';
   end if;
 
   return new;
