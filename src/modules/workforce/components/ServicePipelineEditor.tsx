@@ -49,9 +49,9 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
         <button type="button" className="btn-secondary" disabled={disabled || index===0} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para cima`} onClick={()=>move(index,-1)}>↑</button>
         <button type="button" className="btn-secondary" disabled={disabled || index===selected.length-1} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para baixo`} onClick={()=>move(index,1)}>↓</button>
       </li>)}</ol>
-      <button type="submit" className="btn-primary" disabled={disabled}>{busy?'Salvando…':flow.configurado?'Salvar sequência':'Configurar fluxo'}</button>
+      <button type="submit" className="btn-primary" disabled={disabled} aria-label={busy?'Salvando fluxo':flow.configurado?'Salvar sequência':'Configurar fluxo'}>{busy?'Salvando…':flow.configurado?'Salvar sequência':'Configurar fluxo'}</button>
     </form>}
-    <button type="button" className="btn-secondary" disabled={busy || loading} onClick={()=>{
+    <button type="button" className="btn-secondary" disabled={busy || loading} aria-label={loading?'Carregando fluxo':'Recarregar fluxo'} onClick={()=>{
       if(flow && JSON.stringify(selected)!==JSON.stringify(flow.setores) && !window.confirm('Descartar a sequência não salva e recarregar?'))return;
       setRetry(n=>n+1);
     }}>Recarregar fluxo</button>
