@@ -86,6 +86,7 @@ test('employee profile updates cannot alter authorization fields', async () => {
     assert.match(sql, new RegExp(`new\\.${field}\\s+is distinct from old\\.${field}`, 'i'), `campo protegido ausente: ${field}`);
   }
   assert.match(sql, /actor_role\s+in\s+\('AdministradorTenant',\s*'SuperAdmin'\)/i);
+  assert.doesNotMatch(sql, /private\.is_saas_interno\(\)/i);
   assert.match(sql, /errcode\s*=\s*'42501'/i);
   assert.match(sql, /new\.acesso_versao\s+is distinct from old\.acesso_versao \+ 1/i);
 });
