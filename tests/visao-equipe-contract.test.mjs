@@ -365,6 +365,11 @@ test("criação de tarefa limpa feedback ao trocar o contexto", () => {
   assert.match(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\);setEmployee\(''\)/);
 });
 
+test("criação de tarefa limpa validação ao corrigir campos", () => {
+  assert.match(criacaoTarefa, /setTitle\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
+  assert.match(criacaoTarefa, /setEmployee\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
+});
+
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
