@@ -303,6 +303,10 @@ test("produção limpa o feedback ao editar novo evento", () => {
   assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
 });
 
+test("solicitação de material limpa feedback ao editar", () => {
+  assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
+});
+
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
   assert.match(controleSecagem, /aria-busy=\{busy\}/);
   assert.match(controleSecagem, /aria-live="polite"/);
