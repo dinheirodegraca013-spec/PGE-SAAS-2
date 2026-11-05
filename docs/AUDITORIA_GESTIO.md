@@ -257,3 +257,9 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - A trigger está ativa e sua função não possui execução concedida a `anon` ou `authenticated`; administradores e fluxos internos permanecem autorizados.
 - Regressão adicionada; suíte local: 126 testes aprovados, auditoria SQL (57 migrations) sem achados e typecheck aprovado.
 
+### Advisors e logs após a correção — 05/11/2026
+
+- O advisor de segurança permaneceu sem novos achados críticos; os 17 avisos de tabelas `private` sem políticas são esperados porque o schema não é exposto ao cliente.
+- As 56 funções `SECURITY DEFINER` autenticadas continuam intencionais e com `search_path` fixo; a proteção de senhas vazadas permanece como única configuração pendente no painel Auth.
+- Nos logs do intervalo auditado, todas as fontes registraram `0` respostas 5xx.
+
