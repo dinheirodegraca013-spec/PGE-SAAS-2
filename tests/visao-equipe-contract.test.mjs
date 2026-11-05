@@ -177,6 +177,8 @@ test("resumo informa atualização no botão durante carregamento", () => {
 });
 
 test("resumo nomeia cada indicador para acessibilidade", () => {
+  assert.match(resumoFuncionario, /role="group"/);
+  assert.match(resumoFuncionario, /card border p-4/);
   assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
 });
 
