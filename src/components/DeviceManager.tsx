@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type Device = { id: string; name: string; created_at: string; last_seen_at: string; revoked_at: string | null; suspended: boolean; current: boolean };
@@ -7,6 +7,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
   const [limit, setLimit] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const lastReturnRefresh = useRef(0);
   const load = useCallback(async () => {
     setBusy(true); setError('');
     try {
@@ -17,6 +18,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     finally { setBusy(false); }
   }, [userId]);
   useEffect(() => { setDevices([]); setLimit(null); void load(); }, [load]);
+  useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void load(); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [load]);
   async function revoke(id: string) {
     setBusy(true); setError('');
     try {
