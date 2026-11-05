@@ -138,4 +138,9 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Teste de regressão incluído para garantir que payloads abusivos não avancem no fluxo de cadastro.
 - Produção recebeu os commits `2f0200a` e `1d07c00`, ambos READY; `npm run audit:production`, lint e testes direcionados aprovados.
 
+### CSP de produção endurecida — 05/11/2026
+
+- A política agora restringe scripts, fontes, estilos, imagens e conexões às origens necessárias, mantendo Supabase e Google Fonts explicitamente permitidos.
+- O auditor de produção foi atualizado para comparar o novo valor completo; produção respondeu sem divergências, com 11 rotas, assets e endpoints aprovados.
+
 
