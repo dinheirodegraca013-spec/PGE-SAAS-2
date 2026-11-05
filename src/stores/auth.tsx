@@ -216,6 +216,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (e) {
       console.warn('Erro ao atualizar dados do perfil:', e);
+      clearAuthState();
+      setDeviceError('Não foi possível validar seu perfil. Entre em contato com o administrador.');
+      await supabase.auth.signOut().catch((error) => console.warn('Não foi possível encerrar a sessão remota:', error));
     }
   };
 
