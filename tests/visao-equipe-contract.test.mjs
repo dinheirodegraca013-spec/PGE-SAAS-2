@@ -281,6 +281,11 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
 
+test("secagem e produção informam atualização nos botões", () => {
+  assert.match(controleSecagem, /aria-label=\{busy\?'Aguarde a atualização da secagem':'Atualizar horário do servidor'\}/);
+  assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualização dos registros':'Atualizar registros'\}/);
+});
+
 test("cartão de solicitação informa atualização no botão", () => {
   assert.match(solicitacaoMaterial, /aria-label=\{busy\?'Atualizando solicitações':'Atualizar solicitações'\}/);
   assert.match(solicitacaoMaterial, /\{busy\?'Atualizando…':'Atualizar'\}/);
