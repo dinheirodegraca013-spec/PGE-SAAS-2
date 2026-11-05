@@ -19,7 +19,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
       .finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[serviceId,sector,retry]);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(disabled || busy || loading)return;
     if(selected && !candidates.some(item=>item.id===selected)){setError('Escolha um funcionário disponível.');return;}
     setBusy(true);setError('');setMessage('');
@@ -33,9 +33,10 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
       {current && !candidates.some(item=>item.id===current) && <option value={current} disabled>Responsável anterior indisponível</option>}
       {candidates.map(item=><option key={item.id} value={item.id}>{item.nome}{item.cargo?` — ${item.cargo}`:''}</option>)}
     </select>
-    {loading && <p role="status" className="text-sm">Carregando funcionários autorizados…</p>}
+    {loading && <p role="status" aria-live="polite" className="text-sm">Carregando funcionários autorizados…</p>}
     {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
-    {message && <p role="status" className="text-sm">{message}</p>}
+    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     <button type="submit" className="btn-secondary" disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
   </form>;
 }
+
