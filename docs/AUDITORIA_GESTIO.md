@@ -109,5 +109,7 @@ Data: 27/10/2026
 - O fluxo de convite foi verificado no banco: 1 funcionário, 0 sem tenant e 0 divergências entre metadata, empresa e setor; foi criado teste de regressão para o trigger de metadata diferida (108 testes aprovados).
 - Smoke test visual read-only em produção (`https://gestio.dev.br`): login, cadastro, redefinição de senha e rota pública de orçamento inválido carregaram com conteúdo e campos esperados; não foram enviados dados sensíveis nem submetidos formulários.
 - Console do navegador sem erros ou avisos nas telas públicas auditadas.
+- Regressão adicionada para impedir que rotas operacionais sejam expostas sem `RequireAuth` ou que guards administrativos sejam removidos; a suíte passou de 108 para 110 testes.
+- Vercel Runtime Errors: nenhum erro agregado nas últimas 24 horas após o deploy mais recente.
 
 
