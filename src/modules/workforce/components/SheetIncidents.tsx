@@ -25,8 +25,9 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   const clearFeedback=()=>{setError('');setMessage('');};
   useEffect(()=>{setTitle('');setDescription('');setType('outro');setSeverity('atencao');setMessage('');receipt.current=null;},[serviceId,sector]);
   useEffect(()=>{setPage(0);},[serviceId,sector,context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setItems([]);},[serviceId,sector,page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
-  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');setItems([]);
+  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[serviceId,sector,page,refresh,canView,context?.funcionario.id,context?.funcionario.versao]);
