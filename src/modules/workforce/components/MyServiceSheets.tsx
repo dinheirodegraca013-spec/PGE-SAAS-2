@@ -23,14 +23,14 @@ export default function MyServiceSheets() {
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [page, query, refresh, context?.funcionario.id, context?.funcionario.versao]);
-  return <section className="card space-y-4 p-5">
-    <h2 className="text-lg font-bold">Minhas fichas de serviço</h2>
+  return <section className="card space-y-4 p-5" aria-busy={loading}>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Minhas fichas de serviço</h2><span className="text-xs text-slate-500" aria-live="polite">{loading?'Atualizando fichas…':'Fichas sincronizadas'}</span></div>
     <form className="flex flex-wrap gap-2" onSubmit={event => { event.preventDefault(); setPage(0); setQuery(search.trim()); setRefresh(n => n + 1); }}>
       <label className="min-w-0 flex-1"><span className="sr-only">Pesquisar serviço</span><input className="input-field" maxLength={120} value={search} onChange={event => setSearch(event.target.value)} placeholder="Pesquisar serviço" /></label>
-      <button className="btn-secondary" type="submit" disabled={loading}>Pesquisar</button>
+      <button className="btn-secondary" type="submit" disabled={loading}>{loading?'Pesquisando…':'Pesquisar'}</button>
     </form>
     {loading && <p role="status" aria-live="polite">Carregando fichas…</p>}
-    {error && <div role="alert"><p>{error}</p><button type="button" className="btn-secondary" onClick={() => setRefresh(n => n + 1)}>Tentar novamente</button></div>}
+    {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={() => setRefresh(n => n + 1)}>Tentar novamente</button></div>}
     {list && !list.itens.length && <p className="text-sm text-slate-500">Nenhuma ficha liberada para você com estes filtros.</p>}
     {list && <ul className="divide-y divide-slate-100">{list.itens.map(item => <li key={`${item.servico_id}:${item.setor}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
       <div><p className="font-medium">{item.titulo}</p><p className="text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p></div>
