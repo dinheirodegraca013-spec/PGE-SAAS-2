@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth';
 import { supabase } from '@/lib/supabase';
@@ -28,8 +28,10 @@ export default function MeuSetorView() {
   const [carregando, setCarregando] = useState(true);
   const [atualizacao, setAtualizacao] = useState(0);
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
+  const lastReturnRefresh = useRef(0);
   const setor = context?.funcionario.setor || usuario?.setor;
   const sectorList=authorizedSectors(context);
+  useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setAtualizacao(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
     let mounted = true;
     setCarregando(true);
