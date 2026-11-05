@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -11,7 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
-import ThreeOperationalMap from "./ThreeOperationalMap";
+const ThreeOperationalMap = lazy(() => import("./ThreeOperationalMap"));
 import {
   StatusProjeto,
   type ProjetoMovelPlanejado,
@@ -273,12 +273,14 @@ export default function Visao3DView() {
           >
             Resetar câmera
           </button>
-          <ThreeOperationalMap
-            setores={setores}
-            trabalhadores={equipeDisponivel ? trabalhadores : []}
-            resetKey={cameraReset}
-            onSectorSelect={abrirSetor}
-          />
+          <Suspense fallback={<div role="status" aria-live="polite" className="flex h-full items-center justify-center text-sm text-slate-500">Carregando visão 3D…</div>}>
+            <ThreeOperationalMap
+              setores={setores}
+              trabalhadores={equipeDisponivel ? trabalhadores : []}
+              resetKey={cameraReset}
+              onSectorSelect={abrirSetor}
+            />
+          </Suspense>
           <p className="pointer-events-none absolute bottom-3 left-4 z-20 text-xs text-slate-500">
             Arraste para girar · role para aproximar · toque numa sala para
             abrir o módulo
@@ -498,3 +500,4 @@ export default function Visao3DView() {
     </div>
   );
 }
+
