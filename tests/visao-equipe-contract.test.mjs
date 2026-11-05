@@ -318,3 +318,8 @@ test("inbox de estoque ignora respostas de filtros antigos", () => {
   assert.match(inboxMateriais, /return\(\)=>\{generation\.current\+\+;\}/);
 });
 
+test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
+  const formularioTecnico = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
+  assert.match(formularioTecnico, /role=\{message\.startsWith\('Não foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
+});
+
