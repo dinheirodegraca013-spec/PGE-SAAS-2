@@ -233,6 +233,7 @@ export default function FinanceiroLinksView() {
                           onClick={() => copiarUrl(link.urlCheckout)}
                           className="rounded p-1 text-slate-400 hover:text-slate-700 transition cursor-pointer"
                           title="Copiar URL"
+                          aria-label="Copiar URL do checkout"
                         >
                           <Copy className="h-3.5 w-3.5" />
                         </button>
@@ -242,6 +243,7 @@ export default function FinanceiroLinksView() {
                           rel="noopener noreferrer"
                           className="rounded p-1 text-slate-400 hover:text-brand-600 transition"
                           title="Testar Link Externo"
+                          aria-label="Abrir link externo do checkout"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
@@ -250,6 +252,7 @@ export default function FinanceiroLinksView() {
                           onClick={() => handleExcluirLink(link.id)}
                           className="rounded p-1 text-slate-400 hover:text-red-600 transition cursor-pointer"
                           title="Excluir"
+                          aria-label="Excluir link de checkout"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -413,4 +416,5 @@ export default function FinanceiroLinksView() {
     </div>
   );
 }
+
 
