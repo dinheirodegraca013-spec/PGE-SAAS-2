@@ -31,7 +31,7 @@ export default function ProductionLog({
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div><h4 id={`${id}-title`} className="font-semibold">Produção e perdas</h4><p className="text-sm text-slate-500">Registre peças produzidas, defeitos e desperdícios por evento.</p></div>
-      <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar registros</button>
+      <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização dos registros':'Atualizar registros'}>{busy?'Aguarde…':'Atualizar registros'}</button>
     </div>
     <div className="grid gap-2 sm:grid-cols-3">
       {(['produzido', 'defeito', 'desperdicio'] as const).map(item => <div key={item} className="rounded-lg bg-slate-50 p-3"><span className="block text-xs text-slate-500">{labels[item]}</span><strong>{numberFormat.format(state?.totais[item] ?? 0)}</strong></div>)}
