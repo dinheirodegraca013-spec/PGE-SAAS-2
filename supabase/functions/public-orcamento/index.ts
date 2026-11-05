@@ -71,6 +71,7 @@ async function rollbackQuote(original: Record<string, any>, signedId: string) {
 }
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "GET" && req.method !== "POST") return reply(405, { error: "Método não permitido." });
   try {
     const url = new URL(req.url);
     let body: Record<string, unknown> = {};
