@@ -51,7 +51,7 @@ export default function FinishingDryingControl({
       finally { setBusy(false); }
     }}>
       <label htmlFor={`${id}-minutes`} className="text-sm">Adicionar prazo (minutos)
-        <input id={`${id}-minutes`} className="input-field mt-1 w-44" type="number" min={1} max={10080} step={1} value={minutes} onChange={event => setMinutes(event.target.value)} disabled={disabled || busy} />
+        <input id={`${id}-minutes`} className="input-field mt-1 w-44" type="number" min={1} max={10080} step={1} value={minutes} onChange={event => { setMinutes(event.target.value); setMessage(''); }} disabled={disabled || busy} />
       </label>
       <button type="submit" className="btn-primary" disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
