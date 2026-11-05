@@ -290,6 +290,11 @@ test("produção e estoque sinalizam operações e mensagens ao funcionário", (
   assert.match(registroProducao, /aria-live="polite"/);
 });
 
+test("registros operacionais liberam o identificador após sucesso", () => {
+  assert.match(registroProducao, /await onRegister\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
+  assert.match(solicitacaoMaterial, /await onCreate\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
+});
+
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
   assert.match(controleSecagem, /aria-busy=\{busy\}/);
   assert.match(controleSecagem, /aria-live="polite"/);
