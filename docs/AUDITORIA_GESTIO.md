@@ -97,5 +97,6 @@ Data: 27/10/2026
 - Pós-deploy: os únicos dois `500` registrados foram testes da versão 3 durante a publicação incorreta do pacote; ambos ocorreram às 07:14 UTC. Após a versão 4, não houve `5xx` no intervalo monitorado até 07:30 UTC.
 - O `audit:production` passou a testar permanentemente o limite de payload (`17 KiB` deve retornar `413`), além dos contratos de rota, headers e CORS.
 - Respostas do orçamento público agora enviam `Cache-Control: no-store, max-age=0`; o auditor valida esse cabeçalho junto com o `413`.
+- A versão 6 também compensa a assinatura do orçamento se a atualização do serviço vinculado falhar, evitando estado parcialmente confirmado; teste contratual incluído e suíte com 106 aprovações.
 
 
