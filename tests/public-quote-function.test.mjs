@@ -7,5 +7,6 @@ test('orçamento público fixa dependência e limita payloads', async () => {
   assert.match(source, /npm:@supabase\/supabase-js@2\.117\.3/);
   assert.match(source, /size > 16384/);
   assert.match(source, /return reply\(error instanceof RangeError \? 413 : 400/);
+  assert.match(source, /Cache-Control.*no-store/);
 });
 
