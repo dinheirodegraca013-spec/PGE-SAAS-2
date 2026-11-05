@@ -27,6 +27,7 @@ const notificacoesFuncionario = readOptional("../src/modules/workforce/component
 const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
+const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -198,5 +199,10 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
   assert.match(detalheTarefa, /aria-live="polite"/);
   assert.match(detalheTarefa, /Tentar novamente/);
   assert.match(detalheTarefa, /Recarregar tarefa/);
+});
+
+test("ficha técnica anuncia carregamento e operações em andamento", () => {
+  assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
+  assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy\}/);
 });
 
