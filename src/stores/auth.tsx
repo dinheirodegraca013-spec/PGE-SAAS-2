@@ -57,7 +57,7 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
     for (let attempt = 0; attempt < 3; attempt += 1) {
       const result = await supabase
         .from('profiles')
-        .select('id, tenant_id, nome_completo, email, papel, ativo, setor, tenants(id, plano, ativo, nome_fantasia, razao_social)')
+        .select('id, tenant_id, nome_completo, email, papel, ativo, suspenso, setor, avatar_url, tenants(id, plano, ativo, nome_fantasia, razao_social)')
         .eq('id', userId)
         .maybeSingle();
       data = result.data;
@@ -90,7 +90,7 @@ async function fetchUserProfile(userId: string): Promise<{ profile: any; isActiv
       : null;
 
     const tenantRecord = Array.isArray(data.tenants) ? data.tenants[0] : data.tenants;
-    const isActive = data.ativo === true && Boolean(data.tenant_id) &&
+    const isActive = data.ativo === true && data.suspenso !== true && Boolean(data.tenant_id) &&
       Boolean(data.papel) && tenantRecord?.ativo !== false;
     return { profile: { ...data, tenants: tenantRecord }, isActive, internalRole };
   } catch (err) {
