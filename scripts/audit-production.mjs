@@ -84,6 +84,8 @@ const alternateExposedSecrets = [
   { name: 'service_role', pattern: /service[_-]?role/i },
   { name: 'secret_key', pattern: /(?:secret|private)[_-]?key\s*[:=]/i },
 ].filter((entry) => entry.pattern.test(alternateBundleText)).map((entry) => entry.name);
+const localEndpointReferences = /localhost:5000/i.test(bundleText);
+const alternateLocalEndpointReferences = /localhost:5000/i.test(alternateBundleText);
 const supabaseUrl = bundleText.match(/https:\/\/[a-z0-9-]+\.supabase\.co/)?.[0] ?? null;
 const supabaseKey = bundleText.match(/sb_(?:publishable|anon)_[A-Za-z0-9_-]+/)?.[0] ?? null;
 const endpointSmoke = [];
@@ -180,8 +182,8 @@ if (supabaseUrl && supabaseKey) {
     expectedStatus: 200, allowOrigin: foreignAllowOrigin,
     ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
-const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, alternateExposedSecrets, assets, alternateAssets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, alternateExposedSecrets, localEndpointReferences, alternateLocalEndpointReferences, assets, alternateAssets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || alternateExposedSecrets.length || assets.some((item) => !item.ok) || alternateAssets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || alternateExposedSecrets.length || localEndpointReferences || alternateLocalEndpointReferences || assets.some((item) => !item.ok) || alternateAssets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
