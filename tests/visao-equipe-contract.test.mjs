@@ -297,6 +297,12 @@ test("aceite libera o identificador após confirmação", () => {
   assert.match(aceiteInstalacao, /await onRegister\(\{\.\.\.data,request:receipt\.current\.id\}\);receipt\.current=null/);
 });
 
+test("aceite limpa erro ao corrigir campos", () => {
+  assert.match(aceiteInstalacao, /const clearError=\(\)=>setError\(''\)/);
+  assert.match(aceiteInstalacao, /setName\(event\.target\.value\);clearError\(\)/);
+  assert.match(aceiteInstalacao, /setProof\(event\.target\.value\);clearError\(\)/);
+});
+
 test("produção e estoque sinalizam operações e mensagens ao funcionário", () => {
   assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
   assert.match(solicitacaoMaterial, /aria-live="polite"/);
