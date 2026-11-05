@@ -39,7 +39,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     <ul className="divide-y divide-slate-100">{devices.map(d => <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div>
       <b className="text-sm">{d.name}{d.current ? ' · Este dispositivo' : ''}</b>
       <p className="text-xs text-slate-500">{d.revoked_at ? 'Revogado' : d.suspended ? 'Suspenso pelo plano' : 'Autorizado'} · Último acesso: {new Date(d.last_seen_at).toLocaleString('pt-BR')}</p>
-    </div>{!d.revoked_at && <button type="button" className="btn-secondary text-rose-700" disabled={busy} onClick={() => { if (window.confirm(`Revogar o dispositivo "${d.name}"? As sessões vinculadas serão encerradas.`)) void revoke(d.id); }}>Revogar</button>}</li>)}</ul>
+    </div>{!d.revoked_at && <button type="button" className="btn-secondary text-rose-700" aria-label={`Revogar dispositivo ${d.name}`} disabled={busy} onClick={() => { if (window.confirm(`Revogar o dispositivo "${d.name}"? As sessões vinculadas serão encerradas.`)) void revoke(d.id); }}>Revogar</button>}</li>)}</ul>
   </section>;
 }
 
