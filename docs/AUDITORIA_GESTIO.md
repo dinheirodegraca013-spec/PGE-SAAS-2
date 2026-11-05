@@ -8,6 +8,8 @@ Data: 27/10/2026
 
 O gate reproduzível de release é `npm run verify:release`; ele reúne testes, typecheck, auditorias SQL/integridade, build e auditoria dos endpoints em produção.
 
+Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3`; a instalação limpa (`npm ci --ignore-scripts`) e o gate completo passaram após a correção.
+
 ## Reauditoria de recuperação de senha — 04/11/2026
 
 - Corrigido o callback de recuperação para aceitar PKCE (`code`) e tokens legados no hash (`access_token`/`refresh_token`).
