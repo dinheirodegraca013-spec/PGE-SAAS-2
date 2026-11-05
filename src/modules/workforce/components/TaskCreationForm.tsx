@@ -15,7 +15,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   const canCreate=hasPermission(context,'tarefas','criar');
   useEffect(()=>{
     if(!canCreate || !context)return;
-    let active=true;setLoading(true);setError('');setCandidates([]);setEmployee('');
+    let active=true;setLoading(true);setError('');setMessage('');setCandidates([]);setEmployee('');
     const load=context.proprietario?technicalSheets.candidates(serviceId,sector):Promise.resolve([{id:context.funcionario.id,nome:context.funcionario.nome}]);
     load.then(items=>{if(active)setCandidates(items);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
