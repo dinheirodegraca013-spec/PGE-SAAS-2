@@ -1,5 +1,5 @@
-import {createClient} from 'npm:@supabase/supabase-js@2.117.3';
-import {attachmentContentError,attachmentDigest} from '../_shared/attachment-content.ts';
+import {createClient} from 'npm:@supabase/supabase-js@2.119.0';
+import {attachmentContentError,attachmentDigest} from './attachment-content.ts';
 
 const origin=new URL(Deno.env.get('SITE_URL')||'https://gestio.dev.br').origin;
 const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Content-Type':'application/json','Vary':'Origin'};
@@ -35,3 +35,4 @@ Deno.serve(async request=>{
     return reply(200,result);
   }catch{return reply(500,{error:'Não foi possível validar o anexo agora.'});}
 });
+
