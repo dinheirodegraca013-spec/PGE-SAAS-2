@@ -271,3 +271,7 @@ test("ficha técnica e resolução de ocorrência anunciam estados críticos", (
   assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
 });
 
+test("cartão de tarefa sinaliza atualização concorrente", () => {
+  assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
+});
+
