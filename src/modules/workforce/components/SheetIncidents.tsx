@@ -7,13 +7,14 @@ const severities={informativa:'Informativa',atencao:'Atenção',critica:'Crític
 
 function Resolution({incident,onSaved}:{incident:Incident;onSaved:()=>void}){
   const id=useId();const [text,setText]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const lock=useRef(false);
+  const clearError=()=>setError('');
   return <form className="space-y-2" aria-busy={busy} onSubmit={async event=>{
     event.preventDefault();if(lock.current)return;
     if(text.trim().length<10){setError('Descreva a resolução em pelo menos 10 caracteres.');return;}
     if(!window.confirm('Registrar esta ocorrência como resolvida?'))return;
     lock.current=true;setBusy(true);setError('');
     try{await incidents.resolve(incident,text.trim());onSaved();}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível resolver a ocorrência.');}finally{lock.current=false;setBusy(false);}
-  }}><label htmlFor={id} className="block text-sm">Como o problema foi resolvido?<textarea id={id} className="input-field mt-1" rows={3} maxLength={5000} disabled={busy} value={text} onChange={event=>setText(event.target.value)}/></label>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button type="submit" className="btn-secondary" disabled={busy}>{busy?'Salvando…':'Registrar resolução'}</button></form>;
+  }}><label htmlFor={id} className="block text-sm">Como o problema foi resolvido?<textarea id={id} className="input-field mt-1" rows={3} maxLength={5000} disabled={busy} value={text} onChange={event=>{setText(event.target.value);clearError();}}/></label>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button type="submit" className="btn-secondary" disabled={busy}>{busy?'Salvando…':'Registrar resolução'}</button></form>;
 }
 
 export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:string;sector:string;canCreate:boolean}){
@@ -21,6 +22,7 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   const [items,setItems]=useState<Incident[]>([]);const [page,setPage]=useState(0);const [more,setMore]=useState(false);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');const [type,setType]=useState<IncidentType>('outro');const [severity,setSeverity]=useState<IncidentSeverity>('atencao');const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
+  const clearFeedback=()=>{setError('');setMessage('');};
   useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');setItems([]);
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
@@ -37,10 +39,10 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
       catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível comunicar a ocorrência.');}
       finally{lock.current=false;setBusy(false);}
     }}>
-      <label htmlFor={`${id}-title`} className="text-sm sm:col-span-2">Título<input id={`${id}-title`} className="input-field mt-1" required minLength={3} maxLength={200} disabled={busy} value={title} onChange={event=>setTitle(event.target.value)}/></label>
-      <label htmlFor={`${id}-description`} className="text-sm sm:col-span-2">Descrição do problema<textarea id={`${id}-description`} className="input-field mt-1" rows={3} required minLength={10} maxLength={10000} disabled={busy} value={description} onChange={event=>setDescription(event.target.value)}/></label>
-      <label htmlFor={`${id}-type`} className="text-sm">Tipo<select id={`${id}-type`} className="input-field mt-1" disabled={busy} value={type} onChange={event=>setType(event.target.value as IncidentType)}>{Object.entries(types).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
-      <label htmlFor={`${id}-severity`} className="text-sm">Gravidade<select id={`${id}-severity`} className="input-field mt-1" disabled={busy} value={severity} onChange={event=>setSeverity(event.target.value as IncidentSeverity)}>{Object.entries(severities).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+      <label htmlFor={`${id}-title`} className="text-sm sm:col-span-2">Título<input id={`${id}-title`} className="input-field mt-1" required minLength={3} maxLength={200} disabled={busy} value={title} onChange={event=>{setTitle(event.target.value);clearFeedback();}}/></label>
+      <label htmlFor={`${id}-description`} className="text-sm sm:col-span-2">Descrição do problema<textarea id={`${id}-description`} className="input-field mt-1" rows={3} required minLength={10} maxLength={10000} disabled={busy} value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
+      <label htmlFor={`${id}-type`} className="text-sm">Tipo<select id={`${id}-type`} className="input-field mt-1" disabled={busy} value={type} onChange={event=>{setType(event.target.value as IncidentType);clearFeedback();}}>{Object.entries(types).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+      <label htmlFor={`${id}-severity`} className="text-sm">Gravidade<select id={`${id}-severity`} className="input-field mt-1" disabled={busy} value={severity} onChange={event=>{setSeverity(event.target.value as IncidentSeverity);clearFeedback();}}>{Object.entries(severities).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
       <button type="submit" className="btn-primary" disabled={busy}>{busy?'Registrando…':'Comunicar ocorrência'}</button>
     </form>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}{message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
