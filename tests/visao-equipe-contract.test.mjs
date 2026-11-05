@@ -312,6 +312,10 @@ test("pesquisa de fichas limpa erro ao editar o termo", () => {
   assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
 });
 
+test("contador de notificações anuncia mudanças", () => {
+  assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
