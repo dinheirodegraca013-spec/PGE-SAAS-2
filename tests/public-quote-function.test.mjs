@@ -10,6 +10,7 @@ test('orçamento público fixa dependência e limita payloads', async () => {
   assert.match(source, /Cache-Control.*no-store/);
   assert.match(source, /X-Content-Type-Options.*nosniff/);
   assert.match(source, /Referrer-Policy.*no-referrer/);
+  assert.match(source, /"Vary": "Origin"/);
   assert.match(source, /publicOrigin/);
   assert.doesNotMatch(source, /Access-Control-Allow-Origin.*\*'/);
   assert.match(source, /rollbackQuote\(quote, updated\.id\)/);
