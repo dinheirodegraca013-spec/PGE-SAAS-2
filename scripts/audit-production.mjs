@@ -116,6 +116,15 @@ if (supabaseUrl && supabaseKey) {
     contentTypeOptions: oversized.response?.headers.get('x-content-type-options') ?? null,
     referrerPolicy: oversized.response?.headers.get('referrer-policy') ?? null,
     ok: oversized.response?.status === 413 && oversized.response?.headers.get('cache-control')?.includes('no-store') === true && oversizedHeadersOk });
+
+  const foreignOrigin = await request(`${supabaseUrl}/functions/v1/public-orcamento`, {
+    method: 'OPTIONS',
+    headers: { apikey: supabaseKey, origin: 'https://evil.example', 'access-control-request-method': 'POST' },
+  });
+  const foreignAllowOrigin = foreignOrigin.response?.headers.get('access-control-allow-origin') ?? null;
+  methodChecks.push({ name: 'edge:public-orcamento:CORS-origem-externa', status: foreignOrigin.response?.status ?? 0,
+    expectedStatus: 200, allowOrigin: foreignAllowOrigin,
+    ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
 const report = { baseUrl, routes: results, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
