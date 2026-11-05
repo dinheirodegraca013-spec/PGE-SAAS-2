@@ -109,6 +109,10 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /Atualizado às/);
 });
 
+test("painel não transforma carregamento ou erro de projetos em zero", () => {
+  assert.match(meuSetor, /carregando \? '…' : erro \? 'Indisponível'/);
+});
+
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {
   assert.match(minhasTarefas, /Tentar novamente/);
   assert.match(minhasTarefas, /aria-live="polite"/);
