@@ -3,7 +3,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.119.0';
 const setores = new Set(['corte', 'montagem', 'acabamento', 'instalacao', 'estoque', 'financeiro']);
 const site = Deno.env.get('SITE_URL') || 'https://gestio.dev.br';
 const origin = new URL(site).origin;
-const headers = { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Content-Type': 'application/json', 'Vary': 'Origin' };
+const headers = { 'Access-Control-Allow-Origin': origin, 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Content-Type': 'application/json', 'Cache-Control': 'no-store, max-age=0', 'Vary': 'Origin' };
 const reply = (status: number, body: object) => new Response(JSON.stringify(body), { status, headers });
 
 Deno.serve(async request => {
