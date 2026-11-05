@@ -345,6 +345,10 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
 });
 
+test("criação de tarefa limpa feedback ao trocar o contexto", () => {
+  assert.match(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\);setEmployee\(''\)/);
+});
+
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
