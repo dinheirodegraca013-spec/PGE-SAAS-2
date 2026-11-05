@@ -80,13 +80,14 @@ if (supabaseUrl && supabaseKey) {
     ['edge:validar-anexo:GET', `${supabaseUrl}/functions/v1/validar-anexo`, 405],
     ['edge:public-orcamento:GET-sem-token', `${supabaseUrl}/functions/v1/public-orcamento`, 400],
     ['edge:public-orcamento:PUT', `${supabaseUrl}/functions/v1/public-orcamento`, 405],
+    ['edge:public-orcamento:PATCH', `${supabaseUrl}/functions/v1/public-orcamento`, 405],
     ['edge:public-orcamento:DELETE', `${supabaseUrl}/functions/v1/public-orcamento`, 405],
     ['edge:cadastrar-funcionario:OPTIONS', `${supabaseUrl}/functions/v1/cadastrar-funcionario`, 204],
     ['edge:validar-anexo:OPTIONS', `${supabaseUrl}/functions/v1/validar-anexo`, 204],
     ['edge:public-orcamento:OPTIONS', `${supabaseUrl}/functions/v1/public-orcamento`, 200],
   ];
   for (const [name, url, expectedStatus] of checks) {
-    const method = name.endsWith(':OPTIONS') ? 'OPTIONS' : name.endsWith(':PUT') ? 'PUT' : name.endsWith(':DELETE') ? 'DELETE' : 'GET';
+    const method = name.endsWith(':OPTIONS') ? 'OPTIONS' : name.endsWith(':PUT') ? 'PUT' : name.endsWith(':PATCH') ? 'PATCH' : name.endsWith(':DELETE') ? 'DELETE' : 'GET';
     const result = await request(url, { method, headers: { apikey: supabaseKey, origin: baseUrl, 'access-control-request-method': 'POST' } });
     const status = result.response?.status ?? 0;
     const allowOrigin = result.response?.headers.get('access-control-allow-origin') ?? null;
