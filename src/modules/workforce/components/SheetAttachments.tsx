@@ -5,8 +5,9 @@ export default function SheetAttachments({serviceId,sector,canUpload,onListed}:{
   const {context}=useWorkforceAccess();const id=useId();
   const [items,setItems]=useState<Attachment[]>([]);const [more,setMore]=useState(false);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);
   const [file,setFile]=useState<File|null>(null);const [busy,setBusy]=useState(false);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [message,setMessage]=useState('');const [links,setLinks]=useState<Record<string,string>>({});const [linkBusy,setLinkBusy]=useState<string|null>(null);
-  const receipt=useRef<UploadReceipt|null>(null);const lock=useRef(false);const generation=useRef(0);const input=useRef<HTMLInputElement>(null);
+  const receipt=useRef<UploadReceipt|null>(null);const lock=useRef(false);const generation=useRef(0);const input=useRef<HTMLInputElement>(null);const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);setFile(null);setMessage('');receipt.current=null;if(input.current)input.current.value='';},[serviceId,sector,context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
   useEffect(()=>{const request=++generation.current;setLoading(true);setError('');setItems([]);setLinks({});onListed?.([]);
     attachments.list(serviceId,sector,page).then(result=>{if(request===generation.current){setItems(result.itens);setMore(result.tem_mais);onListed?.(result.itens);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar os anexos.');}).finally(()=>{if(request===generation.current)setLoading(false);});
