@@ -366,6 +366,10 @@ test("inbox de estoque informa atualização no botão", () => {
   assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
 });
 
+test("inbox limpa confirmação antes de nova ação", () => {
+  assert.match(inboxMateriais, /setActionBusy\(item\.id\);setError\(''\);setMessage\(''\)/);
+});
+
 test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
   assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
   assert.match(criacaoTarefa, /aria-live="polite"/);
