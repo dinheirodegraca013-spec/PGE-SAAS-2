@@ -8,6 +8,8 @@ test('vercel preserva o rewrite da SPA e declara Permissions-Policy restritiva',
   const headers = config.headers.flatMap((entry) => entry.headers ?? []);
   const policy = headers.find((header) => header.key.toLowerCase() === 'permissions-policy');
   assert.equal(policy?.value, 'camera=(), microphone=(), geolocation=()');
+  assert.equal(headers.find((header) => header.key.toLowerCase() === 'cross-origin-opener-policy')?.value, 'same-origin');
+  assert.equal(headers.find((header) => header.key.toLowerCase() === 'cross-origin-resource-policy')?.value, 'same-origin');
 });
 
 test('CSP impede embedding e envio de formulários para outra origem', async () => {
