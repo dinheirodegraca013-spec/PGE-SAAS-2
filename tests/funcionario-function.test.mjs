@@ -42,6 +42,7 @@ test('cadastro ignora empresa e papel enviados pelo navegador',async()=>{
   assert.deepEqual(await response.json(),{success:true});assert.equal(s.calls[1][2].redirectTo,'https://gestio.dev.br/redefinir-senha');
 });
 test('setor inválido é recusado antes da criação',async()=>{const s=setup();assert.equal((await s.run({...body,setor:'admin'})).status,400);assert.equal(s.calls.length,0);});
+test('payload acima do limite é recusado antes de consultar a sessão',async()=>{const s=setup();const response=await s.run({...body,observacoes:'x'.repeat(17000)});assert.equal(response.status,413);assert.equal(s.calls.length,0);});
 test('cadastro preserva cargo e identificador interno em metadados confiáveis',async()=>{const s=setup();assert.equal((await s.run({...body,cargo:'Montador',identificador_interno:'FUNC-007'})).status,201);const created=s.calls[0][1];assert.equal(created.app_metadata.gestio_cargo,'Montador');assert.equal(created.app_metadata.gestio_identificador_interno,'FUNC-007');});
 test('identificador interno duplicado é recusado antes de criar conta',async()=>{const s=setup({duplicateIdentifier:true});const response=await s.run({...body,identificador_interno:'FUNC-007'});assert.equal(response.status,409);assert.equal(s.calls.some(call=>call[0]==='create'),false);});
 test('falha de e-mail desfaz somente a conta recém-criada',async()=>{const s=setup({mailFailure:true});assert.equal((await s.run(body)).status,502);assert.deepEqual(s.calls.at(-1),['delete','employee']);});
