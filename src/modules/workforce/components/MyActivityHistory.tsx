@@ -1,12 +1,13 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {supabase} from '@/lib/supabase';
 import {isSetor,setores} from '@/lib/setores';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 type Page={itens:{id:number;acao:string;tabela:string|null;registro_id:string|null;created_at:string;setor:string|null}[];tem_mais:boolean};
 const labels:Record<string,string>={tarefa_criada:'Tarefa criada',tarefa_atualizada:'Tarefa atualizada',ficha_tecnica_salva:'Ficha técnica salva',checklist_atualizado:'Checklist atualizado',ficha_execucao_iniciar:'Execução iniciada ou retomada',ficha_execucao_pausar:'Execução pausada',ficha_execucao_concluir:'Execução concluída',ficha_responsavel_alterado:'Responsável alterado',fluxo_configurado:'Fluxo configurado',etapa_liberada:'Próxima etapa liberada',fluxo_concluido:'Fluxo concluído',FUNCIONARIO_PERMISSOES_ALTERADAS:'Permissões do funcionário atualizadas'};
 export default function MyActivityHistory(){
-  const {context}=useWorkforceAccess();const [data,setData]=useState<Page|null>(null);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');
+  const {context}=useWorkforceAccess();const [data,setData]=useState<Page|null>(null);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{let active=true;setData(null);setError('');setLoading(true);
     Promise.resolve(supabase.rpc('minhas_atividades',{p_pagina:page})).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar o histórico.');return;}setData(data);})
       .catch(()=>{if(active)setError('Não foi possível carregar o histórico.');}).finally(()=>{if(active)setLoading(false);});
