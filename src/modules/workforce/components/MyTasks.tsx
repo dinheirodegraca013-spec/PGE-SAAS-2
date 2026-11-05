@@ -4,6 +4,16 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
 import {workTasks,taskStatusLabels,type TaskPage,type WorkTask,type TaskStatus} from '../services/tasks.service';
 
+const statusTone: Record<TaskStatus,string> = {
+  pendente: 'bg-slate-100 text-slate-700',
+  em_andamento: 'bg-cyan-100 text-cyan-800',
+  pausada: 'bg-amber-100 text-amber-800',
+  aguardando_material: 'bg-orange-100 text-orange-800',
+  aguardando_aprovacao: 'bg-violet-100 text-violet-800',
+  concluida: 'bg-emerald-100 text-emerald-800',
+  cancelada: 'bg-rose-100 text-rose-800',
+};
+
 export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const {context}=useWorkforceAccess();const id=useId();
   const [status,setStatus]=useState<TaskStatus>(task.status);
@@ -18,7 +28,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     (target!=='cancelada' || !task.obrigatoria || hasPermission(context,'tarefas','aprovar')));
   const overdue=task.prazo && !final && new Date(task.prazo).getTime()<Date.now();
   return <li className="space-y-3 rounded-xl border border-slate-200 p-4">
-    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className="text-sm">{taskStatusLabels[task.status]}</span></div>
+    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[task.status]}`}>{taskStatusLabels[task.status]}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${new Date(task.prazo).toLocaleString('pt-BR')}`:'Sem prazo definido'}</p>
