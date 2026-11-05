@@ -78,3 +78,13 @@ test('subscription and billing reads are administrative-only', async () => {
   assert.match(sql, /drop policy if exists saas_cobrancas_select/i);
   assert.equal((sql.match(/private\.current_user_role\(\) in \('AdministradorTenant', 'SuperAdmin'\)/gi) || []).length, 2);
 });
+
+test('employee profile updates cannot alter authorization fields', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105150000_protect_employee_profile_fields.sql', import.meta.url), 'utf8');
+  assert.match(sql, /create or replace function private\.protect_employee_profile_fields/i);
+  for (const field of ['tenant_id', 'email', 'papel', 'ativo', 'setor', 'cargo', 'suspenso', 'acesso_versao', 'identificador_interno']) {
+    assert.match(sql, new RegExp(`new\\.${field}\\s+is distinct from old\\.${field}`, 'i'), `campo protegido ausente: ${field}`);
+  }
+  assert.match(sql, /actor_role\s+in\s+\('AdministradorTenant',\s*'SuperAdmin'\)/i);
+  assert.match(sql, /errcode\s*=\s*'42501'/i);
+});
