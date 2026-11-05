@@ -141,7 +141,7 @@ export default function EquipeView() {
     return () => { mounted = false; };
   }, [administrador, usuario?.tenantId]);
 
-  const ativos = perfis.filter((perfil) => perfil.ativo).length;
+  const ativos = perfis.filter((perfil) => perfil.ativo && !perfil.suspenso && !limits?.suspended_ids.includes(perfil.id)).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
