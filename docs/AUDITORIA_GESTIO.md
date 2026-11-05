@@ -1,5 +1,12 @@
 # Auditoria de aceite do GESTIO
 
+## Auditoria de cobertura de endpoints — 05/11/2026 (ciclo adicional)
+
+- A checagem automatizada comparou RPCs e Edge Functions invocados pelo frontend com as migrations versionadas.
+- Foi encontrado e corrigido um desvio real: `admin_excluir_empresa` e `financeiro_resumo_baixas` eram chamados pelo frontend sem implementação versionada.
+- As duas RPCs foram criadas com `SECURITY DEFINER`, `search_path` fixo, validação de autorização e execução negada a `anon`.
+- Resultado: 120 testes aprovados, lint aprovado, integridade aprovada e privilégios confirmados no Supabase (`anon=false`, `authenticated=true`).
+
 ## Verificação de navegador em produção — 05/11/2026
 
 - Navegação read-only executada no domínio oficial com o navegador: `/login`, `/cadastro`, `/redefinir-senha` e rota protegida `/visao-3d`.
