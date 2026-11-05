@@ -23,6 +23,7 @@ const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.
 const resumoFuncionario = readOptional("../src/modules/workforce/components/PersonalWorkSummary.tsx");
 const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
 const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
+const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -139,5 +140,12 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
   assert.match(fichasFuncionario, /aria-live="polite"/);
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
   assert.match(fichasFuncionario, /aria-current="page"/);
+});
+
+test("notificações permitem retry e paginação acessível", () => {
+  assert.match(notificacoesFuncionario, /aria-live="polite"/);
+  assert.match(notificacoesFuncionario, /Tentar novamente/);
+  assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
+  assert.match(notificacoesFuncionario, /aria-current="page"/);
 });
 
