@@ -28,6 +28,8 @@ const agendaFuncionario = readOptional("../src/modules/workforce/components/Agen
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
 const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
+const ocorrencias = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
+const anexos = readOptional("../src/modules/workforce/components/SheetAttachments.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -204,5 +206,14 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
   assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy\}/);
+});
+
+test("ocorrências e anexos expõem retry e paginação acessível", () => {
+  assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(ocorrencias, /aria-label="Paginação de ocorrências"/);
+  assert.match(ocorrencias, /Tentar novamente/);
+  assert.match(anexos, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(anexos, /aria-label="Paginação de anexos"/);
+  assert.match(anexos, /Tentar novamente/);
 });
 
