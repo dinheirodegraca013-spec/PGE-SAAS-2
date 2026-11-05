@@ -2,7 +2,7 @@ import {createClient} from 'npm:@supabase/supabase-js@2.119.0';
 import {attachmentContentError,attachmentDigest} from './attachment-content.ts';
 
 const origin=new URL(Deno.env.get('SITE_URL')||'https://gestio.dev.br').origin;
-const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Content-Type':'application/json','Vary':'Origin'};
+const headers={'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Content-Type':'application/json','Cache-Control':'no-store, max-age=0','Vary':'Origin'};
 const reply=(status:number,body:object)=>new Response(JSON.stringify(body),{status,headers});
 Deno.serve(async request=>{
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers});
