@@ -377,6 +377,7 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
   assert.match(editorFuncionario, /disabled=\{busy\}/);
+  assert.match(editorFuncionario, /type="button" className="btn-secondary" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
