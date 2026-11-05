@@ -423,6 +423,10 @@ test("ações de execução da ficha informam salvamento", () => {
   assert.match(fichaOperacional, /saving\?'Salvando…'/);
 });
 
+test("ficha técnica limpa erros ao editar um campo", () => {
+  assert.match(readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx"), /setMessage\(''\);\s*setIssues\(\[\]\);\s*change/);
+});
+
 test("liberação da ficha bloqueia duplo clique", () => {
   assert.match(fichaOperacional, /disabled=\{loading\}/);
   assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
