@@ -200,4 +200,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Edge Function `public-orcamento` publicada como versão 16, ACTIVE. Testes direcionados, lint e smoke de produção aprovados.
 - O auditor permanente passou a testar a RPC `assinar_orcamento_publico`; produção respondeu `404` para o cliente anônimo, confirmando que a função não está exposta pelo PostgREST.
 
+### Integridade da fonte antes do deploy — 05/11/2026 (ciclo adicional)
+
+- A investigação do build Vercel encontrou um arquivo `auth.tsx` corrompido no GitHub por marcador de truncamento do conector; o arquivo foi restaurado a partir da cópia local íntegra.
+- O verificador de integridade passou a rejeitar automaticamente `Warning: truncated output` em arquivos de código e migrations.
+- Após a correção: 119 testes, lint e integridade aprovados; o `main` remoto foi conferido por conteúdo bruto sem marcador de corrupção.
+
 
