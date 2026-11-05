@@ -106,6 +106,24 @@ if (supabaseUrl && supabaseKey) {
       ok: status === expectedStatus && corsOk && securityOk,
       ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk && securityOk } } : {}) });
   }
+  const baseUrlObject = new URL(baseUrl);
+  const alternateBaseUrl = baseUrlObject.hostname.startsWith('www.')
+    ? `${baseUrlObject.protocol}//${baseUrlObject.hostname.slice(4)}`
+    : `${baseUrlObject.protocol}//www.${baseUrlObject.hostname}`;
+  for (const [name, url, expectedStatus] of [
+    ['edge:cadastrar-funcionario:OPTIONS-alternate-origin', `${supabaseUrl}/functions/v1/cadastrar-funcionario`, 204],
+    ['edge:validar-anexo:OPTIONS-alternate-origin', `${supabaseUrl}/functions/v1/validar-anexo`, 204],
+    ['edge:public-orcamento:OPTIONS-alternate-origin', `${supabaseUrl}/functions/v1/public-orcamento`, 200],
+  ]) {
+    const result = await request(url, { method: 'OPTIONS', headers: { apikey: supabaseKey, origin: alternateBaseUrl, 'access-control-request-method': 'POST' } });
+    const allowOrigin = result.response?.headers.get('access-control-allow-origin') ?? null;
+    const allowMethods = result.response?.headers.get('access-control-allow-methods') ?? null;
+    const contentTypeOptions = result.response?.headers.get('x-content-type-options') ?? null;
+    const referrerPolicy = result.response?.headers.get('referrer-policy') ?? null;
+    const corsOk = allowOrigin === alternateBaseUrl && allowMethods?.includes(name.includes('public-orcamento') ? 'GET' : 'POST') === true;
+    const securityOk = contentTypeOptions?.toLowerCase() === 'nosniff' && referrerPolicy?.toLowerCase() === 'no-referrer';
+    methodChecks.push({ name, status: result.response?.status ?? 0, expectedStatus, allowOrigin, contentTypeOptions, referrerPolicy, ok: result.response?.status === expectedStatus && corsOk && securityOk });
+  }
   const oversized = await request(`${supabaseUrl}/functions/v1/public-orcamento`, {
     method: 'POST',
     headers: { apikey: supabaseKey, 'content-type': 'application/json' },
