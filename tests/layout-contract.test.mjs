@@ -49,3 +49,14 @@ test("visão geral não converte orçamento ausente em zero fictício", () => {
   assert.match(dashboard, /valoresOrcados\.length/);
   assert.match(dashboard, /: \"—\"/);
 });
+
+test("ações de links financeiros possuem nomes acessíveis", () => {
+  const links = readFileSync(
+    new URL("../src/views/admin/financeiro/FinanceiroLinksView.tsx", import.meta.url),
+    "utf8",
+  );
+  assert.match(links, /aria-label=\"Copiar URL do checkout\"/);
+  assert.match(links, /aria-label=\"Abrir link externo do checkout\"/);
+  assert.match(links, /aria-label=\"Excluir link de checkout\"/);
+});
+
