@@ -354,6 +354,10 @@ test("cartão de solicitação informa atualização no botão", () => {
   assert.match(solicitacaoMaterial, /\{busy\?'Atualizando…':'Atualizar'\}/);
 });
 
+test("cancelamento de material confirma sucesso", () => {
+  assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessage\('Solicitação cancelada\.'\)/);
+});
+
 test("inbox de estoque informa atualização no botão", () => {
   assert.match(inboxMateriais, /aria-label=\{loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
   assert.match(inboxMateriais, /\{loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
