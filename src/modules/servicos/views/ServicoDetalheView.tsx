@@ -499,6 +499,7 @@ export default function ServicoDetalheView() {
                   <Link
                     to={orcamentoServiceUrl(orcamento.publicToken)}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="btn-secondary text-xs gap-1.5 py-1.5 px-3"
                   >
                     <span>Ver Proposta Pública</span>
@@ -513,3 +514,4 @@ export default function ServicoDetalheView() {
     </div>
   );
 }
+
