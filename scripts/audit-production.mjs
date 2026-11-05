@@ -2,6 +2,7 @@ const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$
 const routes = ['/', '/login', '/cadastro', '/redefinir-senha', '/estoque', '/meu-financeiro', '/visao-3d', '/equipe', '/meu-setor', '/admin', '/financeiro'];
 const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
 const expectedHeaderValues = {
+  'content-security-policy': "frame-ancestors 'none'; frame-src 'none'; form-action 'self'; object-src 'none'; base-uri 'self'",
   'x-frame-options': 'DENY',
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'strict-origin-when-cross-origin',
