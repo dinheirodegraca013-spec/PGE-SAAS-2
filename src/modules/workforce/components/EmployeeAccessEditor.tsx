@@ -26,7 +26,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     catch(e){setError((e as Error).message||'Não foi possível salvar.');}finally{setBusy(false);}
   }
   return <section className="card space-y-4 p-5" aria-busy={busy || (!employee && !error)}>
-    <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Acesso do funcionário</h2><button className="btn-secondary" disabled={busy} onClick={onCancel}>Fechar</button></div>
+    <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
     {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
     {!employee&&!error&&<p role="status" aria-live="polite">Carregando acesso…</p>}
     {employee&&<form className="space-y-5" onSubmit={save}>
