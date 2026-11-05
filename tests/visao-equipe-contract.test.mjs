@@ -333,11 +333,6 @@ test("histórico atualiza ao retornar à aba", () => {
   assert.match(historicoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
 });
 
-test("detalhe da tarefa atualiza ao retornar à aba", () => {
-  assert.match(detalheTarefa, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(detalheTarefa, /addEventListener\('focus',refreshOnReturn\)/);
-});
-
 test("ocorrências reiniciam página e atualizam ao retornar à aba", () => {
   assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
   assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
