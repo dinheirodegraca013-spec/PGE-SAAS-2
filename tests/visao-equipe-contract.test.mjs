@@ -425,6 +425,12 @@ test("cartão de tarefa informa o estado do salvamento", () => {
   assert.match(minhasTarefas, /aria-label=\{busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem alterações'\}/);
 });
 
+test("cartão de tarefa limpa erro ao editar", () => {
+  assert.match(minhasTarefas, /const clearError=\(\)=>setError\(''\)/);
+  assert.match(minhasTarefas, /setStatus\(event\.target\.value as TaskStatus\);clearError\(\)/);
+  assert.match(minhasTarefas, /setProgress\(event\.target\.value===''\?NaN:Number\(event\.target\.value\)\);clearError\(\)/);
+});
+
 test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
   assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
