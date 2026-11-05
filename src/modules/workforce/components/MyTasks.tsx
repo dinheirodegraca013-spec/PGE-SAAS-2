@@ -31,7 +31,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const displayedStatus=final?task.status:status;
   const displayedProgress=displayedStatus==='concluida'?100:progress;
   const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
-  return <li className="space-y-3 rounded-xl border border-slate-200 p-4">
+  return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[displayedStatus]}`}>{taskStatusLabels[displayedStatus]}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
