@@ -45,7 +45,7 @@ export default function ProductionLog({
       const payload = JSON.stringify(data);
       if (request.current?.payload !== payload) request.current = { payload, id: crypto.randomUUID() };
       setBusy(true); setMessage('');
-      try { await onRegister({ ...data, request: request.current.id }); setMessage('Registro salvo pelo servidor.'); }
+      try { await onRegister({ ...data, request: request.current.id }); request.current = null; setMessage('Registro salvo pelo servidor.'); }
       catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Não foi possível salvar o registro.'); }
       finally { setBusy(false); }
     }}>
