@@ -18,9 +18,10 @@ export default function PersonalWorkSummary(){
   ]:[];
   return <section className="space-y-4">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Meu trabalho hoje</h2><button type="button" className="btn-secondary" disabled={loading} onClick={()=>setRetry(n=>n+1)}>Atualizar indicadores</button></div>
-    {loading && <p role="status">Carregando indicadores…</p>}{error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {loading && <p role="status" aria-live="polite">Carregando indicadores…</p>}{error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRetry(n=>n+1)}>Tentar novamente</button></div>}
     {summary && <><div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{cards.map(([label,value])=><div key={label} className="card p-4"><p className="text-sm text-slate-500">{label}</p><p className="mt-2 text-2xl font-bold">{value}</p></div>)}</div>
       {hasPermission(context,'tarefas') && <div className="card p-4"><h3 className="font-semibold">Próximos prazos</h3>{!summary.proximos_prazos.length?<p className="mt-2 text-sm text-slate-500">Nenhuma tarefa com prazo pendente.</p>:<ul className="divide-y divide-slate-100">{summary.proximos_prazos.map(task=><li key={task.id} className="flex flex-wrap justify-between gap-2 py-3 text-sm"><span>{task.titulo}</span><time dateTime={task.prazo}>{new Date(task.prazo).toLocaleString('pt-BR')}</time></li>)}</ul>}</div>}
     </>}
   </section>;
 }
+
