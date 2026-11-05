@@ -2,8 +2,16 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const publicOrigin = new URL(Deno.env.get("SITE_URL") || "https://gestio.dev.br").origin;
-const corsHeaders = {
-  "Access-Control-Allow-Origin": publicOrigin,
+const publicUrl = new URL(publicOrigin);
+const alternateOrigin = publicUrl.hostname.startsWith("www.")
+  ? `${publicUrl.protocol}//${publicUrl.hostname.slice(4)}`
+  : `${publicUrl.protocol}//www.${publicUrl.hostname}`;
+const allowedOrigins = new Set([publicOrigin, alternateOrigin]);
+function corsHeaders(request: Request) {
+  const requestOrigin = request.headers.get("Origin");
+  const allowOrigin = requestOrigin && allowedOrigins.has(requestOrigin) ? requestOrigin : publicOrigin;
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
   "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Content-Type": "application/json; charset=utf-8",
@@ -11,14 +19,15 @@ const corsHeaders = {
   "Referrer-Policy": "no-referrer",
   "Cache-Control": "no-store, max-age=0",
   "Vary": "Origin",
-};
+  };
+}
 const supabaseUrl = Deno.env.get("SUPABASE_URL");
 const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 if (!supabaseUrl || !serviceRoleKey) throw new Error("Missing Supabase Edge Function environment configuration.");
 
 const db = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
-function reply(status: number, body: unknown) {
-  return new Response(JSON.stringify(body), { status, headers: corsHeaders });
+function reply(request: Request, status: number, body: unknown) {
+  return new Response(JSON.stringify(body), { status, headers: corsHeaders(request) });
 }
 async function readBody(request: Request): Promise<Record<string, unknown>> {
   const declaredLength = Number(request.headers.get("content-length") || 0);
@@ -73,35 +82,35 @@ async function rollbackQuote(original: Record<string, any>, signedId: string) {
     .eq("id", signedId).eq("tem_pdf_assinado", true);
 }
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
-  if (req.method !== "GET" && req.method !== "POST") return reply(405, { error: "Método não permitido." });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(req) });
+  if (req.method !== "GET" && req.method !== "POST") return reply(req, 405, { error: "Método não permitido." });
   try {
     const url = new URL(req.url);
     let body: Record<string, unknown> = {};
     if (req.method === "POST") {
       try { body = await readBody(req); }
-      catch (error) { return reply(error instanceof RangeError ? 413 : 400, { error: error instanceof RangeError ? "Requisição acima do limite." : "Dados inválidos." }); }
+      catch (error) { return reply(req, error instanceof RangeError ? 413 : 400, { error: error instanceof RangeError ? "Requisição acima do limite." : "Dados inválidos." }); }
     }
     let token = req.method === "GET" ? url.searchParams.get("token") ?? "" : String(body.token ?? "");
     token = token.trim();
     if (!token || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token)) {
-      return reply(400, { error: "Token público inválido." });
+      return reply(req, 400, { error: "Token público inválido." });
     }
     if (req.method === "GET") {
       const quote = await getQuote(token);
-      if (!quote) return reply(404, { error: "Orçamento não encontrado, expirado ou indisponível." });
-      return reply(200, { quote: publicShape(quote) });
+      if (!quote) return reply(req, 404, { error: "Orçamento não encontrado, expirado ou indisponível." });
+      return reply(req, 200, { quote: publicShape(quote) });
     }
     if (req.method === "POST") {
       const nome = typeof body.nome === "string" ? body.nome.trim() : "";
-      if (nome.length < 3 || nome.length > 160) return reply(400, { error: "Informe seu nome completo (3 a 160 caracteres)." });
+      if (nome.length < 3 || nome.length > 160) return reply(req, 400, { error: "Informe seu nome completo (3 a 160 caracteres)." });
       const quote = await getQuote(token);
-      if (!quote) return reply(404, { error: "Orçamento não encontrado, expirado ou indisponível." });
+      if (!quote) return reply(req, 404, { error: "Orçamento não encontrado, expirado ou indisponível." });
       if (String(quote.status).toLowerCase() === "assinado" || quote.tem_pdf_assinado) {
-        return reply(200, { quote: publicShape(quote) });
+        return reply(req, 200, { quote: publicShape(quote) });
       }
       if (!["pendente", "enviado", "visualizado"].includes(String(quote.status).toLowerCase())) {
-        return reply(409, { error: "Este orçamento não está disponível para aceite." });
+        return reply(req, 409, { error: "Este orçamento não está disponível para aceite." });
       }
       const { data: updated, error: updateError } = await db.from("orcamentos")
         .update({ status: "Assinado", tem_pdf_assinado: true, assinado_por_nome: nome,
@@ -110,7 +119,7 @@ Deno.serve(async (req: Request) => {
         .select("id,tenant_id,servico_id,itens,valor_total,data_validade,observacoes_gerais,status,tem_pdf_assinado,assinado_por_nome,assinado_em,public_token")
         .maybeSingle();
       if (updateError) throw updateError;
-      if (!updated) return reply(409, { error: "O orçamento já foi assinado ou alterado. Atualize a página." });
+      if (!updated) return reply(req, 409, { error: "O orçamento já foi assinado ou alterado. Atualize a página." });
       if (updated.servico_id) {
         const { data: serviceUpdated, error: serviceError } = await db.from("servicos")
           .update({ status: "Aprovado", updated_at: new Date().toISOString() })
@@ -126,12 +135,12 @@ Deno.serve(async (req: Request) => {
         tabela: "orcamentos", registro_id: String(updated.id), detalhes: { nome, canal: "link_publico" },
       });
       if (auditError) console.error("Public quote audit log failed:", auditError.message);
-      return reply(200, { quote: publicShape(updated) });
+      return reply(req, 200, { quote: publicShape(updated) });
     }
-    return reply(405, { error: "Método não permitido." });
+    return reply(req, 405, { error: "Método não permitido." });
   } catch (error) {
     console.error("public-orcamento error:", error);
-    return reply(500, { error: "Não foi possível processar o orçamento neste momento." });
+    return reply(req, 500, { error: "Não foi possível processar o orçamento neste momento." });
   }
 });
 
