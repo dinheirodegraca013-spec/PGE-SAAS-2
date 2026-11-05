@@ -155,9 +155,11 @@ test("equipe oferece retry contextual e anuncia o carregamento da lista", () => 
 });
 
 test("fichas de serviço expõem carregamento e paginação acessíveis", () => {
+  assert.match(fichasFuncionario, /aria-busy=\{loading\}/);
   assert.match(fichasFuncionario, /aria-live="polite"/);
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
   assert.match(fichasFuncionario, /aria-current="page"/);
+  assert.match(fichasFuncionario, /Tentar novamente/);
 });
 
 test("notificações permitem retry e paginação acessível", () => {
