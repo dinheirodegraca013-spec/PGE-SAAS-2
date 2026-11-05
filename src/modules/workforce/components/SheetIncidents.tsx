@@ -21,9 +21,11 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   const {context}=useWorkforceAccess();const id=useId();const canView=hasPermission(context,'ocorrencias');
   const [items,setItems]=useState<Incident[]>([]);const [page,setPage]=useState(0);const [more,setMore]=useState(false);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');const [type,setType]=useState<IncidentType>('outro');const [severity,setSeverity]=useState<IncidentSeverity>('atencao');const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
-  const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
+  const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);const lastReturnRefresh=useRef(0);
   const clearFeedback=()=>{setError('');setMessage('');};
   useEffect(()=>{setTitle('');setDescription('');setType('outro');setSeverity('atencao');setMessage('');receipt.current=null;},[serviceId,sector]);
+  useEffect(()=>{setPage(0);},[serviceId,sector,context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
   useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');setItems([]);
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
