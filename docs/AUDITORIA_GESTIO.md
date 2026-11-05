@@ -147,7 +147,7 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - `validar-anexo` foi republicada como versão 2 com o helper de assinatura empacotado no próprio bundle; `401`, `405`, CORS e validação de conteúdo foram revalidados em produção.
 - Auditoria final pós-publicação: 11 rotas, cabeçalhos de segurança, assets, endpoints, métodos, CORS e limite de payload aprovados; suíte com 106 testes, lint, build e integridade aprovados.
 - Guarda preventiva adicionada para manter `cadastrar-funcionario`, `public-orcamento` e `validar-anexo` na mesma versão fixa do cliente Supabase; suíte atualizada para 107 testes aprovados.
-- Respostas das funções autenticadas agora exigem `Cache-Control: no-store, max-age=0`; o auditor de produção valida esse cabeçalho junto aos códigos HTTP e CORS.
+- Respostas das funções autenticadas agora exigem `Cache-Control: no-store, max-age=0`; o auditor de produção valida esse cabeçalho junto com os códigos HTTP e CORS.
 - O fluxo de convite foi verificado no banco: 1 funcionário, 0 sem tenant e 0 divergências entre metadata, empresa e setor; foi criado teste de regressão para o trigger de metadata diferida (108 testes aprovados).
 - Smoke test visual read-only em produção (`https://gestio.dev.br`): login, cadastro, redefinição de senha e rota pública de orçamento inválido carregaram com conteúdo e campos esperados; não foram enviados dados sensíveis nem submetidos formulários.
 - Console do navegador sem erros ou avisos nas telas públicas auditadas.
@@ -182,7 +182,7 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 
 ### Reauditoria contínua — 05/11/2026 (ciclo adicional)
 
-- A varredura de produção foi repetida: 11 rotas no domínio principal e no `www`, headers obrigatórios, CORS, métodos HTTP, payload de 17 KiB e RPCs anônimos conforme o contrato.
+- A varredura de produção foi repetida: 11 rotas no domínio principal e no `www`, headers obrigatórios, assets, CORS, métodos HTTP, payload de 17 KiB e RPCs anônimos conforme o contrato.
 - `npm run audit:sql-security` e `npm run verify:integrity` passaram sem achados.
 - Removido do serviço de orçamentos o helper legado que gerava URLs `http://localhost:5000/api`; não havia consumidores nem endpoint correspondente.
 - Suíte local: 117 testes aprovados e lint aprovado; foi adicionada uma guarda contra a reintrodução de URLs de API local no serviço de orçamentos.
@@ -269,3 +269,11 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 
 - No navegador real, `/meu-setor` e `/financeiro` sem sessão redirecionaram para o login com o parâmetro de retorno correto.
 - Nenhum painel operacional ou dado financeiro foi renderizado antes da autenticação.
+
+### Endurecimento do registro de auditoria — 05/11/2026
+
+- O cliente deixou de obter o `tenant_id` do `localStorage` ao gravar `audit_logs`.
+- O tenant agora é resolvido pelo perfil do usuário autenticado no Supabase antes da inserção; falha de perfil interrompe o registro.
+- Regressão adicionada; suíte local: 127 testes aprovados e typecheck aprovado.
+
+
