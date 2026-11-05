@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isSetor, setores } from '@/lib/setores';
 import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 import { technicalSheets } from '../services/technical-sheet.service';
@@ -15,7 +15,9 @@ export default function MyServiceSheets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
+  const lastReturnRefresh = useRef(0);
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
+  useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
     let active = true;
     setLoading(true); setError(''); setList(null); setSelected(null);
