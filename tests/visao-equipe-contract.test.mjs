@@ -99,3 +99,8 @@ test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /aria-busy=\{loading\}/);
 });
 
+test("tarefas não enviam atualização sem mudança", () => {
+  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
+  assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
+});
+
