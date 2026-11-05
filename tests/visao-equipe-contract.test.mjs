@@ -151,6 +151,11 @@ test("resumo do funcionário usa cores semânticas nos indicadores", () => {
   assert.match(resumoFuncionario, /Em andamento/);
 });
 
+test("resumo informa atualização no botão durante carregamento", () => {
+  assert.match(resumoFuncionario, /aria-label=\{loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
+  assert.match(resumoFuncionario, /\{loading\?'Atualizando…':'Atualizar indicadores'\}/);
+});
+
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
