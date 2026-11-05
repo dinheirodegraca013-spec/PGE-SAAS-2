@@ -115,5 +115,6 @@ Data: 27/10/2026
 - Reauditoria pós-publicação: 11/11 rotas, assets, headers, CORS, métodos, payload de 17 KiB (`413`) e headers de proteção das funções aprovados.
 - O CORS do `public-orcamento` foi restringido de `*` para `https://gestio.dev.br`; a função está na versão v10 e o preflight agora confirma somente a origem oficial e os métodos necessários.
 - O auditor também verifica `nosniff` e `no-referrer` nas respostas `OPTIONS` de todas as Edge Functions; preflights de produção aprovados.
+- A CSP da aplicação foi endurecida com `frame-src 'none'` e `form-action 'self'`, mantendo o checkout via navegação JavaScript e bloqueando embedding/envio de formulários para origens externas.
 
 
