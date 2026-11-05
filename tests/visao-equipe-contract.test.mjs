@@ -217,6 +217,11 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /aria-current="page"/);
 });
 
+test("histórico informa atualização no botão", () => {
+  assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
+  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
