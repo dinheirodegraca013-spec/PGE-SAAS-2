@@ -75,9 +75,9 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   }
 
   if(work.loading&&!work.context)return <div role="status" className="p-6">Validando suas permissões…</div>;
-  if(work.error||!work.context)return <div className="mx-auto max-w-xl space-y-4 p-6"><p role="alert">{work.error||'Não foi possível validar suas permissões de trabalho.'}</p><button className="btn-primary" onClick={()=>void work.reload()}>Tentar novamente</button><button className="btn-secondary ml-3" onClick={()=>void auth.logout()}>Sair</button></div>;
+  if(work.error||!work.context)return <div className="mx-auto max-w-xl space-y-4 p-6"><p role="alert">{work.error||'Não foi possível validar suas permissões de trabalho.'}</p><button type="button" className="btn-primary" onClick={()=>void work.reload()}>Tentar novamente</button><button type="button" className="btn-secondary ml-3" onClick={()=>void auth.logout()}>Sair</button></div>;
   if (!work.context.proprietario && !workforcePathAllowed(work.context,location.pathname)) {
-    if(location.pathname==='/meu-setor')return <div className="space-y-3 p-6"><p role="alert">Nenhuma ferramenta de trabalho foi liberada para sua conta. Fale com o administrador.</p><button className="btn-secondary" onClick={()=>void auth.logout()}>Sair</button></div>;
+    if(location.pathname==='/meu-setor')return <div className="space-y-3 p-6"><p role="alert">Nenhuma ferramenta de trabalho foi liberada para sua conta. Fale com o administrador.</p><button type="button" className="btn-secondary" onClick={()=>void auth.logout()}>Sair</button></div>;
     return <Navigate to="/meu-setor" replace />;
   }
   return <>{children}</>;
