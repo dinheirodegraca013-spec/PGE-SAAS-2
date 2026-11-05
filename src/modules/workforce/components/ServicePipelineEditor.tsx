@@ -26,12 +26,12 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   const move=(index:number,offset:number)=>setSelected(current=>{
     const next=[...current];[next[index],next[index+offset]]=[next[index+offset],next[index]];return next;
   });
-  return <section className="card space-y-4 p-6">
+  return <section className="card space-y-4 p-6" aria-busy={loading || busy}>
     <h3 className="font-semibold">Fluxo de produção</h3>
     <p className="text-sm text-slate-500">Selecione as etapas necessárias e ordene a execução. Estoque permanece como apoio.</p>
-    {loading && <p role="status">Carregando fluxo…</p>}
+    {loading && <p role="status" aria-live="polite">Carregando fluxo…</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role="status" className="text-sm">{message}</p>}
+    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {flow && <form className="space-y-4" onSubmit={async event=>{
       event.preventDefault();if(disabled || lock.current)return;
       if(!selected.length){setError('Escolha pelo menos uma etapa.');return;}
@@ -57,3 +57,4 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     }}>Recarregar fluxo</button>
   </section>;
 }
+
