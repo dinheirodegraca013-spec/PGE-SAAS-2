@@ -267,6 +267,12 @@ test("notificação limpa erro antigo ao abrir um registro", () => {
   assert.match(notificacoesFuncionario, /setError\('\'\);setSelected\(item\)/);
 });
 
+test("agenda usa datas locais para não deslocar o período no fuso horário", () => {
+  assert.match(agendaFuncionario, /const isoDate=\(date:Date\)=>/);
+  assert.doesNotMatch(agendaFuncionario, /Date\.now\(\)\+30\*86400000/);
+  assert.doesNotMatch(agendaFuncionario, /new Date\(\)\.toISOString\(\)\.slice\(0,10\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
