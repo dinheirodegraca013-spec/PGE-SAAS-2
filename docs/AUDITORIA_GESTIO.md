@@ -6,6 +6,8 @@ Data: 27/10/2026
 
 **PASS técnico; homologação visual final pendente.** A Visão 3D usa somente o canvas WebGL Three.js, seguindo o HTML de referência; não há camada fixa sobre o canvas. Quando WebGL não renderiza, o sistema exibe uma mensagem de compatibilidade.
 
+O gate reproduzível de release é `npm run verify:release`; ele reúne testes, typecheck, auditorias SQL/integridade, build e auditoria dos endpoints em produção.
+
 ## Reauditoria de recuperação de senha — 04/11/2026
 
 - Corrigido o callback de recuperação para aceitar PKCE (`code`) e tokens legados no hash (`access_token`/`refresh_token`).
