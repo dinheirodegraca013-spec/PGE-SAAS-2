@@ -401,6 +401,11 @@ test("agenda limpa atividades anteriores antes de nova consulta", () => {
   assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);setItems\(\[\]\)/);
 });
 
+test("agenda limpa atividades quando o período é inválido", () => {
+  assert.match(agendaFuncionario, /if\(!start\|\|!end\)\{setItems\(\[\]\);setError/);
+  assert.match(agendaFuncionario, /if\(end<start\)\{setItems\(\[\]\);setError/);
+});
+
 test("anexos bloqueiam geração simultânea de links temporários", () => {
   assert.match(anexos, /linkBusy/);
   assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
