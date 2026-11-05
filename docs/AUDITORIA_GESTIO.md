@@ -1,5 +1,11 @@
 # Auditoria de aceite do GESTIO
 
+## Verificação de navegador em produção — 05/11/2026
+
+- Navegação read-only executada no domínio oficial com o navegador: `/login`, `/cadastro`, `/redefinir-senha` e rota protegida `/visao-3d`.
+- Login exibiu campos e guard de autenticação; cadastro carregou os três planos reais após a consulta assíncrona; recuperação exibiu fluxo por link e código; `/visao-3d` redirecionou corretamente para login sem sessão.
+- Nenhum formulário foi submetido, nenhum dado sensível foi transmitido e não houve alteração externa durante a verificação.
+
 ## Auditoria contínua de produção — 05/11/2026
 
 - Quality gate completo (`npm run verify:release`): 116 testes, lint, auditoria SQL, integridade do repositório, build e auditoria externa aprovados.
