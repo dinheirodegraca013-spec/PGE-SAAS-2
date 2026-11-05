@@ -253,7 +253,7 @@ test("produção e estoque sinalizam operações e mensagens ao funcionário", (
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
   assert.match(controleSecagem, /aria-busy=\{busy\}/);
   assert.match(controleSecagem, /aria-live="polite"/);
-  assert.match(inboxMateriais, /aria-busy=\{loading\}/);
+  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
   assert.match(inboxMateriais, /Tentar novamente/);
   assert.match(inboxMateriais, /aria-live="polite"/);
   assert.match(inboxMateriais, /actionBusy/);
@@ -267,8 +267,9 @@ test("cartão de solicitação informa atualização no botão", () => {
 });
 
 test("inbox de estoque informa atualização no botão", () => {
-  assert.match(inboxMateriais, /aria-label=\{loading\?'Atualizando solicitações':'Atualizar solicitações'\}/);
-  assert.match(inboxMateriais, /\{loading\?'Atualizando…':'Atualizar'\}/);
+  assert.match(inboxMateriais, /aria-label=\{loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
+  assert.match(inboxMateriais, /\{loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
+  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
 });
 
 test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
