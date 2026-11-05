@@ -21,6 +21,7 @@ const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
 const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
 const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.tsx");
 const resumoFuncionario = readOptional("../src/modules/workforce/components/PersonalWorkSummary.tsx");
+const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -121,5 +122,11 @@ test("resumo do funcionário usa cores semânticas nos indicadores", () => {
   assert.match(resumoFuncionario, /Atrasadas/);
   assert.match(resumoFuncionario, /Concluídas/);
   assert.match(resumoFuncionario, /Em andamento/);
+});
+
+test("editor de acesso permite repetir o carregamento", () => {
+  assert.match(editorAcesso, /const \[retry,setRetry\]/);
+  assert.match(editorAcesso, /\},\[userId,retry\]\)/);
+  assert.match(editorAcesso, /Tentar novamente/);
 });
 
