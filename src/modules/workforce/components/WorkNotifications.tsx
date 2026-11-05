@@ -36,7 +36,7 @@ export default function WorkNotifications(){
       <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{new Date(item.criada_em).toLocaleString('pt-BR')}</time>
       <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" disabled={!!busy} onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
-        setSelected(item);
+        setError('');setSelected(item);
       }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>
       {!item.lida_em && <button type="button" className="btn-secondary" disabled={!!busy} onClick={async()=>{
         if(reading.current)return;reading.current=true;setBusy(item.id);setError('');const request=generation.current;
