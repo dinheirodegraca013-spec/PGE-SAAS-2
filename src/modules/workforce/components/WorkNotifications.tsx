@@ -25,8 +25,8 @@ export default function WorkNotifications(){
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5">
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Notificações{data?` (${data.nao_lidas} não lidas)`:''}</h2><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)}>Atualizar notificações</button></div>
-    {loading && <p role="status">Carregando notificações…</p>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {loading && <p role="status" aria-live="polite">Carregando notificações…</p>}
+    {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
       <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='tarefa_atribuida'?'Nova tarefa atribuída':item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
@@ -42,7 +42,8 @@ export default function WorkNotifications(){
         finally{reading.current=false;setBusy(null);}
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>
     </li>)}</ul>}
-    {data && <div className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></div>}
+    {data && <nav aria-label="Paginação de notificações" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></nav>}
     {selected?.tarefa_id?<TaskDetails key={selected.tarefa_id} taskId={selected.tarefa_id}/>:selected?.servico_id?<ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>:null}
   </section>;
 }
+
