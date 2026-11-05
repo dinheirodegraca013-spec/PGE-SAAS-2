@@ -100,5 +100,6 @@ Data: 27/10/2026
 - A versão 6 também compensa a assinatura do orçamento se a atualização do serviço vinculado falhar, evitando estado parcialmente confirmado; teste contratual incluído e suíte com 106 aprovações.
 - Logs de 05/11/2026: versão 6 respondeu ao teste de limite com `413` e não registrou nenhum `5xx`; as respostas observadas das versões anteriores foram `200`, `400` e `413` conforme esperado.
 - Dependência `@supabase/supabase-js` atualizada para `2.119.0`; `npm audit --omit=dev` continua sem vulnerabilidades, com testes, lint e build aprovados.
+- A versão 7 exige que o serviço vinculado seja efetivamente atualizado antes de confirmar o orçamento; serviço inexistente ou de outro tenant dispara compensação e erro seguro.
 
 
