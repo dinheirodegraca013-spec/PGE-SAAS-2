@@ -284,6 +284,10 @@ test("ocorrências limpam feedback ao editar", () => {
   assert.match(ocorrenciasFuncionario, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
 });
 
+test("ocorrências resetam o formulário ao trocar de contexto", () => {
+  assert.match(ocorrenciasFuncionario, /useEffect\(\(\)=>\{setTitle\(''\);setDescription\(''\);setType\('outro'\);setSeverity\('atencao'\);setMessage\(''\);receipt\.current=null;\},\[serviceId,sector\]\)/);
+});
+
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
