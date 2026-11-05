@@ -228,5 +228,5 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - As políticas de sessão passaram a ser `RESTRICTIVE`; as políticas financeiras genéricas e o limite de setor amplo foram removidos.
 - Dados comerciais, assinaturas e cobranças do tenant agora exigem papel `AdministradorTenant`/`SuperAdmin`; a rota `/configuracoes` ganhou guarda correspondente.
 - Verificações locais: 124 testes, typecheck, integridade, auditoria SQL e dependências (0 vulnerabilidades) aprovados; auditoria pública continua com 11/11 rotas, headers, CORS, métodos e payloads aprovados nos dois domínios.
-- A alteração de frontend foi sincronizada no `main` remoto. A publicação Vercel ainda aguarda nova janela de cota; o último deploy publicado permanece `READY` no commit `325463c`.
+- A alteração de frontend foi sincronizada no `main` remoto e publicada pela Vercel no deploy `dpl_7dYXfRizVFRxPDxG9E2tFZ4EwbEU`, estado **READY**, commit `e451835`.
 
