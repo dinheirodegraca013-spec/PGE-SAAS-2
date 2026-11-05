@@ -280,3 +280,9 @@ test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => 
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
 });
 
+test("fichas bloqueiam abertura e paginação durante sincronização", () => {
+  assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| !list\.tem_mais\}/);
+});
+
