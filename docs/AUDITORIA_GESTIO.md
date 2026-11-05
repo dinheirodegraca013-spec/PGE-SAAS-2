@@ -101,5 +101,8 @@ Data: 27/10/2026
 - Logs de 05/11/2026: versão 6 respondeu ao teste de limite com `413` e não registrou nenhum `5xx`; as respostas observadas das versões anteriores foram `200`, `400` e `413` conforme esperado.
 - Dependência `@supabase/supabase-js` atualizada para `2.119.0`; `npm audit --omit=dev` continua sem vulnerabilidades, com testes, lint e build aprovados.
 - A versão 7 exige que o serviço vinculado seja efetivamente atualizado antes de confirmar o orçamento; serviço inexistente ou de outro tenant dispara compensação e erro seguro.
+- A versão 8 de `public-orcamento` está ativa com limite de payload de 16 KiB, resposta `413` sem cache e compensação da assinatura quando a etapa vinculada falha.
+- `validar-anexo` foi republicada como versão 2 com o helper de assinatura empacotado no próprio bundle; `401`, `405`, CORS e validação de conteúdo foram revalidados em produção.
+- Auditoria final pós-publicação: 11 rotas, cabeçalhos de segurança, assets, endpoints, métodos, CORS e limite de payload aprovados; suíte com 106 testes, lint, build e integridade aprovados.
 
 
