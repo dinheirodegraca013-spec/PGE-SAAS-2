@@ -223,7 +223,7 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
   assert.match(ocorrencias, /aria-label="Paginação de ocorrências"/);
   assert.match(ocorrencias, /Tentar novamente/);
-  assert.match(anexos, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy\}/);
   assert.match(anexos, /aria-label="Paginação de anexos"/);
   assert.match(anexos, /Tentar novamente/);
 });
@@ -304,5 +304,11 @@ test("agenda ignora respostas de requisições antigas", () => {
   assert.match(agendaFuncionario, /const generation=useRef\(0\)/);
   assert.match(agendaFuncionario, /if\(request===generation\.current\)setItems/);
   assert.match(agendaFuncionario, /return\(\)=>\{generation\.current\+\+;\}/);
+});
+
+test("anexos bloqueiam geração simultânea de links temporários", () => {
+  assert.match(anexos, /linkBusy/);
+  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
+  assert.match(anexos, /itemBusy\?'Gerando…'/);
 });
 
