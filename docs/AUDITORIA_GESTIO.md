@@ -124,4 +124,12 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Varredura preventiva adicionada para bloquear regressões com `dangerouslySetInnerHTML`, `innerHTML`, `insertAdjacentHTML`, `eval` e `new Function`; suíte atual: 113 testes aprovados.
 - O endpoint `public-orcamento` passou a rejeitar `PUT`, `PATCH` e `DELETE` imediatamente com `405`, antes de validar token; o auditor agora cobre `PUT` e `DELETE`. Publicação atual: v11.
 
+### Reauditoria contínua — 05/11/2026
+
+- Smoke test visual read-only no domínio oficial: página inicial, login, recuperação de senha e cadastro carregaram; os planos apareceram após o carregamento assíncrono.
+- Nenhum formulário foi submetido e nenhum dado sensível foi transmitido durante a verificação.
+- O auditor de produção passou a exigir `Vary: Origin` no preflight do orçamento público; produção respondeu `200` com `Access-Control-Allow-Origin: https://gestio.dev.br` e `Vary: Accept-Encoding, Origin`.
+- Links externos que abrem nova aba foram protegidos com `rel="noopener noreferrer"`, com regressão automatizada adicionada.
+- Suíte atual: 114 testes aprovados; auditoria de produção: 11 rotas, 0 headers ausentes, 0 divergências, 0 segredos, 0 falhas de endpoint/método.
+
 
