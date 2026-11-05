@@ -74,5 +74,6 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /hasPermission\(context, 'tarefas'\)/);
   assert.match(meuSetor, /meu_setor_projetos/);
   assert.match(meuSetor, /formatPrazo/);
+  assert.match(meuSetor, /additionalSectors/);
 });
 
