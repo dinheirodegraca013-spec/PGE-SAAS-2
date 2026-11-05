@@ -3,7 +3,7 @@ import type {AcceptanceInput} from '../services/installation.service';
 export default function InstallationAcceptanceForm({attachments,disabled,onRegister}:{attachments:{id:string;nome:string}[];disabled:boolean;onRegister:(input:AcceptanceInput)=>Promise<void>}){
   const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy} onSubmit={async event=>{
     event.preventDefault();if(disabled || lock.current)return;
     if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
     const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
@@ -20,8 +20,9 @@ export default function InstallationAcceptanceForm({attachments,disabled,onRegis
       <p className="text-xs text-slate-500">Envie o comprovante em Anexos privados. As opções seguem a página de anexos exibida.</p>
       <label htmlFor={`${id}-notes`} className="block text-sm">Observações<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={2000} value={notes} onChange={event=>setNotes(event.target.value)}/></label>
       <label className="flex items-start gap-2 text-sm"><input className="mt-1" type="checkbox" checked={confirmed} onChange={event=>setConfirmed(event.target.checked)}/><span>Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instalação.</span></label>
-      <button type="submit" className="btn-primary" disabled={!attachments.length}>{busy?'Registrando…':'Registrar aceite recebido'}</button>
+      <button type="submit" className="btn-primary" disabled={!attachments.length || disabled || busy}>{busy?'Registrando…':'Registrar aceite recebido'}</button>
     </fieldset>
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
   </form>;
 }
+
