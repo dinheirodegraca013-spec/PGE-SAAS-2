@@ -12,7 +12,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     try {
       const { data, error } = await supabase.rpc('listar_dispositivos', { p_usuario_id: userId || null });
       if (error) throw error;
-      setDevices(data.devices); setLimit(data.limit);
+      setDevices(Array.isArray(data?.devices) ? data.devices : []); setLimit(typeof data?.limit === 'number' ? data.limit : null);
     } catch (e) { setError(e instanceof Error ? e.message : (e as {message?: string})?.message || 'Não foi possível consultar os dispositivos.'); }
     finally { setBusy(false); }
   }, [userId]);
