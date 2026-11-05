@@ -41,7 +41,7 @@ export default function FinishingDryingControl({
       <div><dt className="text-slate-500">Iniciada em</dt><dd>{formatServerDate(state?.iniciada_em ?? null)}</dd></div>
       <div><dt className="text-slate-500">Liberada para concluir em</dt><dd>{formatServerDate(state?.prevista_ate ?? null)}</dd></div>
     </dl>
-    {canRegister && <form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" onSubmit={async event => {
+    {canRegister && <form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy={busy} onSubmit={async event => {
       event.preventDefault();
       const value = Number(minutes);
       if (!Number.isInteger(value) || value < 1 || value > 10080) { setMessage('Informe de 1 a 10.080 minutos.'); return; }
