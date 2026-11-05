@@ -47,3 +47,12 @@ test('frontend RPCs and Edge Functions have a versioned backend implementation',
   assert.ok(edgeNames.size > 0);
 });
 
+test('administrative and financial RPCs keep anonymous execution revoked', async () => {
+  const archive = await readFile(new URL('../supabase/migrations/20261105110000_admin_archive_tenant_rpc.sql', import.meta.url), 'utf8');
+  const summary = await readFile(new URL('../supabase/migrations/20261105111000_financeiro_resumo_baixas.sql', import.meta.url), 'utf8');
+  assert.match(archive, /revoke all on function public\.admin_excluir_empresa\(uuid, text\) from public, anon/i);
+  assert.match(archive, /grant execute on function public\.admin_excluir_empresa\(uuid, text\) to authenticated/i);
+  assert.match(summary, /revoke all on function public\.financeiro_resumo_baixas\(\) from public, anon/i);
+  assert.match(summary, /grant execute on function public\.financeiro_resumo_baixas\(\) to authenticated/i);
+});
+
