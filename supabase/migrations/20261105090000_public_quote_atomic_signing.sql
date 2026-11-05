@@ -9,7 +9,6 @@ SET search_path = public
 AS $$
 DECLARE
   quote_row public.orcamentos%ROWTYPE;
-  service_status text;
 BEGIN
   IF p_nome IS NULL OR length(btrim(p_nome)) < 3 OR length(btrim(p_nome)) > 160 THEN
     RAISE EXCEPTION 'invalid_signer_name' USING ERRCODE = 'P0001';
@@ -40,8 +39,7 @@ BEGIN
   END IF;
 
   IF quote_row.servico_id IS NOT NULL THEN
-    SELECT status INTO service_status
-      FROM public.servicos
+    PERFORM 1 FROM public.servicos
      WHERE id = quote_row.servico_id
        AND tenant_id = quote_row.tenant_id
      FOR UPDATE;
