@@ -291,6 +291,11 @@ test("editores operacionais anunciam carregamento e bloqueiam estados concorrent
   assert.match(fluxoProducao, /aria-live="polite"/);
 });
 
+test("fluxo informa as ações de salvar e recarregar", () => {
+  assert.match(fluxoProducao, /aria-label=\{busy\?'Salvando fluxo':flow\.configurado\?'Salvar sequência':'Configurar fluxo'\}/);
+  assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
+});
+
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| \(!employee && !error\)\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
