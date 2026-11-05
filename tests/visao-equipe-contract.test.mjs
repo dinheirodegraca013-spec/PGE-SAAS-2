@@ -300,3 +300,9 @@ test("ações de execução da ficha informam salvamento", () => {
   assert.match(fichaOperacional, /saving\?'Salvando…'/);
 });
 
+test("agenda ignora respostas de requisições antigas", () => {
+  assert.match(agendaFuncionario, /const generation=useRef\(0\)/);
+  assert.match(agendaFuncionario, /if\(request===generation\.current\)setItems/);
+  assert.match(agendaFuncionario, /return\(\)=>\{generation\.current\+\+;\}/);
+});
+
