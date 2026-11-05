@@ -277,4 +277,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Regressão adicionada; suíte local: 127 testes aprovados e typecheck aprovado.
 - A publicação desta revisão foi tentada na Vercel e recusada pela cota `api-deployments-free-per-day` (retentativa indicada em 24h); o código permanece sincronizado no `main` do GitHub e a produção anterior continua READY.
 
+### Restrição de escrita no Storage de avatares — 05/11/2026
+
+- A auditoria encontrou políticas que permitiam a qualquer usuário autenticado substituir ou apagar arquivos de outro usuário no bucket `avatars`.
+- INSERT, UPDATE e DELETE agora exigem o caminho `tenant_id/usuario_id/...` correspondente à sessão autenticada; leitura pública continua somente para exibição das imagens.
+- Migration aplicada no Supabase e políticas conferidas diretamente no catálogo; suíte local: 128 testes, auditoria SQL (58 migrations) e integridade aprovadas.
+
 
