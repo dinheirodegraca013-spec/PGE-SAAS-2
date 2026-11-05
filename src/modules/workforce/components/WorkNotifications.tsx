@@ -16,6 +16,7 @@ export default function WorkNotifications(){
   const [selected,setSelected]=useState<WorkNotification|null>(null);
   const generation=useRef(0);
   const reading=useRef(false);
+  useEffect(()=>{const refreshOnReturn=()=>{if(document.visibilityState==='visible')setRefresh(value=>value+1);};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');setData(null);setSelected(null);
     workNotifications.list(page).then(result=>{if(request===generation.current)setData(result);})
