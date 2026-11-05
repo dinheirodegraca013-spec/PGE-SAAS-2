@@ -1,4 +1,4 @@
-import { createClient } from 'npm:@supabase/supabase-js@2.117.3';
+import { createClient } from 'npm:@supabase/supabase-js@2.119.0';
 
 const setores = new Set(['corte', 'montagem', 'acabamento', 'instalacao', 'estoque', 'financeiro']);
 const site = Deno.env.get('SITE_URL') || 'https://gestio.dev.br';
