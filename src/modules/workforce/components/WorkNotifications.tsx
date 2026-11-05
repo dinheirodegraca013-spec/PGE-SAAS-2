@@ -25,7 +25,7 @@ export default function WorkNotifications(){
       .finally(()=>{if(request===generation.current)setLoading(false);});
     return()=>{generation.current++;};
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
-  return <section className="card space-y-4 p-5">
+  return <section className="card space-y-4 p-5" aria-busy={loading || !!busy}>
     <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Notificações{data?` (${data.nao_lidas} não lidas)`:''}</h2><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)}>Atualizar notificações</button></div>
     {loading && <p role="status" aria-live="polite">Carregando notificações…</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
@@ -33,7 +33,7 @@ export default function WorkNotifications(){
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
       <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='tarefa_atribuida'?'Nova tarefa atribuída':item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
       <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{new Date(item.criada_em).toLocaleString('pt-BR')}</time>
-      <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" onClick={()=>{
+      <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" disabled={!!busy} onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
         setSelected(item);
       }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>
