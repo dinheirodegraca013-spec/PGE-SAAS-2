@@ -34,13 +34,21 @@ for (const route of routes) {
 }
 
 const page = await request(baseUrl);
+const alternatePage = await request(alternateBaseUrl);
 const headers = Object.fromEntries(requiredHeaders.map((name) => [name, page.response?.headers.get(name) ?? null]));
+const alternateHeaders = Object.fromEntries(requiredHeaders.map((name) => [name, alternatePage.response?.headers.get(name) ?? null]));
 const missingHeaders = requiredHeaders.filter((name) => !headers[name]);
+const alternateMissingHeaders = requiredHeaders.filter((name) => !alternateHeaders[name]);
 const mismatchedHeaders = Object.entries(expectedHeaderValues)
   .filter(([name, value]) => (headers[name] || '').toLowerCase() !== value.toLowerCase())
   .map(([name, value]) => ({ name, expected: value, actual: headers[name] }));
+const alternateMismatchedHeaders = Object.entries(expectedHeaderValues)
+  .filter(([name, value]) => (alternateHeaders[name] || '').toLowerCase() !== value.toLowerCase())
+  .map(([name, value]) => ({ name, expected: value, actual: alternateHeaders[name] }));
 const contentType = page.response?.headers.get('content-type') ?? null;
 const contentTypeOk = Boolean(contentType?.toLowerCase().startsWith('text/html'));
+const alternateContentType = alternatePage.response?.headers.get('content-type') ?? null;
+const alternateContentTypeOk = Boolean(alternateContentType?.toLowerCase().startsWith('text/html'));
 const html = page.response ? await page.response.text() : '';
 const assetPaths = [...html.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)].map((match) => match[1]);
 const uniqueAssetPaths = [...new Set(assetPaths)];
@@ -155,8 +163,8 @@ if (supabaseUrl && supabaseKey) {
     expectedStatus: 200, allowOrigin: foreignAllowOrigin,
     ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
-const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || mismatchedHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
