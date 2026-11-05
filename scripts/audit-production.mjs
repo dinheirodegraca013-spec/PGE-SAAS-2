@@ -1,4 +1,8 @@
 const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$/, '');
+const baseUrlObject = new URL(baseUrl);
+const alternateBaseUrl = baseUrlObject.hostname.startsWith('www.')
+  ? `${baseUrlObject.protocol}//${baseUrlObject.hostname.slice(4)}`
+  : `${baseUrlObject.protocol}//www.${baseUrlObject.hostname}`;
 const routes = ['/', '/login', '/cadastro', '/redefinir-senha', '/estoque', '/meu-financeiro', '/visao-3d', '/equipe', '/meu-setor', '/admin', '/financeiro'];
 const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'cross-origin-opener-policy', 'cross-origin-resource-policy', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
 const expectedHeaderValues = {
@@ -22,6 +26,11 @@ const results = [];
 for (const route of routes) {
   const result = await request(`${baseUrl}${route}`);
   results.push({ route, status: result.response?.status ?? 0, ok: result.response?.ok ?? false, ...(result.error ? { error: result.error } : {}) });
+}
+const alternateRoutes = [];
+for (const route of routes) {
+  const result = await request(`${alternateBaseUrl}${route}`);
+  alternateRoutes.push({ route, status: result.response?.status ?? 0, ok: result.response?.ok ?? false, ...(result.error ? { error: result.error } : {}) });
 }
 
 const page = await request(baseUrl);
@@ -146,8 +155,8 @@ if (supabaseUrl && supabaseKey) {
     expectedStatus: 200, allowOrigin: foreignAllowOrigin,
     ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
-const report = { baseUrl, routes: results, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, missingHeaders, mismatchedHeaders, contentType, contentTypeOk, exposedSecrets, assets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || missingHeaders.length || mismatchedHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || mismatchedHeaders.length || !contentTypeOk || exposedSecrets.length || assets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
 
