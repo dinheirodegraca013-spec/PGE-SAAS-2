@@ -36,7 +36,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${new Date(task.prazo).toLocaleString('pt-BR')}`:'Sem prazo definido'}</p>
     <progress className="w-full" max={100} value={displayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{displayedProgress}%</span>
-    {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" onSubmit={async event=>{
+    {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
       if(!Number.isInteger(progress) || progress<0 || progress>100){setError('Informe um progresso entre 0 e 100.');return;}
       if(status==='cancelada' && notes.trim().length<10){setError('Explique o cancelamento em pelo menos 10 caracteres.');return;}
