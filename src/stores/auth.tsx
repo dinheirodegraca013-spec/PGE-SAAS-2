@@ -123,8 +123,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { profile, isActive, internalRole } = await fetchUserProfile(user.id);
 
     if (!isActive || !profile?.tenant_id || !profile?.papel) {
-      await supabase.auth.signOut();
       clearAuthState();
+      await supabase.auth.signOut().catch((error) => console.warn('Não foi possível encerrar a sessão remota:', error));
       return false;
     }
 
@@ -188,9 +188,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { profile, isActive, internalRole } = await fetchUserProfile(usuario.usuarioId);
       if (!isActive || !profile) {
-        await supabase.auth.signOut();
         clearAuthState();
         setDeviceError('Acesso suspenso ou perfil inativo. Entre em contato com o administrador.');
+        await supabase.auth.signOut().catch((error) => console.warn('Não foi possível encerrar a sessão remota:', error));
         return;
       }
       if (isActive && profile) {
