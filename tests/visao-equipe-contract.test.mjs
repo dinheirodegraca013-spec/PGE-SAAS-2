@@ -256,6 +256,11 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
 
+test("cartão de solicitação informa atualização no botão", () => {
+  assert.match(solicitacaoMaterial, /aria-label=\{busy\?'Atualizando solicitações':'Atualizar solicitações'\}/);
+  assert.match(solicitacaoMaterial, /\{busy\?'Atualizando…':'Atualizar'\}/);
+});
+
 test("inbox de estoque informa atualização no botão", () => {
   assert.match(inboxMateriais, /aria-label=\{loading\?'Atualizando solicitações':'Atualizar solicitações'\}/);
   assert.match(inboxMateriais, /\{loading\?'Atualizando…':'Atualizar'\}/);
