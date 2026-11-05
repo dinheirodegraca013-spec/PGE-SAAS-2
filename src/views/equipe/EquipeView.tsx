@@ -126,7 +126,7 @@ export default function EquipeView() {
   };
   useEffect(() => {
     void carregar();
-  }, []);
+  }, [administrador, usuario?.tenantId]);
   useEffect(() => {
     if (!administrador || !usuario?.tenantId) return;
     let mounted = true;
