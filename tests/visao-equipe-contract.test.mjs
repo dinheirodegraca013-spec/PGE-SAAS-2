@@ -312,6 +312,12 @@ test("pesquisa de fichas limpa erro ao editar o termo", () => {
   assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
 });
 
+test("fichas de serviço atualizam ao retornar à aba", () => {
+  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
 test("contador de notificações anuncia mudanças", () => {
   assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
 });
