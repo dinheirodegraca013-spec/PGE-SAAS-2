@@ -238,3 +238,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Os smoke tests anônimos continuam retornando somente os estados esperados (`401`, `400` ou `404` conforme o contrato); não há referências a endpoints locais ou segredos expostos.
 - A produção continua no deploy READY `dpl_7dYXfRizVFRxPDxG9E2tFZ4EwbEU` (commit `e451835`); a mudança posterior apenas no script do auditor aguarda a liberação da cota diária de deploy da Vercel.
 
+### Auditoria direta do catálogo RLS — 05/11/2026 (ciclo adicional)
+
+- Consulta direta ao schema ativo confirmou RLS habilitado nas 23 tabelas públicas do ERP e SaaS.
+- Todas possuem políticas registradas; as tabelas operacionais incluem a sessão de dispositivo como política `RESTRICTIVE` e as tabelas financeiras mantêm escopo por registro/permissão.
+- `projetos_setores` permanece sem concessão direta a clientes (`REVOKE`), sendo acessada somente pelos fluxos internos protegidos; catálogos públicos de planos continuam limitados a registros ativos.
+- Nenhuma alteração de banco foi necessária após a conferência; o resultado foi incorporado à trilha de auditoria e ao próximo ciclo de homologação.
+
