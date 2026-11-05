@@ -9,7 +9,7 @@ export default function InstallationAcceptanceForm({attachments,disabled,onRegis
     const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
     if(receipt.current?.payload!==payload)receipt.current={payload,id:crypto.randomUUID()};
     lock.current=true;setBusy(true);setError('');
-    try{await onRegister({...data,request:receipt.current.id});}
+    try{await onRegister({...data,request:receipt.current.id});receipt.current=null;}
     catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível registrar o aceite.');}
     finally{lock.current=false;setBusy(false);}
   }}>
