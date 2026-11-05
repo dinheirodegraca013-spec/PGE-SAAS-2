@@ -24,6 +24,7 @@ const resumoFuncionario = readOptional("../src/modules/workforce/components/Pers
 const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
 const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
 const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
+const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -147,5 +148,13 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /Tentar novamente/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
+});
+
+test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
+  assert.match(agendaFuncionario, /aria-busy=\{loading\}/);
+  assert.match(agendaFuncionario, /aria-live="polite"/);
+  assert.match(agendaFuncionario, /required disabled=\{loading\}/);
+  assert.match(agendaFuncionario, /Tentar novamente/);
+  assert.match(agendaFuncionario, /!start\|\|!end/);
 });
 
