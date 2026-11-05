@@ -87,4 +87,5 @@ test('employee profile updates cannot alter authorization fields', async () => {
   }
   assert.match(sql, /actor_role\s+in\s+\('AdministradorTenant',\s*'SuperAdmin'\)/i);
   assert.match(sql, /errcode\s*=\s*'42501'/i);
+  assert.match(sql, /new\.acesso_versao\s+is distinct from old\.acesso_versao \+ 1/i);
 });
