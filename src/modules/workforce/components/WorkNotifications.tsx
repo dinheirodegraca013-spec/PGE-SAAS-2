@@ -18,9 +18,11 @@ export default function WorkNotifications(){
   const reading=useRef(false);
   const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setSelected(null);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setSelected(null);},[page]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{
-    const request=++generation.current;setLoading(true);setError('');setData(null);setSelected(null);
+    const request=++generation.current;setLoading(true);setError('');
     workNotifications.list(page).then(result=>{if(request===generation.current)setData(result);})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar as notificações.');})
       .finally(()=>{if(request===generation.current)setLoading(false);});
