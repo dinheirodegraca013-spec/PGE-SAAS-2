@@ -1,5 +1,13 @@
 # Auditoria de aceite do GESTIO
 
+## Auditoria contínua de produção — 05/11/2026
+
+- Quality gate completo (`npm run verify:release`): 116 testes, lint, auditoria SQL, integridade do repositório, build e auditoria externa aprovados.
+- Produção: 11 rotas HTTP 200, assets 200, headers de segurança sem divergências e nenhum segredo exposto no bundle.
+- Supabase: Edge Functions, RPCs, métodos HTTP, limite de payload e CORS aprovados para `https://gestio.dev.br` e `https://www.gestio.dev.br`; origem externa não é autorizada.
+- Deploy Vercel READY em produção (`dpl_HhMp8QRFE4HrYTMWjTmDtuP12YLX`); funções `cadastrar-funcionario`, `validar-anexo` e `public-orcamento` ativas no Supabase.
+- Permanece apenas o aviso externo `auth_leaked_password_protection`, que depende da habilitação no painel Auth do Supabase; não há API disponível no projeto para alterar essa configuração com segurança.
+
 Data: 27/10/2026
 
 ## Resultado
