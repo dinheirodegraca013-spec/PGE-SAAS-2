@@ -48,6 +48,12 @@ test("Visão 3D usa renderização WebGL real com fallback", () => {
   assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
 });
 
+test("Visão 3D carrega o mapa pesado sob demanda", () => {
+  assert.match(visao, /lazy\(\(\) => import\("\.\/ThreeOperationalMap"\)\)/);
+  assert.match(visao, /Carregando visão 3D/);
+  assert.match(visao, /<Suspense/);
+});
+
 test("Visão 3D mantém o painel lateral com alertas e equipe sem inventar presença", () => {
   assert.match(
     visao,
