@@ -69,7 +69,7 @@ export default function MeuSetorView() {
           <p className="mt-2 max-w-2xl text-sm text-slate-300">Seu espaço de trabalho para acompanhar prioridades, prazos e atividades autorizadas.</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando} onClick={() => setAtualizacao(value => value + 1)}>
+          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando} aria-label={carregando ? 'Atualizando projetos' : 'Atualizar projetos'} onClick={() => setAtualizacao(value => value + 1)}>
             {carregando ? 'Atualizando…' : 'Atualizar projetos'}
           </button>
           <span className="text-xs text-slate-400" aria-live="polite">{atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Aguardando primeira atualização'}</span>
