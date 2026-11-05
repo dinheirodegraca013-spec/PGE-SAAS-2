@@ -15,7 +15,8 @@
     "test": "node --test tests/*.test.mjs",
     "audit:production": "node scripts/audit-production.mjs",
     "audit:sql-security": "node scripts/audit-sql-security.mjs",
-    "verify:integrity": "node scripts/verify-repository-integrity.mjs"
+    "verify:integrity": "node scripts/verify-repository-integrity.mjs",
+    "verify:release": "npm run test && npm run lint && npm run audit:sql-security && npm run verify:integrity && npm run build && npm run audit:production"
   },
   "dependencies": {
     "@google/genai": "^2.32.0",
