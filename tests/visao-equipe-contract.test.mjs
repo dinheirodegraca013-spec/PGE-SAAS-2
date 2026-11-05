@@ -288,6 +288,12 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
   assert.match(controleSecagem, /messageKind === 'status' \? 'status' : 'alert'/);
 });
 
+test("resumo do funcionário atualiza ao retornar à aba", () => {
+  assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
