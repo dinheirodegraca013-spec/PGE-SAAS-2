@@ -143,6 +143,7 @@ export default function EquipeView() {
 
   const ativos = perfis.filter((perfil) => perfil.ativo && !perfil.suspenso && !limits?.suspended_ids.includes(perfil.id)).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
+  const suspensos = perfis.filter((perfil) => perfil.suspenso || limits?.suspended_ids.includes(perfil.id)).length;
   const filtrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
     if (!termo) return perfis;
@@ -220,7 +221,7 @@ export default function EquipeView() {
           <button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" disabled={carregando} onClick={() => void carregar()}>Tentar novamente</button>
         </div>
       )}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
             <span>Total cadastrados</span>
@@ -244,6 +245,14 @@ export default function EquipeView() {
           </div>
           <b className="mt-2 block text-2xl text-slate-700">{inativos}</b>
           <span className="text-xs text-slate-500">Sem presença inventada</span>
+        </div>
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+          <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-amber-700">
+            <span>Suspensos</span>
+            <UserX className="h-4 w-4" />
+          </div>
+          <b className="mt-2 block text-2xl text-amber-800">{suspensos}</b>
+          <span className="text-xs text-amber-700">Acesso bloqueado</span>
         </div>
       </div>
       <section className="card overflow-hidden p-5" aria-busy={carregando}>
