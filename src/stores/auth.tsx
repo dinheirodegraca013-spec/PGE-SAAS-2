@@ -187,6 +187,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!usuario?.usuarioId || !isSupabaseConfigured) return;
     try {
       const { profile, isActive, internalRole } = await fetchUserProfile(usuario.usuarioId);
+      if (!isActive || !profile) {
+        await supabase.auth.signOut();
+        clearAuthState();
+        setDeviceError('Acesso suspenso ou perfil inativo. Entre em contato com o administrador.');
+        return;
+      }
       if (isActive && profile) {
         const plano = mapPlanoNome(profile?.tenants?.plano);
         const atualizado: UsuarioAutenticado = {
