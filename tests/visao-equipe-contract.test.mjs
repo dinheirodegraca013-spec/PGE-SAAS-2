@@ -35,6 +35,9 @@ const solicitacaoMaterial = readOptional("../src/modules/workforce/components/Ma
 const registroProducao = readOptional("../src/modules/workforce/components/ProductionLog.tsx");
 const controleSecagem = readOptional("../src/modules/workforce/components/FinishingDryingControl.tsx");
 const inboxMateriais = readOptional("../src/modules/workforce/components/MaterialRequestInbox.tsx");
+const criacaoTarefa = readOptional("../src/modules/workforce/components/TaskCreationForm.tsx");
+const atribuicaoFicha = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
+const fluxoProducao = readOptional("../src/modules/workforce/components/ServicePipelineEditor.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -241,5 +244,14 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(inboxMateriais, /Tentar novamente/);
   assert.match(inboxMateriais, /aria-live="polite"/);
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
+});
+
+test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
+  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(criacaoTarefa, /aria-live="polite"/);
+  assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(atribuicaoFicha, /aria-live="polite"/);
+  assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(fluxoProducao, /aria-live="polite"/);
 });
 
