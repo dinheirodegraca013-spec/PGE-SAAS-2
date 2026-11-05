@@ -34,12 +34,12 @@ export default function MyServiceSheets() {
     {list && !list.itens.length && <p className="text-sm text-slate-500">Nenhuma ficha liberada para você com estes filtros.</p>}
     {list && <ul className="divide-y divide-slate-100">{list.itens.map(item => <li key={`${item.servico_id}:${item.setor}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
       <div><p className="font-medium">{item.titulo}</p><p className="text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p></div>
-      <button type="button" className="btn-secondary" onClick={() => {
+      <button type="button" className="btn-secondary" disabled={loading} onClick={() => {
         if (selected && !window.confirm('Abrir outra ficha? Alterações não salvas serão descartadas.')) return;
         setSelected(item);
       }}>Abrir ficha</button>
     </li>)}</ul>}
-    {list && <nav aria-label="Paginação de fichas de serviço" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page + 1}</span><button type="button" className="btn-secondary" disabled={!list.tem_mais} onClick={() => setPage(p => p + 1)}>Próxima</button></nav>}
+    {list && <nav aria-label="Paginação de fichas de serviço" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={loading || page === 0} onClick={() => setPage(p => p - 1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page + 1}</span><button type="button" className="btn-secondary" disabled={loading || !list.tem_mais} onClick={() => setPage(p => p + 1)}>Próxima</button></nav>}
     {selected && <ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} />}
   </section>;
 }
