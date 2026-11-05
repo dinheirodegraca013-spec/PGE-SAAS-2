@@ -278,6 +278,12 @@ test("ocorrências informam atualização no botão", () => {
   assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
 });
 
+test("ocorrências limpam feedback ao editar", () => {
+  assert.match(ocorrenciasFuncionario, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
+  assert.match(ocorrenciasFuncionario, /setTitle\(event\.target\.value\);clearFeedback\(\)/);
+  assert.match(ocorrenciasFuncionario, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
+});
+
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
