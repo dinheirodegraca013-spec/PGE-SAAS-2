@@ -291,3 +291,8 @@ test("pesquisa de fichas não cria nova carga durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading\} value=\{search\}/);
 });
 
+test("operações de produção e secagem sinalizam o formulário em andamento", () => {
+  assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
+  assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
+});
+
