@@ -17,9 +17,13 @@ test('CSP impede embedding e envio de formulários para outra origem', async () 
   assert.match(csp, /frame-ancestors 'none'/);
   assert.match(csp, /frame-src 'none'/);
   assert.match(csp, /form-action 'self'/);
+  assert.match(csp, /default-src 'self'/);
+  assert.match(csp, /script-src 'self'/);
+  assert.match(csp, /connect-src 'self' https:\/\/\*\.supabase\.co wss:\/\/\*\.supabase\.co/);
+  assert.match(csp, /font-src 'self' https:\/\/fonts\.gstatic\.com/);
 });
 
-test('Supabase exige JWT nas funções privadas e mantém orçamento público explícito', async () => {
+test('Supabase exige JWT no cadastro de funcionários e mantém orçamento público explícito', async () => {
   const config = await readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8');
   assert.match(config, /\[functions\.cadastrar-funcionario\][\s\S]*verify_jwt\s*=\s*true/);
   assert.match(config, /\[functions\.validar-anexo\][\s\S]*verify_jwt\s*=\s*true/);
