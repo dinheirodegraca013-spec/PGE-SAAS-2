@@ -296,8 +296,8 @@ test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => 
 });
 
 test("notificações informam atualização no botão", () => {
-  assert.match(notificacoesFuncionario, /aria-label=\{loading\?'Atualizando notificações':'Atualizar notificações'\}/);
-  assert.match(notificacoesFuncionario, /\{loading\?'Atualizando…':'Atualizar notificações'\}/);
+  assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Atualizar notificações'\}/);
+  assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguarde…':'Atualizar notificações'\}/);
 });
 
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
