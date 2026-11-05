@@ -26,7 +26,7 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
     return()=>{active=false;};
   },[serviceId,sector,page,refresh,canView,context?.funcionario.id,context?.funcionario.versao]);
   if(!canView && !canCreate)return null;
-  return <section className="space-y-4 rounded-xl border border-slate-200 p-4"><h4 className="font-semibold">Ocorrências desta ficha</h4>
+  return <section className="space-y-4 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy}><h4 className="font-semibold">Ocorrências desta ficha</h4>
     {canCreate && <form className="grid gap-3 sm:grid-cols-2" onSubmit={async event=>{
       event.preventDefault();if(lock.current)return;
       if(title.trim().length<3 || description.trim().length<10){setError('Informe um título e descreva o problema em pelo menos 10 caracteres.');return;}
@@ -43,10 +43,11 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
       <label htmlFor={`${id}-severity`} className="text-sm">Gravidade<select id={`${id}-severity`} className="input-field mt-1" disabled={busy} value={severity} onChange={event=>setSeverity(event.target.value as IncidentSeverity)}>{Object.entries(severities).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
       <button type="submit" className="btn-primary" disabled={busy}>{busy?'Registrando…':'Comunicar ocorrência'}</button>
     </form>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}{message && <p role="status" className="text-sm">{message}</p>}
-    {canView && <>{loading?<p role="status">Carregando ocorrências…</p>:!error&&!items.length?<p className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página.</p>:null}
+    {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}{message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
+    {canView && <>{loading?<p role="status" aria-live="polite">Carregando ocorrências…</p>:!error&&!items.length?<p className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página.</p>:null}
       <ul className="space-y-3">{items.map(item=><li key={`${item.id}:${item.versao}`} className="space-y-2 rounded-lg border p-3"><p className="font-medium">{item.titulo}</p><p className="text-xs text-slate-500">{types[item.tipo]} · {severities[item.gravidade]} · {item.status==='aberta'?'Aberta':'Resolvida'}</p><p className="whitespace-pre-wrap text-sm">{item.descricao}</p>{item.resolucao && <p className="whitespace-pre-wrap text-sm text-emerald-800">Resolução: {item.resolucao}</p>}{item.status==='aberta' && item.pode_resolver && <Resolution incident={item} onSaved={()=>setRefresh(n=>n+1)}/>}</li>)}</ul>
-      <div className="flex flex-wrap gap-3"><button type="button" className="btn-secondary" disabled={loading || busy || page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="self-center text-sm">Página {page+1}</span><button type="button" className="btn-secondary" disabled={loading || busy || !more} onClick={()=>setPage(n=>n+1)}>Próxima</button><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRefresh(n=>n+1)}>Atualizar ocorrências</button></div>
+      <nav aria-label="Paginação de ocorrências" className="flex flex-wrap gap-3"><button type="button" className="btn-secondary" disabled={loading || busy || page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="self-center text-sm" aria-current="page">Página {page+1}</span><button type="button" className="btn-secondary" disabled={loading || busy || !more} onClick={()=>setPage(n=>n+1)}>Próxima</button><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRefresh(n=>n+1)}>Atualizar ocorrências</button></nav>
     </>}
   </section>;
 }
+
