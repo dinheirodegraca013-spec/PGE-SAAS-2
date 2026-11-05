@@ -1,4 +1,3 @@
-Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 const baseUrl = (process.env.GESTIO_URL || 'https://gestio.dev.br').replace(/\/$/, '');
 const routes = ['/', '/login', '/cadastro', '/redefinir-senha', '/estoque', '/meu-financeiro', '/visao-3d', '/equipe', '/meu-setor', '/admin', '/financeiro'];
 const requiredHeaders = ['strict-transport-security', 'content-security-policy', 'x-frame-options', 'x-content-type-options', 'referrer-policy', 'permissions-policy'];
@@ -89,9 +88,15 @@ if (supabaseUrl && supabaseKey) {
     const status = result.response?.status ?? 0;
     const allowOrigin = result.response?.headers.get('access-control-allow-origin') ?? null;
     const allowMethods = result.response?.headers.get('access-control-allow-methods') ?? null;
+    const contentTypeOptions = result.response?.headers.get('x-content-type-options') ?? null;
+    const referrerPolicy = result.response?.headers.get('referrer-policy') ?? null;
     const corsOk = allowOrigin === baseUrl && allowMethods?.includes(name.includes('public-orcamento') ? 'GET' : 'POST') === true;
-    methodChecks.push({ name, status, expectedStatus, ok: status === expectedStatus && corsOk,
-      ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk } } : {}) });
+    const securityOk = name.endsWith(':OPTIONS')
+      ? contentTypeOptions?.toLowerCase() === 'nosniff' && referrerPolicy?.toLowerCase() === 'no-referrer'
+      : true;
+    methodChecks.push({ name, status, expectedStatus, contentTypeOptions, referrerPolicy,
+      ok: status === expectedStatus && corsOk && securityOk,
+      ...(name.endsWith(':OPTIONS') ? { cors: { allowOrigin, allowMethods, ok: corsOk && securityOk } } : {}) });
   }
   const oversized = await request(`${supabaseUrl}/functions/v1/public-orcamento`, {
     method: 'POST',
