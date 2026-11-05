@@ -283,6 +283,11 @@ test("detalhes abertos oferecem fechamento explícito", () => {
   assert.match(fichasFuncionario, /onClick=\{\(\) => setSelected\(null\)\}>Fechar ficha/);
 });
 
+test("produção e secagem usam estado explícito para mensagens acessíveis", () => {
+  assert.match(registroProducao, /messageKind === 'status' \? 'status' : 'alert'/);
+  assert.match(controleSecagem, /messageKind === 'status' \? 'status' : 'alert'/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
