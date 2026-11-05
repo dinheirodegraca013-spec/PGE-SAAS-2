@@ -363,6 +363,7 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
 
 test("criação de tarefa limpa feedback ao trocar o contexto", () => {
   assert.match(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\);setEmployee\(''\)/);
+  assert.match(criacaoTarefa, /setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
 });
 
 test("criação de tarefa limpa validação ao corrigir campos", () => {
