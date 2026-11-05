@@ -308,6 +308,10 @@ test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
   assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
 });
 
+test("pesquisa de fichas limpa erro ao editar o termo", () => {
+  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
