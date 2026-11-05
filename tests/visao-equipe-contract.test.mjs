@@ -26,6 +26,7 @@ const fichasFuncionario = readOptional("../src/modules/workforce/components/MySe
 const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
 const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
+const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -188,5 +189,12 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /Tentar novamente/);
   assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"/);
   assert.match(historicoFuncionario, /aria-current="page"/);
+});
+
+test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
+  assert.match(detalheTarefa, /aria-busy=\{loading\}/);
+  assert.match(detalheTarefa, /aria-live="polite"/);
+  assert.match(detalheTarefa, /Tentar novamente/);
+  assert.match(detalheTarefa, /Recarregar tarefa/);
 });
 
