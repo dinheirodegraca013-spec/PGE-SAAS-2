@@ -332,3 +332,8 @@ test("histórico bloqueia paginação durante carregamento", () => {
   assert.match(historicoFuncionario, /disabled=\{loading \|\| !data\.tem_mais\}/);
 });
 
+test("tarefas bloqueiam paginação durante carregamento", () => {
+  assert.match(minhasTarefas, /disabled=\{loading \|\| page===0\}/);
+  assert.match(minhasTarefas, /disabled=\{loading \|\| !data\.tem_mais\}/);
+});
+
