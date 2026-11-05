@@ -263,3 +263,8 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - As 56 funções `SECURITY DEFINER` autenticadas continuam intencionais e com `search_path` fixo; a proteção de senhas vazadas permanece como única configuração pendente no painel Auth.
 - Nos logs do intervalo auditado, todas as fontes registraram `0` respostas 5xx.
 
+### Smoke de rotas operacionais e financeiras — 05/11/2026
+
+- No navegador real, `/meu-setor` e `/financeiro` sem sessão redirecionaram para o login com o parâmetro de retorno correto.
+- Nenhum painel operacional ou dado financeiro foi renderizado antes da autenticação.
+
