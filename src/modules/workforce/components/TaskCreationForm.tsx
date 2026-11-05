@@ -13,6 +13,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   const [loading,setLoading]=useState(true);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');const [retry,setRetry]=useState(0);
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
   const canCreate=hasPermission(context,'tarefas','criar');
+  const clearFeedback=()=>{setError('');setMessage('');};
   useEffect(()=>{
     if(!canCreate || !context)return;
     let active=true;setLoading(true);setError('');setMessage('');setCandidates([]);setEmployee('');
@@ -37,11 +38,11 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     <h4 className="font-semibold">Criar tarefa nesta etapa</h4>
     <fieldset disabled={busy || loading} className="grid gap-3 sm:grid-cols-2">
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-title`}>Título<input id={`${id}-title`} className="input-field mt-1" required maxLength={200} value={title} onChange={event=>{setTitle(event.target.value);setError('');setMessage('');}}/></label>
-      <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} maxLength={10000} value={description} onChange={event=>setDescription(event.target.value)}/></label>
+      <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} maxLength={10000} value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-employee`}>Responsável<select id={`${id}-employee`} className="input-field mt-1" required value={employee} onChange={event=>{setEmployee(event.target.value);setError('');setMessage('');}}><option value="">Selecione um funcionário</option>{candidates.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
-      <label className="text-sm" htmlFor={`${id}-deadline`}>Prazo (horário local)<input id={`${id}-deadline`} className="input-field mt-1" type="datetime-local" value={deadline} onChange={event=>setDeadline(event.target.value)}/></label>
-      <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>setPriority(event.target.value as WorkTask['prioridade'])}>{['baixa','normal','alta','urgente'].map(value=><option key={value} value={value}>{value}</option>)}</select></label>
-      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={event=>setMandatory(event.target.checked)}/>Obrigatória para concluir a etapa</label>
+      <label className="text-sm" htmlFor={`${id}-deadline`}>Prazo (horário local)<input id={`${id}-deadline`} className="input-field mt-1" type="datetime-local" value={deadline} onChange={event=>{setDeadline(event.target.value);clearFeedback();}}/></label>
+      <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>{setPriority(event.target.value as WorkTask['prioridade']);clearFeedback();}}>{['baixa','normal','alta','urgente'].map(value=><option key={value} value={value}>{value}</option>)}</select></label>
+      <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={event=>{setMandatory(event.target.checked);clearFeedback();}}/>Obrigatória para concluir a etapa</label>
     </fieldset>
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando responsáveis…</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
