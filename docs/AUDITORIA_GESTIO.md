@@ -104,5 +104,6 @@ Data: 27/10/2026
 - A versão 8 de `public-orcamento` está ativa com limite de payload de 16 KiB, resposta `413` sem cache e compensação da assinatura quando a etapa vinculada falha.
 - `validar-anexo` foi republicada como versão 2 com o helper de assinatura empacotado no próprio bundle; `401`, `405`, CORS e validação de conteúdo foram revalidados em produção.
 - Auditoria final pós-publicação: 11 rotas, cabeçalhos de segurança, assets, endpoints, métodos, CORS e limite de payload aprovados; suíte com 106 testes, lint, build e integridade aprovados.
+- Guarda preventiva adicionada para manter `cadastrar-funcionario`, `public-orcamento` e `validar-anexo` na mesma versão fixa do cliente Supabase; suíte atualizada para 107 testes aprovados.
 
 
