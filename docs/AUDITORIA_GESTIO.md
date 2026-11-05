@@ -98,5 +98,6 @@ Data: 27/10/2026
 - O `audit:production` passou a testar permanentemente o limite de payload (`17 KiB` deve retornar `413`), além dos contratos de rota, headers e CORS.
 - Respostas do orçamento público agora enviam `Cache-Control: no-store, max-age=0`; o auditor valida esse cabeçalho junto com o `413`.
 - A versão 6 também compensa a assinatura do orçamento se a atualização do serviço vinculado falhar, evitando estado parcialmente confirmado; teste contratual incluído e suíte com 106 aprovações.
+- Logs de 05/11/2026: versão 6 respondeu ao teste de limite com `413` e não registrou nenhum `5xx`; as respostas observadas das versões anteriores foram `200`, `400` e `413` conforme esperado.
 
 
