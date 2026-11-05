@@ -132,4 +132,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Links externos que abrem nova aba foram protegidos com `rel="noopener noreferrer"`, com regressão automatizada adicionada.
 - Suíte atual: 114 testes aprovados; auditoria de produção: 11 rotas, 0 headers ausentes, 0 divergências, 0 segredos, 0 falhas de endpoint/método.
 
+### Endurecimento do cadastro de funcionários — 05/11/2026
+
+- O endpoint `cadastrar-funcionario` passou a limitar o corpo da requisição a 16 KiB, rejeitando payloads excedentes com `413` antes de consultar a sessão ou o banco.
+- Teste de regressão incluído para garantir que payloads abusivos não avancem no fluxo de cadastro.
+- Produção recebeu os commits `2f0200a` e `1d07c00`, ambos READY; `npm run audit:production`, lint e testes direcionados aprovados.
+
 
