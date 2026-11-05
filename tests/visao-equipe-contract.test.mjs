@@ -286,3 +286,8 @@ test("fichas bloqueiam abertura e paginação durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading \|\| !list\.tem_mais\}/);
 });
 
+test("pesquisa de fichas não cria nova carga durante sincronização", () => {
+  assert.match(fichasFuncionario, /aria-busy=\{loading\} onSubmit=\{event => \{ event\.preventDefault\(\); if \(loading\) return;/);
+  assert.match(fichasFuncionario, /disabled=\{loading\} value=\{search\}/);
+});
+
