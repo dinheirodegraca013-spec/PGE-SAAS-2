@@ -90,3 +90,13 @@ test('employee profile updates cannot alter authorization fields', async () => {
   assert.match(sql, /errcode\s*=\s*'42501'/i);
   assert.match(sql, /new\.acesso_versao\s+is distinct from old\.acesso_versao \+ 1/i);
 });
+
+test('avatar storage writes stay inside the authenticated user path', async () => {
+  const sql = await readFile(new URL('../supabase/migrations/20261105160000_restrict_avatar_storage_paths.sql', import.meta.url), 'utf8');
+  for (const operation of ['insert', 'update', 'delete']) {
+    assert.match(sql, new RegExp(`for ${operation} to authenticated`, 'i'));
+  }
+  assert.equal((sql.match(/split_part\(name, '\/', 1\)\s*=\s*\(select private\.current_tenant_id\(\)\)::text/gi) || []).length, 4);
+  assert.equal((sql.match(/split_part\(name, '\/', 2\)\s*=\s*\(select auth\.uid\(\)\)::text/gi) || []).length, 4);
+});
+
