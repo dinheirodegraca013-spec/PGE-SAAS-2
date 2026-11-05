@@ -272,14 +272,15 @@ export default function EquipeView() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px] text-left text-sm">
+              <caption className="sr-only">Colaboradores cadastrados e seus acessos</caption>
               <thead className="text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="p-3">Colaborador</th>
-                  <th className="p-3">Perfil</th>
-                  <th className="p-3">Setor</th>
-                  <th className="p-3">Status cadastral</th>
-                  <th className="p-3">Presença</th>
-                  {administrador && <th className="p-3">Acessos</th>}
+                  <th scope="col" className="p-3">Colaborador</th>
+                  <th scope="col" className="p-3">Perfil</th>
+                  <th scope="col" className="p-3">Setor</th>
+                  <th scope="col" className="p-3">Status cadastral</th>
+                  <th scope="col" className="p-3">Presença</th>
+                  {administrador && <th scope="col" className="p-3">Acessos</th>}
                 </tr>
               </thead>
               <tbody>
