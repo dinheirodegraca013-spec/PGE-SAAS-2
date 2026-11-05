@@ -174,4 +174,10 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - A nova publicação foi tentada, mas a Vercel recusou por cota diária (`api-deployments-free-per-day`); o último deploy publicado permanece `READY`.
 - O auditor de produção passou a falhar se os bundles publicados contiverem o fallback `localhost:5000`; a checagem foi executada nos dois domínios sem referências locais.
 
+### Auditoria de logs e autorização — 05/11/2026 (ciclo adicional)
+
+- Consulta direta aos logs do Supabase no intervalo UTC de 04/11/2026 12:00 a 05/11/2026 12:00 não encontrou respostas HTTP 500, 501, 502 ou 503.
+- A catalogação das funções públicas confirmou que as funções `SECURITY DEFINER` expostas permitem execução somente a `authenticated`; não há execução anônima. Os avisos restantes correspondem a RPCs autenticados intencionais e à proteção de senhas vazadas ainda não habilitada no painel Auth.
+- Nenhuma alteração de código foi necessária neste ciclo; a evidência foi registrada para manter a trilha de auditoria e orientar a próxima verificação após a liberação da cota de deploy da Vercel.
+
 
