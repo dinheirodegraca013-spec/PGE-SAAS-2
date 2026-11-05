@@ -253,6 +253,10 @@ test("histórico informa atualização no botão", () => {
   assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
 });
 
+test("histórico reinicia a paginação ao trocar de funcionário", () => {
+  assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
