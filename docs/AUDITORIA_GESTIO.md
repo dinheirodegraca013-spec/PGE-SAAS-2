@@ -107,5 +107,7 @@ Data: 27/10/2026
 - Guarda preventiva adicionada para manter `cadastrar-funcionario`, `public-orcamento` e `validar-anexo` na mesma versão fixa do cliente Supabase; suíte atualizada para 107 testes aprovados.
 - Respostas das funções autenticadas agora exigem `Cache-Control: no-store, max-age=0`; o auditor de produção valida esse cabeçalho junto com os códigos HTTP e CORS.
 - O fluxo de convite foi verificado no banco: 1 funcionário, 0 sem tenant e 0 divergências entre metadata, empresa e setor; foi criado teste de regressão para o trigger de metadata diferida (108 testes aprovados).
+- Smoke test visual read-only em produção (`https://gestio.dev.br`): login, cadastro, redefinição de senha e rota pública de orçamento inválido carregaram com conteúdo e campos esperados; não foram enviados dados sensíveis nem submetidos formulários.
+- Console do navegador sem erros ou avisos nas telas públicas auditadas.
 
 
