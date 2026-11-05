@@ -89,9 +89,5 @@ export const orcamentosService = {
     return `${window.location.origin}/orcamento/${encodeURIComponent(token)}`;
   },
 
-  /** Monta URL de PDF */
-  urlPdf(id: string, assinado: boolean): string {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api';
-    return `${baseUrl}/orcamentos/${id}/pdf?assinado=${assinado}`;
-  },
 };
+
