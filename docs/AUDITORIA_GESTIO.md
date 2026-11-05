@@ -245,3 +245,8 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - `projetos_setores` permanece sem concessão direta a clientes (`REVOKE`), sendo acessada somente pelos fluxos internos protegidos; catálogos públicos de planos continuam limitados a registros ativos.
 - Nenhuma alteração de banco foi necessária após a conferência; o resultado foi incorporado à trilha de auditoria e ao próximo ciclo de homologação.
 
+### Smoke adicional de rotas administrativas — 05/11/2026
+
+- Navegador real acessou `/admin` sem sessão e foi redirecionado para `/login?redirect=%2Fadmin`.
+- A página exibida continha somente o formulário de autenticação; nenhum painel ou dado administrativo foi renderizado.
+
