@@ -130,6 +130,10 @@ test("tarefas limpam o horário anterior durante nova sincronização", () => {
   assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
 });
 
+test("tarefas bloqueiam o filtro durante sincronização", () => {
+  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
+});
+
 test("tarefas não enviam atualização sem mudança", () => {
   assert.match(minhasTarefas, /const dirty=status!==task\.status/);
   assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
