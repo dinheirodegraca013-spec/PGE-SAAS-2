@@ -51,9 +51,10 @@ export default function MyTasks(){
   return <section className="card space-y-4 p-5"><h2 className="text-lg font-bold">Minhas tarefas</h2>
     <label htmlFor={id} className="block text-sm">Filtrar por situação<select id={id} className="input-field mt-1" value={filter} onChange={event=>{setFilter(event.target.value as TaskStatus|'');setPage(0);}}><option value="">Todas as situações</option>{Object.entries(taskStatusLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
     <button type="button" className="btn-secondary" disabled={loading} onClick={()=>setRefresh(n=>n+1)}>Atualizar tarefas</button>
-    {loading && <p role="status">Carregando tarefas…</p>}{error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {loading && <p role="status" aria-live="polite">Carregando tarefas…</p>}{error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma tarefa disponível neste filtro.</p>}
     {data && <ul className="space-y-4">{data.itens.map(task=><TaskCard key={`${task.id}:${task.versao}`} task={task} onSaved={()=>setRefresh(n=>n+1)}/>)}</ul>}
     {data && <div className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais} onClick={()=>setPage(n=>n+1)}>Próxima</button></div>}
   </section>;
 }
+
