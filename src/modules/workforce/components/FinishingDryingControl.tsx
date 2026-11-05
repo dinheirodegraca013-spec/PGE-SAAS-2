@@ -27,7 +27,7 @@ export default function FinishingDryingControl({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
 
-  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`}>
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div>
         <h4 id={`${id}-title`} className="font-semibold">Controle de secagem</h4>
@@ -56,7 +56,8 @@ export default function FinishingDryingControl({
       <button type="submit" className="btn-primary" disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
-    {message && <p role={message.includes('registrada') ? 'status' : 'alert'} className="text-sm text-slate-700">{message}</p>}
+    {message && <p role={message.includes('registrada') ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy}>Atualizar horário do servidor</button>
   </section>;
 }
+
