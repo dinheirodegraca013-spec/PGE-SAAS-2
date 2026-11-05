@@ -59,8 +59,9 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
 export default function MyTasks(){
   const {context}=useWorkforceAccess();const [data,setData]=useState<TaskPage|null>(null);const [page,setPage]=useState(0);const [filter,setFilter]=useState<TaskStatus|''>('');const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [updatedAt,setUpdatedAt]=useState<Date|null>(null);const id=useId();const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);setFilter('');},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setUpdatedAt(null);},[page,filter,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
-  useEffect(()=>{let active=true;setLoading(true);setError('');setData(null);setUpdatedAt(null);
+  useEffect(()=>{let active=true;setLoading(true);setError('');
     workTasks.list(page,filter||null).then(result=>{if(active){setData(result);setUpdatedAt(new Date());}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar as tarefas.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[page,filter,refresh,context?.funcionario.id,context?.funcionario.versao]);
