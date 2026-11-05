@@ -7,7 +7,7 @@ const severities={informativa:'Informativa',atencao:'Atenção',critica:'Crític
 
 function Resolution({incident,onSaved}:{incident:Incident;onSaved:()=>void}){
   const id=useId();const [text,setText]=useState('');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const lock=useRef(false);
-  return <form className="space-y-2" onSubmit={async event=>{
+  return <form className="space-y-2" aria-busy={busy} onSubmit={async event=>{
     event.preventDefault();if(lock.current)return;
     if(text.trim().length<10){setError('Descreva a resolução em pelo menos 10 caracteres.');return;}
     if(!window.confirm('Registrar esta ocorrência como resolvida?'))return;
