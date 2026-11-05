@@ -13,7 +13,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
   useEffect(()=>{setSelected(current || '');},[current]);
   useEffect(()=>{
     let active=true;
-    setLoading(true);setError('');setCandidates([]);
+    setLoading(true);setError('');setMessage('');setCandidates([]);
     technicalSheets.candidates(serviceId,sector).then(items=>{if(active)setCandidates(items);})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');})
       .finally(()=>{if(active)setLoading(false);});
