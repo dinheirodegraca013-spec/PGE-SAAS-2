@@ -62,11 +62,13 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   if (!sheet) return <div className="space-y-3">
     <p role="alert" className="text-sm text-red-700">{error}</p>
     <button type="button" className="btn-secondary" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
-    {context?.proprietario && <button type="button" className="btn-primary" onClick={async () => {
-      setLoading(true); setError('');
+    {context?.proprietario && <button type="button" className="btn-primary" disabled={loading} onClick={async () => {
+      if (mutation.current) return;
+      mutation.current = true; setLoading(true); setError('');
       try { await technicalSheets.save(serviceId, sector, {}, 0); setReload(n => n + 1); }
       catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível liberar a ficha.'); setLoading(false); }
-    }}>Liberar ficha deste setor</button>}
+      finally { mutation.current = false; }
+    }}>{loading ? 'Liberando…' : 'Liberar ficha deste setor'}</button>}
   </div>;
   return <section className="space-y-4" aria-busy={saving || checklistBusy}>
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
