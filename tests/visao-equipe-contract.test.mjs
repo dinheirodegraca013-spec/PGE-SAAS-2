@@ -352,6 +352,10 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
 });
 
+test("fluxo limpa feedback ao alterar a sequência", () => {
+  assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
+});
+
 test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
