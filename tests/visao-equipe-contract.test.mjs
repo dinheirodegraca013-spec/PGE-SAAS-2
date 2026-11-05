@@ -93,3 +93,9 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
 });
 
+test("tarefas informam a última atualização da lista", () => {
+  assert.match(minhasTarefas, /updatedAt/);
+  assert.match(minhasTarefas, /Atualizado às/);
+  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
+});
+
