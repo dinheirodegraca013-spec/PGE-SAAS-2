@@ -113,5 +113,6 @@ Data: 27/10/2026
 - Vercel Runtime Errors: nenhum erro agregado nas últimas 24 horas após o deploy mais recente.
 - As Edge Functions passaram a declarar `X-Content-Type-Options: nosniff` e `Referrer-Policy: no-referrer`; o auditor de produção agora verifica esses headers diretamente. Versões publicadas: `public-orcamento` v9, `cadastrar-funcionario` v9 e `validar-anexo` v4.
 - Reauditoria pós-publicação: 11/11 rotas, assets, headers, CORS, métodos, payload de 17 KiB (`413`) e headers de proteção das funções aprovados.
+- O CORS do `public-orcamento` foi restringido de `*` para `https://gestio.dev.br`; a função está na versão v10 e o preflight agora confirma somente a origem oficial e os métodos necessários.
 
 
