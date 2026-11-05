@@ -124,6 +124,8 @@ test("tarefas atualizam ao retornar à aba", () => {
   assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
   assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
   assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /lastReturnRefresh/);
+  assert.match(minhasTarefas, />1000/);
 });
 
 test("resumo do funcionário usa cores semânticas nos indicadores", () => {
@@ -167,6 +169,8 @@ test("notificações atualizam ao retornar à aba", () => {
   assert.match(notificacoesFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
   assert.match(notificacoesFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
   assert.match(notificacoesFuncionario, /removeEventListener\('visibilitychange',refreshOnReturn\)/);
+  assert.match(notificacoesFuncionario, /lastReturnRefresh/);
+  assert.match(notificacoesFuncionario, />1000/);
 });
 
 test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
