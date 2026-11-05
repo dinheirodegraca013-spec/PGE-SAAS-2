@@ -283,6 +283,10 @@ test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", 
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
 });
 
+test("aceite libera o identificador após confirmação", () => {
+  assert.match(aceiteInstalacao, /await onRegister\(\{\.\.\.data,request:receipt\.current\.id\}\);receipt\.current=null/);
+});
+
 test("produção e estoque sinalizam operações e mensagens ao funcionário", () => {
   assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
   assert.match(solicitacaoMaterial, /aria-live="polite"/);
