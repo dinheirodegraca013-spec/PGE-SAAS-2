@@ -229,4 +229,5 @@ Em 05/11/2026, o lockfile foi corrigido para incluir `@emnapi/wasi-threads@1.2.3
 - Dados comerciais, assinaturas e cobranças do tenant agora exigem papel `AdministradorTenant`/`SuperAdmin`; a rota `/configuracoes` ganhou guarda correspondente.
 - Verificações locais: 124 testes, typecheck, integridade, auditoria SQL e dependências (0 vulnerabilidades) aprovados; auditoria pública continua com 11/11 rotas, headers, CORS, métodos e payloads aprovados nos dois domínios.
 - A alteração de frontend foi sincronizada no `main` remoto e publicada pela Vercel no deploy `dpl_7dYXfRizVFRxPDxG9E2tFZ4EwbEU`, estado **READY**, commit `e451835`.
+- Smoke test no navegador real confirmou que um visitante sem sessão em `/configuracoes` é redirecionado para `/login?redirect=/configuracoes`; nenhum conteúdo administrativo foi renderizado.
 
