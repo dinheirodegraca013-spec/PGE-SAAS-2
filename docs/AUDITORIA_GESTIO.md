@@ -14,6 +14,7 @@
 - As políticas financeiras genéricas por `tenant_id` foram removidas; leituras agora dependem do escopo de permissão financeira por registro.
 - Verificação no banco confirmou todas as políticas de sessão como `RESTRICTIVE`; suíte passou para 122 testes.
 - Também foi removida a política `employee_sector_boundary` das tabelas financeiras; o acesso agora permanece exclusivamente em `employee_financial_scope` por lançamento/baixa.
+- Os dados comerciais cadastrais da empresa passaram a ser leitura administrativa (`AdministradorTenant`/`SuperAdmin`), sem exposição ampla aos sublogins.
 
 ## Verificação de navegador em produção — 05/11/2026
 
