@@ -73,7 +73,7 @@ export default function MeuSetorView() {
         {sectorList.length > 1 && <span className="text-slate-400">Acesso adicional: {sectorList.filter(isSetor).map(s => setores[s]).join(', ')}</span>}
       </div>
     </header>
-    {erro && <p role="alert" className="rounded-xl bg-rose-50 p-4 text-rose-800">{erro}</p>}
+    {erro && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{erro}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" onClick={() => setAtualizacao(value => value + 1)}>Tentar novamente</button></div>}
     {(sectorList.includes('estoque')&&hasPermission(context,'estoque') || sectorList.includes('financeiro')&&hasPermission(context,'financeiro')) && <div className="flex flex-wrap gap-3">
       {sectorList.includes('estoque')&&hasPermission(context,'estoque')&&<Link className="btn-primary inline-flex" to="/estoque">Abrir painel de estoque <span aria-hidden="true">→</span></Link>}
       {sectorList.includes('financeiro')&&hasPermission(context,'financeiro')&&<Link className="btn-primary inline-flex" to="/meu-financeiro">Abrir painel financeiro <span aria-hidden="true">→</span></Link>}
@@ -89,7 +89,8 @@ export default function MeuSetorView() {
     {hasPermission(context,'atividades') && <MyActivityHistory />}
     <section className="card p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{projetos.length} {projetos.length === 1 ? 'projeto' : 'projetos'}</span></div>
-      {carregando ? <p role="status" className="py-6">Carregando…</p> : !erro && !projetos.length ?
+      {carregando ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro ?
+        <p className="py-6 text-sm text-slate-500">Os projetos não puderam ser exibidos agora. Use “Tentar novamente” para atualizar.</p> : !projetos.length ?
         <p className="py-6 text-slate-500">Nenhum projeto encaminhado para este setor.</p> :
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"><b className="block text-slate-900">{p.titulo}</b><span className="mt-2 block text-sm text-slate-500">{formatPrazo(p.prazo)}</span></li>)}</ul>}
     </section>
