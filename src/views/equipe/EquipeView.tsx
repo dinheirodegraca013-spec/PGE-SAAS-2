@@ -184,7 +184,7 @@ export default function EquipeView() {
         {limits.sublogins_available === 0 && <p className="text-sm text-amber-700">Limite atingido. Desative um funcionário ou amplie seu plano.</p>}
         <Link to="/configuracoes?tab=assinatura" className="inline-block text-sm font-semibold text-cyan-700">Ver planos e opções de upgrade →</Link>
       </section>}
-      {sucesso && <p role="status" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{sucesso}</p>}
+      {sucesso && <p role="status" aria-live="polite" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{sucesso}</p>}
       {accessUser&&<EmployeeAccessEditor userId={accessUser} onCancel={()=>setAccessUser(null)} onSaved={()=>{setAccessUser(null);setSucesso('Setores e permissões atualizados.');void carregar();}}/>}
       {novo && administrador && <form onSubmit={cadastrar} className="card space-y-4 p-5">
         <h2 className="text-lg font-bold">{editingId ? 'Editar funcionário' : 'Cadastrar funcionário'}</h2>
@@ -208,10 +208,10 @@ export default function EquipeView() {
       {erro && (
         <div
           role="alert"
-          className="flex gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"
         >
-          <CircleAlert className="h-5 w-5 shrink-0" />
-          {erro}
+          <span className="flex items-center gap-2"><CircleAlert className="h-5 w-5 shrink-0" />{erro}</span>
+          <button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" disabled={carregando} onClick={() => void carregar()}>Tentar novamente</button>
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-3">
@@ -240,7 +240,7 @@ export default function EquipeView() {
           <span className="text-xs text-slate-500">Sem presença inventada</span>
         </div>
       </div>
-      <section className="card overflow-hidden p-5">
+      <section className="card overflow-hidden p-5" aria-busy={carregando}>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="gestio-section-title">Lista de colaboradores</h2>
@@ -260,7 +260,7 @@ export default function EquipeView() {
           </label>
         </div>
         {carregando ? (
-          <p className="py-8 text-sm text-slate-500">Carregando equipe...</p>
+          <p role="status" aria-live="polite" className="py-8 text-sm text-slate-500">Carregando equipe...</p>
         ) : !perfis.length ? (
           <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
             Nenhum colaborador disponível para este usuário.
