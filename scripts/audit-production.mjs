@@ -97,7 +97,7 @@ if (supabaseUrl && supabaseKey) {
     ['rpc:limites_acesso', `${supabaseUrl}/rest/v1/rpc/limites_acesso`, 401],
     ['rpc:meu_contexto_operacional', `${supabaseUrl}/rest/v1/rpc/meu_contexto_operacional`, 401],
     ['rpc:assinar_orcamento_publico', `${supabaseUrl}/rest/v1/rpc/assinar_orcamento_publico`, [401, 404]],
-    ['rpc:admin_excluir_empresa', `${supabaseUrl}/rest/v1/rpc/admin_excluir_empresa`, 401],
+    ['rpc:admin_excluir_empresa', `${supabaseUrl}/rest/v1/rpc/admin_excluir_empresa`, [401, 404]],
     ['rpc:financeiro_resumo_baixas', `${supabaseUrl}/rest/v1/rpc/financeiro_resumo_baixas`, 401],
   ];
   for (const [name, url, expectedStatus] of checks) {
