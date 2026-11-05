@@ -300,6 +300,10 @@ test("projetos do setor atualizam ao retornar à aba", () => {
   assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
 });
 
+test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
+  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
+});
+
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
   assert.match(detalheTarefa, /aria-busy=\{loading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
