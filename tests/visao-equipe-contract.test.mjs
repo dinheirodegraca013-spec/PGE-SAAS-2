@@ -120,6 +120,12 @@ test("tarefas identificam a paginação para tecnologia assistiva", () => {
   assert.match(minhasTarefas, /aria-current="page"/);
 });
 
+test("tarefas atualizam ao retornar à aba", () => {
+  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
+});
+
 test("resumo do funcionário usa cores semânticas nos indicadores", () => {
   assert.match(resumoFuncionario, /function cardTone/);
   assert.match(resumoFuncionario, /Atrasadas/);
@@ -155,6 +161,12 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /Tentar novamente/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
+});
+
+test("notificações atualizam ao retornar à aba", () => {
+  assert.match(notificacoesFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(notificacoesFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+  assert.match(notificacoesFuncionario, /removeEventListener\('visibilitychange',refreshOnReturn\)/);
 });
 
 test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
