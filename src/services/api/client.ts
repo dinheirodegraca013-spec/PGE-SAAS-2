@@ -40,13 +40,22 @@ async function recordAuditLog(
 ) {
   if (!isSupabaseConfigured) return;
   try {
-    const tenantId = getCurrentTenantId();
     const {
       data: { user },
       error,
     } = await supabase.auth.getUser();
-    if (error || !user || !tenantId) {
+    if (error || !user) {
       console.warn("Auditoria não registrada: sessão ou tenant não validado.");
+      return;
+    }
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .maybeSingle();
+    const tenantId = profile?.tenant_id;
+    if (profileError || !tenantId) {
+      console.warn("Auditoria não registrada: perfil ou tenant não validado.");
       return;
     }
     const { error: auditError } = await supabase.from("audit_logs").insert({
@@ -1111,4 +1120,5 @@ export const apiClient = {
     }
   },
 };
+
 
