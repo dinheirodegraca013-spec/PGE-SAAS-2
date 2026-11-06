@@ -13,3 +13,8 @@ test('atualização de material valida identificador e versão',()=>{
   assert.match(source,/typeof id!==\'string\'\|\|!id\.trim\(\).*Number\.isSafeInteger\(version\).*version<1/);
 });
 
+test('lista de solicitações valida serviço e setor antes do RPC',()=>{
+  assert.match(source,/isServiceSector=\(service:unknown,sector:unknown\)/);
+  assert.match(source,/if\(!isServiceSector\(service,sector\)\)throw new Error\('O serviço ou setor da ficha é inválido\.'\)/);
+});
+

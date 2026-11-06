@@ -63,6 +63,7 @@ export type MaterialRequest = {
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 const materialStatuses=['pendente','aprovada','recusada','atendida','cancelada'];
+const isServiceSector=(service:unknown,sector:unknown):boolean=>typeof service==='string'&&service.trim().length>0&&typeof sector==='string'&&isSetor(sector);
 const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
 function isMaterialOption(value: unknown): value is MaterialOption {
   if (!value || typeof value !== 'object') return false;
@@ -251,6 +252,7 @@ export const technicalSheets = {
     return data;
   },
   async materialRequests(service: string, sector: string): Promise<MaterialRequest[]> {
+    if(!isServiceSector(service,sector))throw new Error('O serviço ou setor da ficha é inválido.');
     const { data, error } = await supabase.rpc('material_solicitacao_listar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações de material.');
     if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item))) throw new Error('As solicitações retornaram dados inválidos. Recarregue a ficha.');
