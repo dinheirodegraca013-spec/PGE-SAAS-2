@@ -1,1063 +1,54 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import fs from "node:fs";
-
-const app = fs.readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
-const nav = fs.readFileSync(
-  new URL("../src/layouts/navigation.ts", import.meta.url),
-  "utf8",
-);
-const appLayout = fs.readFileSync(
-  new URL("../src/layouts/AppLayout.tsx", import.meta.url),
-  "utf8",
-);
-const dashboard = fs.readFileSync(
-  new URL("../src/views/dashboard/DashboardView.tsx", import.meta.url),
-  "utf8",
-);
-const readOptional = (path) =>
-  fs.existsSync(new URL(path, import.meta.url))
-    ? fs.readFileSync(new URL(path, import.meta.url), "utf8")
-    : "";
-const visao = readOptional("../src/views/visao3d/Visao3DView.tsx");
-const mapa3d = readOptional("../src/views/visao3d/ThreeOperationalMap.tsx");
-const equipe = readOptional("../src/views/equipe/EquipeView.tsx");
-const meuSetor = readOptional("../src/views/equipe/MeuSetorView.tsx");
-const minhasTarefas = readOptional("../src/modules/workforce/components/MyTasks.tsx");
-const resumoFuncionario = readOptional("../src/modules/workforce/components/PersonalWorkSummary.tsx");
-const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
-const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
-const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
-const gerenciadorDispositivos = readOptional("../src/components/DeviceManager.tsx");
-const acessoWorkforce = readOptional("../src/modules/workforce/context/WorkforceAccessContext.tsx");
-const workforceEvents = readOptional("../src/modules/workforce/lib/events.ts");
-const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
-const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
-const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
-const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
-const formularioFichaTecnica = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
-const technicalSheetService = readOptional("../src/modules/workforce/services/technical-sheet.service.ts");
-const ocorrencias = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
-const anexos = readOptional("../src/modules/workforce/components/SheetAttachments.tsx");
-const aceiteInstalacao = readOptional("../src/modules/workforce/components/InstallationAcceptanceForm.tsx");
-const solicitacaoMaterial = readOptional("../src/modules/workforce/components/MaterialRequestPanel.tsx");
-const registroProducao = readOptional("../src/modules/workforce/components/ProductionLog.tsx");
-const controleSecagem = readOptional("../src/modules/workforce/components/FinishingDryingControl.tsx");
-const inboxMateriais = readOptional("../src/modules/workforce/components/MaterialRequestInbox.tsx");
-const criacaoTarefa = readOptional("../src/modules/workforce/components/TaskCreationForm.tsx");
-const atribuicaoFicha = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
-const fluxoProducao = readOptional("../src/modules/workforce/components/ServicePipelineEditor.tsx");
-const editorFuncionario = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
-const fichaOperacional = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
-const ocorrenciasFuncionario = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
-
-test("rotas autenticadas incluem VisÃ£o 3D e Equipe", () => {
-  assert.match(app, /path="visao-3d"/);
-  assert.match(app, /path="equipe"/);
-});
-
-test("menu lateral aponta para VisÃ£o 3D e Equipe", () => {
-  assert.match(nav, /path: '\/visao-3d'/);
-  assert.match(nav, /path: '\/equipe'/);
-});
-
-test("funcionÃ¡rio nÃ£o recebe links administrativos de configuraÃ§Ãµes", () => {
-  assert.match(appLayout, /const employeeProfilePath = work\.context && !work\.context\.proprietario \? '\/meu-setor#perfil' : '\/configuracoes'/);
-  assert.match(appLayout, /work\.context\?\.proprietario && <NavLink/);
-  assert.match(appLayout, /to=\{employeeProfilePath\}/);
-});
-
-test("sino do funcionÃ¡rio abre a central de notificaÃ§Ãµes do painel", () => {
-  assert.match(appLayout, /to="\/meu-setor#notificacoes"/);
-  assert.match(appLayout, /aria-label="Abrir notificaÃ§Ãµes do funcionÃ¡rio"/);
-  assert.match(appLayout, /work\.context && !work\.context\.proprietario && hasPermission\(work\.context, 'notificacoes'\) \? <NavLink/);
-  assert.match(appLayout, /work\.context\?\.proprietario \? <button/);
-});
-
-test("cabeÃ§alho acompanha o estado real da conexÃ£o", () => {
-  assert.match(appLayout, /useState\(\(\) => typeof navigator === 'undefined' \|\| navigator\.onLine\)/);
-  assert.match(appLayout, /addEventListener\('online', updateConnection\)/);
-  assert.match(appLayout, /addEventListener\('offline', updateConnection\)/);
-  assert.match(appLayout, /\{online \? 'Sistema online' : 'Sem conexÃ£o'\}/);
-});
-
-test("sino nÃ£o inventa contador de notificaÃ§Ãµes", () => {
-  assert.doesNotMatch(appLayout, /bg-rose-500/);
-});
-
-test("perfil fecha o menu mÃ³vel ao navegar", () => {
-  assert.match(appLayout, /to=\{employeeProfilePath\}\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
-});
-
-test("atalho de recursos tambÃ©m fecha o menu mÃ³vel", () => {
-  assert.match(appLayout, /to="\/configuracoes"\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
-});
-
-test("visÃ£o operacional nÃ£o incorpora os nÃºmeros demonstrativos do protÃ³tipo", () => {
-  assert.doesNotMatch(visao, /R\$\s*10\.550|MDF 18mm \(chapa\).*6 de 10/);
-  assert.match(visao, /estoque_itens|projetosService/);
-});
-
-test("VisÃ£o 3D usa renderizaÃ§Ã£o WebGL real com fallback", () => {
-  assert.match(mapa3d, /WebGLRenderer/);
-  assert.match(mapa3d, /OrbitControls/);
-  assert.match(mapa3d, /activeWorkers/);
-  assert.match(mapa3d, /workerName/);
-  assert.match(mapa3d, /onSectorSelect/);
-  assert.match(mapa3d, /O modo 3D nÃ£o estÃ¡ disponÃ­vel neste navegador/);
-  assert.match(mapa3d, /setClearColor\(0xffffff, 1\)/);
-  assert.doesNotMatch(mapa3d, /Modo 3D ativo/);
-});
-
-test("VisÃ£o 3D carrega o mapa pesado sob demanda", () => {
-  assert.match(visao, /lazy\(\(\) => import\("\.\/ThreeOperationalMap"\)\)/);
-  assert.match(visao, /Carregando visÃ£o 3D/);
-  assert.match(visao, /<Suspense/);
-});
-
-test("VisÃ£o 3D mantÃ©m o painel lateral com alertas e equipe sem inventar presenÃ§a", () => {
-  assert.match(
-    visao,
-    /setores\.filter\(\(setor\) => setor\.estado === "critico"\)/,
-  );
-  assert.match(visao, /Equipe/);
-  assert.match(visao, /PresenÃ§a diÃ¡ria nÃ£o registrada/);
-  assert.match(visao, /value="nao-registrada"/);
-  assert.match(visao, /onSectorSelect={abrirSetor}/);
-});
-
-test("equipe consulta profiles do tenant e explicita presenÃ§a nÃ£o registrada", () => {
-  assert.match(equipe, /from\(["']profiles["']\)/);
-  assert.match(equipe, /PresenÃ§a nÃ£o registrada/);
-  assert.match(equipe, /Setor/);
-});
-
-test("dashboard oferece resumo para VisÃ£o 3D e Equipe", () => {
-  assert.match(dashboard, /to="\/visao-3d"/);
-  assert.match(dashboard, /to="\/equipe"/);
-});
-
-test("painel do funcionÃ¡rio mantÃ©m aÃ§Ãµes rÃ¡pidas e dados reais do setor", () => {
-  assert.match(meuSetor, /Painel do funcionÃ¡rio/);
-  assert.match(meuSetor, /AÃ§Ãµes rÃ¡pidas/);
-  assert.match(meuSetor, /hasPermission\(context, 'tarefas'\)/);
-  assert.match(meuSetor, /meu_setor_projetos/);
-  assert.match(meuSetor, /formatPrazo/);
-  assert.match(meuSetor, /additionalSectors/);
-  assert.match(meuSetor, /Tentar novamente/);
-  assert.match(meuSetor, /aria-live="polite"/);
-  assert.match(meuSetor, /atualizadoEm/);
-  assert.match(meuSetor, /Atualizado Ã s/);
-});
-
-test("painel nÃ£o transforma carregamento ou erro de projetos em zero", () => {
-  assert.match(meuSetor, /carregando \? 'â€¦' : erro \? 'IndisponÃ­vel'/);
-});
-
-test("painel mantÃ©m projetos visÃ­veis durante nova consulta", () => {
-  assert.match(meuSetor, /carregando && !projetos\.length/);
-  assert.match(meuSetor, /Atualizando projetosâ€¦/);
-});
-
-test("painel limpa o alerta apÃ³s atualizar projetos com sucesso", () => {
-  assert.match(meuSetor, /setErro\(''\);\s*setProjetos\(normalizeProjects\(data\)\)/);
-});
-
-test("painel nomeia a atualizaÃ§Ã£o dos projetos", () => {
-  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexÃ£o para atualizar painel' : 'Atualizar painel'\}/);
-  assert.match(meuSetor, /aria-label=\{`\$\{p\.titulo\} Â· \$\{formatPrazo\(p\.prazo\)\}\$\{status \? ` Â· \$\{status\}` : ''\}`\}/);
-  assert.match(meuSetor, /<h3 className="block text-slate-900">\{p\.titulo\}<\/h3>/);
-  assert.match(meuSetor, /<time className=\{`mt-2 block text-sm/);
-  assert.match(meuSetor, /role="status" aria-live="polite" className="rounded-lg border border-dashed/);
-});
-
-test("painel nÃ£o consulta projetos quando a validaÃ§Ã£o de acesso falha", () => {
-  assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
-  assert.match(meuSetor, /\[accessLoading, accessError, context,/);
-});
-
-test("painel de projetos participa da atualizaÃ§Ã£o global", () => {
-  assert.match(meuSetor, /workforceRefreshEvent/);
-  assert.match(meuSetor, /addEventListener\(workforceRefreshEvent, refreshPanel\)/);
-  assert.match(meuSetor, /onClick=\{\(\) => requestWorkforceRefresh\(\)\}/);
-});
-
-test("painel remove projetos antigos quando a autorizaÃ§Ã£o Ã© revogada", () => {
-  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
-});
-
-test("painel anuncia sincronizaÃ§Ã£o global para tecnologia assistiva", () => {
-  assert.match(meuSetor, /className="space-y-6" aria-busy=\{carregando \|\| accessLoading\}/);
-});
-
-test("painel informa conexÃ£o offline e retoma sincronizaÃ§Ã£o ao voltar", () => {
-  assert.match(meuSetor, /window\.addEventListener\('online'/);
-  assert.match(meuSetor, /window\.addEventListener\('offline'/);
-  assert.match(meuSetor, /if \(isOnline\) requestWorkforceRefresh\(\)/);
-  assert.match(meuSetor, /Sem conexÃ£o com a internet/);
-  assert.match(meuSetor, /!online/);
-});
-
-test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
-  assert.match(gerenciadorDispositivos, /isDateString/);
-  assert.match(gerenciadorDispositivos, /new Set\(devices\.map\(\(device: Device\) => device\.id\)\)/);
-  assert.match(gerenciadorDispositivos, /length > data\.limit/);
-});
-
-test("revalidaÃ§Ã£o do funcionÃ¡rio preserva contexto vÃ¡lido durante o carregamento", () => {
-  assert.match(acessoWorkforce, /setContext\(current => current && current\.empresa_id===tenantId && current\.funcionario\.id===userId \? current : null\)/);
-});
-
-test("revalidaÃ§Ã£o ignora respostas antigas apÃ³s troca de identidade", () => {
-  assert.match(acessoWorkforce, /const generation=useRef\(0\)/);
-  assert.match(acessoWorkforce, /const request=\+\+generation\.current/);
-  assert.match(acessoWorkforce, /request===generation\.current&&identity\.current\.userId===userId&&identity\.current\.tenantId===tenantId/);
-  assert.match(acessoWorkforce, /useEffect\(\(\)=>\(\)=>\{generation\.current\+\+;\},\[\]\)/);
-});
-
-test("atualizaÃ§Ã£o do painel sincroniza os blocos de trabalho", () => {
-  assert.match(workforceEvents, /workforceRefreshEvent/);
-  assert.match(workforceEvents, /typeof window === 'undefined'/);
-  assert.match(meuSetor, /requestWorkforceRefresh\(\)/);
-  assert.match(minhasTarefas, /workforceRefreshEvent/);
-  assert.match(notificacoesFuncionario, /workforceRefreshEvent/);
-  assert.match(agendaFuncionario, /workforceRefreshEvent/);
-  assert.match(historicoFuncionario, /workforceRefreshEvent/);
-  assert.match(fichasFuncionario, /workforceRefreshEvent/);
-  assert.match(resumoFuncionario, /workforceRefreshEvent/);
-});
-
-test("painel exibe perfil somente quando a permissÃ£o foi concedida", () => {
-  assert.match(meuSetor, /hasPermission\(context,'perfil'\)/);
-  assert.match(meuSetor, /id="perfil"/);
-  assert.match(meuSetor, /employee-profile-title/);
-  assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
-  assert.match(meuSetor, /Setores autorizados/);
-});
-
-test("aÃ§Ãµes rÃ¡pidas possuem foco visÃ­vel no teclado", () => {
-  assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
-});
-
-test("painel oferece atalho de teclado para as aÃ§Ãµes rÃ¡pidas", () => {
-  assert.match(meuSetor, /quickActions\.length > 0 && <a href="#quick-actions"/);
-  assert.match(meuSetor, /href="#quick-actions"/);
-  assert.match(meuSetor, /Pular para as aÃ§Ãµes rÃ¡pidas/);
-  assert.match(meuSetor, /id="quick-actions" tabIndex=\{-1\}/);
-  assert.match(meuSetor, /!quickActions\.length && <p role="status" aria-live="polite"/);
-});
-
-test("saltos das aÃ§Ãµes rÃ¡pidas devolvem foco Ã  seÃ§Ã£o de destino", () => {
-  assert.match(meuSetor, /window\.addEventListener\('hashchange', focusHashTarget\)/);
-  assert.match(meuSetor, /window\.requestAnimationFrame\(focusHashTarget\)/);
-  assert.match(meuSetor, /window\.cancelAnimationFrame\(frame\)/);
-  assert.match(meuSetor, /lastFocusedHash\.current === id && document\.activeElement === target/);
-  assert.match(meuSetor, /\}, \[accessRenderKey\]\)/);
-  assert.match(meuSetor, /target\.setAttribute\('tabindex', '-1'\); target\.focus\(\{ preventScroll: true \}\)/);
-  assert.match(meuSetor, /id="tarefas" tabIndex=\{-1\}/);
-  assert.match(meuSetor, /id="agenda" tabIndex=\{-1\}/);
-});
-
-test("painel preserva a Ãºltima atualizaÃ§Ã£o durante nova consulta", () => {
-  assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
-  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
-});
-
-test("tarefas do funcionÃ¡rio permitem recuperar falhas de carregamento", () => {
-  assert.match(minhasTarefas, /Tentar novamente/);
-  assert.match(minhasTarefas, /aria-live="polite"/);
-  assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
-});
-
-test("tarefas refletem imediatamente status e progresso selecionados", () => {
-  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} Â· \$\{formatTaskStatus\(displayedStatus\)\} Â· \$\{formatTaskSector\(task\.setor\)\} Â· Prioridade \$\{formatPriority\(task\.prioridade\)\} Â· \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' Â· Atrasada':''\}`\}/);
-  assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
-  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
-  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
-  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
-  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
-  assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
-  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluÃ­do`\}/);
-});
-
-test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
-  assert.match(minhasTarefas, /const priorityTone=/);
-  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
-  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
-});
-
-test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
-  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
-  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
-  assert.match(minhasTarefas, /bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800/);
-});
-
-test("serviÃ§o de tarefas exige progresso inteiro", () => {
-  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
-  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
-  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
-});
-
-test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
-  assert.match(minhasTarefas, /updatedAt/);
-  assert.match(minhasTarefas, /Ãšltima atualizaÃ§Ã£o Ã s/);
-  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
-});
-
-test("tarefas limpam o horÃ¡rio anterior durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
-});
-
-test("tarefas preservam a lista durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
-  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
-  assert.match(minhasTarefas, /data \? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'/);
-});
-
-test("tarefas bloqueiam o filtro durante sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
-});
-
-test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
-  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
-  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
-  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
-});
-
-test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
-  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
-  assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
-});
-
-test("tarefas identificam a paginaÃ§Ã£o para tecnologia assistiva", () => {
-  assert.match(minhasTarefas, /aria-label="PaginaÃ§Ã£o de tarefas"/);
-  assert.match(minhasTarefas, /aria-current="page"/);
-});
-
-test("tarefas atualizam ao retornar Ã  aba", () => {
-  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /lastReturnRefresh/);
-  assert.match(minhasTarefas, />1000/);
-});
-
-test("tarefas nÃ£o consultam dados sem vÃ­nculo validado", () => {
-  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
-});
-
-test("resumo do funcionÃ¡rio usa cores semÃ¢nticas nos indicadores", () => {
-  assert.match(resumoFuncionario, /function cardTone/);
-  assert.match(resumoFuncionario, /Atrasadas/);
-  assert.match(resumoFuncionario, /ConcluÃ­das/);
-  assert.match(resumoFuncionario, /Em andamento/);
-});
-
-test("resumo informa atualizaÃ§Ã£o no botÃ£o durante carregamento", () => {
-  assert.match(resumoFuncionario, /aria-label=\{loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
-  assert.match(resumoFuncionario, /\{loading\?'Atualizandoâ€¦':'Atualizar indicadores'\}/);
-});
-
-test("resumo preserva indicadores durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);/);
-  assert.match(resumoFuncionario, /Promise\.resolve\(\)\.then\(\(\)=>supabase\.rpc\('meu_resumo_operacional'\)/);
-  assert.match(resumoFuncionario, /summary \? 'Atualizando indicadoresâ€¦' : 'Carregando indicadoresâ€¦'/);
-});
-
-test("resumo nÃ£o consulta dados sem vÃ­nculo de funcionÃ¡rio validado", () => {
-  assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\);setUpdatedAt\(null\);return/);
-  assert.match(resumoFuncionario, /if\(accessError\|\|!context\)\{setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(resumoFuncionario, /setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(resumoFuncionario, /\[accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
-});
-
-test("resumo nomeia cada indicador para acessibilidade", () => {
-  assert.match(resumoFuncionario, /role="group"/);
-  assert.match(resumoFuncionario, /card border p-4/);
-  assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
-});
-
-test("resumo encaminha prazos para a lista quando a tarefa nÃ£o estÃ¡ carregada", () => {
-  assert.match(resumoFuncionario, /function focusTask\(taskId:string\)/);
-  assert.match(resumoFuncionario, /scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
-  assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
-});
-
-test("indicadores de tarefas oferecem atalho acessÃ­vel para a lista", () => {
-  assert.match(resumoFuncionario, /function focusTaskList\(\)/);
-  assert.match(resumoFuncionario, /href="#tarefas" onClick=\{focusTaskList\}/);
-  assert.match(resumoFuncionario, /Abrir minhas tarefas/);
-});
-
-test("resumo destaca urgÃªncia dos prÃ³ximos prazos", () => {
-  assert.match(resumoFuncionario, /function deadlineStatus\(value:string\)/);
-  assert.match(resumoFuncionario, /Vence hoje/);
-  assert.match(resumoFuncionario, /Vence amanhÃ£/);
-  assert.match(resumoFuncionario, /status==='Atrasado'/);
-});
-
-test("editor de acesso permite repetir o carregamento", () => {
-  assert.match(editorAcesso, /const \[retry,setRetry\]/);
-  assert.match(editorAcesso, /\},\[userId,retry\]\)/);
-  assert.match(editorAcesso, /aria-label="Recarregar o acesso do funcionÃ¡rio"/);
-  assert.match(editorAcesso, /Tentar novamente/);
-});
-
-test("editor de acesso informa catÃ¡logo de permissÃµes vazio", () => {
-  assert.match(editorAcesso, /!catalog\.length/);
-  assert.match(editorAcesso, /Nenhuma permissÃ£o estÃ¡ disponÃ­vel para configuraÃ§Ã£o/);
-});
-
-test("equipe recarrega apÃ³s a sessÃ£o e o tenant ficarem disponÃ­veis", () => {
-  assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
-});
-
-test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
-  assert.match(equipe, /Tentar novamente/);
-  assert.match(equipe, /aria-busy=\{carregando\}/);
-  assert.match(equipe, /role="status" aria-live="polite"/);
-  assert.match(equipe, /role="status" aria-live="polite" className="rounded-xl/);
-});
-
-test("fichas de serviÃ§o expÃµem carregamento e paginaÃ§Ã£o acessÃ­veis", () => {
-  assert.match(fichasFuncionario, /aria-busy=\{loading\}/);
-  assert.match(fichasFuncionario, /aria-live="polite"/);
-  assert.match(fichasFuncionario, /aria-label="PaginaÃ§Ã£o de fichas de serviÃ§o"/);
-  assert.match(fichasFuncionario, /aria-current="page"/);
-  assert.match(fichasFuncionario, /Tentar novamente/);
-});
-
-test("fichas nÃ£o consultam dados sem vÃ­nculo validado", () => {
-  assert.match(fichasFuncionario, /if \(accessLoading\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); return/);
-  assert.match(fichasFuncionario, /if \(accessError \|\| !context\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); setLoading\(false\)/);
-  assert.match(fichasFuncionario, /\[page, query, refresh, accessLoading, accessError, context\?\.funcionario\.id, context\?\.funcionario\.versao\]/);
-});
-
-test("fichas exibem a Ãºltima atualizaÃ§Ã£o recebida", () => {
-  assert.match(fichasFuncionario, /formatSheetUpdate/);
-  assert.match(fichasFuncionario, /dateTime=\{safeSheetDateTime\(item\.atualizado_em\)\}/);
-});
-
-test("fichas de serviÃ§o nomeiam tÃ­tulo, setor e atualizaÃ§Ã£o", () => {
-  assert.match(fichasFuncionario, /aria-label=\{`Ficha \$\{item\.titulo\} Â· \$\{isSetor\(item\.setor\) \? setores\[item\.setor\] : item\.setor\} Â· \$\{formatSheetUpdate\(item\.atualizado_em\)\}`\}/);
-});
-
-test("fichas diferenciam carga inicial de sincronizaÃ§Ã£o", () => {
-  assert.match(fichasFuncionario, /list \? 'Atualizando fichasâ€¦' : 'Carregando fichasâ€¦'/);
-});
-
-test("pesquisa de fichas informa o estado do botÃ£o", () => {
-  assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
-  assert.match(fichasFuncionario, /\{loading\?'Pesquisandoâ€¦':'Pesquisar'\}/);
-  assert.match(fichasFuncionario, /<input type="search" className="input-field"/);
-});
-
-test("notificaÃ§Ãµes permitem retry e paginaÃ§Ã£o acessÃ­vel", () => {
-  assert.match(notificacoesFuncionario, /aria-live="polite"/);
-  assert.match(notificacoesFuncionario, /Tentar novamente/);
-  assert.match(notificacoesFuncionario, /aria-label="PaginaÃ§Ã£o de notificaÃ§Ãµes"/);
-  assert.match(notificacoesFuncionario, /aria-current="page"/);
-});
-
-test("notificaÃ§Ãµes atualizam ao retornar Ã  aba", () => {
-  assert.match(notificacoesFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /removeEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /lastReturnRefresh/);
-  assert.match(notificacoesFuncionario, />1000/);
-});
-
-test("agenda do funcionÃ¡rio informa carregamento, valida perÃ­odo e permite retry", () => {
-  assert.match(agendaFuncionario, /aria-busy=\{loading\}/);
-  assert.match(agendaFuncionario, /aria-live="polite"/);
-  assert.match(agendaFuncionario, /required disabled=\{loading\}/);
-  assert.match(agendaFuncionario, /Tentar novamente/);
-  assert.match(agendaFuncionario, /!start\|\|!end/);
-  assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
-  assert.match(agendaFuncionario, /min=\{start\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-invalid=\{invalidRange\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem tÃ­tulo'\} Â· \$\{formatAgendaDate\(item\.inicio\)\} Â· \$\{formatAgendaStatus\(item\.status\)\} Â· Prioridade \$\{formatAgendaPriority\(item\.prioridade\)\}`\}/);
-});
-
-test("agenda informa atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
-  assert.match(agendaFuncionario, /\{loading\?'Atualizandoâ€¦':'Atualizar'\}/);
-});
-
-test("histÃ³rico do funcionÃ¡rio oferece retry e paginaÃ§Ã£o acessÃ­vel", () => {
-  assert.match(historicoFuncionario, /aria-busy=\{loading\}/);
-  assert.match(historicoFuncionario, /aria-live="polite"/);
-  assert.match(historicoFuncionario, /Tentar novamente/);
-  assert.match(historicoFuncionario, /aria-label="PaginaÃ§Ã£o do histÃ³rico de atividades"/);
-  assert.match(historicoFuncionario, /aria-current="page"/);
-  assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
-});
-
-test("histÃ³rico informa atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histÃ³rico':'Atualizar histÃ³rico'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizandoâ€¦':'Atualizar histÃ³rico'\}/);
-});
-
-test("histÃ³rico diferencia carga inicial de sincronizaÃ§Ã£o", () => {
-  assert.match(historicoFuncionario, /data \? 'Atualizando histÃ³ricoâ€¦' : 'Carregando histÃ³ricoâ€¦'/);
-});
-
-test("histÃ³rico nÃ£o consulta dados sem vÃ­nculo de funcionÃ¡rio validado", () => {
-  assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(historicoFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
-});
-
-test("histÃ³rico reinicia a paginaÃ§Ã£o ao trocar de funcionÃ¡rio", () => {
-  assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-});
-
-test("listas do funcionÃ¡rio reiniciam filtros e paginaÃ§Ã£o ao trocar de contexto", () => {
-  assert.match(notificacoesFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(minhasTarefas, /useEffect\(\(\)=>\{setPage\(0\);setFilter\(''\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(fichasFuncionario, /useEffect\(\(\) => \{ setPage\(0\); setSearch\(''\); setQuery\(''\); \}, \[context\?\.funcionario\.id, context\?\.funcionario\.versao\]\)/);
-});
-
-test("notificaÃ§Ã£o limpa erro antigo ao abrir um registro", () => {
-  assert.match(notificacoesFuncionario, /setError\('\'\);openerRef\.current=event\.currentTarget;setSelected\(item\)/);
-  assert.match(notificacoesFuncionario, /ficha_atribuida:'Ficha atribuÃ­da'/);
-});
-
-test("notificaÃ§Ãµes preservam a lista e o detalhe durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);/);
-  assert.doesNotMatch(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);setSelected\(null\)/);
-  assert.match(notificacoesFuncionario, /data \? 'Atualizando notificaÃ§Ãµesâ€¦' : 'Carregando notificaÃ§Ãµesâ€¦'/);
-});
-
-test("agenda usa datas locais para nÃ£o deslocar o perÃ­odo no fuso horÃ¡rio", () => {
-  assert.match(agendaFuncionario, /const isoDate=\(date:Date\)=>/);
-  assert.doesNotMatch(agendaFuncionario, /Date\.now\(\)\+30\*86400000/);
-  assert.doesNotMatch(agendaFuncionario, /new Date\(\)\.toISOString\(\)\.slice\(0,10\)/);
-});
-
-test("agenda limpa o erro ao corrigir o perÃ­odo", () => {
-  assert.match(agendaFuncionario, /setStart\(event\.target\.value\);setError\('\'\)/);
-  assert.match(agendaFuncionario, /setEnd\(event\.target\.value\);setError\('\'\)/);
-});
-
-test("detalhes abertos oferecem fechamento explÃ­cito", () => {
-  assert.match(notificacoesFuncionario, /onClick=\{\(\)=>\{returnFocus\.current=true;setSelected\(null\);\}\}>Fechar detalhe/);
-  assert.match(notificacoesFuncionario, /aria-label="Fechar detalhe da notificaÃ§Ã£o"/);
-  assert.match(notificacoesFuncionario, /selectedRef\.current\?\.focus\(\)/);
-  assert.match(notificacoesFuncionario, /openerRef\.current\?\.focus\(\)/);
-  assert.match(fichasFuncionario, /onClick=\{\(\) => \{ returnFocus\.current = true; setSelected\(null\); \}\}>Fechar ficha/);
-  assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"/);
-  assert.match(fichasFuncionario, /selectedRef\.current\?\.focus\(\)/);
-  assert.match(fichasFuncionario, /tabIndex=\{-1\}[^>]*aria-label=\{`Ficha aberta:/);
-  assert.match(fichasFuncionario, /returnFocus\.current = true; setSelected\(null\)/);
-  assert.match(fichasFuncionario, /openerRef\.current\?\.focus\(\)/);
-});
-
-test("produÃ§Ã£o e secagem usam estado explÃ­cito para mensagens acessÃ­veis", () => {
-  assert.match(registroProducao, /messageKind === 'status' \? 'status' : 'alert'/);
-  assert.match(controleSecagem, /messageKind === 'status' \? 'status' : 'alert'/);
-});
-
-test("resumo do funcionÃ¡rio atualiza ao retornar Ã  aba", () => {
-  assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("projetos do setor atualizam ao retornar Ã  aba", () => {
-  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("projetos do setor rejeitam duplicidades e ordenam prazos vÃ¡lidos", () => {
-  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
-  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
-  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
-});
-
-test("ediÃ§Ã£o de acesso limpa erro ao alterar escopo de permissÃ£o", () => {
-  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
-});
-
-test("anexos reiniciam paginaÃ§Ã£o e arquivo ao trocar de contexto", () => {
-  assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
-});
-
-test("pesquisa de fichas limpa erro ao editar o termo", () => {
-  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
-});
-
-test("fichas de serviÃ§o atualizam ao retornar Ã  aba", () => {
-  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("contador de notificaÃ§Ãµes anuncia mudanÃ§as", () => {
-  assert.match(notificacoesFuncionario, /NotificaÃ§Ãµes <span aria-live="polite">/);
-});
-
-test("anexos atualizam ao retornar Ã  aba", () => {
-  assert.match(anexos, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(anexos, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(anexos, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("agenda atualiza ao retornar Ã  aba", () => {
-  assert.match(agendaFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(agendaFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(agendaFuncionario, /void load\(\)/);
-});
-
-test("histÃ³rico atualiza ao retornar Ã  aba", () => {
-  assert.match(historicoFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(historicoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("ocorrÃªncias reiniciam pÃ¡gina e atualizam ao retornar Ã  aba", () => {
-  assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(ocorrencias, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("detalhe de tarefa oferece retry contextual e estado de carregamento acessÃ­vel", () => {
-  assert.match(detalheTarefa, /aria-busy=\{loading\}/);
-  assert.match(detalheTarefa, /aria-live="polite"/);
-  assert.match(detalheTarefa, /Tentar novamente/);
-  assert.match(detalheTarefa, /Recarregar tarefa/);
-});
-
-test("detalhe de tarefa informa recarregamento no botÃ£o", () => {
-  assert.match(detalheTarefa, /aria-label=\{loading\?\(task\?'Atualizando tarefa':'Carregando tarefa'\):'Recarregar tarefa'\}/);
-  assert.match(detalheTarefa, /\{loading\?\(task\?'Atualizandoâ€¦':'Carregandoâ€¦'\):'Recarregar tarefa'\}/);
-});
-
-test("detalhe de tarefa preserva a ficha durante sincronizaÃ§Ã£o", () => {
-  assert.match(detalheTarefa, /task \? 'Atualizando tarefaâ€¦' : 'Carregando tarefaâ€¦'/);
-  assert.doesNotMatch(detalheTarefa, /setLoading\(true\);setError\(''\);setTask\(null\);setUpdatedAt\(null\)/);
-});
-
-test("ficha tÃ©cnica anuncia carregamento e operaÃ§Ãµes em andamento", () => {
-  assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha tÃ©cnica/);
-  assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
-});
-
-test("ficha tÃ©cnica anuncia ausÃªncia de anexo vinculado", () => {
-  assert.match(formularioFichaTecnica, /role=\{current \? undefined : 'status'\}/);
-});
-
-test("ficha tÃ©cnica preserva o conteÃºdo durante sincronizaÃ§Ã£o", () => {
-  assert.match(fichaTecnica, /if \(loading && !sheet\) return/);
-  assert.match(fichaTecnica, /Atualizando ficha tÃ©cnicaâ€¦/);
-  assert.match(fichaTecnica, /setSheet\(null\); setValues\(\{\}\)/);
-});
-
-test("ficha tÃ©cnica bloqueia ediÃ§Ã£o e aÃ§Ãµes durante sincronizaÃ§Ã£o", () => {
-  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| !sheet\.pode_editar/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy \|\| sheet\.status\s*===\s*'concluida'\}/);
-});
-
-test("ocorrÃªncias e anexos expÃµem retry e paginaÃ§Ã£o acessÃ­vel", () => {
-  assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(ocorrencias, /aria-label="PaginaÃ§Ã£o de ocorrÃªncias"/);
-  assert.match(ocorrencias, /role="status" aria-live="polite" className="text-sm text-slate-500">Nenhuma ocorrÃªncia disponÃ­vel nesta pÃ¡gina/);
-  assert.match(ocorrencias, /aria-label=\{`OcorrÃªncia \$\{incidentTitle\} Â· \$\{formatIncidentSeverity\(item\.gravidade\)\} Â· \$\{incidentStatus\}`\}/);
-  assert.match(ocorrencias, /Tentar novamente/);
-  assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /aria-label="PaginaÃ§Ã£o de anexos"/);
-  assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} Â· \$\{attachmentSize\}`\}/);
-  assert.match(anexos, /Tentar novamente/);
-  assert.match(anexos, /Nenhum anexo validado nesta pÃ¡gina/);
-});
-
-test("ocorrÃªncias informam atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualizaÃ§Ã£o das ocorrÃªncias':'Atualizar ocorrÃªncias'\}/);
-  assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguardeâ€¦':'Atualizar ocorrÃªncias'\}/);
-});
-
-test("ocorrÃªncias limpam feedback ao editar", () => {
-  assert.match(ocorrenciasFuncionario, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
-  assert.match(ocorrenciasFuncionario, /setTitle\(event\.target\.value\);clearFeedback\(\)/);
-  assert.match(ocorrenciasFuncionario, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
-});
-
-test("anexos e ocorrÃªncias diferenciam carga inicial de sincronizaÃ§Ã£o", () => {
-  assert.match(anexos, /items\.length \? 'Atualizando anexosâ€¦' : 'Carregando anexosâ€¦'/);
-  assert.match(ocorrenciasFuncionario, /items\.length\?'Atualizando ocorrÃªnciasâ€¦':'Carregando ocorrÃªnciasâ€¦'/);
-  assert.match(anexos, /setItems\(\[\]\);setLinks\(\{\}\);onListed\?\.\(\[\]\)/);
-  assert.match(ocorrenciasFuncionario, /setItems\(\[\]\);setMore\(false\)/);
-});
-
-test("ocorrÃªncias resetam o formulÃ¡rio ao trocar de contexto", () => {
-  assert.match(ocorrenciasFuncionario, /useEffect\(\(\)=>\{setTitle\(''\);setDescription\(''\);setType\('outro'\);setSeverity\('atencao'\);setMessage\(''\);receipt\.current=null;\},\[serviceId,sector\]\)/);
-});
-
-test("aceite da instalaÃ§Ã£o sinaliza salvamento e bloqueia envio concorrente", () => {
-  assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
-  assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
-  assert.match(aceiteInstalacao, /!attachments\.length&&<p role="status" aria-live="polite"/);
-  assert.match(aceiteInstalacao, /type="checkbox" required checked=\{confirmed\}/);
-});
-
-test("aceite libera o identificador apÃ³s confirmaÃ§Ã£o", () => {
-  assert.match(aceiteInstalacao, /await onRegister\(\{\.\.\.data,request:receipt\.current\.id\}\);receipt\.current=null/);
-});
-
-test("aceite limpa erro ao corrigir campos", () => {
-  assert.match(aceiteInstalacao, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(aceiteInstalacao, /setName\(event\.target\.value\);clearError\(\)/);
-  assert.match(aceiteInstalacao, /setProof\(event\.target\.value\);clearError\(\)/);
-  assert.match(aceiteInstalacao, /id=\{`\$\{id\}-name`\}[^>]*autoComplete="name"/);
-  assert.match(aceiteInstalacao, /aria-describedby=\{`\$\{id\}-proof-help`\}/);
-});
-
-test("produÃ§Ã£o e estoque sinalizam operaÃ§Ãµes e mensagens ao funcionÃ¡rio", () => {
-  assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
-  assert.match(solicitacaoMaterial, /aria-live="polite"/);
-  assert.match(registroProducao, /aria-busy=\{busy\}/);
-  assert.match(registroProducao, /dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
-  assert.match(registroProducao, /aria-live="polite"/);
-  assert.match(registroProducao, /Nenhum evento de produÃ§Ã£o registrado nesta ficha/);
-  assert.match(registroProducao, /aria-label=\{`Evento \$\{formatType\(item\.tipo\)\} Â· \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} Â· \$\{formatEntryDate\(item\.criado_em\)\}`\}/);
-});
-
-test("registros operacionais liberam o identificador apÃ³s sucesso", () => {
-  assert.match(registroProducao, /await onRegister\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
-  assert.match(solicitacaoMaterial, /await onCreate\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
-});
-
-test("produÃ§Ã£o limpa o feedback ao editar novo evento", () => {
-  assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
-});
-
-test("produÃ§Ã£o valida observaÃ§Ã£o antes do envio", () => {
-  assert.match(registroProducao, /description\.trim\(\)\.length < 3/);
-  assert.match(registroProducao, /Informe uma observaÃ§Ã£o com pelo menos 3 caracteres/);
-  assert.match(registroProducao, /minLength=\{3\} maxLength=\{1000\} required/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*required min=/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-unit`\}[^>]*required maxLength=\{40\}/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*inputMode="decimal"/);
-});
-
-test("solicitaÃ§Ã£o de material limpa feedback ao editar", () => {
-  assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(solicitacaoMaterial, /canRequest && !options\.length && <p role="status" aria-live="polite"/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*inputMode="decimal"/);
-});
-
-test("secagem, inbox de estoque e resumo anunciam estados de operaÃ§Ã£o", () => {
-  assert.match(controleSecagem, /aria-busy=\{busy\}/);
-  assert.match(controleSecagem, /aria-live="polite"/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
-  assert.match(inboxMateriais, /Tentar novamente/);
-  assert.match(inboxMateriais, /aria-live="polite"/);
-  assert.match(inboxMateriais, /actionBusy/);
-  assert.match(inboxMateriais, /aria-label=\{`SolicitaÃ§Ã£o de \$\{item\.item_nome\} Â· \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} Â· \$\{formatStatus\(item\.status\)\}`\}/);
-  assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\}/);
-  assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
-});
-
-test("secagem e produÃ§Ã£o informam atualizaÃ§Ã£o nos botÃµes", () => {
-  assert.match(controleSecagem, /aria-label=\{busy\?'Aguarde a atualizaÃ§Ã£o da secagem':'Atualizar horÃ¡rio do servidor'\}/);
-  assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualizaÃ§Ã£o dos registros':'Atualizar registros'\}/);
-});
-
-test("secagem limpa feedback ao editar o prazo", () => {
-  assert.match(controleSecagem, /setMinutes\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\} max=\{10080\}/);
-  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\}/);
-});
-
-test("cartÃ£o de solicitaÃ§Ã£o informa atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(solicitacaoMaterial, /aria-label=\{busy\?'Atualizando solicitaÃ§Ãµes':'Atualizar solicitaÃ§Ãµes'\}/);
-  assert.match(solicitacaoMaterial, /\{busy\?'Atualizandoâ€¦':'Atualizar'\}/);
-});
-
-test("cartÃ£o de solicitaÃ§Ã£o preserva o horÃ¡rio durante sincronizaÃ§Ã£o", () => {
-  assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
-  assert.match(solicitacaoMaterial, /busy\?'Atualizando solicitaÃ§Ãµesâ€¦':updatedAt/);
-});
-
-test("cancelamento de material confirma sucesso", () => {
-  assert.match(solicitacaoMaterial, /aria-label=\{`SolicitaÃ§Ã£o de \$\{requestItem\.item_nome\} Â· \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} Â· \$\{formatStatus\(requestItem\.status\)\}`\}/);
-  assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('SolicitaÃ§Ã£o cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);
-  assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('SolicitaÃ§Ã£o cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /role=\{messageKind === 'status' \? 'status' : 'alert'\}/);
-});
-
-test("inbox de estoque informa atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(inboxMateriais, /aria-label=\{loading \|\| !!actionBusy\?'Aguarde a atualizaÃ§Ã£o das solicitaÃ§Ãµes':'Atualizar solicitaÃ§Ãµes'\}/);
-  assert.match(inboxMateriais, /\{loading \|\| !!actionBusy\?'Aguardeâ€¦':'Atualizar'\}/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
-});
-
-test("inbox de estoque participa da atualizaÃ§Ã£o global", () => {
-  assert.match(inboxMateriais, /workforceRefreshEvent/);
-  assert.match(inboxMateriais, /addEventListener\(workforceRefreshEvent,refreshPanel\)/);
-  assert.match(inboxMateriais, /void load\(false\)/);
-});
-
-test("inbox limpa confirmaÃ§Ã£o antes de nova aÃ§Ã£o", () => {
-  assert.match(inboxMateriais, /setActionBusy\(item\.id\);setError\(''\);setMessage\(''\)/);
-});
-
-test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
-  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(criacaoTarefa, /aria-live="polite"/);
-  assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(atribuicaoFicha, /aria-live="polite"/);
-  assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(fluxoProducao, /aria-live="polite"/);
-});
-
-test("fluxo informa as aÃ§Ãµes de salvar e recarregar", () => {
-  assert.match(fluxoProducao, /aria-label=\{busy\?'Salvando fluxo':flow\.configurado\?'Salvar sequÃªncia':'Configurar fluxo'\}/);
-  assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
-});
-
-test("fluxo preserva a configuraÃ§Ã£o durante sincronizaÃ§Ã£o", () => {
-  assert.match(fluxoProducao, /flow \? 'Atualizando fluxoâ€¦' : 'Carregando fluxoâ€¦'/);
-  assert.doesNotMatch(fluxoProducao, /setLoading\(true\);setError\(''\);setFlow\(null\)/);
-  assert.match(fluxoProducao, /useEffect\(\(\)=>\{setFlow\(null\);setSelected\(\[\]\);\},\[serviceId,context\?\.proprietario\]\)/);
-});
-
-test("fluxo limpa feedback ao alterar a sequÃªncia", () => {
-  assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
-});
-
-test("criaÃ§Ã£o de tarefa informa carregamento dos responsÃ¡veis", () => {
-  assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsÃ¡veis':busy\?'Criando tarefa':'Criar tarefa'\}/);
-  assert.match(criacaoTarefa, /\{loading\?'Carregandoâ€¦':busy\?'Criandoâ€¦':'Criar tarefa'\}/);
-  assert.match(criacaoTarefa, /candidates\.length \? 'Atualizando responsÃ¡veisâ€¦' : 'Carregando responsÃ¡veisâ€¦'/);
-  assert.match(criacaoTarefa, /!loading && !error && !candidates\.length && <p role="status" aria-live="polite"/);
-  assert.match(criacaoTarefa, /type="datetime-local" autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\} value=\{deadline\}/);
-  assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
-  assert.match(criacaoTarefa, /O horÃ¡rio serÃ¡ salvo conforme o fuso local deste dispositivo/);
-});
-
-test("criaÃ§Ã£o de tarefa limpa feedback ao trocar o contexto", () => {
-  assert.match(criacaoTarefa, /setCandidates\(\[\]\);setEmployee\(''\);setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
-  assert.doesNotMatch(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
-});
-
-test("criaÃ§Ã£o de tarefa limpa validaÃ§Ã£o ao corrigir campos", () => {
-  assert.match(criacaoTarefa, /setTitle\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
-  assert.match(criacaoTarefa, /setEmployee\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
-  assert.match(criacaoTarefa, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
-  assert.match(criacaoTarefa, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
-  assert.match(criacaoTarefa, /setDeadline\(event\.target\.value\);clearFeedback\(\)/);
-});
-
-test("criaÃ§Ã£o de tarefa valida descriÃ§Ã£o antes do envio", () => {
-  assert.match(criacaoTarefa, /id=\{`\$\{id\}-title`\}[^>]*required minLength=\{2\} maxLength=\{200\}/);
-  assert.match(criacaoTarefa, /description\.trim\(\)\.length<2/);
-  assert.match(criacaoTarefa, /Informe uma descriÃ§Ã£o com pelo menos 2 caracteres/);
-  assert.match(criacaoTarefa, /minLength=\{2\} maxLength=\{10000\} required/);
-});
-
-test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
-  assert.match(editorFuncionario, /aria-busy=\{busy \|\| loading\}/);
-  assert.match(editorFuncionario, /busy&&<p role="status" aria-live="polite">Salvando acesso do funcionÃ¡rioâ€¦<\/p>/);
-  assert.match(editorFuncionario, /role="status" aria-live="polite"/);
-  assert.match(editorFuncionario, /employee\?'Atualizando acessoâ€¦':'Carregando acessoâ€¦'/);
-  assert.match(editorFuncionario, /disabled=\{busy\}/);
-  assert.match(editorFuncionario, /dateTime=\{safeEmployeeDateTime\(employee\.created_at\)\}/);
-  assert.match(editorFuncionario, /type="button" className="btn-secondary" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar ediÃ§Ã£o do funcionÃ¡rio"/);
-  assert.match(editorFuncionario, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
-  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
-  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-job`\}[^>]*autoComplete="organization-title"/);
-});
-
-test("responsÃ¡vel limpa feedback ao recarregar candidatos", () => {
-  assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
-  assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcionÃ¡rios autorizadosâ€¦' : 'Carregando funcionÃ¡rios autorizadosâ€¦'/);
-  assert.match(atribuicaoFicha, /useEffect\(\(\)=>\{setCandidates\(\[\]\);\},\[serviceId,sector\]\)/);
-});
-
-test("responsÃ¡vel limpa feedback quando a ficha muda externamente", () => {
-  assert.match(atribuicaoFicha, /setSelected\(current \|\| ''\);setMessage\(''\)/);
-});
-
-test("ficha tÃ©cnica e resoluÃ§Ã£o de ocorrÃªncia anunciam estados crÃ­ticos", () => {
-  assert.match(fichaTecnica, /\{error && <p role="alert"/);
-  assert.match(fichaOperacional, /role="status" aria-live="polite"/);
-  assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
-  assert.match(ocorrenciasFuncionario, /rows=\{3\} required minLength=\{10\} maxLength=\{5000\}/);
-});
-
-test("ficha tÃ©cnica ignora respostas antigas de secagem e produÃ§Ã£o", () => {
-  assert.match(fichaTecnica, /const result = await technicalSheets\.dryingLoad\(serviceId\); if \(request === generation\.current\) setDrying\(result\)/);
-  assert.match(fichaTecnica, /const result = await technicalSheets\.productionLoad\(serviceId, sector\); if \(request === generation\.current\) setProduction\(result\)/);
-});
-
-test("cartÃ£o de tarefa sinaliza atualizaÃ§Ã£o concorrente", () => {
-  assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-});
-
-test("cartÃ£o de tarefa informa o estado do salvamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem alteraÃ§Ãµes'\}/);
-  assert.match(minhasTarefas, /\{busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700 sm:col-span-2">Salvando tarefaâ€¦<\/p>\}/);
-});
-
-test("cartÃ£o de tarefa limpa erro ao editar", () => {
-  assert.match(minhasTarefas, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(minhasTarefas, /setStatus\(event\.target\.value as TaskStatus\);clearError\(\)/);
-  assert.match(minhasTarefas, /setProgress\(event\.target\.value===''\?NaN:Number\(event\.target\.value\)\);clearError\(\)/);
-});
-
-test("notificaÃ§Ãµes sinalizam leitura e bloqueiam abertura concorrente", () => {
-  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
-  assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
-  assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notificaÃ§Ã£oâ€¦<\/p>\}/);
-  assert.match(notificacoesFuncionario, /setMessage\('NotificaÃ§Ã£o marcada como lida\.'\)/);
-});
-
-test("notificaÃ§Ãµes expÃµem o estado de leitura semanticamente", () => {
-  assert.match(notificacoesFuncionario, /aria-label=\{`\$\{item\.lida_em\?'NotificaÃ§Ã£o lida':'NotificaÃ§Ã£o nÃ£o lida'\}/);
-  assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: \$\{notificationLabels\[item\.evento\]\|\|'AtualizaÃ§Ã£o da operaÃ§Ã£o'\}`\}/);
-});
-
-test("notificaÃ§Ãµes informam atualizaÃ§Ã£o no botÃ£o", () => {
-  assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualizaÃ§Ã£o das notificaÃ§Ãµes':'Atualizar notificaÃ§Ãµes'\}/);
-  assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguardeâ€¦':'Atualizar notificaÃ§Ãµes'\}/);
-});
-
-test("fichas bloqueiam abertura e paginaÃ§Ã£o durante sincronizaÃ§Ã£o", () => {
-  assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| !list\.tem_mais\}/);
-});
-
-test("pesquisa de fichas nÃ£o cria nova carga durante sincronizaÃ§Ã£o", () => {
-  assert.match(fichasFuncionario, /aria-busy=\{loading\} onSubmit=\{event => \{ event\.preventDefault\(\); if \(loading\) return;/);
-  assert.match(fichasFuncionario, /disabled=\{loading\} value=\{search\}/);
-});
-
-test("operaÃ§Ãµes de produÃ§Ã£o e secagem sinalizam o formulÃ¡rio em andamento", () => {
-  assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-  assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
-});
-
-test("aÃ§Ãµes de execuÃ§Ã£o da ficha informam salvamento", () => {
-  assert.match(fichaOperacional, /saving\?'Salvandoâ€¦'/);
-  assert.match(fichaTecnica, /saving && <p role="status" aria-live="polite">Salvando alteraÃ§Ãµes da ficha tÃ©cnicaâ€¦<\/p>/);
-  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="text-sm font-medium">SituaÃ§Ã£o:/);
-});
-
-test("ficha tÃ©cnica limpa erros ao editar um campo", () => {
-  assert.match(readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx"), /setMessage\(''\);\s*setIssues\(\[\]\);\s*change/);
-});
-
-test("serviÃ§o de fichas valida checklist e dados da resposta", () => {
-  assert.match(technicalSheetService, /hasUniqueKeys\(checklistItems\) &&\s+!!row\.checklist/);
-  assert.doesNotMatch(technicalSheetService, /hasUniqueKeys\(checklistItems\);\s+!!row\.checklist/);
-});
-
-test("serviÃ§o de fichas rejeita timestamps invÃ¡lidos", () => {
-  assert.match(technicalSheetService, /isDateOrNull\(row\.iniciada_em\) && isDateOrNull\(row\.concluida_em\)/);
-  assert.match(technicalSheetService, /Number\.isFinite\(new Date\(record\.criado_em\)\.getTime\(\)\)/);
-});
-
-test("registro de secagem valida datas retornadas", () => {
-  assert.match(technicalSheetService, /!isDateOrNull\(result\.prevista_ate\)/);
-  assert.match(technicalSheetService, /!isDateOrNull\(result\.servidor_agora\)/);
-  assert.match(controleSecagem, /dateTime=\{safeServerDateTime\(state\?\.iniciada_em \?\? null\)\}/);
-});
-
-test("liberaÃ§Ã£o da ficha bloqueia duplo clique", () => {
-  assert.match(fichaOperacional, /disabled=\{loading\}/);
-  assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
-  assert.match(fichaOperacional, /loading \? 'Liberandoâ€¦' : 'Liberar ficha deste setor'/);
-});
-
-test("agenda ignora respostas de requisiÃ§Ãµes antigas", () => {
-  assert.match(agendaFuncionario, /const generation=useRef\(0\)/);
-  assert.match(agendaFuncionario, /if\(request===generation\.current\)setItems/);
-  assert.match(agendaFuncionario, /return\(\)=>\{generation\.current\+\+;\}/);
-});
-
-test("agenda limpa atividades anteriores antes de nova consulta", () => {
-  assert.match(agendaFuncionario, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[start,end,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);try/);
-});
-
-test("agenda preserva eventos durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(agendaFuncionario, /items\.length\?'Atualizando agendaâ€¦':'Carregando agendaâ€¦'/);
-});
-
-test("agenda limpa atividades quando o perÃ­odo Ã© invÃ¡lido", () => {
-  assert.match(agendaFuncionario, /if\(!start\|\|!end\)\{setItems\(\[\]\);setError/);
-  assert.match(agendaFuncionario, /if\(end<start\)\{setItems\(\[\]\);setError/);
-});
-
-test("anexos bloqueiam geraÃ§Ã£o simultÃ¢nea de links temporÃ¡rios", () => {
-  assert.match(anexos, /linkBusy/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /itemBusy\?'Gerandoâ€¦'/);
-});
-
-test("anexos bloqueiam envio enquanto o link temporÃ¡rio Ã© gerado", () => {
-  assert.match(anexos, /if\(lock\.current \|\| !!linkBusy \|\| !file\)return/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| !file\}/);
-});
-
-test("anexos orientam formatos e tamanho do arquivo", () => {
-  assert.match(anexos, /aria-describedby=\{`\$\{id\}-help`\}/);
-  assert.match(anexos, /Formatos aceitos: JPEG, PNG, WebP ou PDF\. Tamanho mÃ¡ximo: 10 MB\./);
-});
-
-test("inbox de estoque ignora respostas de filtros antigos", () => {
-  assert.match(inboxMateriais, /const generation=useRef\(0\)/);
-  assert.match(inboxMateriais, /if\(request===generation\.current\)setItems/);
-  assert.match(inboxMateriais, /return\(\)=>\{generation\.current\+\+;\}/);
-});
-
-test("inbox de estoque preserva dados durante nova consulta", () => {
-  assert.doesNotMatch(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
-  assert.match(inboxMateriais, /items\.length\?'Atualizando solicitaÃ§Ãµesâ€¦':'Carregando solicitaÃ§Ãµesâ€¦'/);
-  assert.match(inboxMateriais, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[status,allowed/);
-});
-
-test("inbox preserva feedback apÃ³s aÃ§Ã£o concluÃ­da", () => {
-  assert.match(inboxMateriais, /async function load\(clearMessage=true\)/);
-  assert.match(inboxMateriais, /setMessage\('SolicitaÃ§Ã£o aprovada\.'\);await load\(false\)/);
-});
-
-test("ficha tÃ©cnica diferencia erro de sucesso na mensagem acessÃ­vel", () => {
-  const formularioTecnico = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
-  assert.match(formularioTecnico, /role=\{message\.startsWith\('NÃ£o foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
-});
-
-test("formulÃ¡rio de ocorrÃªncia sinaliza o envio em andamento", () => {
-  assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-});
-
-test("histÃ³rico bloqueia paginaÃ§Ã£o durante carregamento", () => {
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| page===0\}/);
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| !data\.tem_mais\}/);
-});
-
-test("tarefas bloqueiam paginaÃ§Ã£o durante carregamento", () => {
-  assert.match(minhasTarefas, /disabled=\{loading \|\| page===0\}/);
-  assert.match(minhasTarefas, /disabled=\{loading \|\| !data\.tem_mais\}/);
-});
-
-test("tarefas informam atualizaÃ§Ã£o no botÃ£o durante carregamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
-  assert.match(minhasTarefas, /\{loading\?'Atualizandoâ€¦':'Atualizar tarefas'\}/);
-});
-
-test("tarefas exibem um Ãºnico bloco de carregamento e erro", () => {
-  assert.equal((minhasTarefas.match(/Carregando tarefasâ€¦/g) || []).length, 1);
-  assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
-});
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíÛNxí:-jZ.¶›­–)Ş³V–×÷'BFW7Bg&öÒ&æöFS§FW7B#°Ğ¦–×÷'B76W'Bg&öÒ&æöFS¦76W'B÷7G&–7B#°Ğ¦–×÷'Bg2g&öÒ&æöFS¦g2#°Ğ Ğ¦6öç7BÒg2ç&VDf–ÆU7–æ2†æWrU$Â‚"ââ÷7&2ôçG7‚"Â–×÷'BæÖWFçW&Â’Â'WFc‚"“°Ğ¦6öç7BæbÒg2ç&VDf–ÆU7–æ2€Ğ¢æWrU$Â‚"ââ÷7&2öÆ–÷WG2öæf–vF–öâçG2"Â–×÷'BæÖWFçW&Â’ÀĞ¢'WFc‚"ÀĞ¢“°Ğ¦6öç7BÆ–÷WBÒg2ç&VDf–ÆU7–æ2€Ğ¢æWrU$Â‚"ââ÷7&2öÆ–÷WG2ôÆ–÷WBçG7‚"Â–×÷'BæÖWFçW&Â’ÀĞ¢'WFc‚"ÀĞ¢“°Ğ¦6öç7BF6†&ö&BÒg2ç&VDf–ÆU7–æ2€Ğ¢æWrU$Â‚"ââ÷7&2÷f–Ww2öF6†&ö&BôF6†&ö&Ef–WrçG7‚"Â–×÷'BæÖWFçW&Â’ÀĞ¢'WFc‚"ÀĞ¢“°Ğ¦6öç7B&VD÷F–öæÂÒ‡F‚’ÓàĞ¢g2æW†—7G57–æ2†æWrU$Â‡F‚Â–×÷'BæÖWFçW&Â’Ğ¢òg2ç&VDf–ÆU7–æ2†æWrU$Â‡F‚Â–×÷'BæÖWFçW&Â’Â'WFc‚"Ğ¢¢"#°Ğ¦6öç7Bf—6òÒ&VD÷F–öæÂ‚"ââ÷7&2÷f–Ww2÷f—6ó6Bõf—6ó4Ef–WrçG7‚"“°Ğ¦6öç7BÖ6BÒ&VD÷F–öæÂ‚"ââ÷7&2÷f–Ww2÷f—6ó6BõF‡&VT÷W&F–öæÄÖçG7‚"“°Ğ¦6öç7BWV—RÒ&VD÷F–öæÂ‚"ââ÷7&2÷f–Ww2öWV—RôWV—Uf–WrçG7‚"“°Ğ¦6öç7BÖWU6WF÷"Ò&VD÷F–öæÂ‚"ââ÷7&2÷f–Ww2öWV—RôÖWU6WF÷%f–WrçG7‚"“°Ğ¦6öç7BÖ–æ†5F&Vf2Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ô×•F6·2çG7‚"“°Ğ¦6öç7B&W7VÖôgVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õW'6öæÅv÷&µ7VÖÖ'’çG7‚"“°Ğ¦6öç7BVF—F÷$6W76òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôV×Æ÷–VT66W74VF—F÷"çG7‚"“°Ğ¦6öç7Bf–6†4gVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ô×•6W'f–6U6†VWG2çG7‚"“°Ğ¦6öç7Bæ÷F–f–66öW4gVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õv÷&´æ÷F–f–6F–öç2çG7‚"“°Ğ¦6öç7BvW&Væ6–F÷$F—7÷6—F—f÷2Ò&VD÷F–öæÂ‚"ââ÷7&2ö6ö×öæVçG2ôFWf–6TÖævW"çG7‚"“°Ğ¦6öç7B6W76õv÷&¶f÷&6RÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6öçFW‡Bõv÷&¶f÷&6T66W746öçFW‡BçG7‚"“°Ğ¦6öç7Bv÷&¶f÷&6TWfVçG2Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6RöÆ–"öWfVçG2çG2"“°Ğ¦6öç7BvVæFgVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôvVæFæVÂçG7‚"“°Ğ¦6öç7B†—7F÷&–6ôgVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ô×”7F—f—G”†—7F÷'’çG7‚"“°Ğ¦6öç7BFWFÆ†UF&VfÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õF6´FWF–Ç2çG7‚"“°Ğ¦6öç7Bf–6†FV6æ–6Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6W'f–6UFV6†æ–6Å6†VWBçG7‚"“°Ğ¦6öç7Bf÷&×VÆ&–ôf–6†FV6æ–6Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õFV6†æ–6Å6†VWDf÷&ÒçG7‚"“°Ğ¦6öç7BFV6†æ–6Å6†VWE6W'f–6RÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6R÷6W'f–6W2÷FV6†æ–6Â×6†VWBç6W'f–6RçG2"“°Ğ¦6öç7Bö6÷'&Væ6–2Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6†VWD–æ6–FVçG2çG7‚"“°Ğ¦6öç7BæW†÷2Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6†VWDGF6†ÖVçG2çG7‚"“°Ğ¦6öç7B6V—FT–ç7FÆ6òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ô–ç7FÆÆF–öä66WFæ6Tf÷&ÒçG7‚"“°Ğ¦6öç7B6öÆ–6—F6ôÖFW&–ÂÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôÖFW&–Å&WVW7EæVÂçG7‚"“°Ğ¦6öç7B&Vv—7G&õ&öGV6òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ&öGV7F–öäÆörçG7‚"“°Ğ¦6öç7B6öçG&öÆU6V6vVÒÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôf–æ—6†–ætG'––æt6öçG&öÂçG7‚"“°Ğ¦6öç7B–æ&÷„ÖFW&–—2Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôÖFW&–Å&WVW7D–æ&÷‚çG7‚"“°Ğ¦6öç7B7&–6õF&VfÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õF6´7&VF–öäf÷&ÒçG7‚"“°Ğ¦6öç7BG&–'V–6ôf–6†Ò&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6†VWD76–væÖVçDVF—F÷"çG7‚"“°Ğ¦6öç7BfÇW†õ&öGV6òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6W'f–6U—VÆ–æTVF—F÷"çG7‚"“°Ğ¦6öç7BVF—F÷$gVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2ôV×Æ÷–VT66W74VF—F÷"çG7‚"“°Ğ¦6öç7Bf–6†÷W&6–öæÂÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6W'f–6UFV6†æ–6Å6†VWBçG7‚"“°Ğ¦6öç7Bö6÷'&Væ6–4gVæ6–öæ&–òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õ6†VWD–æ6–FVçG2çG7‚"“°Ğ Ğ§FW7B‚'&÷F2WFVçF–6F2–æ6ÇVVÒf—<:6ò4BRWV—R"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Â÷FƒÒ'f—6òÓ6B"ò“°Ğ¢76W'BæÖF6‚†Â÷FƒÒ&WV—R"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ÖVçRÆFW&ÂöçF&f—<:6ò4BRWV—R"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æbÂ÷Fƒ¢uÂ÷f—6òÓ6Brò“°Ğ¢76W'BæÖF6‚†æbÂ÷Fƒ¢uÂöWV—Rrò“°Ğ§Ò“°Ğ Ğ§FW7B‚&gVæ6–öì:&–òì:6ò&V6V&RÆ–æ·2FÖ–æ—7G&F—f÷2FR6öæf–wW&:|;VW2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Æ–÷WBÂö6öç7BV×Æ÷–VU&öf–ÆUF‚Òv÷&µÂæ6öçFW‡Bbbv÷&µÂæ6öçFW‡EÂç&÷&–WF&–òÃòuÂöÖWR×6WF÷"7W&f–Âr¢uÂö6öæf–wW&6öW2rò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷v÷&µÂæ6öçFW‡EÃõÂç&÷&–WF&–òbbÄædÆ–æ²ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷FóÕÇ¶V×Æ÷–VU&öf–ÆUF…ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6–æòFògVæ6–öì:&–ò'&R6VçG&ÂFRæ÷F–f–6:|;VW2Fò–æVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷FóÒ%ÂöÖWR×6WF÷"6æ÷F–f–66öW2"ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂö&–ÖÆ&VÃÒ$'&—"æ÷F–f–6:|;VW2FògVæ6–öì:&–ò"ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷v÷&µÂæ6öçFW‡Bbbv÷&µÂæ6öçFW‡EÂç&÷&–WF&–òbb†5W&Ö—76–öåÂ‡v÷&µÂæ6öçFW‡BÂvæ÷F–f–66öW2uÂ’ÃòÄædÆ–æ²ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷v÷&µÂæ6öçFW‡EÃõÂç&÷&–WF&–òÃòÆ'WGFöâò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6&\:vÆ†ò6ö×æ†òW7FFò&VÂF6öæWŒ:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷W6U7FFUÂ…Â…Â’ÓâG—Vöbæf–vF÷"ÓÓÒwVæFVf–æVBrÇÅÇÂæf–vF÷%ÂæöäÆ–æUÂ’ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂöFDWfVçDÆ—7FVæW%Â‚vöæÆ–æRrÂWFFT6öææV7F–öåÂ’ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂöFDWfVçDÆ—7FVæW%Â‚vöffÆ–æRrÂWFFT6öææV7F–öåÂ’ò“°Ğ¢76W'BæÖF6‚†Æ–÷WBÂõÇ¶öæÆ–æRÃòu6—7FVÖöæÆ–æRr¢u6VÒ6öæWŒ:6òuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6–æòì:6ò–çfVçF6öçFF÷"FRæ÷F–f–6:|;VW2"Â‚’Óâ°Ğ¢76W'BæFöW4æ÷DÖF6‚†Æ–÷WBÂö&r×&÷6RÓSò“°Ğ§Ò“°Ğ Ğ§FW7B‚'W&f–ÂfV6†òÖVçRÜ;7fVÂòæfVv""Â‚’Óâ°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷FóÕÇ¶V×Æ÷–VU&öf–ÆUF…ÇÕÇ2¦öä6Æ–6³ÕÇµÂ…Â’Óâ6WDÖö&–ÆTÖVçT÷VåÂ†fÇ6UÂ•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&FÆ†òFR&V7W'6÷2FÖ,:–ÒfV6†òÖVçRÜ;7fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Æ–÷WBÂ÷FóÒ%Âö6öæf–wW&6öW2%Ç2¦öä6Æ–6³ÕÇµÂ…Â’Óâ6WDÖö&–ÆTÖVçT÷VåÂ†fÇ6UÂ•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'f—<:6ò÷W&6–öæÂì:6ò–æ6÷'÷&÷2ì;¦ÖW&÷2FVÖöç7G&F—f÷2Fò&÷L;7F—ò"Â‚’Óâ°Ğ¢76W'BæFöW4æ÷DÖF6‚‡f—6òÂõ%ÂEÇ2£ÂãSSÄÔDb†ÖÒÂ†6†Â’â£bFRò“°Ğ¢76W'BæÖF6‚‡f—6òÂöW7F÷VUö—FVç7Ç&ö¦WF÷56W'f–6Rò“°Ğ§Ò“°Ğ Ğ§FW7B‚%f—<:6ò4BW6&VæFW&—¦:|:6òvV$tÂ&VÂ6öÒfÆÆ&6²"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö6BÂõvV$tÅ&VæFW&W"ò“°Ğ¢76W'BæÖF6‚†Ö6BÂô÷&&—D6öçG&öÇ2ò“°Ğ¢76W'BæÖF6‚†Ö6BÂö7F—fUv÷&¶W'2ò“°Ğ¢76W'BæÖF6‚†Ö6BÂ÷v÷&¶W$æÖRò“°Ğ¢76W'BæÖF6‚†Ö6BÂööå6V7F÷%6VÆV7Bò“°Ğ¢76W'BæÖF6‚†Ö6BÂôòÖöFò4Bì:6òW7L:F—7öì:×fVÂæW7FRæfVvF÷"ò“°Ğ¢76W'BæÖF6‚†Ö6BÂ÷6WD6ÆV$6öÆ÷%Âƒ†fffffbÂÂ’ò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†Ö6BÂôÖöFò4BF—fòò“°Ğ§Ò“°Ğ Ğ§FW7B‚%f—<:6ò4B6'&VvòÖW6Fò6ö"FVÖæF"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡f—6òÂöÆ§•Â…Â…Â’Óâ–×÷'EÂ‚%ÂåÂõF‡&VT÷W&F–öæÄÖ%Â•Â’ò“°Ğ¢76W'BæÖF6‚‡f—6òÂô6'&VvæFòf—<:6ò4Bò“°Ğ¢76W'BæÖF6‚‡f—6òÂóÅ7W7Vç6Rò“°Ğ§Ò“°Ğ Ğ§FW7B‚%f—<:6ò4BÖçL:–Òò–æVÂÆFW&Â6öÒÆW'F2RWV—R6VÒ–çfVçF"&W6Vì:v"Â‚’Óâ°Ğ¢76W'BæÖF6‚€Ğ¢f—6òÀĞ¢÷6WF÷&W5Âæf–ÇFW%Â…Â‡6WF÷%Â’Óâ6WF÷%ÂæW7FFòÓÓÒ&7&—F–6ò%Â’òÀĞ¢“°Ğ¢76W'BæÖF6‚‡f—6òÂôWV—Rò“°Ğ¢76W'BæÖF6‚‡f—6òÂõ&W6Vì:vFœ:&–ì:6ò&Vv—7G&Fò“°Ğ¢76W'BæÖF6‚‡f—6òÂ÷fÇVSÒ&æò×&Vv—7G&F"ò“°Ğ¢76W'BæÖF6‚‡f—6òÂööå6V7F÷%6VÆV7C×¶'&—%6WF÷'Òò“°Ğ§Ò“°Ğ Ğ§FW7B‚&WV—R6öç7VÇF&öf–ÆW2FòFVæçBRW‡Æ–6—F&W6Vì:vì:6ò&Vv—7G&F"Â‚’Óâ°Ğ¢76W'BæÖF6‚†WV—RÂög&öÕÂ…²"u×&öf–ÆW5²"uÕÂ’ò“°Ğ¢76W'BæÖF6‚†WV—RÂõ&W6Vì:vì:6ò&Vv—7G&Fò“°Ğ¢76W'BæÖF6‚†WV—RÂõ6WF÷"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&F6†&ö&BöfW&V6R&W7VÖò&f—<:6ò4BRWV—R"Â‚’Óâ°Ğ¢76W'BæÖF6‚†F6†&ö&BÂ÷FóÒ%Â÷f—6òÓ6B"ò“°Ğ¢76W'BæÖF6‚†F6†&ö&BÂ÷FóÒ%ÂöWV—R"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂFògVæ6–öì:&–òÖçL:–Ò:|;VW2,:–F2RFF÷2&V—2Fò6WF÷""Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âõ–æVÂFògVæ6–öì:&–òò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âô:|;VW2,:–F2ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö†5W&Ö—76–öåÂ†6öçFW‡BÂwF&Vf2uÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöÖWU÷6WF÷%÷&ö¦WF÷2ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âöf÷&ÖE&¦òò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöFF—F–öæÅ6V7F÷'2ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöGVÆ—¦FôVÒò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂôGVÆ—¦Fò:2ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂì:6òG&ç6f÷&Ö6'&VvÖVçFò÷RW'&òFR&ö¦WF÷2VÒ¦W&ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö6'&VvæFòÃò~(
+br¢W'&òÃòt–æF—7öì:×fVÂrò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂÖçL:–Ò&ö¦WF÷2f—<:×fV—2GW&çFRæ÷f6öç7VÇF"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö6'&VvæFòbb&ö¦WF÷5ÂæÆVæwF‚ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂôGVÆ—¦æFò&ö¦WF÷>(
+bò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂÆ–×òÆW'F;72GVÆ—¦"&ö¦WF÷26öÒ7V6W76ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷6WDW'&õÂ‚ruÂ“µÇ2§6WE&ö¦WF÷5Â†æ÷&ÖÆ—¦U&ö¦V7G5Â†FFÂ•Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂæöÖV–GVÆ—¦:|:6òF÷2&ö¦WF÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö&–ÖÆ&VÃÕÇ¶6'&VvæFòÃòtGVÆ—¦æFò–æVÂr¢öæÆ–æRÃòu6VÒ6öæWŒ:6ò&GVÆ—¦"–æVÂr¢tGVÆ—¦"–æVÂuÇÒò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö&–ÖÆ&VÃÕÇ¶ÂEÇ·ÂçF—GVÆõÇÒ+rÂEÇ¶f÷&ÖE&¦õÂ‡Âç&¦õÂ•ÇÕÂEÇ·7FGW2Ãò+rÂEÇ·7FGW5ÇÖ¢ruÇÖÇÒò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂóÆƒ26Æ74æÖSÒ&&Æö6²FW‡B×6ÆFRÓ“#åÇ·ÂçF—GVÆõÇÓÅÂöƒ3âò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂóÇF–ÖR6Æ74æÖSÕÇ¶×BÓ"&Æö6²FW‡B×6Òò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'&÷VæFVBÖÆr&÷&FW"&÷&FW"ÖF6†VBò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂì:6ò6öç7VÇF&ö¦WF÷2VæFòfÆ–F:|:6òFR6W76òfÆ†"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–bÂ†66W74ÆöF–ærÇÅÇÂ66W74W'&÷"ÇÅÇÂ6öçFW‡EÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂõÅ¶66W74ÆöF–ærÂ66W74W'&÷"Â6öçFW‡BÂò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂFR&ö¦WF÷2'F–6—FGVÆ—¦:|:6òvÆö&Â"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöFDWfVçDÆ—7FVæW%Â‡v÷&¶f÷&6U&Vg&W6„WfVçBÂ&Vg&W6…æVÅÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âööä6Æ–6³ÕÇµÂ…Â’Óâ&WVW7Ev÷&¶f÷&6U&Vg&W6…Â…Â•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂ&VÖ÷fR&ö¦WF÷2çF–v÷2VæFòWF÷&—¦:|:6ò:’&WfövF"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–bÂ†66W74W'&÷%Â’ÇµÇ2§6WE&ö¦WF÷5Â…ÅµÅÕÂ“µÇ2§6WDGVÆ—¦FôVÕÂ†çVÆÅÂ“²ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂçVæ6–6–æ7&öæ—¦:|:6òvÆö&Â&FV6æöÆöv–76—7F—f"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö6Æ74æÖSÒ'76R×’Ób"&–Ö'W7“ÕÇ¶6'&VvæFòÇÅÇÂ66W74ÆöF–æuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂ–æf÷&Ö6öæWŒ:6òöffÆ–æRR&WFöÖ6–æ7&öæ—¦:|:6òòföÇF""Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v–æF÷uÂæFDWfVçDÆ—7FVæW%Â‚vöæÆ–æRrò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v–æF÷uÂæFDWfVçDÆ—7FVæW%Â‚vöffÆ–æRrò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–bÂ†—4öæÆ–æUÂ’&WVW7Ev÷&¶f÷&6U&Vg&W6…Â…Â’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âõ6VÒ6öæWŒ:6ò6öÒ–çFW&æWBò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂòöæÆ–æRò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vW&Væ6–F÷"FRF—7÷6—F—f÷2&V¦V—FFF÷2–æ6öç6—7FVçFW2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vW&Væ6–F÷$F—7÷6—F—f÷2Âö—4FFU7G&–ærò“°Ğ¢76W'BæÖF6‚†vW&Væ6–F÷$F—7÷6—F—f÷2ÂöæWr6WEÂ†FWf–6W5ÂæÖÂ…Â†FWf–6S¢FWf–6UÂ’ÓâFWf–6UÂæ–EÂ•Â’ò“°Ğ¢76W'BæÖF6‚†vW&Væ6–F÷$F—7÷6—F—f÷2ÂöÆVæwF‚âFFÂæÆ–Ö—Bò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&WfÆ–F:|:6òFògVæ6–öì:&–ò&W6W'f6öçFW‡Fòl:Æ–FòGW&çFRò6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6W76õv÷&¶f÷&6RÂ÷6WD6öçFW‡EÂ†7W'&VçBÓâ7W'&VçBbb7W'&VçEÂæV×&W6ö–CÓÓ×FVæçD–Bbb7W'&VçEÂægVæ6–öæ&–õÂæ–CÓÓ×W6W$–BÃò7W'&VçB¢çVÆÅÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&WfÆ–F:|:6ò–væ÷&&W7÷7F2çF–v2;72G&ö6FR–FVçF–FFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6W76õv÷&¶f÷&6RÂö6öç7BvVæW&F–öã×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†6W76õv÷&¶f÷&6RÂö6öç7B&WVW7CÕÂµÂ¶vVæW&F–öåÂæ7W'&VçBò“°Ğ¢76W'BæÖF6‚†6W76õv÷&¶f÷&6RÂ÷&WVW7CÓÓÖvVæW&F–öåÂæ7W'&VçBbf–FVçF—G•Âæ7W'&VçEÂçW6W$–CÓÓ×W6W$–Bbf–FVçF—G•Âæ7W'&VçEÂçFVæçD–CÓÓ×FVæçD–Bò“°Ğ¢76W'BæÖF6‚†6W76õv÷&¶f÷&6RÂ÷W6TVffV7EÂ…Â…Â“ÓåÂ…Â“ÓåÇ¶vVæW&F–öåÂæ7W'&VçEÂµÂ³µÇÒÅÅµÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&GVÆ—¦:|:6òFò–æVÂ6–æ7&öæ—¦÷2&Æö6÷2FRG&&Æ†ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡v÷&¶f÷&6TWfVçG2Â÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚‡v÷&¶f÷&6TWfVçG2Â÷G—Vöbv–æF÷rÓÓÒwVæFVf–æVBrò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷&WVW7Ev÷&¶f÷&6U&Vg&W6…Â…Â’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂ÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂ÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂW†–&RW&f–Â6öÖVçFRVæFòW&Ö—7<:6òfö’6öæ6VF–F"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö†5W&Ö—76–öåÂ†6öçFW‡BÂwW&f–ÂuÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–CÒ'W&f–Â"ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöV×Æ÷–VR×&öf–ÆR×F—FÆRò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö6öçFW‡EÂægVæ6–öæ&–õÂçVÇF–Öõö6W76òò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âõ6WF÷&W2WF÷&—¦F÷2ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&:|;VW2,:–F2÷77VVÒfö6òf—<:×fVÂæòFV6ÆFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âöfö7W3§&–ærÓ"fö7W3§&–ærÖ7–âÓSò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂöfW&V6RFÆ†òFRFV6ÆFò&2:|;VW2,:–F2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷V–6´7F–öç5ÂæÆVæwF‚âbbÆ‡&VcÒ"7V–6²Ö7F–öç2"ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö‡&VcÒ"7V–6²Ö7F–öç2"ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂõVÆ"&2:|;VW2,:–F2ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–CÒ'V–6²Ö7F–öç2"F$–æFWƒÕÇ²ÓÇÒò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂòV–6´7F–öç5ÂæÆVæwF‚bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6ÇF÷2F2:|;VW2,:–F2FWföÇfVÒfö6ò:6\:|:6òFRFW7F–æò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v–æF÷uÂæFDWfVçDÆ—7FVæW%Â‚v†6†6†ævRrÂfö7W4†6…F&vWEÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v–æF÷uÂç&WVW7Dæ–ÖF–öäg&ÖUÂ†fö7W4†6…F&vWEÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷v–æF÷uÂæ6æ6VÄæ–ÖF–öäg&ÖUÂ†g&ÖUÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöÆ7Dfö7W6VD†6…Âæ7W'&VçBÓÓÒ–BbbFö7VÖVçEÂæ7F—fTVÆVÖVçBÓÓÒF&vWBò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂõÇÒÂÅ¶66W75&VæFW$¶W•ÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷F&vWEÂç6WDGG&–'WFUÂ‚wF&–æFW‚rÂrÓuÂ“²F&vWEÂæfö7W5Â…Ç²&WfVçE67&öÆÃ¢G'VRÇÕÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–CÒ'F&Vf2"F$–æFWƒÕÇ²ÓÇÒò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–CÒ&vVæF"F$–æFWƒÕÇ²ÓÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'–æVÂ&W6W'f;¦ÇF–ÖGVÆ—¦:|:6òGW&çFRæ÷f6öç7VÇF"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö6öç7B6öçFW‡D¶W’Ò6öçFW‡BÃòÂEÇ¶6öçFW‡EÂæV×&W6ö–EÇÓ¥ÂEÇ¶6öçFW‡EÂægVæ6–öæ&–õÂæ–EÇÖ¢rsµÇ2¦–bÂ†6öçFW‡D¶W’ÓÒÆ7D6öçFW‡D¶W•Âæ7W'&VçEÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Âö–bÂ†66W74W'&÷%Â’ÇµÇ2§6WE&ö¦WF÷5Â…ÅµÅÕÂ“µÇ2§6WDGVÆ—¦FôVÕÂ†çVÆÅÂ“²ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2FògVæ6–öì:&–òW&Ö—FVÒ&V7WW&"fÆ†2FR6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WE&Vg&W6…Â†ãÓæåÂ³Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2&VfÆWFVÒ–ÖVF–FÖVçFR7FGW2R&öw&W76ò6VÆV6–öæF÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ&VÃÕÇ¶F&VfÂEÇ·F6µÂçF—GVÆõÇÒ+rÂEÇ¶f÷&ÖEF6µ7FGW5Â†F—7Æ–VE7FGW5Â•ÇÒ+rÂEÇ¶f÷&ÖEF6µ6V7F÷%Â‡F6µÂç6WF÷%Â•ÇÒ+r&–÷&–FFRÂEÇ¶f÷&ÖE&–÷&—G•Â‡F6µÂç&–÷&–FFUÂ•ÇÒ+rÂEÇ·F6µÂç&¦õÃö&¦òÂEÇ¶f÷&ÖEF6´FVFÆ–æUÂ‡F6µÂç&¦õÂ•ÇÖ¢u6VÒ&¦òuÇÕÂEÇ¶÷fW&GVUÃòr+rG&6Fs¢ruÇÖÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFFUF–ÖSÕÇ·6fUF6´FFUF–ÖUÂ‡F6µÂç&¦õÂ•ÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒ×&öw&W72Ö†VÇÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒÖæ÷FW2Ö†VÇÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöF—7Æ–VE7FGW3Öf–æÅÃ÷F6µÂç7FGW3§7FGW2ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöF—7Æ–VE&öw&W73ÖF—7Æ–VE7FGW3ÓÓÒv6öæ6ÇV–FuÃó§&öw&W72ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷G—SÒ&çVÖ&W""–çWDÖöFSÒ&çVÖW&–2"&WV—&VBÖ–ãÕÇ³ÇÒÖƒÕÇ³ÇÒ7FWÕÇ³ÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–×fÇVWFW‡CÕÇ¶ÂEÇ·6fTF—7Æ–VE&öw&W75ÇÒR6öæ6Ç\:ÖFöÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2FW7F6Ò&–÷&–FFR6öÒ6÷&W26VÜ:&çF–62"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö6öç7B&–÷&—G•FöæSÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷W&vVçFS¢v&r×&÷6RÓFW‡B×&÷6RÓƒrò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷&–÷&—G”&FvUFöæUÂ‡F6µÂç&–÷&–FFUÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2fVæ6–F2&V6V&VÒFW7FVRf—7VÂR6W7<:×fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö÷fW&GVUÃòv&÷&FW"×&÷6RÓ#&r×&÷6RÓSÂóCs¢v&÷&FW"×6ÆFRÓ#rò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö÷fW&GVUÃòr+rG&6Fs¢rrò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&r×&÷6RÓ‚Ó"’ÓFW‡B×‡2föçB×6VÖ–&öÆBFW‡B×&÷6RÓƒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6W'fœ:vòFRF&Vf2W†–vR&öw&W76ò–çFV—&ò"Â‚’Óâ°Ğ¢6öç7BF&Vf56W'f–6RÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6R÷6W'f–6W2÷F6·2ç6W'f–6RçG2"“°Ğ¢76W'BæÖF6‚‡F&Vf56W'f–6RÂôçVÖ&W%Âæ—4–çFVvW%Â‡&÷uÂç&öw&W76õÂ’ò“°Ğ¢76W'BæÖF6‚‡F&Vf56W'f–6RÂôçVÖ&W%Âæ—4–çFVvW%Â…Â‡fÇVR2&V6÷&CÇ7G&–ærÇVæ¶æ÷vãåÂ•Âç&öw&W76õÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2–æf÷&ÖÒ;¦ÇF–ÖGVÆ—¦:|:6òFÆ—7F"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷WFFVDBò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âü9¦ÇF–ÖGVÆ—¦:|:6ò:2ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2Æ–×Òò†÷,:&–òçFW&–÷"GW&çFRæ÷f6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WDFFÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2&W6W'fÒÆ—7FGW&çFRæ÷f6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚uÂuÂ“²ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷v÷&µF6·5ÂæÆ—7EÂ‡vRÆf–ÇFW%ÇÅÇÆçVÆÅÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFFÃòtGVÆ—¦æFòF&Vf>(
+br¢t6'&VvæFòF&Vf>(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2&Æ÷VV–Òòf–ÇG&òGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö6Æ74æÖSÕÂ&–çWBÖf–VÆB×BÓÂ"F—6&ÆVCÕÇ¶ÆöF–æuÇÒfÇVSÕÇ¶f–ÇFW%ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2W&Ö—FVÒÆ–×"òf–ÇG&ò6VÒFWVæFW"FÆ—7Ff¦–"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âöf–ÇFW"bcÆ'WGFöâG—SÕÂ&'WGFöåÂ"6Æ74æÖSÕÂ&'Fâ×6V6öæF'•Â"ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ&VÃÕÂ$Æ–×"f–ÇG&òFRF&Vf5Â"ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WDf–ÇFW%Â‚ruÂ“·6WEvUÂƒÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2ì:6òVçf–ÒGVÆ—¦:|:6ò6VÒ×VFì:v"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö6öç7BF—'G“×7FGW2Ó×F6µÂç7FGW2ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂòF—'G’ÇÅÇÂ†5W&Ö—76–öâò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2–æf÷&ÖÒVçF–FFRf—<:×fVÂRW†—7L:¦æ6–FRÖ—2:v–æ2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFFbbÆöF–ærbcÇ6Æ74æÖSÒ'FW‡B×‡2FW‡B×6ÆFRÓS"&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#âò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFFÂæ—FVç5ÂæÆVæwFƒÓÓÓÃòwF&Vff—<:×fVÂs¢wF&Vf2f—<:×fV—2rò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFFÂçFVÕöÖ—5Ãòr+rŒ:Ö—2F&Vf2F—7öì:×fV—5Ââs¢rrò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2–FVçF–f–6Òv–æ:|:6ò&FV6æöÆöv–76—7F—f"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ&VÃÒ%v–æ:|:6òFRF&Vf2"ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–Ö7W'&VçCÒ'vR"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2GVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷&VÖ÷fTWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöÆ7E&WGW&å&Vg&W6‚ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âóãò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2ì:6ò6öç7VÇFÒFF÷26VÒl:Öæ7VÆòfÆ–FFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö–eÂ†66W74ÆöF–æuÂ•Ç·6WDFFÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·&WGW&âò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö–eÂ†66W74W'&÷%ÇÅÇÂ6öçFW‡EÂ•Ç·6WDFFÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·6WDÆöF–æuÂ†fÇ6UÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂõÅ·vRÆf–ÇFW"Ç&Vg&W6‚Æ66W74ÆöF–ærÆ66W74W'&÷"Æ6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖòFògVæ6–öì:&–òW66÷&W26VÜ:&çF–62æ÷2–æF–6F÷&W2"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂögVæ7F–öâ6&EFöæRò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂôG&6F2ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂô6öæ6Ç\:ÖF2ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂôVÒæFÖVçFòò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖò–æf÷&ÖGVÆ—¦:|:6òæò&÷L:6òGW&çFR6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòtGVÆ—¦æFò–æF–6F÷&W2s¢tGVÆ—¦"–æF–6F÷&W2uÇÒò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂõÇ¶ÆöF–æuÃòtGVÆ—¦æFş(
+bs¢tGVÆ—¦"–æF–6F÷&W2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖò&W6W'f–æF–6F÷&W2GW&çFRæ÷f6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚uÂuÂ“²ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂõ&öÖ—6UÂç&W6öÇfUÂ…Â•ÂçF†VåÂ…Â…Â“Óç7W&6UÂç'5Â‚vÖWU÷&W7VÖõö÷W&6–öæÂuÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷7VÖÖ'’ÃòtGVÆ—¦æFò–æF–6F÷&W>(
+br¢t6'&VvæFò–æF–6F÷&W>(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖòì:6ò6öç7VÇFFF÷26VÒl:Öæ7VÆòFRgVæ6–öì:&–òfÆ–FFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö–eÂ†66W74ÆöF–æuÂ•Ç·6WE7VÖÖ'•Â†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·&WGW&âò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö–eÂ†66W74W'&÷%ÇÅÇÂ6öçFW‡EÂ•Ç·6WE7VÖÖ'•Â†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·6WDÆöF–æuÂ†fÇ6UÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷6WE7VÖÖ'•Â†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·6WDÆöF–æuÂ†fÇ6UÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂõÅ¶66W74ÆöF–ærÆ66W74W'&÷"Æ6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6òÇ&WG'•ÅÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖòæöÖV–6F–æF–6F÷"&6W76–&–Æ–FFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷&öÆSÒ&w&÷W"ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö6&B&÷&FW"ÓBò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ²â¦Æ&VÂâ§fÇVRâ¥ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖòVæ6Ö–æ†&¦÷2&Æ—7FVæFòF&Vfì:6òW7L:6'&VvF"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂögVæ7F–öâfö7W5F6µÂ‡F6´–C§7G&–æuÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷67&öÆÄ–çFõf–WuÂ…Ç¶&V†f–÷#¢w6Öö÷F‚rÆ&Æö6³¢w7F'BuÇÕÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶'&—"F&Vfò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æF–6F÷&W2FRF&Vf2öfW&V6VÒFÆ†ò6W7<:×fVÂ&Æ—7F"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂögVæ7F–öâfö7W5F6´Æ—7EÂ…Â’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö‡&VcÒ"7F&Vf2"öä6Æ–6³ÕÇ¶fö7W5F6´Æ—7EÇÒò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂô'&—"Ö–æ†2F&Vf2ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7VÖòFW7F6W&|:¦æ6–F÷2,;7†–Ö÷2&¦÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂögVæ7F–öâFVFÆ–æU7FGW5Â‡fÇVS§7G&–æuÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂõfVæ6R†ö¦Rò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂõfVæ6RÖæŒ:2ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂ÷7FGW3ÓÓÒtG&6Fòrò“°Ğ§Ò“°Ğ Ğ§FW7B‚&VF—F÷"FR6W76òW&Ö—FR&WWF—"ò6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂö6öç7BÅ·&WG'’Ç6WE&WG'•ÅÒò“°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂõÇÒÅÅ·W6W$–BÇ&WG'•ÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂö&–ÖÆ&VÃÒ%&V6'&Vv"ò6W76òFògVæ6–öì:&–ò"ò“°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂõFVçF"æ÷fÖVçFRò“°Ğ§Ò“°Ğ Ğ§FW7B‚&VF—F÷"FR6W76ò–æf÷&Ö6L:ÆövòFRW&Ö—7<;VW2f¦–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂò6FÆöuÂæÆVæwF‚ò“°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂôæVæ‡VÖW&Ö—7<:6òW7L:F—7öì:×fVÂ&6öæf–wW&:|:6òò“°Ğ§Ò“°Ğ Ğ§FW7B‚&WV—R&V6'&Vv;726W7<:6òRòFVæçBf–6&VÒF—7öì:×fV—2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†WV—RÂõÇÒÂÅ¶FÖ–æ—7G&F÷"ÂW7V&–õÃõÂçFVæçD–EÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&WV—RöfW&V6R&WG'’6öçFW‡GVÂRçVæ6–ò6'&VvÖVçFòFÆ—7F"Â‚’Óâ°Ğ¢76W'BæÖF6‚†WV—RÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†WV—RÂö&–Ö'W7“ÕÇ¶6'&VvæFõÇÒò“°Ğ¢76W'BæÖF6‚†WV—RÂ÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†WV—RÂ÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'&÷VæFVB×†Âò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2FR6W'fœ:vòW‡;VVÒ6'&VvÖVçFòRv–æ:|:6ò6W7<:×fV—2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–ÖÆ&VÃÒ%v–æ:|:6òFRf–6†2FR6W'fœ:vò"ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–Ö7W'&VçCÒ'vR"ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂõFVçF"æ÷fÖVçFRò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2ì:6ò6öç7VÇFÒFF÷26VÒl:Öæ7VÆòfÆ–FFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö–bÂ†66W74ÆöF–æuÂ’Ç²6WDÆ—7EÂ†çVÆÅÂ“²6WE6VÆV7FVEÂ†çVÆÅÂ“²6WEWFFVDEÂ†çVÆÅÂ“²&WGW&âò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö–bÂ†66W74W'&÷"ÇÅÇÂ6öçFW‡EÂ’Ç²6WDÆ—7EÂ†çVÆÅÂ“²6WE6VÆV7FVEÂ†çVÆÅÂ“²6WEWFFVDEÂ†çVÆÅÂ“²6WDÆöF–æuÂ†fÇ6UÂ’ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂõÅ·vRÂVW'’Â&Vg&W6‚Â66W74ÆöF–ærÂ66W74W'&÷"Â6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÂ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2W†–&VÒ;¦ÇF–ÖGVÆ—¦:|:6ò&V6V&–F"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöf÷&ÖE6†VWEWFFRò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöFFUF–ÖSÕÇ·6fU6†VWDFFUF–ÖUÂ†—FVÕÂæGVÆ—¦FõöVÕÂ•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2FR6W'fœ:vòæöÖV–ÒL:×GVÆòÂ6WF÷"RGVÆ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶f–6†ÂEÇ¶—FVÕÂçF—GVÆõÇÒ+rÂEÇ¶—56WF÷%Â†—FVÕÂç6WF÷%Â’Ãò6WF÷&W5Å¶—FVÕÂç6WF÷%ÅÒ¢—FVÕÂç6WF÷%ÇÒ+rÂEÇ¶f÷&ÖE6†VWEWFFUÂ†—FVÕÂæGVÆ—¦FõöVÕÂ•ÇÖÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2F–fW&Væ6–Ò6&v–æ–6–ÂFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöÆ—7BÃòtGVÆ—¦æFòf–6†>(
+br¢t6'&VvæFòf–6†>(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚'W7V—6FRf–6†2–æf÷&ÖòW7FFòFò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòuW7V—6æFòf–6†2s¢uW7V—6"f–6†2uÇÒò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂõÇ¶ÆöF–æuÃòuW7V—6æFş(
+bs¢uW7V—6"uÇÒò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂóÆ–çWBG—SÒ'6V&6‚"6Æ74æÖSÒ&–çWBÖf–VÆB"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW2W&Ö—FVÒ&WG'’Rv–æ:|:6ò6W7<:×fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–ÖÆ&VÃÒ%v–æ:|:6òFRæ÷F–f–6:|;VW2"ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–Ö7W'&VçCÒ'vR"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW2GVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷&VÖ÷fTWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöÆ7E&WGW&å&Vg&W6‚ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂóãò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæFFògVæ6–öì:&–ò–æf÷&Ö6'&VvÖVçFòÂfÆ–FW,:ÖöFòRW&Ö—FR&WG'’"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷&WV—&VBF—6&ÆVCÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂò7F'EÇÅÇÂVæBò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂöÖƒÕÇ¶VæEÇÅÇÇVæFVf–æVEÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂöÖ–ãÕÇ·7F'EÇÅÇÇVæFVf–æVEÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö&–Ö–çfÆ–CÕÇ¶–çfÆ–E&ævUÇÅÇÇVæFVf–æVEÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÂEÇ¶—FVÕÂçF—GVÆõÇÅÇÂtF—f–FFR6VÒL:×GVÆòuÇÒ+rÂEÇ¶f÷&ÖDvVæFFFUÂ†—FVÕÂæ–æ–6–õÂ•ÇÒ+rÂEÇ¶f÷&ÖDvVæF7FGW5Â†—FVÕÂç7FGW5Â•ÇÒ+r&–÷&–FFRÂEÇ¶f÷&ÖDvVæF&–÷&—G•Â†—FVÕÂç&–÷&–FFUÂ•ÇÖÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæF–æf÷&ÖGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòtGVÆ—¦æFòvVæFs¢tGVÆ—¦"vVæFuÇÒò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂõÇ¶ÆöF–æuÃòtGVÆ—¦æFş(
+bs¢tGVÆ—¦"uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6òFògVæ6–öì:&–òöfW&V6R&WG'’Rv–æ:|:6ò6W7<:×fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–ÖÆ&VÃÒ%v–æ:|:6òFò†—7L;7&–6òFRF—f–FFW2"ò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–Ö7W'&VçCÒ'vR"ò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÂEÇ¶Æ&VÇ5Å¶—FVÕÂæ6õÅÕÇÅÇÂtF—f–FFR&Vv—7G&FuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6ò–æf÷&ÖGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòtGVÆ—¦æFò†—7L;7&–6òs¢tGVÆ—¦"†—7L;7&–6òuÇÒò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂõÇ¶ÆöF–æuÃòtGVÆ—¦æFş(
+bs¢tGVÆ—¦"†—7L;7&–6òuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6òF–fW&Væ6–6&v–æ–6–ÂFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂöFFÃòtGVÆ—¦æFò†—7L;7&–6ş(
+br¢t6'&VvæFò†—7L;7&–6ş(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6òì:6ò6öç7VÇFFF÷26VÒl:Öæ7VÆòFRgVæ6–öì:&–òfÆ–FFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö–eÂ†66W74ÆöF–æuÂ•Ç·6WDFFÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·&WGW&âò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂö–eÂ†66W74W'&÷%ÇÅÇÂ6öçFW‡EÂ•Ç·6WDFFÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ“·6WDÆöF–æuÂ†fÇ6UÂ’ò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂõÅ·vRÇ&Vg&W6‚Æ66W74ÆöF–ærÆ66W74W'&÷"Æ6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6ò&V–æ–6–v–æ:|:6òòG&ö6"FRgVæ6–öì:&–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂ÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WEvUÂƒÂ“µÇÒÅÅ¶6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&Æ—7F2FògVæ6–öì:&–ò&V–æ–6–Òf–ÇG&÷2Rv–æ:|:6òòG&ö6"FR6öçFW‡Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WEvUÂƒÂ“µÇÒÅÅ¶6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WEvUÂƒÂ“·6WDf–ÇFW%Â‚ruÂ“µÇÒÅÅ¶6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂ÷W6TVffV7EÂ…Â…Â’ÓâÇ²6WEvUÂƒÂ“²6WE6V&6…Â‚ruÂ“²6WEVW'•Â‚ruÂ“²ÇÒÂÅ¶6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÂ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|:6òÆ–×W'&òçF–vòò'&—"VÒ&Vv—7G&ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷6WDW'&÷%Â‚uÂuÂ“¶÷VæW%&VeÂæ7W'&VçCÖWfVçEÂæ7W'&VçEF&vWC·6WE6VÆV7FVEÂ†—FVÕÂ’ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöf–6†öG&–'V–F¢tf–6†G&–'\:ÖFrò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW2&W6W'fÒÆ—7FRòFWFÆ†RGW&çFRæ÷f6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚uÂuÂ“²ò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚uÂuÂ“·6WE6VÆV7FVEÂ†çVÆÅÂ’ò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöFFÃòtGVÆ—¦æFòæ÷F–f–6:|;VW>(
+br¢t6'&VvæFòæ÷F–f–6:|;VW>(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæFW6FF2Æö6—2&ì:6òFW6Æö6"òW,:ÖöFòæògW6ò†÷,:&–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö6öç7B—6ôFFSÕÂ†FFS¤FFUÂ“Óâò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†vVæFgVæ6xîÚ$z{-®éÜj×GVÆ—¦ò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂöÆ7E&WGW&å&Vg&W6ƒ×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&ö¦WF÷2Fò6WF÷"GVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöÆ7E&WGW&å&Vg&W6‚ÒW6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÂ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÂ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&ö¦WF÷2Fò6WF÷"&V¦V—FÒGWÆ–6–FFW2R÷&FVæÒ&¦÷2l:Æ–F÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂöæWr6WEÂ‡&ö¦V7G5ÂæÖÂ‡&ö¦V7BÓâ&ö¦V7EÂæ–EÂ•Â•Âç6—¦RÓÒ&ö¦V7G5ÂæÆVæwF‚ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"ÂòÂõÅåÅÆEÇ³EÇÒÕÅÆEÇ³%ÇÒÕÅÆEÇ³%ÇÕÂEÂõÂçFW7EÂ‡&¦õÂ’ò“°Ğ¢76W'BæÖF6‚†ÖWU6WF÷"Â÷&WGW&â&ö¦V7G5Âç6÷'EÂ…Â†Â%Â’Óâò“°Ğ§Ò“°Ğ Ğ§FW7B‚&VFœ:|:6òFR6W76òÆ–×W'&òòÇFW&"W66÷òFRW&Ö—7<:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†VF—F÷$6W76òÂ÷6WDw&çG5Â†7W'&VçCÓæ7W'&VçEÂæÖÂ†sÓæsÓÓÖw&çEÃõÇµÂåÂåÂærÆW66÷ó¦UÂçF&vWEÂçfÇVR2&V6÷&E66÷UÇÓ¦uÂ•Â“¶6ÆV$W'&÷%Â…Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2&V–æ–6–Òv–æ:|:6òR'V—fòòG&ö6"FR6öçFW‡Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2Â÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WEvUÂƒÂ“·6WDf–ÆUÂ†çVÆÅÂ“·6WDÖW76vUÂ‚uÂuÂ“·&V6V—EÂæ7W'&VçCÖçVÆÂò“°Ğ§Ò“°Ğ Ğ§FW7B‚'W7V—6FRf–6†2Æ–×W'&òòVF—F"òFW&Öò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂ÷6WE6V&6…Â†WfVçEÂçF&vWEÂçfÇVUÂ“²6WDW'&÷%Â‚uÂuÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2FR6W'fœ:vòGVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöÆ7E&WGW&å&Vg&W6‚ÒW6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÂ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÂ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6öçFF÷"FRæ÷F–f–6:|;VW2çVæ6–×VFì:v2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂôæ÷F–f–6:|;VW2Ç7â&–ÖÆ—fSÒ'öÆ—FR#âò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2GVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2ÂöÆ7E&WGW&å&Vg&W6ƒ×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæFGVÆ—¦ò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂöÆ7E&WGW&å&Vg&W6ƒ×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚vfö7W2rÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷fö–BÆöEÂ…Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6òGVÆ—¦ò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂöÆ7E&WGW&å&Vg&W6ƒ×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ö6÷',:¦æ6–2&V–æ–6–Ò:v–æRGVÆ—¦Òò&WF÷&æ":&"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2Â÷6WEvUÂƒÂ“µÇÒÅÅ·6W'f–6T–BÇ6V7F÷"Æ6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2ÂöÆ7E&WGW&å&Vg&W6ƒ×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2ÂöFDWfVçDÆ—7FVæW%Â‚wf—6–&–Æ—G–6†ævRrÇ&Vg&W6„öå&WGW&åÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&FWFÆ†RFRF&VföfW&V6R&WG'’6öçFW‡GVÂRW7FFòFR6'&VvÖVçFò6W7<:×fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂõ&V6'&Vv"F&Vfò“°Ğ§Ò“°Ğ Ğ§FW7B‚&FWFÆ†RFRF&Vf–æf÷&Ö&V6'&VvÖVçFòæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃõÂ‡F6µÃòtGVÆ—¦æFòF&Vfs¢t6'&VvæFòF&VfuÂ“¢u&V6'&Vv"F&VfuÇÒò“°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂõÇ¶ÆöF–æuÃõÂ‡F6µÃòtGVÆ—¦æFş(
+bs¢t6'&VvæFş(
+buÂ“¢u&V6'&Vv"F&VfuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&FWFÆ†RFRF&Vf&W6W'ff–6†GW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†FWFÆ†UF&VfÂ÷F6²ÃòtGVÆ—¦æFòF&Vf(
+br¢t6'&VvæFòF&Vf(
+brò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†FWFÆ†UF&VfÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“·6WEF6µÂ†çVÆÅÂ“·6WEWFFVDEÂ†çVÆÅÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6çVæ6–6'&VvÖVçFòR÷W&:|;VW2VÒæFÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Â÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#ä6'&VvæFòf–6†L:–6æ–6ò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Âö&–Ö'W7“ÕÇ·6f–ærÇÅÇÂ6†V6¶Æ—7D'W7’ÇÅÇÂÆöF–æuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6çVæ6–W<:¦æ6–FRæW†òf–æ7VÆFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f÷&×VÆ&–ôf–6†FV6æ–6Â÷&öÆSÕÇ¶7W'&VçBÃòVæFVf–æVB¢w7FGW2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6&W6W'fò6öçF\;¦FòGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Âö–bÂ†ÆöF–ærbb6†VWEÂ’&WGW&âò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂôGVÆ—¦æFòf–6†L:–6æ–6(
+bò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Â÷6WE6†VWEÂ†çVÆÅÂ“²6WEfÇVW5Â…ÇµÇÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6&Æ÷VV–VFœ:|:6òR:|;VW2GW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂ6f–ærÇÅÇÂ6†V6¶Æ—7D'W7’ò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂ6†VWEÂçöFUöVF—F"ò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂ6f–ærÇÅÇÂ6†V6¶Æ—7D'W7’ÇÅÇÂ6†VWEÂç7FGW5Ç2£ÓÓÕÇ2¢v6öæ6ÇV–FuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ö6÷',:¦æ6–2RæW†÷2W‡;VVÒ&WG'’Rv–æ:|:6ò6W7<:×fVÂ"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2Âö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2Âö&–ÖÆ&VÃÒ%v–æ:|:6òFRö6÷',:¦æ6–2"ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2Â÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓS#äæVæ‡VÖö6÷',:¦æ6–F—7öì:×fVÂæW7F:v–æò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2Âö&–ÖÆ&VÃÕÇ¶ö6÷',:¦æ6–ÂEÇ¶–æ6–FVçEF—FÆUÇÒ+rÂEÇ¶f÷&ÖD–æ6–FVçE6WfW&—G•Â†—FVÕÂæw&f–FFUÂ•ÇÒ+rÂEÇ¶–æ6–FVçE7FGW5ÇÖÇÒò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–2ÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†æW†÷2Âö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7’ÇÅÇÂÆ–æ´'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†æW†÷2Âö&–ÖÆ&VÃÒ%v–æ:|:6òFRæW†÷2"ò“°Ğ¢76W'BæÖF6‚†æW†÷2Âö&–ÖÆ&VÃÕÇ¶æW†òÂEÇ¶GF6†ÖVçDæÖUÇÒ+rÂEÇ¶GF6†ÖVçE6—¦UÇÖÇÒò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂôæVæ‡VÒæW†òfÆ–FFòæW7F:v–æò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ö6÷',:¦æ6–2–æf÷&ÖÒGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÃòtwV&FRGVÆ—¦:|:6òF2ö6÷',:¦æ6–2s¢tGVÆ—¦"ö6÷',:¦æ6–2uÇÒò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂõÇ¶ÆöF–ærÇÅÇÂ'W7•ÃòtwV&F^(
+bs¢tGVÆ—¦"ö6÷',:¦æ6–2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ö6÷',:¦æ6–2Æ–×ÒfVVF&6²òVF—F""Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂö6öç7B6ÆV$fVVF&6³ÕÂ…Â“ÓåÇ·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ“µÇÒò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂ÷6WEF—FÆUÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$fVVF&6µÂ…Â’ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂ÷6WDFW67&—F–öåÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$fVVF&6µÂ…Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2Rö6÷',:¦æ6–2F–fW&Væ6–Ò6&v–æ–6–ÂFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2Âö—FV×5ÂæÆVæwF‚ÃòtGVÆ—¦æFòæW†÷>(
+br¢t6'&VvæFòæW†÷>(
+brò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂö—FV×5ÂæÆVæwF…ÃòtGVÆ—¦æFòö6÷',:¦æ6–>(
+bs¢t6'&VvæFòö6÷',:¦æ6–>(
+brò“°Ğ¢76W'BæÖF6‚†æW†÷2Â÷6WD—FV×5Â…ÅµÅÕÂ“·6WDÆ–æ·5Â…ÇµÇÕÂ“¶öäÆ—7FVEÃõÂåÂ…ÅµÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂ÷6WD—FV×5Â…ÅµÅÕÂ“·6WDÖ÷&UÂ†fÇ6UÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&ö6÷',:¦æ6–2&W6WFÒòf÷&×VÌ:&–òòG&ö6"FR6öçFW‡Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂ÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WEF—FÆUÂ‚ruÂ“·6WDFW67&—F–öåÂ‚ruÂ“·6WEG—UÂ‚v÷WG&òuÂ“·6WE6WfW&—G•Â‚vFVæ6òuÂ“·6WDÖW76vUÂ‚ruÂ“·&V6V—EÂæ7W'&VçCÖçVÆÃµÇÒÅÅ·6W'f–6T–BÇ6V7F÷%ÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6V—FRF–ç7FÆ:|:6ò6–æÆ—¦6ÇfÖVçFòR&Æ÷VV–Vçf–ò6öæ6÷'&VçFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂö&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂöF—6&ÆVCÕÇ²GF6†ÖVçG5ÂæÆVæwF‚ÇÅÇÂF—6&ÆVBÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂòGF6†ÖVçG5ÂæÆVæwF‚bcÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂ÷G—SÒ&6†V6¶&÷‚"&WV—&VB6†V6¶VCÕÇ¶6öæf—&ÖVEÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6V—FRÆ–&W&ò–FVçF–f–6F÷";726öæf—&Ö:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂöv—Böå&Vv—7FW%Â…ÇµÂåÂåÂæFFÇ&WVW7C§&V6V—EÂæ7W'&VçEÂæ–EÇÕÂ“·&V6V—EÂæ7W'&VçCÖçVÆÂò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6V—FRÆ–×W'&òò6÷'&–v—"6×÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂö6öç7B6ÆV$W'&÷#ÕÂ…Â“Óç6WDW'&÷%Â‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂ÷6WDæÖUÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$W'&÷%Â…Â’ò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂ÷6WE&ööeÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$W'&÷%Â…Â’ò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂö–CÕÇ¶ÂEÇ¶–EÇÒÖæÖVÇÕµãåÒ¦WFô6ö×ÆWFSÒ&æÖR"ò“°Ğ¢76W'BæÖF6‚†6V—FT–ç7FÆ6òÂö&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒ×&ööbÖ†VÇÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&öG\:|:6òRW7F÷VR6–æÆ—¦Ò÷W&:|;VW2RÖVç6vVç2ògVæ6–öì:&–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂöFFUF–ÖSÕÇ·6fTVçG'”FFUF–ÖUÂ†—FVÕÂæ7&–FõöVÕÂ•ÇÒò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂôæVæ‡VÒWfVçFòFR&öG\:|:6ò&Vv—7G&FòæW7Ff–6†ò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö&–ÖÆ&VÃÕÇ¶WfVçFòÂEÇ¶f÷&ÖEG—UÂ†—FVÕÂçF—õÂ•ÇÒ+rÂEÇ¶f÷&ÖEVçF—G•Â†—FVÕÂçVçF–FFUÂ•ÇÒÂEÇ¶—FVÕÂçVæ–FFUÇÒ+rÂEÇ¶f÷&ÖDVçG'”FFUÂ†—FVÕÂæ7&–FõöVÕÂ•ÇÖÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&Vv—7G&÷2÷W&6–öæ—2Æ–&W&Òò–FVçF–f–6F÷";727V6W76ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂöv—Böå&Vv—7FW%Â…ÇµÇ2¥ÂåÂåÂæFFÂ&WVW7C¢&WVW7EÂæ7W'&VçEÂæ–EÇ2¥ÇÕÂ“²&WVW7EÂæ7W'&VçBÒçVÆÂò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂöv—Böä7&VFUÂ…ÇµÇ2¥ÂåÂåÂæFFÂ&WVW7C¢&WVW7EÂæ7W'&VçEÂæ–EÇ2¥ÇÕÂ“²&WVW7EÂæ7W'&VçBÒçVÆÂò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&öG\:|:6òÆ–×òfVVF&6²òVF—F"æ÷fòWfVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂ÷6WEVçF—G•Â†WfVçEÂçF&vWEÂçfÇVUÂ“²6WDÖW76vUÂ‚ruÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&öG\:|:6òfÆ–Fö'6W'f:|:6òçFW2FòVçf–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂöFW67&—F–öåÂçG&–ÕÂ…Â•ÂæÆVæwF‚Â2ò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂô–æf÷&ÖRVÖö'6W'f:|:6ò6öÒVÆòÖVæ÷226&7FW&W2ò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂöÖ–äÆVæwFƒÕÇ³5ÇÒÖ„ÆVæwFƒÕÇ³ÇÒ&WV—&VBò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö–CÕÇ¶ÂEÇ¶–EÇÒ×VçF—G–ÇÕµãåÒ§&WV—&VBÖ–ãÒò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö–CÕÇ¶ÂEÇ¶–EÇÒ×Væ—FÇÕµãåÒ§&WV—&VBÖ„ÆVæwFƒÕÇ³CÇÒò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö–CÕÇ¶ÂEÇ¶–EÇÒ×VçF—G–ÇÕµãåÒ¦–çWDÖöFSÒ&FV6–ÖÂ"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6öÆ–6—F:|:6òFRÖFW&–ÂÆ–×fVVF&6²òVF—F""Â‚’Óâ°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂ÷6WEVçF—G•Â†WfVçEÂçF&vWEÂçfÇVUÂ“²6WDÖW76vUÂ‚ruÂ’ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö6å&WVW7Bbb÷F–öç5ÂæÆVæwF‚bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö–CÕÇ¶ÂEÇ¶f–VÆE&Vf—…ÇÒÖ—FVÖÇÕµãåÒ§&WV—&VBò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö–CÕÇ¶ÂEÇ¶f–VÆE&Vf—…ÇÒ×VçF—G–ÇÕµãåÒ§&WV—&VBÖ–ãÒò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö–CÕÇ¶ÂEÇ¶f–VÆE&Vf—…ÇÒ×&V6öæÇÕµãåÒ§&WV—&VBÖ–äÆVæwFƒÕÇ³5ÇÒò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö–CÕÇ¶ÂEÇ¶f–VÆE&Vf—…ÇÒ×VçF—G–ÇÕµãåÒ¦–çWDÖöFSÒ&FV6–ÖÂ"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6V6vVÒÂ–æ&÷‚FRW7F÷VRR&W7VÖòçVæ6–ÒW7FF÷2FR÷W&:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂö&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ7F–öä'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2ÂõFVçF"æ÷fÖVçFRò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö7F–öä'W7’ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö&–ÖÆ&VÃÕÇ¶6öÆ–6—F:|:6òFRÂEÇ¶—FVÕÂæ—FVÕöæöÖUÇÒ+rÂEÇ¶f÷&ÖEVçF—G•Â†—FVÕÂçVçF–FFUÂ•ÇÒÂEÇ¶—FVÕÂçVæ–FFUÇÒ+rÂEÇ¶f÷&ÖE7FGW5Â†—FVÕÂç7FGW5Â•ÇÖÇÒò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2ÂöF—6&ÆVCÕÇ¶ÆöF–æuÇÅÇÂ7F–öä'W7•ÇÒò“°Ğ¢76W'BæÖF6‚‡&W7VÖôgVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6V6vVÒR&öG\:|:6ò–æf÷&ÖÒGVÆ—¦:|:6òæ÷2&÷L;VW2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂö&–ÖÆ&VÃÕÇ¶'W7•ÃòtwV&FRGVÆ—¦:|:6òF6V6vVÒs¢tGVÆ—¦"†÷,:&–òFò6W'f–F÷"uÇÒò“°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂö&–ÖÆ&VÃÕÇ¶'W7•ÃòtwV&FRGVÆ—¦:|:6òF÷2&Vv—7G&÷2s¢tGVÆ—¦"&Vv—7G&÷2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6V6vVÒÆ–×fVVF&6²òVF—F"ò&¦ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂ÷6WDÖ–çWFW5Â†WfVçEÂçF&vWEÂçfÇVUÂ“²6WDÖW76vUÂ‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂ÷G—SÒ&çVÖ&W""–çWDÖöFSÒ&çVÖW&–2"&WV—&VBÖ–ãÕÇ³ÇÒÖƒÕÇ³ƒÇÒò“°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂ÷G—SÒ&çVÖ&W""–çWDÖöFSÒ&çVÖW&–2"&WV—&VBÖ–ãÕÇ³ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6'L:6òFR6öÆ–6—F:|:6ò–æf÷&ÖGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö&–ÖÆ&VÃÕÇ¶'W7•ÃòtGVÆ—¦æFò6öÆ–6—F:|;VW2s¢tGVÆ—¦"6öÆ–6—F:|;VW2uÇÒò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂõÇ¶'W7•ÃòtGVÆ—¦æFş(
+bs¢tGVÆ—¦"uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6'L:6òFR6öÆ–6—F:|:6ò&W6W'fò†÷,:&–òGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæFöW4æ÷DÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂ÷6WD'W7•Â‡G'VUÂ“²6WDÖW76vUÂ‚ruÂ“²6WEWFFVDEÂ†çVÆÅÂ’ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö'W7•ÃòtGVÆ—¦æFò6öÆ–6—F:|;VW>(
+bs§WFFVDBò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6æ6VÆÖVçFòFRÖFW&–Â6öæf—&Ö7V6W76ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂö&–ÖÆ&VÃÕÇ¶6öÆ–6—F:|:6òFRÂEÇ·&WVW7D—FVÕÂæ—FVÕöæöÖUÇÒ+rÂEÇ¶f÷&ÖEVçF—G•Â‡&WVW7D—FVÕÂçVçF–FFUÂ•ÇÒÂEÇ·&WVW7D—FVÕÂçVæ–FFUÇÒ+rÂEÇ¶f÷&ÖE7FGW5Â‡&WVW7D—FVÕÂç7FGW5Â•ÇÖÇÒò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂöv—Böä6æ6VÅÂ‡&WVW7D—FVÕÂ“²6WDÖW76vT¶–æEÂ‚w7FGW2uÂ“²6WDÖW76vUÂ‚u6öÆ–6—F:|:6ò6æ6VÆFÂâuÂ’ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂöÖW76vT¶–æBÅÇ2§6WDÖW76vT¶–æEÅÒâ§W6U7FFSÂw7FGW2rÇÂvW'&÷"såÂ‚w7FGW2uÂ’ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂ÷6WDÖW76vT¶–æEÂ‚w7FGW2uÂ“µÇ2§6WDÖW76vUÂ‚u6öÆ–6—F:|:6ò6æ6VÆFÂâuÂ’ò“°Ğ¢76W'BæÖF6‚‡6öÆ–6—F6ôÖFW&–ÂÂ÷&öÆSÕÇ¶ÖW76vT¶–æBÓÓÒw7FGW2rÃòw7FGW2r¢vÆW'BuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚FRW7F÷VR–æf÷&ÖGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö&–ÖÆ&VÃÕÇ¶ÆöF–ærÇÅÇÂ7F–öä'W7•ÃòtwV&FRGVÆ—¦:|:6òF26öÆ–6—F:|;VW2s¢tGVÆ—¦"6öÆ–6—F:|;VW2uÇÒò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2ÂõÇ¶ÆöF–ærÇÅÇÂ7F–öä'W7•ÃòtwV&F^(
+bs¢tGVÆ—¦"uÇÒò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ7F–öä'W7•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚FRW7F÷VR'F–6—FGVÆ—¦:|:6òvÆö&Â"Â‚’Óâ°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷v÷&¶f÷&6U&Vg&W6„WfVçBò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2ÂöFDWfVçDÆ—7FVæW%Â‡v÷&¶f÷&6U&Vg&W6„WfVçBÇ&Vg&W6…æVÅÂ’ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷fö–BÆöEÂ†fÇ6UÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚Æ–×6öæf—&Ö:|:6òçFW2FRæ÷f:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷6WD7F–öä'W7•Â†—FVÕÂæ–EÂ“·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&VF—F÷&W2÷W&6–öæ—2çVæ6–Ò6'&VvÖVçFòR&Æ÷VV–ÒW7FF÷26öæ6÷'&VçFW2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Âö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Âö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂö&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&fÇW†ò–æf÷&Ö2:|;VW2FR6Çf"R&V6'&Vv""Â‚’Óâ°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂö&–ÖÆ&VÃÕÇ¶'W7•Ãòu6ÇfæFòfÇW†òs¦fÆ÷uÂæ6öæf–wW&FõÃòu6Çf"6W\:¦æ6–s¢t6öæf–wW&"fÇW†òuÇÒò“°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòt6'&VvæFòfÇW†òs¢u&V6'&Vv"fÇW†òuÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&fÇW†ò&W6W'f6öæf–wW&:|:6òGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂöfÆ÷rÃòtGVÆ—¦æFòfÇW†ş(
+br¢t6'&VvæFòfÇW†ş(
+brò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†fÇW†õ&öGV6òÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“·6WDfÆ÷uÂ†çVÆÅÂ’ò“°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂ÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WDfÆ÷uÂ†çVÆÅÂ“·6WE6VÆV7FVEÂ…ÅµÅÕÂ“µÇÒÅÅ·6W'f–6T–BÆ6öçFW‡EÃõÂç&÷&–WF&–õÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&fÇW†òÆ–×fVVF&6²òÇFW&"6W\:¦æ6–"Â‚’Óâ°Ğ¢76W'BæÖF6‚†fÇW†õ&öGV6òÂ÷6WDÖW76vUÂ‚ruÂ“·6WDW'&÷%Â‚ruÂ“·6WE6VÆV7FVBò“°Ğ§Ò“°Ğ Ğ§FW7B‚&7&–:|:6òFRF&Vf–æf÷&Ö6'&VvÖVçFòF÷2&W7öç<:fV—2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòt6'&VvæFò&W7öç<:fV—2s¦'W7•Ãòt7&–æFòF&Vfs¢t7&–"F&VfuÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂõÇ¶ÆöF–æuÃòt6'&VvæFş(
+bs¦'W7•Ãòt7&–æFş(
+bs¢t7&–"F&VfuÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö6æF–FFW5ÂæÆVæwF‚ÃòtGVÆ—¦æFò&W7öç<:fV—>(
+br¢t6'&VvæFò&W7öç<:fV—>(
+brò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂòÆöF–ærbbW'&÷"bb6æF–FFW5ÂæÆVæwF‚bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷G—SÒ&FFWF–ÖRÖÆö6Â"WFô6ö×ÆWFSÒ&öfb"&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒÖFVFÆ–æRÖ†VÇÇÒfÇVSÕÇ¶FVFÆ–æUÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂöWFô6ö×ÆWFSÒ&öfb"&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒÖFVFÆ–æRÖ†VÇÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂôò†÷,:&–ò6W,:6Çfò6öæf÷&ÖRògW6òÆö6ÂFW7FRF—7÷6—F—fòò“°Ğ§Ò“°Ğ Ğ§FW7B‚&7&–:|:6òFRF&VfÆ–×fVVF&6²òG&ö6"ò6öçFW‡Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷6WD6æF–FFW5Â…ÅµÅÕÂ“·6WDV×Æ÷–VUÂ‚ruÂ“·6WEF—FÆUÂ‚ruÂ“·6WDFW67&—F–öåÂ‚ruÂ“·6WDFVFÆ–æUÂ‚ruÂ“·6WE&–÷&—G•Â‚væ÷&ÖÂuÂ“·6WDÖæFF÷'•Â†fÇ6UÂ“·&V6V—EÂæ7W'&VçCÖçVÆÂò“°Ğ¢76W'BæFöW4æ÷DÖF6‚†7&–6õF&VfÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ“·6WD6æF–FFW5Â…ÅµÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&7&–:|:6òFRF&VfÆ–×fÆ–F:|:6òò6÷'&–v—"6×÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷6WEF—FÆUÂ†WfVçEÂçF&vWEÂçfÇVUÂ“·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷6WDV×Æ÷–VUÂ†WfVçEÂçF&vWEÂçfÇVUÂ“·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö6öç7B6ÆV$fVVF&6³ÕÂ…Â“ÓåÇ·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ“µÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷6WDFW67&—F–öåÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$fVVF&6µÂ…Â’ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂ÷6WDFVFÆ–æUÂ†WfVçEÂçF&vWEÂçfÇVUÂ“¶6ÆV$fVVF&6µÂ…Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&7&–:|:6òFRF&VffÆ–FFW67&œ:|:6òçFW2FòVçf–ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂö–CÕÇ¶ÂEÇ¶–EÇÒ×F—FÆVÇÕµãåÒ§&WV—&VBÖ–äÆVæwFƒÕÇ³%ÇÒÖ„ÆVæwFƒÕÇ³#ÇÒò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂöFW67&—F–öåÂçG&–ÕÂ…Â•ÂæÆVæwFƒÃ"ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂô–æf÷&ÖRVÖFW67&œ:|:6ò6öÒVÆòÖVæ÷2"6&7FW&W2ò“°Ğ¢76W'BæÖF6‚†7&–6õF&VfÂöÖ–äÆVæwFƒÕÇ³%ÇÒÖ„ÆVæwFƒÕÇ³ÇÒ&WV—&VBò“°Ğ§Ò“°Ğ Ğ§FW7B‚&VF—F÷"FR6W76òçVæ6–6'&VvÖVçFòR&Æ÷VV–6ÇfÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶'W7’ÇÅÇÂÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂö'W7’bcÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#å6ÇfæFò6W76òFògVæ6–öì:&–ş(
+cÅÂ÷âò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂ÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂöV×Æ÷–VUÃòtGVÆ—¦æFò6W76ş(
+bs¢t6'&VvæFò6W76ş(
+brò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂöFFUF–ÖSÕÇ·6fTV×Æ÷–VTFFUF–ÖUÂ†V×Æ÷–VUÂæ7&VFVEöEÂ•ÇÒò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂ÷G—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’"F—6&ÆVCÕÇ¶'W7•ÇÒöä6Æ–6³ÕÇ¶öä6æ6VÅÇÒ&–ÖÆ&VÃÒ$fV6†"VFœ:|:6òFògVæ6–öì:&–ò"ò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂö6öç7B6ÆV$W'&÷#ÕÂ…Â“Óç6WDW'&÷%Â‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂ÷6WDæÖUÂ†UÂçF&vWEÂçfÇVUÂ“¶6ÆV$W'&÷%Â…Â’ò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂö–CÕÇ¶ÂEÇ¶f–VÆD–EÇÒÖæÖVÇÕµãåÒ¦WFô6ö×ÆWFSÒ&æÖR"ò“°Ğ¢76W'BæÖF6‚†VF—F÷$gVæ6–öæ&–òÂö–CÕÇ¶ÂEÇ¶f–VÆD–EÇÒÖ¦ö&ÇÕµãåÒ¦WFô6ö×ÆWFSÒ&÷&væ—¦F–öâ×F—FÆR"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7öç<:fVÂÆ–×fVVF&6²ò&V6'&Vv"6æF–FF÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Â÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“·6WDÖW76vUÂ‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Âö6æF–FFW5ÂæÆVæwF‚ÃòtGVÆ—¦æFògVæ6–öì:&–÷2WF÷&—¦F÷>(
+br¢t6'&VvæFògVæ6–öì:&–÷2WF÷&—¦F÷>(
+brò“°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Â÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WD6æF–FFW5Â…ÅµÅÕÂ“µÇÒÅÅ·6W'f–6T–BÇ6V7F÷%ÅÕÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&W7öç<:fVÂÆ–×fVVF&6²VæFòf–6†×VFW‡FW&æÖVçFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†G&–'V–6ôf–6†Â÷6WE6VÆV7FVEÂ†7W'&VçBÇÅÇÂruÂ“·6WDÖW76vUÂ‚ruÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6R&W6öÇ\:|:6òFRö6÷',:¦æ6–çVæ6–ÒW7FF÷27,:×F–6÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂõÇ¶W'&÷"bbÇ&öÆSÒ&ÆW'B"ò“°Ğ¢76W'BæÖF6‚†f–6†÷W&6–öæÂÂ÷&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"ò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂóÆf÷&Ò6Æ74æÖSÒ'76R×’Ó""&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂ÷&÷w3ÕÇ³5ÇÒ&WV—&VBÖ–äÆVæwFƒÕÇ³ÇÒÖ„ÆVæwFƒÕÇ³SÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6–væ÷&&W7÷7F2çF–v2FR6V6vVÒR&öG\:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Âö6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG5ÂæG'––ætÆöEÂ‡6W'f–6T–EÂ“²–bÂ‡&WVW7BÓÓÒvVæW&F–öåÂæ7W'&VçEÂ’6WDG'––æuÂ‡&W7VÇEÂ’ò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Âö6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG5Âç&öGV7F–öäÆöEÂ‡6W'f–6T–BÂ6V7F÷%Â“²–bÂ‡&WVW7BÓÓÒvVæW&F–öåÂæ7W'&VçEÂ’6WE&öGV7F–öåÂ‡&W7VÇEÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6'L:6òFRF&Vf6–æÆ—¦GVÆ—¦:|:6ò6öæ6÷'&VçFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂóÆf÷&Ò6Æ74æÖSÒ&w&–BvÓ26Ó¦w&–BÖ6öÇ2Ó""&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6'L:6òFRF&Vf–æf÷&ÖòW7FFòFò6ÇfÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ&VÃÕÇ¶'W7•Ãòu6ÇfæFòF&Vfs¦F—'G•ÃòtGVÆ—¦"F&Vfs¢u6VÒÇFW&:|;VW2uÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂõÇ¶'W7’bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒFW‡BÖ7–âÓs6Ó¦6öÂ×7âÓ"#å6ÇfæFòF&Vf(
+cÅÂ÷åÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&6'L:6òFRF&VfÆ–×W'&òòVF—F""Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö6öç7B6ÆV$W'&÷#ÕÂ…Â“Óç6WDW'&÷%Â‚ruÂ’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WE7FGW5Â†WfVçEÂçF&vWEÂçfÇVR2F6µ7FGW5Â“¶6ÆV$W'&÷%Â…Â’ò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Â÷6WE&öw&W75Â†WfVçEÂçF&vWEÂçfÇVSÓÓÒruÃôæã¤çVÖ&W%Â†WfVçEÂçF&vWEÂçfÇVUÂ•Â“¶6ÆV$W'&÷%Â…Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW26–æÆ—¦ÒÆV—GW&R&Æ÷VV–Ò&W'GW&6öæ6÷'&VçFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂöF—6&ÆVCÕÇ²'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂõÇ¶'W7’bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#å6ÇfæFòÆV—GW&Fæ÷F–f–6:|:6ş(
+cÅÂ÷åÇÒò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂ÷6WDÖW76vUÂ‚tæ÷F–f–6:|:6òÖ&6F6öÖòÆ–FÂâuÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW2W‡;VVÒòW7FFòFRÆV—GW&6VÖçF–6ÖVçFR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÂEÇ¶—FVÕÂæÆ–FöVÕÃòtæ÷F–f–6:|:6òÆ–Fs¢tæ÷F–f–6:|:6òì:6òÆ–FuÇÒò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶Ö&6"6öÖòÆ–F¢ÂEÇ¶æ÷F–f–6F–öäÆ&VÇ5Å¶—FVÕÂæWfVçFõÅÕÇÅÇÂtGVÆ—¦:|:6òF÷W&:|:6òuÇÖÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æ÷F–f–6:|;VW2–æf÷&ÖÒGVÆ—¦:|:6òæò&÷L:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂö&–ÖÆ&VÃÕÇ¶ÆöF–ærÇÅÇÂ'W7•ÃòtwV&FRGVÆ—¦:|:6òF2æ÷F–f–6:|;VW2s¢tGVÆ—¦"æ÷F–f–6:|;VW2uÇÒò“°Ğ¢76W'BæÖF6‚†æ÷F–f–66öW4gVæ6–öæ&–òÂõÇ¶ÆöF–ærÇÅÇÂ'W7•ÃòtwV&F^(
+bs¢tGVÆ—¦"æ÷F–f–6:|;VW2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†2&Æ÷VV–Ò&W'GW&Rv–æ:|:6òGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–æuÇÒöä6Æ–6³ÕÇµÂ…Â’Óâò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂvRÓÓÒÇÒò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂÆ—7EÂçFVÕöÖ—5ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'W7V—6FRf–6†2ì:6ò7&–æ÷f6&vGW&çFR6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂö&–Ö'W7“ÕÇ¶ÆöF–æuÇÒöå7V&Ö—CÕÇ¶WfVçBÓâÇ²WfVçEÂç&WfVçDFVfVÇEÂ…Â“²–bÂ†ÆöF–æuÂ’&WGW&ã²ò“°Ğ¢76W'BæÖF6‚†f–6†4gVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–æuÇÒfÇVSÕÇ·6V&6…ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&÷W&:|;VW2FR&öG\:|:6òR6V6vVÒ6–æÆ—¦Òòf÷&×VÌ:&–òVÒæFÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&Vv—7G&õ&öGV6òÂóÆf÷&Ò6Æ74æÖSÒ&w&–BvÓ2&÷&FW"×B&÷&FW"×6ÆFRÓBÓ26Ó¦w&–BÖ6öÇ2Ó""&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂóÆf÷&Ò6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2ÖVæBvÓ2&÷&FW"×B&÷&FW"×6ÆFRÓBÓ2"&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&:|;VW2FRW†V7\:|:6òFf–6†–æf÷&ÖÒ6ÇfÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†÷W&6–öæÂÂ÷6f–æuÃòu6ÇfæFş(
+brò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6Â÷6f–ærbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#å6ÇfæFòÇFW&:|;VW2Ff–6†L:–6æ–6(
+cÅÂ÷âò“°Ğ¢76W'BæÖF6‚†f–6†FV6æ–6ÂóÇ7â&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒföçBÖÖVF—VÒ#å6—GV:|:6ó¢ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6Æ–×W'&÷2òVF—F"VÒ6×ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õFV6†æ–6Å6†VWDf÷&ÒçG7‚"’Â÷6WDÖW76vUÂ‚ruÂ“µÇ2§6WD—77VW5Â…ÅµÅÕÂ“µÇ2¦6†ævRò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6W'fœ:vòFRf–6†2fÆ–F6†V6¶Æ—7BRFF÷2F&W7÷7F"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂö†5Væ—VT¶W—5Â†6†V6¶Æ—7D—FV×5Â’beÇ2²&÷uÂæ6†V6¶Æ—7Bò“°Ğ¢76W'BæFöW4æ÷DÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂö†5Væ—VT¶W—5Â†6†V6¶Æ—7D—FV×5Â“µÇ2²&÷uÂæ6†V6¶Æ—7Bò“°Ğ§Ò“°Ğ Ğ§FW7B‚'6W'fœ:vòFRf–6†2&V¦V—FF–ÖW7F×2–çl:Æ–F÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂö—4FFT÷$çVÆÅÂ‡&÷uÂæ–æ–6–FöVÕÂ’bb—4FFT÷$çVÆÅÂ‡&÷uÂæ6öæ6ÇV–FöVÕÂ’ò“°Ğ¢76W'BæÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂôçVÖ&W%Âæ—4f–æ—FUÂ†æWrFFUÂ‡&V6÷&EÂæ7&–FõöVÕÂ•ÂævWEF–ÖUÂ…Â•Â’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚'&Vv—7G&òFR6V6vVÒfÆ–FFF2&WF÷&æF2"Â‚’Óâ°Ğ¢76W'BæÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂò—4FFT÷$çVÆÅÂ‡&W7VÇEÂç&Wf—7FöFUÂ’ò“°Ğ¢76W'BæÖF6‚‡FV6†æ–6Å6†VWE6W'f–6RÂò—4FFT÷$çVÆÅÂ‡&W7VÇEÂç6W'f–F÷%öv÷&Â’ò“°Ğ¢76W'BæÖF6‚†6öçG&öÆU6V6vVÒÂöFFUF–ÖSÕÇ·6fU6W'fW$FFUF–ÖUÂ‡7FFUÃõÂæ–æ–6–FöVÒÃõÃòçVÆÅÂ•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&Æ–&W&:|:6òFf–6†&Æ÷VV–GWÆò6Æ—VR"Â‚’Óâ°Ğ¢76W'BæÖF6‚†f–6†÷W&6–öæÂÂöF—6&ÆVCÕÇ¶ÆöF–æuÇÒò“°Ğ¢76W'BæÖF6‚†f–6†÷W&6–öæÂÂö–bÂ†×WFF–öåÂæ7W'&VçEÂ’&WGW&ã²ò“°Ğ¢76W'BæÖF6‚†f–6†÷W&6–öæÂÂöÆöF–ærÃòtÆ–&W&æFş(
+br¢tÆ–&W&"f–6†FW7FR6WF÷"rò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæF–væ÷&&W7÷7F2FR&WV—6œ:|;VW2çF–v2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö6öç7BvVæW&F–öã×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö–eÂ‡&WVW7CÓÓÖvVæW&F–öåÂæ7W'&VçEÂ—6WD—FV×2ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷&WGW&åÂ…Â“ÓåÇ¶vVæW&F–öåÂæ7W'&VçEÂµÂ³µÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæFÆ–×F—f–FFW2çFW&–÷&W2çFW2FRæ÷f6öç7VÇF"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WD—FV×5Â…ÅµÅÕÂ“·6WEWFFVDEÂ†çVÆÅÂ“µÇÒÅÅ·7F'BÆVæBÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂæ–BÆ6öçFW‡EÃõÂægVæ6–öæ&–õÂçfW'6õÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂ÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“·G'’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæF&W6W'fWfVçF÷2GW&çFRæ÷f6–æ7&öæ—¦:|:6ò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö—FV×5ÂæÆVæwF…ÃòtGVÆ—¦æFòvVæF(
+bs¢t6'&VvæFòvVæF(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚&vVæFÆ–×F—f–FFW2VæFòòW,:ÖöFò:’–çl:Æ–Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö–eÂ‚7F'EÇÅÇÂVæEÂ•Ç·6WD—FV×5Â…ÅµÅÕÂ“·6WDW'&÷"ò“°Ğ¢76W'BæÖF6‚†vVæFgVæ6–öæ&–òÂö–eÂ†VæCÇ7F'EÂ•Ç·6WD—FV×5Â…ÅµÅÕÂ“·6WDW'&÷"ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2&Æ÷VV–ÒvW&:|:6ò6–×VÇL:&æVFRÆ–æ·2FV×÷,:&–÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2ÂöÆ–æ´'W7’ò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂöF—6&ÆVCÕÇ¶'W7’ÇÅÇÂÆ–æ´'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†æW†÷2Âö—FVÔ'W7•ÃòtvW&æFş(
+brò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2&Æ÷VV–ÒVçf–òVçVçFòòÆ–æ²FV×÷,:&–ò:’vW&Fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2Âö–eÂ†Æö6µÂæ7W'&VçBÇÅÇÂÆ–æ´'W7’ÇÅÇÂf–ÆUÂ—&WGW&âò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂöF—6&ÆVCÕÇ¶'W7’ÇÅÇÂÆ–æ´'W7•ÇÒò“°Ğ¢76W'BæÖF6‚†æW†÷2ÂöF—6&ÆVCÕÇ¶'W7’ÇÅÇÂÆ–æ´'W7’ÇÅÇÂf–ÆUÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&æW†÷2÷&–VçFÒf÷&ÖF÷2RFÖæ†òFò'V—fò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†æW†÷2Âö&–ÖFW67&–&VF'“ÕÇ¶ÂEÇ¶–EÇÒÖ†VÇÇÒò“°Ğ¢76W'BæÖF6‚†æW†÷2Âôf÷&ÖF÷26V—F÷3¢¥TrÂärÂvV%÷RDeÂâFÖæ†òÜ:†–Öó¢Ô%Ââò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚FRW7F÷VR–væ÷&&W7÷7F2FRf–ÇG&÷2çF–v÷2"Â‚’Óâ°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö6öç7BvVæW&F–öã×W6U&VeÂƒÂ’ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö–eÂ‡&WVW7CÓÓÖvVæW&F–öåÂæ7W'&VçEÂ—6WD—FV×2ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷&WGW&åÂ…Â“ÓåÇ¶vVæW&F–öåÂæ7W'&VçEÂµÂ³µÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚FRW7F÷VR&W6W'fFF÷2GW&çFRæ÷f6öç7VÇF"Â‚’Óâ°Ğ¢76W'BæFöW4æ÷DÖF6‚†–æ&÷„ÖFW&–—2Â÷6WDÆöF–æuÂ‡G'VUÂ“·6WDW'&÷%Â‚ruÂ“¶–eÂ†6ÆV$ÖW76vUÂ—6WDÖW76vUÂ‚ruÂ“·6WD—FV×5Â…ÅµÅÕÂ’ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö—FV×5ÂæÆVæwF…ÃòtGVÆ—¦æFò6öÆ–6—F:|;VW>(
+bs¢t6'&VvæFò6öÆ–6—F:|;VW>(
+brò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷W6TVffV7EÂ…Â…Â“ÓåÇ·6WD—FV×5Â…ÅµÅÕÂ“·6WEWFFVDEÂ†çVÆÅÂ“µÇÒÅÅ·7FGW2ÆÆÆ÷vVBò“°Ğ§Ò“°Ğ Ğ§FW7B‚&–æ&÷‚&W6W'ffVVF&6²;72:|:6ò6öæ6Ç\:ÖF"Â‚’Óâ°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Âö7–æ2gVæ7F–öâÆöEÂ†6ÆV$ÖW76vS×G'VUÂ’ò“°Ğ¢76W'BæÖF6‚†–æ&÷„ÖFW&–—2Â÷6WDÖW76vUÂ‚u6öÆ–6—F:|:6ò&÷fFÂâuÂ“¶v—BÆöEÂ†fÇ6UÂ’ò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f–6†L:–6æ–6F–fW&Væ6–W'&òFR7V6W76òæÖVç6vVÒ6W7<:×fVÂ"Â‚’Óâ°Ğ¢6öç7Bf÷&×VÆ&–õFV6æ–6òÒ&VD÷F–öæÂ‚"ââ÷7&2öÖöGVÆW2÷v÷&¶f÷&6Rö6ö×öæVçG2õFV6†æ–6Å6†VWDf÷&ÒçG7‚"“°Ğ¢76W'BæÖF6‚†f÷&×VÆ&–õFV6æ–6òÂ÷&öÆSÕÇ¶ÖW76vUÂç7F'G5v—F…Â‚tì:6òfö’uÂ’ÇÅÇÂÖW76vUÂç7F'G5v—F…Â‚u&Wf—6RuÂ’ÃòvÆW'Br¢w7FGW2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&f÷&×VÌ:&–òFRö6÷',:¦æ6–6–æÆ—¦òVçf–òVÒæFÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†ö6÷'&Væ6–4gVæ6–öæ&–òÂóÆf÷&Ò6Æ74æÖSÒ&w&–BvÓ26Ó¦w&–BÖ6öÇ2Ó""&–Ö'W7“ÕÇ¶'W7•ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚&†—7L;7&–6ò&Æ÷VV–v–æ:|:6òGW&çFR6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂvSÓÓÓÇÒò“°Ğ¢76W'BæÖF6‚††—7F÷&–6ôgVæ6–öæ&–òÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂFFÂçFVÕöÖ—5ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2&Æ÷VV–Òv–æ:|:6òGW&çFR6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂvSÓÓÓÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂöF—6&ÆVCÕÇ¶ÆöF–ærÇÅÇÂFFÂçFVÕöÖ—5ÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2–æf÷&ÖÒGVÆ—¦:|:6òæò&÷L:6òGW&çFR6'&VvÖVçFò"Â‚’Óâ°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2Âö&–ÖÆ&VÃÕÇ¶ÆöF–æuÃòtGVÆ—¦æFòF&Vf2s¢tGVÆ—¦"F&Vf2uÇÒò“°Ğ¢76W'BæÖF6‚†Ö–æ†5F&Vf2ÂõÇ¶ÆöF–æuÃòtGVÆ—¦æFş(
+bs¢tGVÆ—¦"F&Vf2uÇÒò“°Ğ§Ò“°Ğ Ğ§FW7B‚'F&Vf2W†–&VÒVÒ;¦æ–6ò&Æö6òFR6'&VvÖVçFòRW'&ò"Â‚’Óâ°Ğ¢76W'BæWVÂ‚†Ö–æ†5F&Vf2æÖF6‚‚ô6'&VvæFòF&Vf>(
+bör’ÇÂµÒ’æÆVæwF‚Â“°Ğ¢76W'BæWVÂ‚†Ö–æ†5F&Vf2æÖF6‚‚÷&öÆSÕÂ&ÆW'EÂ"6Æ74æÖSÕÂ&fÆW‚fÆW‚×w&—FV×2Ö6VçFW"§W7F–g’Ö&WGvVVâvÓ2&÷VæFVBÖÆr&r×&÷6RÓSör’ÇÂµÒ’æÆVæwF‚Â“°Ğ§Ò“°Ğ
