@@ -94,9 +94,10 @@ function isTechnicalField(value: unknown): value is TechnicalField {
   if (!value || typeof value !== 'object') return false;
   const field = value as Record<string, unknown>;
   const types = ['text', 'textarea', 'number', 'integer', 'table', 'file', 'url', 'date'];
-  return typeof field.key === 'string' && typeof field.label === 'string' && types.includes(String(field.type)) &&
-    (field.columns === undefined || Array.isArray(field.columns) && field.columns.every(isTechnicalField));
+  return typeof field.key === 'string' && field.key.length>0 && typeof field.label === 'string' && field.label.length>0 && types.includes(String(field.type)) &&
+    (field.columns === undefined || Array.isArray(field.columns) && field.columns.every(isTechnicalField) && new Set(field.columns.map(column => column.key)).size===field.columns.length);
 }
+const hasUniqueKeys=(items:unknown[]):boolean=>new Set(items.map(item => (item as {key:string}).key)).size===items.length;
 
 function isServiceSheet(value: unknown): value is ServiceSheet {
   if (!value || typeof value !== 'object') return false;
@@ -117,8 +118,8 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
     Array.isArray(actions) && actions.every(item => typeof item === 'string') &&
     Array.isArray(privacy) && privacy.every(item => typeof item === 'string') &&
     modelRecord !== null && typeof modelRecord.titulo === 'string' &&
-    fields !== null && fields.every(isTechnicalField) &&
-    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && typeof (item as Record<string, unknown>).label === 'string' && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) &&
+    fields !== null && fields.every(isTechnicalField) && hasUniqueKeys(fields) &&
+    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && (item as Record<string, unknown>).key && typeof (item as Record<string, unknown>).label === 'string' && (item as Record<string, unknown>).label && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems);
     !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') &&
     !!row.dados && typeof row.dados === 'object' && !Array.isArray(row.dados);
 }
