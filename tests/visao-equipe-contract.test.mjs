@@ -1434,6 +1434,7 @@ test("fichas de serviço preservam busca e ação de abertura no mobile", () => 
   assert.match(fichasFuncionario, /<button className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" type="submit" disabled=\{loading\}/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\) => \{ setSearch/);
   assert.match(fichasFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{event =>/);
+  assert.match(fichasFuncionario, /setError\('\'\);\s*openerRef\.current = event\.currentTarget;/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar ficha aberta"/);
 });
 

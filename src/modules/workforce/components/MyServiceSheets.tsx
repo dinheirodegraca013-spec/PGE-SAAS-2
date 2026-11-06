@@ -53,6 +53,7 @@ export default function MyServiceSheets() {
       <div className="min-w-0"><p className="break-words font-medium">{item.titulo}</p><p className="break-words text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p><time className="text-xs text-slate-500" dateTime={safeSheetDateTime(item.atualizado_em)}>{formatSheetUpdate(item.atualizado_em)}</time></div>
       <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} onClick={event => {
         if (selected && !window.confirm('Abrir outra ficha? Alterações não salvas serão descartadas.')) return;
+        setError('');
         openerRef.current = event.currentTarget;
         setSelected(item);
       }} aria-label={`Abrir ficha ${item.titulo}`}>Abrir ficha</button>
@@ -61,3 +62,4 @@ export default function MyServiceSheets() {
     {selected && <div ref={selectedRef} tabIndex={-1} className="space-y-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2" aria-label={`Ficha aberta: ${selected.titulo}`}><div className="flex justify-end"><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar ficha aberta" onClick={() => { returnFocus.current = true; setSelected(null); }}>Fechar ficha</button></div><ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} /></div>}
   </section>;
 }
+
