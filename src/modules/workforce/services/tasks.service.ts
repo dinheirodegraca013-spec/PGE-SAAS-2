@@ -25,6 +25,7 @@ export const workTasks={
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar a tarefa.');if(!isWorkTask(data))throw new Error('A tarefa retornou dados inválidos. Recarregue a lista.');return data;
   },
   async create(input:{request:string;sector:string;title:string;description:string;employee:string;service:string|null;deadline:string|null;priority:WorkTask['prioridade'];mandatory:boolean}):Promise<{id:string;versao:number;repetida:boolean}>{
+    if(!input||typeof input.request!=='string'||!input.request.trim()||typeof input.sector!=='string'||!isSetor(input.sector)||typeof input.title!=='string'||input.title.trim().length<2||typeof input.description!=='string'||input.description.trim().length<2||typeof input.employee!=='string'||!input.employee.trim()||(input.service!==null&&(typeof input.service!=='string'||!input.service.trim()))||(input.deadline!==null&&(typeof input.deadline!=='string'||!Number.isFinite(new Date(input.deadline).getTime())))||!['baixa','normal','alta','urgente'].includes(input.priority)||typeof input.mandatory!=='boolean')throw new Error('Os dados da tarefa são inválidos.');
     const {data,error}=await supabase.rpc('tarefa_criar',{p_requisicao:input.request,p_setor:input.sector,p_titulo:input.title,p_descricao:input.description,p_responsavel:input.employee,p_servico:input.service,p_prazo:input.deadline,p_prioridade:input.priority,p_obrigatoria:input.mandatory});
     if(error || !data)throw new Error(error?.message||'Não foi possível criar a tarefa.');if(!isCreateResult(data))throw new Error('A criação da tarefa retornou dados inválidos. Tente novamente.');return data;
   },
@@ -35,8 +36,8 @@ export const workTasks={
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as tarefas.');if(!isTaskPage(data))throw new Error('As tarefas retornaram dados inválidos. Recarregue a lista.');return data;
   },
   async update(task:WorkTask,status:TaskStatus,progress:number,notes:string):Promise<Partial<WorkTask>>{
+    if(!task||typeof task.id!=='string'||!task.id.trim()||!Number.isSafeInteger(task.versao)||task.versao<1||!isTaskStatus(status)||!Number.isInteger(progress)||progress<0||progress>100||typeof notes!=='string')throw new Error('Os dados da atualização da tarefa são inválidos.');
     const {data,error}=await supabase.rpc('tarefa_atualizar',{p_tarefa:task.id,p_status:status,p_versao:task.versao,p_progresso:status==='concluida'?null:progress,p_observacoes:notes});
     if(error || !data)throw new Error(error?.code==='40001'?'A tarefa foi alterada. Atualize a lista antes de continuar.':error?.message||'Não foi possível atualizar a tarefa.');if(!isUpdateResult(data,task.id))throw new Error('A atualização da tarefa retornou dados inválidos. Recarregue a lista.');return data;
   },
 };
-
