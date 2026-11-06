@@ -1474,8 +1474,8 @@ test("ficha técnica quebra a situação sem perder as ações", () => {
 
 test("erro de responsáveis organiza retry no mobile", () => {
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
-  assert.match(assignment, /<div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">\{error\}<\/p>/);
-  assert.match(assignment, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
+  assert.match(assignment, /<div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:flex-row sm:items-start sm:justify-between"><p className="min-w-0 break-words">\{error\}<\/p>/);
+  assert.match(assignment, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
 });
 
 test("controle de secagem protege status e atualização no mobile", () => {
