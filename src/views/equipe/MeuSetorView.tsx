@@ -61,7 +61,11 @@ export default function MeuSetorView() {
   const setor = context?.funcionario.setor;
   const sectorList=authorizedSectors(context);
   useEffect(() => {
-    const updateConnection = () => setOnline(navigator.onLine);
+    const updateConnection = () => {
+      const isOnline = navigator.onLine;
+      setOnline(isOnline);
+      if (isOnline) requestWorkforceRefresh();
+    };
     window.addEventListener('online', updateConnection);
     window.addEventListener('offline', updateConnection);
     return () => { window.removeEventListener('online', updateConnection); window.removeEventListener('offline', updateConnection); };

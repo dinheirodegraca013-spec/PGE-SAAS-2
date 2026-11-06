@@ -124,6 +124,7 @@ test("painel nomeia a atualização dos projetos", () => {
 test("painel informa conexão offline e retoma sincronização ao voltar", () => {
   assert.match(meuSetor, /window\.addEventListener\('online'/);
   assert.match(meuSetor, /window\.addEventListener\('offline'/);
+  assert.match(meuSetor, /if \(isOnline\) requestWorkforceRefresh\(\)/);
   assert.match(meuSetor, /Sem conexão com a internet/);
   assert.match(meuSetor, /!online/);
 });
