@@ -230,8 +230,8 @@ export default function EquipeView() {
         </button>
         </div>
       </header>
-      {administrador && limits && <section className="card space-y-2 p-5">
-        <h2 className="text-lg font-bold">Acessos do plano {limits.plan}</h2>
+      {administrador && limits && <section className="card space-y-2 p-5" aria-labelledby="plan-access-title">
+        <h2 id="plan-access-title" className="text-lg font-bold">Acessos do plano {limits.plan}</h2>
         <p className="text-sm">{Math.min(limits.sublogins_active, limits.sublogin_limit)} de {limits.sublogin_limit} sublogins utilizados · {limits.sublogins_available} disponíveis · {limits.device_limit} dispositivo(s) por login.</p>
         <p className="text-sm text-slate-500">A conta principal não ocupa uma vaga. No downgrade, os cadastros mais antigos permanecem liberados.</p>
         {limits.sublogins_suspended > 0 && <p role="status" className="text-sm text-amber-700">{limits.sublogins_suspended} funcionário(s) suspenso(s) pelo limite do plano.</p>}
@@ -302,10 +302,10 @@ export default function EquipeView() {
           <span className="text-xs text-amber-700">Acesso bloqueado</span>
         </div>
       </div>
-      <section className="card overflow-hidden p-5" aria-busy={carregando}>
+      <section className="card overflow-hidden p-5" aria-labelledby="team-list-title" aria-busy={carregando}>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="gestio-section-title">Lista de colaboradores</h2>
+            <h2 id="team-list-title" className="gestio-section-title">Lista de colaboradores</h2>
             <p className="gestio-section-subtitle">
               Origem: profiles do tenant autenticado.
             </p>
