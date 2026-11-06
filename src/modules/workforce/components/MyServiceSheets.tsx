@@ -18,8 +18,10 @@ export default function MyServiceSheets() {
   const [error, setError] = useState('');
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
+  const selectedRef = useRef<HTMLDivElement>(null);
   const lastReturnRefresh = useRef(0);
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
+  useEffect(() => { if (selected) selectedRef.current?.focus(); }, [selected]);
   useEffect(() => { setList(null); setSelected(null); setUpdatedAt(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao, accessError]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => { const refreshPanel = () => setRefresh(value => value + 1); window.addEventListener(workforceRefreshEvent, refreshPanel); return () => window.removeEventListener(workforceRefreshEvent, refreshPanel); }, []);
@@ -50,6 +52,6 @@ export default function MyServiceSheets() {
       }} aria-label={`Abrir ficha ${item.titulo}`}>Abrir ficha</button>
     </li>)}</ul>}
     {list && <nav aria-label="Paginação de fichas de serviço" className="flex items-center gap-3"><button type="button" className="btn-secondary" aria-label="Ir para a página anterior de fichas" disabled={loading || page === 0} onClick={() => setPage(p => p - 1)}>Anterior</button><span className="text-sm" aria-current="page" aria-live="polite">Página {page + 1}</span><button type="button" className="btn-secondary" aria-label="Ir para a próxima página de fichas" disabled={loading || !list.tem_mais} onClick={() => setPage(p => p + 1)}>Próxima</button></nav>}
-    {selected && <div className="space-y-3"><div className="flex justify-end"><button type="button" className="btn-secondary" aria-label="Fechar ficha aberta" onClick={() => setSelected(null)}>Fechar ficha</button></div><ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} /></div>}
+    {selected && <div ref={selectedRef} tabIndex={-1} className="space-y-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2" aria-label={`Ficha aberta: ${selected.titulo}`}><div className="flex justify-end"><button type="button" className="btn-secondary" aria-label="Fechar ficha aberta" onClick={() => setSelected(null)}>Fechar ficha</button></div><ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} /></div>}
   </section>;
 }

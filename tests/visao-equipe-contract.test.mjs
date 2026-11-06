@@ -444,6 +444,8 @@ test("detalhes abertos oferecem fechamento explícito", () => {
   assert.match(notificacoesFuncionario, /onClick=\{\(\)=>setSelected\(null\)\}>Fechar detalhe/);
   assert.match(fichasFuncionario, /onClick=\{\(\) => setSelected\(null\)\}>Fechar ficha/);
   assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"/);
+  assert.match(fichasFuncionario, /selectedRef\.current\?\.focus\(\)/);
+  assert.match(fichasFuncionario, /tabIndex=\{-1\}[^>]*aria-label=\{`Ficha aberta:/);
 });
 
 test("produção e secagem usam estado explícito para mensagens acessíveis", () => {
