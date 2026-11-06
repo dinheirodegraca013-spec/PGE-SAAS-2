@@ -200,6 +200,11 @@ test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
   assert.match(equipeView, /title=\{!limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
 });
 
+test("solicitação de material relaciona bloqueio à mensagem de estoque vazio", () => {
+  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-no-materials`\} role="status"/);
+  assert.match(solicitacaoMaterial, /aria-describedby=\{!options\.length \? `\$\{fieldPrefix\}-no-materials` : undefined\}/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
@@ -865,7 +870,7 @@ test("produção valida observação antes do envio", () => {
 
 test("solicitação de material limpa feedback ao editar", () => {
   assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(solicitacaoMaterial, /canRequest && !options\.length && <p role="status" aria-live="polite"/);
+  assert.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
