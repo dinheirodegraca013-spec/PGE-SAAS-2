@@ -174,6 +174,7 @@ test("painel nomeia a atualização dos projetos", () => {
 test("ações administrativas da equipe têm nomes acessíveis", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
   assert.match(equipeView, /aria-label="Cadastrar novo funcionário"/);
+  assert.match(equipeView, /className="btn-primary w-full sm:w-auto"/);
   assert.match(equipeView, /aria-label=\{carregando \? 'Atualizando equipe' : 'Atualizar equipe'\}/);
   assert.match(equipeView, /aria-label="Encaminhar projeto para o setor selecionado"/);
   assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
