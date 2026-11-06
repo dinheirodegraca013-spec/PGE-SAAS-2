@@ -134,6 +134,7 @@ export default function MeuSetorView() {
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Status do acesso</dt><dd className="mt-1 font-semibold text-slate-900">{employeeStatusLabels[context.funcionario.status] || 'Indisponível'}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Último acesso</dt><dd className="mt-1 text-slate-900">{formatAccessDate(context.funcionario.ultimo_acesso)}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Identificador interno</dt><dd className="mt-1 text-slate-900">{context.funcionario.identificador_interno || 'Não informado'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Setores autorizados</dt><dd className="mt-1 text-slate-900">{sectorList.length ? sectorList.filter(isSetor).map(item => setores[item]).join(', ') : 'Nenhum setor informado'}</dd></div>
       </dl>
     </section>}
     {context && <section className="card p-5" aria-labelledby="sector-projects-title"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="sector-projects-title" className="text-lg font-bold">Projetos do setor</h2>
