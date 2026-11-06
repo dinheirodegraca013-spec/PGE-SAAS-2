@@ -587,6 +587,7 @@ test("aceite limpa erro ao corrigir campos", () => {
   assert.match(aceiteInstalacao, /const clearError=\(\)=>setError\(''\)/);
   assert.match(aceiteInstalacao, /setName\(event\.target\.value\);clearError\(\)/);
   assert.match(aceiteInstalacao, /setProof\(event\.target\.value\);clearError\(\)/);
+  assert.match(aceiteInstalacao, /id=\{`\$\{id\}-name`\}[^>]*autoComplete="name"/);
 });
 
 test("produção e estoque sinalizam operações e mensagens ao funcionário", () => {
