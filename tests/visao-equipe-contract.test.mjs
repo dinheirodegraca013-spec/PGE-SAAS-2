@@ -690,6 +690,14 @@ test("lista administrativa quebra identificadores e histórico longos", () => {
   assert.match(equipe, /<li key=\{a\.id\} className="break-words">/);
 });
 
+test("notificações e histórico quebram rótulos operacionais longos", () => {
+  assert.match(notificacoesFuncionario, /break-words text-sm text-slate-600/);
+  assert.match(notificacoesFuncionario, /items-center gap-2 break-words text-sm font-semibold/);
+  assert.match(notificacoesFuncionario, /className="shrink-0 rounded-full bg-cyan-100/);
+  assert.match(historicoFuncionario, /className="break-words text-sm font-medium"/);
+  assert.match(historicoFuncionario, /className="break-words text-xs text-slate-500"/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
@@ -1129,7 +1137,7 @@ test("notificações informam atualização no botão", () => {
 });
 
 test("notificações destacam cada item não lido", () => {
-  assert.match(notificacoesFuncionario, /!item\.lida_em&&<span className="rounded-full bg-cyan-100/);
+  assert.match(notificacoesFuncionario, /!item\.lida_em&&<span className="shrink-0 rounded-full bg-cyan-100/);
   assert.match(notificacoesFuncionario, />Não lida<\/span>/);
 });
 
