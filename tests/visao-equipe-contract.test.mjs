@@ -391,6 +391,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /Tentar novamente/);
   assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"/);
   assert.match(historicoFuncionario, /aria-current="page"/);
+  assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
 });
 
 test("histórico informa atualização no botão", () => {
