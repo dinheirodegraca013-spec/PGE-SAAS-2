@@ -2,12 +2,13 @@ import {supabase} from '@/lib/supabase';
 import {mensagemErroFuncao} from '@/services/api/function-errors';
 export type Attachment={id:string;nome:string;tipo:string;tamanho:number;caminho:string;criado_em:string};
 export type UploadReceipt={id:string;caminho:string;bucket:string;uploaded?:boolean};
+const isDate=(value:unknown):value is string=>typeof value==='string'&&Number.isFinite(new Date(value).getTime());
 const isAttachment=(value:unknown):value is Attachment=>{
   if(!value||typeof value!=='object')return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&typeof row.nome==='string'&&typeof row.tipo==='string'&&Number.isSafeInteger(row.tamanho)&&Number(row.tamanho)>0&&typeof row.caminho==='string'&&typeof row.criado_em==='string';
+  return typeof row.id==='string'&&row.id.length>0&&typeof row.nome==='string'&&row.nome.length>0&&typeof row.tipo==='string'&&row.tipo.length>0&&Number.isSafeInteger(row.tamanho)&&Number(row.tamanho)>0&&typeof row.caminho==='string'&&row.caminho.length>0&&isDate(row.criado_em);
 };
-const isUploadReceipt=(value:unknown):value is UploadReceipt=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&typeof (value as Record<string,unknown>).caminho==='string'&&(value as Record<string,unknown>).bucket==='workforce-private');
+const isUploadReceipt=(value:unknown):value is UploadReceipt=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(value as Record<string,unknown>).id&&typeof (value as Record<string,unknown>).caminho==='string'&&(value as Record<string,unknown>).caminho&&(value as Record<string,unknown>).bucket==='workforce-private');
 export const attachments={
   async list(service:string,sector:string,page:number):Promise<{itens:Attachment[];tem_mais:boolean}>{
     const {data,error}=await supabase.rpc('anexos_ficha_listar',{p_servico:service,p_setor:sector,p_pagina:page});
