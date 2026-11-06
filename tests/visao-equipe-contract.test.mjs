@@ -1465,6 +1465,8 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
 test("inbox de materiais acomoda retry de erro no mobile", () => {
   assert.match(inboxMateriais, /className="flex flex-col items-stretch gap-2 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"/);
   assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Tentar carregar as solicitações novamente"/);
+  assert.match(inboxMateriais, /className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap"/);
+  assert.match(inboxMateriais, /className="btn-primary w-full shrink-0 whitespace-nowrap text-sm sm:w-auto"/);
 });
 
 test("registros de produção quebram observações sem deslocar o horário", () => {
