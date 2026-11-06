@@ -145,8 +145,8 @@ export default function MeuSetorView() {
           <p className="mt-2 max-w-2xl text-sm text-slate-300">Seu espaço de trabalho para acompanhar prioridades, prazos e atividades autorizadas.</p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
-          <button type="button" className="shrink-0 whitespace-nowrap rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando || !online} aria-label={carregando ? 'Atualizando painel' : !online ? 'Sem conexão para atualizar painel' : 'Atualizar painel'} onClick={() => requestWorkforceRefresh()}>
-            {carregando ? 'Atualizando…' : 'Atualizar painel'}
+          <button type="button" className="shrink-0 whitespace-nowrap rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando || accessLoading || !online} aria-label={accessLoading ? 'Validando acesso antes de atualizar painel' : carregando ? 'Atualizando painel' : !online ? 'Sem conexão para atualizar painel' : 'Atualizar painel'} onClick={() => requestWorkforceRefresh()}>
+            {accessLoading ? 'Validando acesso…' : carregando ? 'Atualizando…' : 'Atualizar painel'}
           </button>
           <span className="text-xs text-slate-400" aria-live="polite">{atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Aguardando primeira atualização'}</span>
         </div>

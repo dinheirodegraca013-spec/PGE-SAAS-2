@@ -164,7 +164,7 @@ test("painel limpa o alerta após atualizar projetos com sucesso", () => {
 });
 
 test("painel nomeia a atualização dos projetos", () => {
-  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
+  assert.match(meuSetor, /aria-label=\{accessLoading \? 'Validando acesso antes de atualizar painel' : carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
   assert.match(meuSetor, /aria-label=\{`\$\{p\.titulo\} · \$\{formatPrazo\(p\.prazo\)\}\$\{status \? ` · \$\{status\}` : ''\}`\}/);
   assert.match(meuSetor, /<h3 className="min-w-0 break-words text-slate-900">\{p\.titulo\}<\/h3>/);
   assert.match(meuSetor, /<time className=\{`mt-2 block text-sm/);
@@ -1342,7 +1342,9 @@ test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", 
 
 test("cabeçalho do painel mantém a atualização legível no mobile", () => {
   assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-xl border border-white\/20/);
-  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
+  assert.match(meuSetor, /disabled=\{carregando \|\| accessLoading \|\| !online\}/);
+  assert.match(meuSetor, /aria-label=\{accessLoading \? 'Validando acesso antes de atualizar painel' : carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
+  assert.match(meuSetor, /\{accessLoading \? 'Validando acesso…' : carregando \? 'Atualizando…' : 'Atualizar painel'\}/);
 });
 
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
