@@ -636,8 +636,15 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
 });
 
 test("histórico informa atualização no botão", () => {
+  assert.match(historicoFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
   assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
   assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
+});
+
+test("erro do histórico bloqueia retry durante sincronização", () => {
+  assert.match(historicoFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
+  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Tentar novamente'\}/);
 });
 
 test("histórico diferencia carga inicial de sincronização", () => {
