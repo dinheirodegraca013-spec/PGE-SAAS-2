@@ -252,6 +252,10 @@ test("painel informa conexão offline e retoma sincronização ao voltar", () =>
   assert.match(meuSetor, /!online/);
 });
 
+test("contagem de projetos é anunciada durante a sincronização", () => {
+  assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" aria-live="polite" aria-atomic="true"/);
+});
+
 test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
   assert.match(gerenciadorDispositivos, /isDateString/);
   assert.match(gerenciadorDispositivos, /new Set\(devices\.map\(\(device: Device\) => device\.id\)\)/);
