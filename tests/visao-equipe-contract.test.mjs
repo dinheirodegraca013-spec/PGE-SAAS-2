@@ -130,6 +130,11 @@ test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
 });
 
+test("painel não consulta projetos quando a validação de acesso falha", () => {
+  assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
+  assert.match(meuSetor, /\[accessLoading, accessError, context,/);
+});
+
 test("painel anuncia sincronização global para tecnologia assistiva", () => {
   assert.match(meuSetor, /className="space-y-6" aria-busy=\{carregando \|\| accessLoading\}/);
 });

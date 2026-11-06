@@ -81,7 +81,7 @@ export default function MeuSetorView() {
       lastContextKey.current = contextKey;
       setProjetos([]);
     }
-    if (accessLoading || !context) {
+    if (accessLoading || accessError || !context) {
       setCarregando(accessLoading);
       return () => { mounted = false; };
     }
@@ -107,7 +107,7 @@ export default function MeuSetorView() {
     }
     void carregar();
     return () => { mounted = false; };
-  }, [accessLoading, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao, online]);
+  }, [accessLoading, accessError, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao, online]);
   const nome = (context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador').trim() || 'colaborador';
   const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
   const quickActions = [
