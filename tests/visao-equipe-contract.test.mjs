@@ -383,6 +383,12 @@ test("histórico diferencia carga inicial de sincronização", () => {
   assert.match(historicoFuncionario, /data \? 'Atualizando histórico…' : 'Carregando histórico…'/);
 });
 
+test("histórico não consulta dados sem vínculo de funcionário validado", () => {
+  assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
+  assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(historicoFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
+});
+
 test("histórico reinicia a paginação ao trocar de funcionário", () => {
   assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
 });
