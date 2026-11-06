@@ -10,6 +10,6 @@ test('solicitação de material valida dados antes da criação',()=>{
 });
 
 test('atualização de material valida identificador e versão',()=>{
-  assert.match(source,/if\(typeof id!==\'string\'\|\|!id\.trim\(\)\|\|!Number\.isSafeInteger\(version\)\|\|version<1\)/);
+  assert.match(source,/typeof id!==\'string\'\|\|!id\.trim\(\).*Number\.isSafeInteger\(version\).*version<1/);
 });
 

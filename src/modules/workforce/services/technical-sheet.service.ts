@@ -257,6 +257,7 @@ export const technicalSheets = {
     return data;
   },
   async materialStockRequests(status: string|null = null): Promise<MaterialStockRequest[]> {
+    if(status!==null&&!materialStatuses.includes(status))throw new Error('O filtro de solicitações é inválido.');
     const { data, error } = await supabase.rpc('material_solicitacao_painel_estoque', { p_status: status });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações do estoque.');
     if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item, true))) throw new Error('A fila de estoque retornou dados inválidos. Recarregue a tela.');
@@ -270,7 +271,7 @@ export const technicalSheets = {
     return data;
   },
   async materialRequestUpdate(id: string, action: 'cancelar'|'aprovar'|'recusar'|'atender', version: number, reason?: string): Promise<{ id: string; status: string; versao: number }> {
-    if(typeof id!=='string'||!id.trim()||!Number.isSafeInteger(version)||version<1)throw new Error('A solicitação ou versão é inválida.');
+    if(typeof id!=='string'||!id.trim()||!['cancelar','aprovar','recusar','atender'].includes(action)||!Number.isSafeInteger(version)||version<1||reason!==undefined&&typeof reason!=='string')throw new Error('A solicitação ou versão é inválida.');
     const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: reason ?? null });
     if (error || !data) throw new Error(error?.code === '40001' ? 'A solicitação foi alterada. Atualize a lista.' : error?.message || 'Não foi possível atualizar a solicitação.');
     const expectedStatus={cancelar:'cancelada',aprovar:'aprovada',recusar:'recusada',atender:'atendida'}[action];
