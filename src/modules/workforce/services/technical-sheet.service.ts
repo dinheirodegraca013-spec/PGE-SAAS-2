@@ -89,7 +89,10 @@ function normalizeServiceList(value: unknown): { itens: { servico_id: string; ti
     return {servico_id:row.servico_id,titulo:row.titulo,setor:row.setor,versao:Number(row.versao),atualizado_em:row.atualizado_em};
   });
   if (itens.some(item=>item===null)) return null;
-  return {itens:itens as { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[],tem_mais:source.tem_mais,pagina:Number(source.pagina)};
+  const validItens=itens as { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[];
+  if (new Set(validItens.map(item=>`${item.servico_id}:${item.setor}`)).size!==validItens.length) return null;
+  validItens.sort((left,right)=>new Date(right.atualizado_em).getTime()-new Date(left.atualizado_em).getTime());
+  return {itens:validItens,tem_mais:source.tem_mais,pagina:Number(source.pagina)};
 }
 
 function isTechnicalField(value: unknown): value is TechnicalField {

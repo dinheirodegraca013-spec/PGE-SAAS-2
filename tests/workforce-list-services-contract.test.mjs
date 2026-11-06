@@ -14,3 +14,7 @@ test('fichas rejeitam página inválida e pesquisa não textual antes da RPC',()
   assert.match(sheets,/if\(typeof search!=='string'\)throw new Error\('A pesquisa de fichas é inválida\.'\)/);
 });
 
+test('fichas rejeitam duplicatas e ordenam pela atualização mais recente',()=>{
+  assert.match(sheets,/new Set\(validItens\.map\(item=>`\$\{item\.servico_id\}:\$\{item\.setor\}`\)\)\.size!==validItens\.length/);
+  assert.match(sheets,/validItens\.sort\(\(left,right\)=>new Date\(right\.atualizado_em\)\.getTime\(\)-new Date\(left\.atualizado_em\)\.getTime\(\)\)/);
+});
