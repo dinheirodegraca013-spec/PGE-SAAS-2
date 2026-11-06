@@ -63,7 +63,7 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
       {error && <p id={`${controlId}-error`} role="alert" className="mt-1 text-sm text-red-700">{error}</p>}
     </div>;
   }
-  return <form noValidate onSubmit={async event => {
+  return <form noValidate aria-label="Formulário da ficha técnica" onSubmit={async event => {
     event.preventDefault();
     if (busy || disabled) return;
     const patch = writable(fields, value);
@@ -77,7 +77,7 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
   }} className="space-y-4" aria-busy={busy}>
     <div className="grid min-w-0 gap-4">{fields.map(field => renderField(field, value, onChange))}</div>
     {message && <p role={message.startsWith('Não foi') || message.startsWith('Revise') ? 'alert' : 'status'} aria-live="polite" className="text-sm">{message}</p>}
-    <button type="submit" disabled={busy || disabled} className="rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
+    <button type="submit" disabled={busy || disabled} aria-label={busy ? 'Salvando ficha técnica' : 'Salvar ficha técnica'} className="rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
   </form>;
 }
 
