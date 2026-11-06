@@ -1368,3 +1368,11 @@ test("aceite da instalação quebra confirmação longa no mobile", () => {
   assert.match(aceiteInstalacao, /<span className="min-w-0 break-words">Confirmo que o cliente/);
   assert.match(aceiteInstalacao, /className="btn-primary shrink-0" aria-label=/);
 });
+
+test("cartão de tarefa mantém badges e prazo legíveis no mobile", () => {
+  assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2\.5 py-1 text-xs font-semibold/);
+  assert.match(minhasTarefas, /<span className="break-words">\{formatTaskSector\(task\.setor\)\}<\/span>/);
+  assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2 py-1 font-semibold/);
+  assert.match(minhasTarefas, /<span className="break-words">Obrigatória para concluir a etapa<\/span>/);
+  assert.match(minhasTarefas, /<span className="break-words">Prazo: <time/);
+});
