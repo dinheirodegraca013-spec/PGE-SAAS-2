@@ -36,6 +36,10 @@ test('ocorrências rejeitam textos e IDs vazios nas respostas',()=>{
   assert.match(incidents,/String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0/);
 });
 
+test('mutações de ocorrências aceitam somente status do domínio',()=>{
+  assert.match(incidents,/\['aberta','resolvida'\]\.includes\(String\(\(value as Record<string,unknown>\)\.status\)\)/);
+});
+
 test('fluxo valida sequência de setores antes da gravação',()=>{
   assert.match(pipeline,/!Array\.isArray\(sectors\)/);
   assert.match(pipeline,/new Set\(sectors\)\.size!==sectors\.length/);
