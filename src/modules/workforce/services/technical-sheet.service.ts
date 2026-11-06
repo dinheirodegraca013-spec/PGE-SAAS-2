@@ -109,6 +109,7 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
   const fields = modelRecord && Array.isArray(modelRecord.campos) ? modelRecord.campos : null;
   const actions = row.acoes_execucao;
   const privacy = row.privacidade_autorizada;
+  const checklistKeys = checklistItems?.map(item => (item as Record<string, unknown>).key) ?? [];
   return typeof row.servico_id === 'string' && isSetor(row.setor) && Number.isSafeInteger(row.versao) && Number(row.versao)>=0 &&
     (row.responsavel_id===null||typeof row.responsavel_id==='string') &&
     ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
@@ -120,7 +121,7 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
     modelRecord !== null && typeof modelRecord.titulo === 'string' &&
     fields !== null && fields.every(isTechnicalField) && hasUniqueKeys(fields) &&
     checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && (item as Record<string, unknown>).key && typeof (item as Record<string, unknown>).label === 'string' && (item as Record<string, unknown>).label && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems);
-    !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') &&
+    !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') && Object.keys(row.checklist as Record<string, unknown>).every(key => checklistKeys.includes(key)) &&
     !!row.dados && typeof row.dados === 'object' && !Array.isArray(row.dados);
 }
 
