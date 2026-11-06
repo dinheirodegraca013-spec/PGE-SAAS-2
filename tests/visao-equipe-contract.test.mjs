@@ -1464,6 +1464,7 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
 test("registros de produção quebram observações sem deslocar o horário", () => {
   assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
   assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
+  assert.match(registroProducao, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{onRefresh\}/);
 });
 
 test("ficha técnica quebra a situação sem perder as ações", () => {

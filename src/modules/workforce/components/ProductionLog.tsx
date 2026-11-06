@@ -1,3 +1,68 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíß_:Õ:-jZ.¶›­–)Ş³v–×÷'B&V7BÂ²W6T–BÂW6U&VbÂW6U7FFRÒg&öÒw&V7Bs°Ğ¦–×÷'BG—R²&öGV7F–öäVçG'’Â&öGV7F–öå7FFRÒg&öÒrââ÷6W'f–6W2÷FV6†æ–6Â×6†VWBç6W'f–6Rs°Ğ Ğ¦6öç7BÆ&VÇ3¢&V6÷&CÅ&öGV7F–öäVçG'•²wF—òuÒÂ7G&–æsâÒ²&öGW¦–Fó¢u&öGW¦–FòrÂFVfV—Fó¢tFVfV—FòrÂFW7W&F–6–ó¢tFW7W&L:Ö6–òrÓ°Ğ¦6öç7BçVÖ&W$f÷&ÖBÒæWr–çFÂäçVÖ&W$f÷&ÖB‚wBÔ%"rÂ²Ö†–×VÔg&7F–öäF–v—G3¢2Ò“°Ğ¦6öç7Bf÷&ÖEVçF—G“Ò‡fÇVS¦çVÖ&W"“ÓäçVÖ&W"æ—4f–æ—FR‡fÇVR“öçVÖ&W$f÷&ÖBæf÷&ÖB‡fÇVR“¢uVçF–FFR–æF—7öì:×fVÂs°Ğ¦6öç7Bf÷&ÖEG—SÒ‡fÇVS§7G&–ær“ÓæÆ&VÇ5·fÇVR2&öGV7F–öäVçG'•²wF—òuÕÓóòuF—ò–æF—7öì:×fVÂs°Ğ¦6öç7Bf÷&ÖDVçG'”FFSÒ‡fÇVS§7G&–ær“Óç¶6öç7BFFSÖæWrFFR‡fÇVR“·&WGW&âçVÖ&W"æ—4æâ†FFRævWEF–ÖR‚’“òtFFì:6ò–æf÷&ÖFs¦æWr–çFÂäFFUF–ÖTf÷&ÖB‚wBÔ%"rÂ²FFU7G–ÆS¢w6†÷'BrÂF–ÖU7G–ÆS¢w6†÷'BrÒ’æf÷&ÖB†FFR“·Ó°Ğ¦6öç7B6fTVçG'”FFUF–ÖSÒ‡fÇVS§7G&–ær“Óç¶6öç7BFFSÖæWrFFR‡fÇVR“·&WGW&âçVÖ&W"æ—4æâ†FFRævWEF–ÖR‚’“÷VæFVf–æVC¦FFRçFô•4õ7G&–ær‚“·Ó°Ğ Ğ¦W‡÷'BFVfVÇBgVæ7F–öâ&öGV7F–öäÆör‡°Ğ¢7FFRÀĞ¢6å&Vv—7FW"ÀĞ¢F—6&ÆVBÀĞ¢W'&÷"ÀĞ¢öå&Vv—7FW"ÀĞ¢öå&Vg&W6‚ÀĞ§Ó¢°Ğ¢7FFS¢&öGV7F–öå7FFRÂçVÆÃ°Ğ¢6å&Vv—7FW#¢&ööÆVã°Ğ¢F—6&ÆVC¢&ööÆVã°Ğ¢W'&÷#ó¢7G&–æs°Ğ¢öå&Vv—7FW#¢†–çWC¢²&WVW7C¢7G&–æs²G—S¢&öGV7F–öäVçG'•²wF—òuÓ²VçF—G“¢çVÖ&W#²Væ—C¢7G&–æs²FW67&—F–öã¢7G&–ærÒ’Óâ&öÖ—6SÇfö–Cã°Ğ¢öå&Vg&W6ƒ¢‚’Óâfö–C°Ğ§Ò’°Ğ¢6öç7B–BÒW6T–B‚“°Ğ¢6öç7B·G—RÂ6WEG—UÒÒW6U7FFSÅ&öGV7F–öäVçG'•²wF—òuÓâ‚w&öGW¦–Fòr“°Ğ¢6öç7B·VçF—G’Â6WEVçF—G•ÒÒW6U7FFR‚sr“°Ğ¢6öç7B·Væ—BÂ6WEVæ—EÒÒW6U7FFR‚wVâr“°Ğ¢6öç7B¶FW67&—F–öâÂ6WDFW67&—F–öåÒÒW6U7FFR‚rr“°Ğ¢6öç7B¶'W7’Â6WD'W7•ÒÒW6U7FFR†fÇ6R“°Ğ¢6öç7B¶ÖW76vRÂ6WDÖW76vUÒÒW6U7FFR‚rr“°Ğ¢6öç7B¶ÖW76vT¶–æBÂ6WDÖW76vT¶–æEÒÒW6U7FFSÂw7FGW2rÂvW'&÷"sâ‚w7FGW2r“°Ğ¢6öç7B&WVW7BÒW6U&VcÇ²–ÆöC¢7G&–æs²–C¢7G&–ærÒÂçVÆÃâ†çVÆÂ“°Ğ Ğ¢&WGW&âÇ6V7F–öâ6Æ74æÖSÒ'76R×’Ó2&÷VæFVB×†Â&÷&FW"&÷&FW"×6ÆFRÓ#&r×v†—FRÓB"&–ÖÆ&VÆÆVF'“×¶G¶–GÒ×F—FÆVÒ&–Ö'W7“×¶'W7—ÓàĞ¢ÆF—b6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2×7F'B§W7F–g’Ö&WGvVVâvÓ2#àĞ¢ÆF—b6Æ74æÖSÒ&Ö–â×rÓ#ãÆƒB–C×¶G¶–GÒ×F—FÆVÒ6Æ74æÖSÒ&'&V²×v÷&G2föçB×6VÖ–&öÆB#å&öG\:|:6òRW&F3ÂöƒCãÇ6Æ74æÖSÒ&'&V²×v÷&G2FW‡B×6ÒFW‡B×6ÆFRÓS#å&Vv—7G&R\:v2&öGW¦–F2ÂFVfV—F÷2RFW7W&L:Ö6–÷2÷"WfVçFòãÂ÷ãÂöF—càĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"öä6Æ–6³×¶öå&Vg&W6‡ÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—Ò&–ÖÆ&VÃ×¶'W7“òtwV&FRGVÆ—¦:|:6òF÷2&Vv—7G&÷2s¢tGVÆ—¦"&Vv—7G&÷2wÓç¶'W7“òtwV&F^(
-bs¢tGVÆ—¦"&Vv—7G&÷2wÓÂö'WGFöãàĞ¢ÂöF—càĞ¢ÆF—b6Æ74æÖSÒ&w&–BvÓ"6Ó¦w&–BÖ6öÇ2Ó2#àĞ¢²…²w&öGW¦–FòrÂvFVfV—FòrÂvFW7W&F–6–òuÒ26öç7B’æÖ†—FVÒÓâÆF—b¶W“×¶—FV×Ò6Æ74æÖSÒ'&÷VæFVBÖÆr&r×6ÆFRÓSÓ2#ãÇ7â6Æ74æÖSÒ&&Æö6²FW‡B×‡2FW‡B×6ÆFRÓS#ç¶Æ&VÇ5¶—FVÕ×ÓÂ÷7ããÇ7G&öæsç¶f÷&ÖEVçF—G’‡7FFSòçF÷F—5¶—FVÕÒóò—ÓÂ÷7G&öæsãÂöF—câ—ĞĞ¢ÂöF—càĞ¢¶6å&Vv—7FW"bbÆf÷&Ò6Æ74æÖSÒ&w&–BvÓ2&÷&FW"×B&÷&FW"×6ÆFRÓBÓ26Ó¦w&–BÖ6öÇ2Ó""&–Ö'W7“×¶'W7—Òöå7V&Ö—C×¶7–æ2WfVçBÓâ°Ğ¢WfVçBç&WfVçDFVfVÇB‚“°Ğ¢6öç7BfÇVRÒçVÖ&W"‡VçF—G’“°Ğ¢6öç7Bæ÷&ÖÆ—¦VEVæ—BÒVæ—BçG&–Ò‚“°Ğ¢–b‚çVÖ&W"æ—4f–æ—FR‡fÇVR’ÇÂfÇVRÃÒÇÂfÇVRãÒÇÂæ÷&ÖÆ—¦VEVæ—BÇÂæ÷&ÖÆ—¦VEVæ—BæÆVæwF‚âC’²6WDÖW76vT¶–æB‚vW'&÷"r“²6WDÖW76vR‚t–æf÷&ÖRVÖVçF–FFRRVæ–FFRl:Æ–F2âr“²&WGW&ã²ĞĞ¢–b†FW67&—F–öâçG&–Ò‚’æÆVæwF‚Â2’²6WDÖW76vT¶–æB‚vW'&÷"r“²6WDÖW76vR‚t–æf÷&ÖRVÖö'6W'f:|:6ò6öÒVÆòÖVæ÷226&7FW&W2âr“²&WGW&ã²ĞĞ¢6öç7BFFÒ²G—RÂVçF—G“¢fÇVRÂVæ—C¢æ÷&ÖÆ—¦VEVæ—BÂFW67&—F–öã¢FW67&—F–öâçG&–Ò‚’Ó°Ğ¢6öç7B–ÆöBÒ¥4ôâç7G&–æv–g’†FF“°Ğ¢–b‡&WVW7Bæ7W'&VçCòç–ÆöBÓÒ–ÆöB’&WVW7Bæ7W'&VçBÒ²–ÆöBÂ–C¢7'—Fòç&æFöÕUT”B‚’Ó°Ğ¢6WD'W7’‡G'VR“²6WDÖW76vR‚rr“°Ğ¢G'’²v—Böå&Vv—7FW"‡²ââæFFÂ&WVW7C¢&WVW7Bæ7W'&VçBæ–BÒ“²&WVW7Bæ7W'&VçBÒçVÆÃ²6WDÖW76vT¶–æB‚w7FGW2r“²6WDÖW76vR‚u&Vv—7G&ò6ÇfòVÆò6W'f–F÷"âr“²ĞĞ¢6F6‚†6W6R’²6WDÖW76vT¶–æB‚vW'&÷"r“²6WDÖW76vR†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6Çf"ò&Vv—7G&òâr“²ĞĞ¢f–æÆÇ’²6WD'W7’†fÇ6R“²ĞĞ¢×ÓàĞ¢ÆÆ&VÂ‡FÖÄf÷#×¶G¶–GÒ×G—VÒ6Æ74æÖSÒ&&Æö6²FW‡B×6Ò#åF—óÇ6VÆV7B–C×¶G¶–GÒ×G—VÒ6Æ74æÖSÒ&–çWBÖf–VÆB×BÓ"fÇVS×·G—WÒöä6†ævS×¶WfVçBÓâ²6WEG—R†WfVçBçF&vWBçfÇVR2&öGV7F–öäVçG'•²wF—òuÒ“²6WDÖW76vR‚rr“²×ÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—Óç²„ö&¦V7Bæ¶W—2†Æ&VÇ2’2&öGV7F–öäVçG'•²wF—òuÕµÒ’æÖ†—FVÒÓâÆ÷F–öâ¶W“×¶—FV×ÒfÇVS×¶—FV×Óç¶Æ&VÇ5¶—FVÕ×ÓÂö÷F–öãâ—ÓÂ÷6VÆV7CãÂöÆ&VÃàĞ¢ÆÆ&VÂ‡FÖÄf÷#×¶G¶–GÒ×VçF—G–Ò6Æ74æÖSÒ&&Æö6²FW‡B×6Ò#åVçF–FFSÆ–çWB–C×¶G¶–GÒ×VçF—G–Ò6Æ74æÖSÒ&–çWBÖf–VÆB×BÓ"G—SÒ&çVÖ&W""–çWDÖöFSÒ&FV6–ÖÂ"&WV—&VBÖ–ãÒ#ã"ÖƒÒ#“““““““’"7FWÒ&ç’"fÇVS×·VçF—G—Òöä6†ævS×¶WfVçBÓâ²6WEVçF—G’†WfVçBçF&vWBçfÇVR“²6WDÖW76vR‚rr“²×ÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—ÒóãÂöÆ&VÃàĞ¢ÆÆ&VÂ‡FÖÄf÷#×¶G¶–GÒ×Væ—FÒ6Æ74æÖSÒ&&Æö6²FW‡B×6Ò#åVæ–FFSÆ–çWB–C×¶G¶–GÒ×Væ—FÒ6Æ74æÖSÒ&–çWBÖf–VÆB×BÓ"&WV—&VBÖ„ÆVæwFƒ×³CÒfÇVS×·Væ—GÒöä6†ævS×¶WfVçBÓâ²6WEVæ—B†WfVçBçF&vWBçfÇVR“²6WDÖW76vR‚rr“²×ÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—ÒóãÂöÆ&VÃàĞ¢ÆÆ&VÂ‡FÖÄf÷#×¶G¶–GÒÖFW67&—F–öæÒ6Æ74æÖSÒ&&Æö6²FW‡B×6Ò6Ó¦6öÂ×7âÓ"#äö'6W'f:|:6óÇFW‡F&V–C×¶G¶–GÒÖFW67&—F–öæÒ6Æ74æÖSÒ&–çWBÖf–VÆB×BÓ"&÷w3×³'ÒÖ–äÆVæwFƒ×³7ÒÖ„ÆVæwFƒ×³Ò&WV—&VBfÇVS×¶FW67&—F–öçÒöä6†ævS×¶WfVçBÓâ²6WDFW67&—F–öâ†WfVçBçF&vWBçfÇVR“²6WDÖW76vR‚rr“²×ÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—ÒóãÂöÆ&VÃàĞ¢Æ'WGFöâG—SÒ'7V&Ö—B"6Æ74æÖSÒ&'Fâ×&–Ö'’6‡&–æ²Óv†—FW76RÖæ÷w&6Ó¦6öÂ×7âÓ""&–ÖÆ&VÃ×¶'W7’òu6ÇfæFòWfVçFòFR&öG\:|:6òr¢u&Vv—7G&"WfVçFòFR&öG\:|:6òwÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7—Óç¶'W7’òu6ÇfæFş(
-br¢u&Vv—7G&"WfVçFòwÓÂö'WGFöãàĞ¢Âöf÷&ÓçĞĞ¢¶W'&÷"bbÇ&öÆSÒ&ÆW'B"6Æ74æÖSÒ&'&V²×v÷&G2FW‡B×6ÒFW‡B×&VBÓs#ç¶W'&÷'ÓÂ÷çĞĞ¢¶ÖW76vRbbÇ&öÆS×¶ÖW76vT¶–æBÓÓÒw7FGW2ròw7FGW2r¢vÆW'BwÒ&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓs#ç¶ÖW76vWÓÂ÷çĞĞ¢·7FFRbb7FFRç&Vv—7G&÷2æÆVæwF‚bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'&÷VæFVBÖÆr&÷&FW"&÷&FW"ÖF6†VB&÷&FW"×6ÆFRÓ#Ó2FW‡B×6ÒFW‡B×6ÆFRÓS#äæVæ‡VÒWfVçFòFR&öG\:|:6ò&Vv—7G&FòæW7Ff–6†ãÂ÷ç×²7FFSòç&Vv—7G&÷2æÆVæwF‚bbÆF—b6Æ74æÖSÒ'76R×’Ó"&÷&FW"×B&÷&FW"×6ÆFRÓBÓ2#ãÆƒR6Æ74æÖSÒ'FW‡B×6ÒföçBÖÖVF—VÒ#ì9¦ÇF–Ö÷2&Vv—7G&÷3ÂöƒSç·7FFRç&Vv—7G&÷2ç6Æ–6RƒÂR’æÖ†—FVÒÓâÆF—b¶W“×¶—FVÒæ–GÒ6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2Ö&6VÆ–æR§W7F–g’Ö&WGvVVâvÓ"FW‡B×6Ò"&–ÖÆ&VÃ×¶WfVçFòG¶f÷&ÖEG—R†—FVÒçF—ò—Ò+rG¶f÷&ÖEVçF—G’†—FVÒçVçF–FFR—ÒG¶—FVÒçVæ–FFWÒ+rG¶f÷&ÖDVçG'”FFR†—FVÒæ7&–FõöVÒ—ÖÓãÇ7â6Æ74æÖSÒ&Ö–â×rÓ'&V²×v÷&G2#ãÇ7G&öæsç¶f÷&ÖEG—R†—FVÒçF—ò—ÓÂ÷7G&öæsâ+r¶f÷&ÖEVçF—G’†—FVÒçVçF–FFR—Ò¶—FVÒçVæ–FFW×¶—FVÒæFW67&–6òbb(	BG¶—FVÒæFW67&–6÷ÖÓÂ÷7ããÇF–ÖR6Æ74æÖSÒ'6‡&–æ²ÓFW‡B×‡2FW‡B×6ÆFRÓS"FFUF–ÖS×·6fTVçG'”FFUF–ÖR†—FVÒæ7&–FõöVÒ—Óç¶f÷&ÖDVçG'”FFR†—FVÒæ7&–FõöVÒ—ÓÂ÷F–ÖSãÂöF—câ—ÓÂöF—cçĞĞ¢Â÷6V7F–öãã°Ğ§ĞĞ
+import React, { useId, useRef, useState } from 'react';
+import type { ProductionEntry, ProductionState } from '../services/technical-sheet.service';
+
+const labels: Record<ProductionEntry['tipo'], string> = { produzido: 'Produzido', defeito: 'Defeito', desperdicio: 'DesperdÃ­cio' };
+const numberFormat = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });
+const formatQuantity=(value:number)=>Number.isFinite(value)?numberFormat.format(value):'Quantidade indisponÃ­vel';
+const formatType=(value:string)=>labels[value as ProductionEntry['tipo']]??'Tipo indisponÃ­vel';
+const formatEntryDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data nÃ£o informada':new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(date);};
+const safeEntryDateTime=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();};
+
+export default function ProductionLog({
+  state,
+  canRegister,
+  disabled,
+  error,
+  onRegister,
+  onRefresh,
+}: {
+  state: ProductionState | null;
+  canRegister: boolean;
+  disabled: boolean;
+  error?: string;
+  onRegister: (input: { request: string; type: ProductionEntry['tipo']; quantity: number; unit: string; description: string }) => Promise<void>;
+  onRefresh: () => void;
+}) {
+  const id = useId();
+  const [type, setType] = useState<ProductionEntry['tipo']>('produzido');
+  const [quantity, setQuantity] = useState('1');
+  const [unit, setUnit] = useState('un');
+  const [description, setDescription] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
+  const request = useRef<{ payload: string; id: string } | null>(null);
+
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="min-w-0"><h4 id={`${id}-title`} className="break-words font-semibold">ProduÃ§Ã£o e perdas</h4><p className="break-words text-sm text-slate-500">Registre peÃ§as produzidas, defeitos e desperdÃ­cios por evento.</p></div>
+      <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualizaÃ§Ã£o dos registros':'Atualizar registros'}>{busy?'Aguardeâ€¦':'Atualizar registros'}</button>
+    </div>
+    <div className="grid gap-2 sm:grid-cols-3">
+      {(['produzido', 'defeito', 'desperdicio'] as const).map(item => <div key={item} className="rounded-lg bg-slate-50 p-3"><span className="block text-xs text-slate-500">{labels[item]}</span><strong>{formatQuantity(state?.totais[item] ?? 0)}</strong></div>)}
+    </div>
+    {canRegister && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event => {
+      event.preventDefault();
+      const value = Number(quantity);
+      const normalizedUnit = unit.trim();
+      if (!Number.isFinite(value) || value <= 0 || value >= 100000000 || !normalizedUnit || normalizedUnit.length > 40) { setMessageKind('error'); setMessage('Informe uma quantidade e unidade vÃ¡lidas.'); return; }
+      if (description.trim().length < 3) { setMessageKind('error'); setMessage('Informe uma observaÃ§Ã£o com pelo menos 3 caracteres.'); return; }
+      const data = { type, quantity: value, unit: normalizedUnit, description: description.trim() };
+      const payload = JSON.stringify(data);
+      if (request.current?.payload !== payload) request.current = { payload, id: crypto.randomUUID() };
+      setBusy(true); setMessage('');
+      try { await onRegister({ ...data, request: request.current.id }); request.current = null; setMessageKind('status'); setMessage('Registro salvo pelo servidor.'); }
+      catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel salvar o registro.'); }
+      finally { setBusy(false); }
+    }}>
+      <label htmlFor={`${id}-type`} className="block text-sm">Tipo<select id={`${id}-type`} className="input-field mt-1" value={type} onChange={event => { setType(event.target.value as ProductionEntry['tipo']); setMessage(''); }} disabled={disabled || busy}>{(Object.keys(labels) as ProductionEntry['tipo'][]).map(item => <option key={item} value={item}>{labels[item]}</option>)}</select></label>
+      <label htmlFor={`${id}-quantity`} className="block text-sm">Quantidade<input id={`${id}-quantity`} className="input-field mt-1" type="number" inputMode="decimal" required min="0.001" max="99999999" step="any" value={quantity} onChange={event => { setQuantity(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
+      <label htmlFor={`${id}-unit`} className="block text-sm">Unidade<input id={`${id}-unit`} className="input-field mt-1" required maxLength={40} value={unit} onChange={event => { setUnit(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
+      <label htmlFor={`${id}-description`} className="block text-sm sm:col-span-2">ObservaÃ§Ã£o<textarea id={`${id}-description`} className="input-field mt-1" rows={2} minLength={3} maxLength={1000} required value={description} onChange={event => { setDescription(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
+      <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto" aria-label={busy ? 'Salvando evento de produÃ§Ã£o' : 'Registrar evento de produÃ§Ã£o'} disabled={disabled || busy}>{busy ? 'Salvandoâ€¦' : 'Registrar evento'}</button>
+    </form>}
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
+    {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
+    {state && !state.registros.length && <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500">Nenhum evento de produÃ§Ã£o registrado nesta ficha.</p>}{!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Ãšltimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm" aria-label={`Evento ${formatType(item.tipo)} Â· ${formatQuantity(item.quantidade)} ${item.unidade} Â· ${formatEntryDate(item.criado_em)}`}><span className="min-w-0 break-words"><strong>{formatType(item.tipo)}</strong> Â· {formatQuantity(item.quantidade)} {item.unidade}{item.descricao && ` â€” ${item.descricao}`}</span><time className="shrink-0 text-xs text-slate-500" dateTime={safeEntryDateTime(item.criado_em)}>{formatEntryDate(item.criado_em)}</time></div>)}</div>}
+  </section>;
+}
