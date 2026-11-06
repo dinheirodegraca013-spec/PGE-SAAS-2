@@ -1307,3 +1307,9 @@ test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
   assert.match(meuSetor, /<div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold"/);
   assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100/);
 });
+
+test("inbox de materiais preserva erro e retry em telas estreitas", () => {
+  assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
+  assert.match(inboxMateriais, /className="btn-secondary shrink-0" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
+  assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
+});
