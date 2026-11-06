@@ -332,7 +332,48 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} Â· \$\{formatTaskStatus\(displayedStatus\)\} Â· \$\{formatTaskSector\(task\.setor\)\} Â· Prioridade \$\{formatPriority\(task\.prioridade\)\} Â· \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' Â· Atrasada':''\}`\}/);
   assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
-  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}/]¸ó‹h‘éì¶»§q«^t›X]Ú
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
+  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
+  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
+  assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
+  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluÃ­do`\}/);
+});
+
+test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
+  assert.match(minhasTarefas, /const priorityTone=/);
+  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
+  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
+test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
+  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
+  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
+  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
+});
+
+test("tarefas prÃ³ximas do prazo recebem aviso relativo", () => {
+  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
+  assert.match(minhasTarefas, /Vence hoje/);
+  assert.match(minhasTarefas, /Vence amanhÃ£/);
+  assert.match(minhasTarefas, /Vence em \$\{days\} dias/);
+});
+
+test("serviÃ§o de tarefas exige progresso inteiro", () => {
+  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
+  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
+  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
+});
+
+test("painel quebra tÃ­tulos longos em telas estreitas", () => {
+  assert.match(minhasTarefas, /min-w-0 break-words font-semibold/);
+  assert.match(minhasTarefas, /break-words whitespace-pre-wrap text-sm text-slate-600/);
+  assert.match(agendaFuncionario, /min-w-0 flex-1/);
+  assert.match(agendaFuncionario, /shrink-0 text-sm font-semibold/);
+  assert.match(resumoFuncionario, /min-w-0 break-words/);
+});
+
+test("resumo de trabalho preserva prazo e status no mobile", () => {
+  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semic]}ÓÛh‘éì¶»§q«^w›X]Ú
 [˜›ÞX]\šXZ\ËØXÝ[Û\ÞKÊNÃBˆ\ÜÙ\›X]Ú
 [˜›ÞX]\šXZ\ËØ\šXK[X™[WØÛÛXÚ]péðèÛÈH	Ú][Wš][WÛ›ÛYWH0­È	Ù›Ü›X]]X[]W
 ][Wœ]X[YYW
