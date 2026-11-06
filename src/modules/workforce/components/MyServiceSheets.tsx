@@ -5,6 +5,7 @@ import { technicalSheets } from '../services/technical-sheet.service';
 import ServiceTechnicalSheet from './ServiceTechnicalSheet';
 
 type List = Awaited<ReturnType<typeof technicalSheets.list>>;
+function formatSheetUpdate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Atualização não informada':`Atualizada em ${date.toLocaleString('pt-BR')}`;}
 export default function MyServiceSheets() {
   const { context } = useWorkforceAccess();
   const [list, setList] = useState<List | null>(null);
@@ -38,7 +39,7 @@ export default function MyServiceSheets() {
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar as fichas novamente" onClick={() => setRefresh(n => n + 1)}>Tentar novamente</button></div>}
     {list && !list.itens.length && <div role="status" aria-live="polite" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 p-4"><p className="text-sm text-slate-500">{query ? `Nenhuma ficha encontrada para “${query}”.` : 'Nenhuma ficha liberada para você no momento.'}</p>{query && <button type="button" className="btn-secondary" disabled={loading} onClick={() => { setSearch(''); setQuery(''); setPage(0); }}>Limpar pesquisa</button>}</div>}
     {list && <ul className="divide-y divide-slate-100">{list.itens.map(item => <li key={`${item.servico_id}:${item.setor}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
-      <div><p className="font-medium">{item.titulo}</p><p className="text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p></div>
+      <div><p className="font-medium">{item.titulo}</p><p className="text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p><time className="text-xs text-slate-500" dateTime={item.atualizado_em}>{formatSheetUpdate(item.atualizado_em)}</time></div>
       <button type="button" className="btn-secondary" disabled={loading} onClick={() => {
         if (selected && !window.confirm('Abrir outra ficha? Alterações não salvas serão descartadas.')) return;
         setSelected(item);
