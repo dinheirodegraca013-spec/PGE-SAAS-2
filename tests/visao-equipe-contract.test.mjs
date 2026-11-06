@@ -175,6 +175,9 @@ test("ações administrativas da equipe têm nomes acessíveis", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
   assert.match(equipeView, /aria-label="Cadastrar novo funcionário"/);
   assert.match(equipeView, /className="btn-primary w-full sm:w-auto"/);
+  assert.match(equipeView, /className="btn-secondary inline-flex w-full items-center justify-center gap-2 sm:w-auto"/);
+  assert.match(equipeView, /className="flex flex-col gap-2 sm:flex-row"/);
+  assert.match(equipeView, /className="btn-primary w-full sm:w-auto sm:self-end"/);
   assert.match(equipeView, /aria-label=\{carregando \? 'Atualizando equipe' : 'Atualizar equipe'\}/);
   assert.match(equipeView, /aria-label="Encaminhar projeto para o setor selecionado"/);
   assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
@@ -714,7 +717,7 @@ test("ações de cabeçalho e formulários se reorganizam no mobile", () => {
   assert.match(inboxMateriais, /className="min-w-0"><h2 id="material-requests-title" className="break-words/);
   assert.match(inboxMateriais, /className="flex flex-wrap items-center gap-2"><select/);
   assert.match(editorAcesso, /className="flex flex-wrap items-center justify-between gap-3"><h2 id="employee-access-title" className="min-w-0 break-words/);
-  assert.match(equipe, /<div className="flex flex-wrap gap-2"><button type="submit"/);
+  assert.match(equipe, /<div className="flex flex-col gap-2 sm:flex-row"><button type="submit"/);
 });
 
 test("lista administrativa quebra identificadores e histórico longos", () => {
