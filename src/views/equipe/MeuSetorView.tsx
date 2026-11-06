@@ -56,6 +56,9 @@ function formatAccessDate(value: string | null) {
 const employeeStatusLabels: Record<string, string> = {
   ativo: 'Ativo', inativo: 'Inativo', suspenso: 'Suspenso', suspenso_plano: 'Suspenso pelo plano',
 };
+const employeeStatusTone: Record<string, string> = {
+  ativo: 'bg-emerald-100 text-emerald-800', inativo: 'bg-slate-100 text-slate-700', suspenso: 'bg-rose-100 text-rose-800', suspenso_plano: 'bg-amber-100 text-amber-800',
+};
 
 export default function MeuSetorView() {
   const { usuario } = useAuthStore();
@@ -182,7 +185,7 @@ export default function MeuSetorView() {
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nome completo</dt><dd className="mt-1 break-words font-semibold text-slate-900">{context.funcionario.nome || 'Não informado'}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">E-mail</dt><dd className="mt-1 break-all text-slate-900">{context.funcionario.email || 'Não informado'}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Cargo ou função</dt><dd className="mt-1 break-words text-slate-900">{context.funcionario.cargo || 'Não informado'}</dd></div>
-        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Status do acesso</dt><dd className="mt-1 font-semibold text-slate-900">{employeeStatusLabels[context.funcionario.status] || 'Indisponível'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Status do acesso</dt><dd className="mt-1"><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${employeeStatusTone[context.funcionario.status] || 'bg-slate-100 text-slate-700'}`} aria-label={`Status do acesso: ${employeeStatusLabels[context.funcionario.status] || 'Indisponível'}`}>{employeeStatusLabels[context.funcionario.status] || 'Indisponível'}</span></dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Último acesso</dt><dd className="mt-1 text-slate-900">{formatAccessDate(context.funcionario.ultimo_acesso)}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Identificador interno</dt><dd className="mt-1 text-slate-900">{context.funcionario.identificador_interno || 'Não informado'}</dd></div>
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Setores autorizados</dt><dd className="mt-1 text-slate-900">{sectorList.length ? sectorList.filter(isSetor).map(item => setores[item]).join(', ') : 'Nenhum setor informado'}</dd></div>

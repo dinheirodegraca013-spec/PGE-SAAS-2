@@ -294,6 +294,11 @@ test("painel exibe perfil somente quando a permissão foi concedida", () => {
   assert.match(meuSetor, /Setores autorizados/);
 });
 
+test("perfil destaca semanticamente o status do acesso", () => {
+  assert.match(meuSetor, /employeeStatusTone/);
+  assert.match(meuSetor, /aria-label=\{`Status do acesso: \$\{employeeStatusLabels\[context\.funcionario\.status\] \|\| 'Indisponível'\}`\}/);
+});
+
 test("ações rápidas possuem foco visível no teclado", () => {
   assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
 });
