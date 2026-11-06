@@ -116,7 +116,7 @@ export default function MeuSetorView() {
     </div>}
     {context && !accessLoading && !accessError && !quickActions.length && <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-600">Seu acesso está ativo, mas ainda não há módulos operacionais liberados. Fale com o administrador da empresa.</p>}
     {quickActions.length > 0 && <nav aria-label="Ações rápidas" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {quickActions.map(action => <a key={action.href} href={action.href} aria-label={`${action.label}: ${action.detail}`} className="card group p-4 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-sm"><span className="text-sm font-semibold text-slate-900 group-hover:text-cyan-700">{action.label} <span aria-hidden="true">↗</span></span><span className="mt-1 block text-xs text-slate-500">{action.detail}</span></a>)}
+      {quickActions.map(action => <a key={action.href} href={action.href} aria-label={`${action.label}: ${action.detail}`} className="card group p-4 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"><span className="text-sm font-semibold text-slate-900 group-hover:text-cyan-700">{action.label} <span aria-hidden="true">↗</span></span><span className="mt-1 block text-xs text-slate-500">{action.detail}</span></a>)}
     </nav>}
     {(hasPermission(context,'tarefas') || hasPermission(context,'ordens')) && <PersonalWorkSummary />}
     {hasPermission(context,'agenda') && <div id="agenda" className="scroll-mt-6"><AgendaPanel /></div>}
