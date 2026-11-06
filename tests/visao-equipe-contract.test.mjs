@@ -1428,10 +1428,11 @@ test("ocorrências preservam comunicação, resolução e paginação no mobile"
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
-  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" onClick=\{refreshRequests\}/);
+  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0 whitespace-nowrap" onClick=\{refreshRequests\}/);
   assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
   assert.match(solicitacaoMaterial, /className="shrink-0 rounded-full bg-white px-2 py-1 text-xs"/);
-  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" aria-label=\{`Cancelar solicitação/);
+  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{`Cancelar solicitação/);
+  assert.match(solicitacaoMaterial, /className="btn-primary inline-flex shrink-0 whitespace-nowrap sm:col-span-2"/);
 });
 
 test("registros de produção quebram observações sem deslocar o horário", () => {
