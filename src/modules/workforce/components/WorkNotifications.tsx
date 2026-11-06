@@ -46,7 +46,7 @@ export default function WorkNotifications(){
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
         setError('');setSelected(item);
       }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>}{!item.tarefa_id&&!item.servico_id&&<span className="self-center text-xs text-slate-500">Sem registro relacionado</span>}
-      {!item.lida_em && <button type="button" className="btn-secondary" disabled={!!busy} onClick={async()=>{
+      {!item.lida_em && <button type="button" className="btn-secondary" disabled={!!busy} aria-label="Marcar esta notificação como lida" onClick={async()=>{
         if(reading.current)return;reading.current=true;setBusy(item.id);setError('');const request=generation.current;
         try{const result=await workNotifications.read(item.id);if(request===generation.current)setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);}
         catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível registrar a leitura.');}
