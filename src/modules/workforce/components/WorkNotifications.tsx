@@ -42,7 +42,7 @@ export default function WorkNotifications(){
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
       <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{notificationLabels[item.evento]||'Atualização da operação'} · {isSetor(item.setor)?setores[item.setor]:item.setor||'Setor não informado'}</p>
       <time className="block text-xs text-slate-500" dateTime={safeNotificationDateTime(item.criada_em)}>{formatNotificationDate(item.criada_em)}</time>
-      <div className="flex flex-wrap gap-2">{(item.tarefa_id||item.servico_id)&&<button type="button" className="btn-secondary" disabled={!!busy} onClick={()=>{
+      <div className="flex flex-wrap gap-2">{(item.tarefa_id||item.servico_id)&&<button type="button" className="btn-secondary" disabled={!!busy} aria-label={item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'} onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
         setError('');setSelected(item);
       }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>}{!item.tarefa_id&&!item.servico_id&&<span className="self-center text-xs text-slate-500">Sem registro relacionado</span>}
