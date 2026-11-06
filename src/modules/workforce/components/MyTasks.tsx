@@ -13,6 +13,7 @@ const statusTone: Record<TaskStatus,string> = {
   concluida: 'bg-emerald-100 text-emerald-800',
   cancelada: 'bg-rose-100 text-rose-800',
 };
+function formatTaskDeadline(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Prazo não informado':date.toLocaleString('pt-BR');}
 
 export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const {context}=useWorkforceAccess();const id=useId();
@@ -35,7 +36,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[displayedStatus]}`}>{taskStatusLabels[displayedStatus]}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
-    <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${new Date(task.prazo).toLocaleString('pt-BR')}`:'Sem prazo definido'}</p>
+    <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${formatTaskDeadline(task.prazo)}`:'Sem prazo definido'}</p>
     <progress className="w-full" max={100} value={displayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{displayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
