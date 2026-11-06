@@ -171,6 +171,14 @@ test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /role="status" aria-live="polite" className="rounded-lg border border-dashed/);
 });
 
+test("ações administrativas da equipe têm nomes acessíveis", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /aria-label="Cadastrar novo funcionário"/);
+  assert.match(equipeView, /aria-label=\{carregando \? 'Atualizando equipe' : 'Atualizar equipe'\}/);
+  assert.match(equipeView, /aria-label="Encaminhar projeto para o setor selecionado"/);
+  assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);

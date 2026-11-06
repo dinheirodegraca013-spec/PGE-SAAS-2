@@ -216,9 +216,10 @@ export default function EquipeView() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-        {administrador && <button type="button" className="btn-primary" disabled={!limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
+        {administrador && <button type="button" className="btn-primary" aria-label="Cadastrar novo funcionário" disabled={!limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
+          aria-label={carregando ? 'Atualizando equipe' : 'Atualizar equipe'}
           onClick={() => void carregar()}
           disabled={carregando}
           className="btn-secondary inline-flex items-center gap-2"
@@ -249,12 +250,12 @@ export default function EquipeView() {
           {!editingId && <><label className="text-sm" htmlFor={`${employeeFormId}-job`}>Cargo ou função<input id={`${employeeFormId}-job`} className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm" htmlFor={`${employeeFormId}-internal-id`}>Identificador interno<input id={`${employeeFormId}-internal-id`} className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label></>}
           <label className="text-sm" htmlFor={`${employeeFormId}-sector`}>Setor<select id={`${employeeFormId}-sector`} className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
         </div>{editingId && <label className="flex items-center gap-2 text-sm" htmlFor={`${employeeFormId}-active`}><input id={`${employeeFormId}-active`} type="checkbox" checked={editActive} onChange={e => setEditActive(e.target.checked)} disabled={salvando} /> Acesso ativo</label>}
-        <div className="flex gap-2"><button type="submit" className="btn-primary" disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
+        <div className="flex gap-2"><button type="submit" className="btn-primary" aria-label={salvando ? 'Salvando funcionário' : editingId ? 'Salvar acesso do funcionário' : 'Cadastrar funcionário e enviar acesso'} disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" aria-label="Cancelar cadastro ou edição do funcionário" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
       </form>}
       {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5"><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
         <div className="grid gap-3 sm:grid-cols-3"><label className="text-sm">Projeto<select required className="input-field mt-1" value={projetoId} onChange={e => setProjetoId(e.target.value)} disabled={projetosCarregando || !!projetosErro}><option value="">{projetosCarregando ? 'Carregando projetos…' : projetosErro ? 'Projetos indisponíveis' : 'Selecione um projeto'}</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}</select></label>
         <label className="text-sm">Setor<select className="input-field mt-1" value={setorProjeto} onChange={e => setSetorProjeto(e.target.value)}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-        <button type="submit" disabled={salvando || projetosCarregando || !!projetosErro || !projetoId} className="btn-primary self-end">Encaminhar</button></div>{projetosErro ? <p role="alert" className="flex items-center justify-between gap-2 text-sm text-rose-700"><span>{projetosErro}</span><button type="button" className="btn-secondary" onClick={recarregarProjetos} disabled={projetosCarregando}>Tentar novamente</button></p> : !projetosCarregando && !projetos.length && <p className="text-sm text-slate-500">Nenhum projeto disponível para encaminhamento.</p>}</form>}
+        <button type="submit" aria-label="Encaminhar projeto para o setor selecionado" disabled={salvando || projetosCarregando || !!projetosErro || !projetoId} className="btn-primary self-end">Encaminhar</button></div>{projetosErro ? <p role="alert" className="flex items-center justify-between gap-2 text-sm text-rose-700"><span>{projetosErro}</span><button type="button" className="btn-secondary" aria-label="Tentar carregar projetos novamente" onClick={recarregarProjetos} disabled={projetosCarregando}>Tentar novamente</button></p> : !projetosCarregando && !projetos.length && <p className="text-sm text-slate-500">Nenhum projeto disponível para encaminhamento.</p>}</form>}
       <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-900">
         A presença diária ainda não está registrada no banco. Por isso, esta
         tela mostra apenas o status cadastral real e não inventa presença.
@@ -265,7 +266,7 @@ export default function EquipeView() {
           className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800"
         >
           <span className="flex items-center gap-2"><CircleAlert className="h-5 w-5 shrink-0" />{erro}</span>
-          <button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" disabled={carregando} onClick={() => void carregar()}>Tentar novamente</button>
+          <button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar a equipe novamente" disabled={carregando} onClick={() => void carregar()}>Tentar novamente</button>
         </div>
       )}
       <div className="grid gap-3 sm:grid-cols-4">
@@ -387,4 +388,3 @@ export default function EquipeView() {
     </div>
   );
 }
-
