@@ -682,6 +682,7 @@ test("produção e estoque sinalizam operações e mensagens ao funcionário", (
   assert.match(registroProducao, /dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
   assert.match(registroProducao, /aria-live="polite"/);
   assert.match(registroProducao, /Nenhum evento de produção registrado nesta ficha/);
+  assert.match(registroProducao, /aria-label=\{`Evento \$\{formatType\(item\.tipo\)\} · \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} · \$\{formatEntryDate\(item\.criado_em\)\}`\}/);
 });
 
 test("registros operacionais liberam o identificador após sucesso", () => {
