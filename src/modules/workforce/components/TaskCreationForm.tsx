@@ -48,7 +48,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando responsáveis…</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
-    {!loading && !candidates.length && <button type="button" className="btn-secondary" onClick={()=>setRetry(n=>n+1)}>Atualizar responsáveis</button>}
+    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary" onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label="Tentar carregar responsáveis novamente">Atualizar responsáveis</button>}
     <button type="submit" className="btn-primary" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
