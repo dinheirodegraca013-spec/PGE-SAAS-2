@@ -14,9 +14,10 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   const [message,setMessage]=useState('');
   const [retry,setRetry]=useState(0);
   const lock=useRef(false);
+  useEffect(()=>{setFlow(null);setSelected([]);},[serviceId,context?.proprietario]);
   useEffect(()=>{
     if(!context?.proprietario)return;
-    let active=true;setLoading(true);setError('');setFlow(null);setMessage('');
+    let active=true;setLoading(true);setError('');setMessage('');
     servicePipeline.load(serviceId).then(result=>{if(active){setFlow(result);setSelected(result.setores);}})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar o fluxo.');})
       .finally(()=>{if(active)setLoading(false);});
@@ -30,7 +31,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy}>
     <h3 id={`${id}-title`} className="font-semibold">Fluxo de produção</h3>
     <p className="text-sm text-slate-500">Selecione as etapas necessárias e ordene a execução. Estoque permanece como apoio.</p>
-    {loading && <p role="status" aria-live="polite">Carregando fluxo…</p>}
+    {loading && <p role="status" aria-live="polite">{flow ? 'Atualizando fluxo…' : 'Carregando fluxo…'}</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {flow && <form className="space-y-4" onSubmit={async event=>{
@@ -58,4 +59,3 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     }}>Recarregar fluxo</button>
   </section>;
 }
-

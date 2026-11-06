@@ -607,6 +607,12 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
 });
 
+test("fluxo preserva a configuração durante sincronização", () => {
+  assert.match(fluxoProducao, /flow \? 'Atualizando fluxo…' : 'Carregando fluxo…'/);
+  assert.doesNotMatch(fluxoProducao, /setLoading\(true\);setError\(''\);setFlow\(null\)/);
+  assert.match(fluxoProducao, /useEffect\(\(\)=>\{setFlow\(null\);setSelected\(\[\]\);\},\[serviceId,context\?\.proprietario\]\)/);
+});
+
 test("fluxo limpa feedback ao alterar a sequência", () => {
   assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
 });
