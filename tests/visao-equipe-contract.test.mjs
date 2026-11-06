@@ -242,6 +242,7 @@ test("painel oferece atalho de teclado para as ações rápidas", () => {
   assert.match(meuSetor, /href="#quick-actions"/);
   assert.match(meuSetor, /Pular para as ações rápidas/);
   assert.match(meuSetor, /id="quick-actions" tabIndex=\{-1\}/);
+  assert.match(meuSetor, /!quickActions\.length && <p role="status" aria-live="polite"/);
 });
 
 test("saltos das ações rápidas devolvem foco à seção de destino", () => {
