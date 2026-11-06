@@ -18,6 +18,7 @@ export const attachments={
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar os anexos.');if(typeof data!=='object'||Array.isArray(data))throw new Error('Os anexos retornaram dados inválidos. Recarregue a lista.');const row=data as Record<string,unknown>;if(!Array.isArray(row.itens)||typeof row.tem_mais!=='boolean'||!row.itens.every(isAttachment))throw new Error('Os anexos retornaram dados inválidos. Recarregue a lista.');return data as {itens:Attachment[];tem_mais:boolean};
   },
   async prepare(service:string,sector:string,file:File):Promise<UploadReceipt>{
+    if(typeof service!=='string'||!service.trim()||typeof sector!=='string'||!isSetor(sector)||!file||typeof file.name!=='string'||!file.name.trim()||typeof file.type!=='string'||!Number.isSafeInteger(file.size)||file.size<=0)throw new Error('O serviço, setor ou arquivo do anexo é inválido.');
     const {data,error}=await supabase.rpc('anexo_preparar',{p_servico:service,p_setor:sector,p_nome:file.name,p_tipo:file.type,p_tamanho:file.size});
     if(error || !data)throw new Error(error?.message||'Não foi possível preparar o envio.');if(!isUploadReceipt(data))throw new Error('A preparação do anexo retornou dados inválidos. Tente novamente.');return data;
   },
