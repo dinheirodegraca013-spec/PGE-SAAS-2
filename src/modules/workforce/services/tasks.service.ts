@@ -15,7 +15,7 @@ const isTaskPage=(value:unknown):value is TaskPage=>{
   return Array.isArray(row.itens)&&typeof row.tem_mais==='boolean'&&row.itens.every(isWorkTask);
 };
 const isCreateResult=(value:unknown):value is {id:string;versao:number;repetida:boolean}=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).id==='string'&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1&&typeof (value as Record<string,unknown>).repetida==='boolean');
-const isUpdateResult=(value:unknown):value is Partial<WorkTask>=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).id==='string'&&isTaskStatus((value as Record<string,unknown>).status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1&&typeof (value as Record<string,unknown>).progresso==='number'&&Number((value as Record<string,unknown>).progresso)>=0&&Number((value as Record<string,unknown>).progresso)<=100&&typeof (value as Record<string,unknown>).observacoes==='string');
+const isUpdateResult=(value:unknown,expectedId?:string):value is Partial<WorkTask>=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).id==='string'&&(!expectedId||(value as Record<string,unknown>).id===expectedId)&&isTaskStatus((value as Record<string,unknown>).status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1&&typeof (value as Record<string,unknown>).progresso==='number'&&Number((value as Record<string,unknown>).progresso)>=0&&Number((value as Record<string,unknown>).progresso)<=100&&typeof (value as Record<string,unknown>).observacoes==='string');
 export const workTasks={
   async load(id:string):Promise<WorkTask>{
     const {data,error}=await supabase.rpc('tarefa_consultar',{p_tarefa:id});
@@ -31,7 +31,7 @@ export const workTasks={
   },
   async update(task:WorkTask,status:TaskStatus,progress:number,notes:string):Promise<Partial<WorkTask>>{
     const {data,error}=await supabase.rpc('tarefa_atualizar',{p_tarefa:task.id,p_status:status,p_versao:task.versao,p_progresso:status==='concluida'?null:progress,p_observacoes:notes});
-    if(error || !data)throw new Error(error?.code==='40001'?'A tarefa foi alterada. Atualize a lista antes de continuar.':error?.message||'Não foi possível atualizar a tarefa.');if(!isUpdateResult(data))throw new Error('A atualização da tarefa retornou dados inválidos. Recarregue a lista.');return data;
+    if(error || !data)throw new Error(error?.code==='40001'?'A tarefa foi alterada. Atualize a lista antes de continuar.':error?.message||'Não foi possível atualizar a tarefa.');if(!isUpdateResult(data,task.id))throw new Error('A atualização da tarefa retornou dados inválidos. Recarregue a lista.');return data;
   },
 };
 
