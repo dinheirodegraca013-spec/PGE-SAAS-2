@@ -198,6 +198,8 @@ export const technicalSheets = {
     return data;
   },
   async list(page: number, search: string): Promise<{itens: {servico_id:string;titulo:string;setor:string;versao:number;atualizado_em:string}[];tem_mais:boolean;pagina:number}> {
+    if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de fichas é inválida.');
+    if(typeof search!=='string')throw new Error('A pesquisa de fichas é inválida.');
     const { data, error } = await supabase.rpc('minhas_fichas_servicos', { p_pagina: page, p_busca: search });
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar suas fichas.');
     const normalized = normalizeServiceList(data);

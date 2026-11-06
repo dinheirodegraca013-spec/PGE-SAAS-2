@@ -19,6 +19,7 @@ const isNotificationPage=(value:unknown):value is NotificationPage=>{
 };
 export const workNotifications={
   async list(page:number):Promise<NotificationPage>{
+    if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de notificações é inválida.');
     const {data,error}=await supabase.rpc('minhas_notificacoes',{p_pagina:page});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as notificações.');
     if(!isNotificationPage(data))throw new Error('As notificações retornaram dados inválidos. Recarregue a lista.');return data;
