@@ -1320,6 +1320,14 @@ test("fichas de serviço preservam busca e ação de abertura no mobile", () => 
   assert.match(fichasFuncionario, /<button type="button" className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{event =>/);
 });
 
+test("editor de acesso quebra setores e permissões longas no mobile", () => {
+  assert.match(editorFuncionario, /className="flex min-w-0 items-start gap-2 text-sm"><input type="checkbox"/);
+  assert.match(editorFuncionario, /<span className="break-words">\{label\}<\/span>/);
+  assert.match(editorFuncionario, /<summary className="cursor-pointer break-words font-semibold">/);
+  assert.match(editorFuncionario, /<span className="break-words">\{permissionLabels\[c\.operacao\]\|\|c\.operacao\}<\/span>/);
+  assert.match(editorFuncionario, /<p className="break-words text-xs text-slate-500">ID da conta:/);
+});
+
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
