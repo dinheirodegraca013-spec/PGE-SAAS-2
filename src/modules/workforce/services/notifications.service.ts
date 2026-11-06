@@ -7,10 +7,10 @@ const isNotification=(value:unknown):value is WorkNotification=>{
   if(!value||typeof value!=='object')return false;
   const row=value as Record<string,unknown>;
   const event=row.evento;
-  const serviceLink=typeof row.servico_id==='string'&&row.servico_id.length>0;
-  const taskLink=typeof row.tarefa_id==='string'&&row.tarefa_id.length>0;
+  const serviceLink=typeof row.servico_id==='string'&&row.servico_id.trim().length>0;
+  const taskLink=typeof row.tarefa_id==='string'&&row.tarefa_id.trim().length>0;
   const relationValid=(event==='tarefa_atribuida'&&taskLink)||(event==='ficha_atribuida'||event==='etapa_liberada')&&serviceLink&&!taskLink;
-  return typeof row.id==='string'&&row.id.length>0&&(row.servico_id===null||serviceLink)&&(row.tarefa_id===null||taskLink)&&typeof row.setor==='string'&&isSetor(row.setor)&&relationValid&&isDate(row.criada_em)&&(row.lida_em===null||isDate(row.lida_em));
+  return typeof row.id==='string'&&row.id.trim().length>0&&(row.servico_id===null||serviceLink)&&(row.tarefa_id===null||taskLink)&&typeof row.setor==='string'&&isSetor(row.setor)&&relationValid&&isDate(row.criada_em)&&(row.lida_em===null||isDate(row.lida_em));
 };
 const isNotificationPage=(value:unknown):value is NotificationPage=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
@@ -28,6 +28,6 @@ export const workNotifications={
     if(typeof id!=='string'||!id.trim())throw new Error('A notificação é inválida.');
     const {data,error}=await supabase.rpc('notificacao_marcar_lida',{p_notificacao:id});
     if(error || !data)throw new Error(error?.message||'Não foi possível marcar a notificação como lida.');
-    if(typeof data!=='object'||!data||Array.isArray(data)||typeof (data as Record<string,unknown>).id!=='string'||(data as Record<string,unknown>).id!==id||!isDate((data as Record<string,unknown>).lida_em))throw new Error('A confirmação da notificação retornou dados inválidos.');return data as {id:string;lida_em:string};
+    if(typeof data!=='object'||!data||Array.isArray(data)||typeof (data as Record<string,unknown>).id!=='string'||String((data as Record<string,unknown>).id).trim().length===0||(data as Record<string,unknown>).id!==id||!isDate((data as Record<string,unknown>).lida_em))throw new Error('A confirmação da notificação retornou dados inválidos.');return data as {id:string;lida_em:string};
   },
 };
