@@ -1,10 +1,11 @@
-import React, {useEffect,useRef,useState} from 'react';
+import React, {useEffect,useId,useRef,useState} from 'react';
 import {isSetor,setores} from '@/lib/setores';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {servicePipeline,type ServiceFlow} from '../services/pipeline.service';
 
 export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   const {context}=useWorkforceAccess();
+  const id=useId();
   const [flow,setFlow]=useState<ServiceFlow|null>(null);
   const [selected,setSelected]=useState<string[]>([]);
   const [loading,setLoading]=useState(true);
@@ -26,8 +27,8 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   const move=(index:number,offset:number)=>{setMessage('');setError('');setSelected(current=>{
     const next=[...current];[next[index],next[index+offset]]=[next[index+offset],next[index]];return next;
   });};
-  return <section className="card space-y-4 p-6" aria-busy={loading || busy}>
-    <h3 className="font-semibold">Fluxo de produção</h3>
+  return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy}>
+    <h3 id={`${id}-title`} className="font-semibold">Fluxo de produção</h3>
     <p className="text-sm text-slate-500">Selecione as etapas necessárias e ordene a execução. Estoque permanece como apoio.</p>
     {loading && <p role="status" aria-live="polite">Carregando fluxo…</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
@@ -42,7 +43,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     }}>
       {!flow.editavel && <p className="text-sm text-slate-500">A execução já começou. A sequência está bloqueada para preservar o histórico.</p>}
       <fieldset disabled={disabled} className="flex flex-wrap gap-4"><legend className="sr-only">Etapas incluídas</legend>
-        {Object.entries(setores).filter(([sector])=>sector!=='estoque').map(([sector,label])=><label key={sector} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selected.includes(sector)} onChange={event=>{setMessage('');setError('');setSelected(current=>event.target.checked?[...current,sector]:current.filter(item=>item!==sector));}}/>{label}</label>)}
+        {Object.entries(setores).filter(([sector])=>sector!=='estoque').map(([sector,label])=><label key={sector} htmlFor={`${id}-${sector}`} className="flex items-center gap-2 text-sm"><input id={`${id}-${sector}`} type="checkbox" checked={selected.includes(sector)} onChange={event=>{setMessage('');setError('');setSelected(current=>event.target.checked?[...current,sector]:current.filter(item=>item!==sector));}}/>{label}</label>)}
       </fieldset>
       <ol className="space-y-2">{selected.map((sector,index)=><li key={sector} className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
         <span className="min-w-0 flex-1 text-sm">{index+1}. {isSetor(sector)?setores[sector]:sector}</span>
