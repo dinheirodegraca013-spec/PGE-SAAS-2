@@ -475,6 +475,11 @@ test("detalhe de tarefa informa recarregamento no botão", () => {
   assert.match(detalheTarefa, /\{loading\?'Carregando…':'Recarregar tarefa'\}/);
 });
 
+test("detalhe de tarefa preserva a ficha durante sincronização", () => {
+  assert.match(detalheTarefa, /task \? 'Atualizando tarefa…' : 'Carregando tarefa…'/);
+  assert.doesNotMatch(detalheTarefa, /setLoading\(true\);setError\(''\);setTask\(null\);setUpdatedAt\(null\)/);
+});
+
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
   assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy\}/);
