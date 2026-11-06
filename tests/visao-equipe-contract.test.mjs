@@ -917,7 +917,7 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} · \$\{attachmentSize\}`\}/);
   assert.match(anexos, /Tentar novamente/);
   assert.match(anexos, /Nenhum anexo validado nesta página/);
-  assert.match(anexos, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{busy\?'Enviando e validando anexo'/);
+  assert.match(anexos, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{busy\?'Enviando e validando anexo'/);
   assert.match(anexos, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior de anexos"/);
   assert.match(anexos, /className="shrink-0 text-sm" aria-current="page"/);
 });
