@@ -1,4 +1,61 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíß]tÕ:-jZ.¶›­–)Ş³v–×÷'B&V7BÂ·W6TVffV7BÇW6T–BÇW6U&VbÇW6U7FFWÒg&öÒw&V7Bs°Ğ¦–×÷'B¶—56WF÷"Ç6WF÷&W7Òg&öÒtöÆ–"÷6WF÷&W2s°Ğ¦–×÷'B·W6Uv÷&¶f÷&6T66W77Òg&öÒrââö6öçFW‡Bõv÷&¶f÷&6T66W746öçFW‡Bs°Ğ¦–×÷'B·6W'f–6U—VÆ–æRÇG—R6W'f–6TfÆ÷wÒg&öÒrââ÷6W'f–6W2÷—VÆ–æRç6W'f–6Rs°Ğ Ğ¦W‡÷'BFVfVÇBgVæ7F–öâ6W'f–6U—VÆ–æTVF—F÷"‡·6W'f–6T–GÓ§·6W'f–6T–C§7G&–æwÒ—°Ğ¢6öç7B¶6öçFW‡GÓ×W6Uv÷&¶f÷&6T66W72‚“°Ğ¢6öç7B–C×W6T–B‚“°Ğ¢6öç7B¶fÆ÷rÇ6WDfÆ÷uÓ×W6U7FFSÅ6W'f–6TfÆ÷wÆçVÆÃâ†çVÆÂ“°Ğ¢6öç7B·6VÆV7FVBÇ6WE6VÆV7FVEÓ×W6U7FFSÇ7G&–æuµÓâ…µÒ“°Ğ¢6öç7B¶ÆöF–ærÇ6WDÆöF–æuÓ×W6U7FFR‡G'VR“°Ğ¢6öç7B¶'W7’Ç6WD'W7•Ó×W6U7FFR†fÇ6R“°Ğ¢6öç7B¶W'&÷"Ç6WDW'&÷%Ó×W6U7FFR‚rr“°Ğ¢6öç7B¶ÖW76vRÇ6WDÖW76vUÓ×W6U7FFR‚rr“°Ğ¢6öç7B·&WG'’Ç6WE&WG'•Ó×W6U7FFRƒ“°Ğ¢6öç7BÆö6³×W6U&Vb†fÇ6R“°Ğ¢W6TVffV7B‚‚“Óç·6WDfÆ÷r†çVÆÂ“·6WE6VÆV7FVB…µÒ“·ÒÅ·6W'f–6T–BÆ6öçFW‡Còç&÷&–WF&–õÒ“°Ğ¢W6TVffV7B‚‚“Óç°Ğ¢–b‚6öçFW‡Còç&÷&–WF&–ò—&WGW&ã°Ğ¢ÆWB7F—fS×G'VS·6WDÆöF–ær‡G'VR“·6WDW'&÷"‚rr“·6WDÖW76vR‚rr“°Ğ¢6W'f–6U—VÆ–æRæÆöB‡6W'f–6T–B’çF†Vâ‡&W7VÇCÓç¶–b†7F—fR—·6WDfÆ÷r‡&W7VÇB“·6WE6VÆV7FVB‡&W7VÇBç6WF÷&W2“·×ÒĞ¢æ6F6‚†6W6SÓç¶–b†7F—fR—6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷#ö6W6RæÖW76vS¢tì:6òfö’÷7<:×fVÂ6'&Vv"òfÇW†òâr“·ÒĞ¢æf–æÆÇ’‚‚“Óç¶–b†7F—fR—6WDÆöF–ær†fÇ6R“·Ò“°Ğ¢&WGW&â‚“Óç¶7F—fSÖfÇ6S·Ó°Ğ¢ÒÅ·6W'f–6T–BÆ6öçFW‡Còç&÷&–WF&–òÇ&WG'•Ò“°Ğ¢–b‚6öçFW‡Còç&÷&–WF&–ò—&WGW&âçVÆÃ°Ğ¢6öç7BF—6&ÆVCÖ'W7’ÇÂÆöF–ærÇÂfÆ÷sòæVF—FfVÃ°Ğ¢6öç7BÖ÷fSÒ†–æFWƒ¦çVÖ&W"Æöfg6WC¦çVÖ&W"“Óç·6WDÖW76vR‚rr“·6WDW'&÷"‚rr“·6WE6VÆV7FVB†7W'&VçCÓç°Ğ¢6öç7BæW‡CÕ²ââæ7W'&VçEÓµ¶æW‡E¶–æFW…ÒÆæW‡E¶–æFW‚¶öfg6WEÕÓÕ¶æW‡E¶–æFW‚¶öfg6WEÒÆæW‡E¶–æFW…ÕÓ·&WGW&âæW‡C°Ğ¢Ò“·Ó°Ğ¢&WGW&âÇ6V7F–öâ6Æ74æÖSÒ&6&B76R×’ÓBÓb"&–ÖÆ&VÆÆVF'“×¶G¶–GÒ×F—FÆVÒ&–Ö'W7“×¶ÆöF–ærÇÂ'W7—ÓàĞ¢Æƒ2–C×¶G¶–GÒ×F—FÆVÒ6Æ74æÖSÒ&föçB×6VÖ–&öÆB#äfÇW†òFR&öG\:|:6óÂöƒ3àĞ¢Ç6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓS#å6VÆV6–öæR2WF2æV6W7<:&–2R÷&FVæRW†V7\:|:6òâW7F÷VRW&ÖæV6R6öÖòö–òãÂ÷àĞ¢¶ÆöF–ærbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#ç¶fÆ÷ròtGVÆ—¦æFòfÇW†ş(
-br¢t6'&VvæFòfÇW†ş(
-bwÓÂ÷çĞĞ¢¶W'&÷"bbÇ&öÆSÒ&ÆW'B"6Æ74æÖSÒ&'&V²×v÷&G2FW‡B×6ÒFW‡B×&VBÓs#ç¶W'&÷'ÓÂ÷çĞĞ¢¶ÖW76vRbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6Ò#ç¶ÖW76vWÓÂ÷çĞĞ¢¶fÆ÷rbbÆf÷&Ò6Æ74æÖSÒ'76R×’ÓB"öå7V&Ö—C×¶7–æ2WfVçCÓç°Ğ¢WfVçBç&WfVçDFVfVÇB‚“¶–b†F—6&ÆVBÇÂÆö6²æ7W'&VçB—&WGW&ã°Ğ¢–b‚6VÆV7FVBæÆVæwF‚—·6WDW'&÷"‚tW66öÆ†VÆòÖVæ÷2VÖWFâr“·&WGW&ã·ĞĞ¢Æö6²æ7W'&VçC×G'VS·6WD'W7’‡G'VR“·6WDW'&÷"‚rr“·6WDÖW76vR‚rr“°Ğ¢G'—¶6öç7B&W7VÇCÖv—B6W'f–6U—VÆ–æRç6fR‡6W'f–6T–BÇ6VÆV7FVBÆfÆ÷rçfW'6ò“·6WDfÆ÷r‡²ââæfÆ÷rÂââç&W7VÇBÆ6öæf–wW&Fó§G'VWÒ“·6WDÖW76vR‚tfÇW†ò6Çfòâ2f–6†2F÷26WF÷&W2f÷&ÒÆ–&W&F2âr“·ĞĞ¢6F6‚†6W6R—·6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷#ö6W6RæÖW76vS¢tì:6òfö’÷7<:×fVÂ6Çf"òfÇW†òâr“·ĞĞ¢f–æÆÇ—¶Æö6²æ7W'&VçCÖfÇ6S·6WD'W7’†fÇ6R“·ĞĞ¢×ÓàĞ¢²fÆ÷ræVF—FfVÂbbÇ6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓS#äW†V7\:|:6ò¬:6öÖ\:v÷Râ6W\:¦æ6–W7L:&Æ÷VVF&&W6W'f"ò†—7L;7&–6òãÂ÷çĞĞ¢Æf–VÆG6WBF—6&ÆVC×¶F—6&ÆVGÒ6Æ74æÖSÒ&fÆW‚fÆW‚×w&vÓB#ãÆÆVvVæB6Æ74æÖSÒ'7"ÖöæÇ’#äWF2–æ6Ç\:ÖF3ÂöÆVvVæCàĞ¢´ö&¦V7BæVçG&–W2‡6WF÷&W2’æf–ÇFW"‚…·6V7F÷%Ò“Óç6V7F÷"ÓÒvW7F÷VRr’æÖ‚…·6V7F÷"ÆÆ&VÅÒ“ÓãÆÆ&VÂ¶W“×·6V7F÷'Ò‡FÖÄf÷#×¶G¶–GÒÒG·6V7F÷'ÖÒ6Æ74æÖSÒ&fÆW‚—FV×2Ö6VçFW"vÓ"FW‡B×6Ò#ãÆ–çWB–C×¶G¶–GÒÒG·6V7F÷'ÖÒG—SÒ&6†V6¶&÷‚"6†V6¶VC×·6VÆV7FVBæ–æ6ÇVFW2‡6V7F÷"—Òöä6†ævS×¶WfVçCÓç·6WDÖW76vR‚rr“·6WDW'&÷"‚rr“·6WE6VÆV7FVB†7W'&VçCÓæWfVçBçF&vWBæ6†V6¶VCõ²ââæ7W'&VçBÇ6V7F÷%Ó¦7W'&VçBæf–ÇFW"†—FVÓÓæ—FVÒÓ×6V7F÷"’“·×Òóç¶Æ&VÇÓÂöÆ&VÃâ—ĞĞ¢Âöf–VÆG6WCàĞ¢ÆöÂ6Æ74æÖSÒ'76R×’Ó"#ç·6VÆV7FVBæÖ‚‡6V7F÷"Æ–æFW‚“ÓãÆÆ’¶W“×·6V7F÷'Ò6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2Ö6VçFW"vÓ"&÷VæFVBÖÆr&÷&FW"Ó2#àĞ¢Ç7â6Æ74æÖSÒ&Ö–â×rÓfÆW‚Ó'&V²×v÷&G2FW‡B×6Ò#ç¶–æFW‚³Òâ¶—56WF÷"‡6V7F÷"“÷6WF÷&W5·6V7F÷%Ó§6V7F÷'ÓÂ÷7ãàĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Ó"F—6&ÆVC×¶F—6&ÆVBÇÂ–æFWƒÓÓÓÒ&–ÖÆ&VÃ×¶Ö÷fW"G¶—56WF÷"‡6V7F÷"“÷6WF÷&W5·6V7F÷%Ó§6V7F÷'Ò&6–ÖÒöä6Æ–6³×²‚“ÓæÖ÷fR†–æFW‚ÂÓ—Óî(iÂö'WGFöãàĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Ó"F—6&ÆVC×¶F—6&ÆVBÇÂ–æFWƒÓÓ×6VÆV7FVBæÆVæwF‚ÓÒ&–ÖÆ&VÃ×¶Ö÷fW"G¶—56WF÷"‡6V7F÷"“÷6WF÷&W5·6V7F÷%Ó§6V7F÷'Ò&&—†öÒöä6Æ–6³×²‚“ÓæÖ÷fR†–æFW‚Ã—Óî(i3Âö'WGFöãàĞ¢ÂöÆ“â—ÓÂööÃàĞ¢Æ'WGFöâG—SÒ'7V&Ö—B"6Æ74æÖSÒ&'Fâ×&–Ö'’6‡&–æ²Óv†—FW76RÖæ÷w&"F—6&ÆVC×¶F—6&ÆVGÒ&–ÖÆ&VÃ×¶'W7“òu6ÇfæFòfÇW†òs¦fÆ÷ræ6öæf–wW&Fóòu6Çf"6W\:¦æ6–s¢t6öæf–wW&"fÇW†òwÓç¶'W7“òu6ÇfæFş(
-bs¦fÆ÷ræ6öæf–wW&Fóòu6Çf"6W\:¦æ6–s¢t6öæf–wW&"fÇW†òwÓÂö'WGFöãàĞ¢Âöf÷&ÓçĞĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"F—6&ÆVC×¶'W7’ÇÂÆöF–æwÒ&–ÖÆ&VÃ×¶ÆöF–æsòt6'&VvæFòfÇW†òs¢u&V6'&Vv"fÇW†òwÒöä6Æ–6³×²‚“Óç°Ğ¢–b†fÆ÷rbb¥4ôâç7G&–æv–g’‡6VÆV7FVB’ÓÔ¥4ôâç7G&–æv–g’†fÆ÷rç6WF÷&W2’bbv–æF÷ræ6öæf—&Ò‚tFW66'F"6W\:¦æ6–ì:6ò6ÇfR&V6'&Vv#òr’—&WGW&ã°Ğ¢6WE&WG'’†ãÓæâ³“°Ğ¢×Óå&V6'&Vv"fÇW†óÂö'WGFöãàĞ¢Â÷6V7F–öãã°Ğ§ĞĞ 
+import React, {useEffect,useId,useRef,useState} from 'react';
+import {isSetor,setores} from '@/lib/setores';
+import {useWorkforceAccess} from '../context/WorkforceAccessContext';
+import {servicePipeline,type ServiceFlow} from '../services/pipeline.service';
+
+export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
+  const {context}=useWorkforceAccess();
+  const id=useId();
+  const [flow,setFlow]=useState<ServiceFlow|null>(null);
+  const [selected,setSelected]=useState<string[]>([]);
+  const [loading,setLoading]=useState(true);
+  const [busy,setBusy]=useState(false);
+  const [error,setError]=useState('');
+  const [message,setMessage]=useState('');
+  const [retry,setRetry]=useState(0);
+  const lock=useRef(false);
+  useEffect(()=>{setFlow(null);setSelected([]);},[serviceId,context?.proprietario]);
+  useEffect(()=>{
+    if(!context?.proprietario)return;
+    let active=true;setLoading(true);setError('');setMessage('');
+    servicePipeline.load(serviceId).then(result=>{if(active){setFlow(result);setSelected(result.setores);}})
+      .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel carregar o fluxo.');})
+      .finally(()=>{if(active)setLoading(false);});
+    return()=>{active=false;};
+  },[serviceId,context?.proprietario,retry]);
+  if(!context?.proprietario)return null;
+  const disabled=busy || loading || !flow?.editavel;
+  const move=(index:number,offset:number)=>{setMessage('');setError('');setSelected(current=>{
+    const next=[...current];[next[index],next[index+offset]]=[next[index+offset],next[index]];return next;
+  });};
+  return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy}>
+    <h3 id={`${id}-title`} className="font-semibold">Fluxo de produÃ§Ã£o</h3>
+    <p className="text-sm text-slate-500">Selecione as etapas necessÃ¡rias e ordene a execuÃ§Ã£o. Estoque permanece como apoio.</p>
+    {loading && <p role="status" aria-live="polite">{flow ? 'Atualizando fluxoâ€¦' : 'Carregando fluxoâ€¦'}</p>}
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
+    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
+    {flow && <form className="space-y-4" onSubmit={async event=>{
+      event.preventDefault();if(disabled || lock.current)return;
+      if(!selected.length){setError('Escolha pelo menos uma etapa.');return;}
+      lock.current=true;setBusy(true);setError('');setMessage('');
+      try{const result=await servicePipeline.save(serviceId,selected,flow.versao);setFlow({...flow,...result,configurado:true});setMessage('Fluxo salvo. As fichas dos setores foram liberadas.');}
+      catch(cause){setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel salvar o fluxo.');}
+      finally{lock.current=false;setBusy(false);}
+    }}>
+      {!flow.editavel && <p className="text-sm text-slate-500">A execuÃ§Ã£o jÃ¡ comeÃ§ou. A sequÃªncia estÃ¡ bloqueada para preservar o histÃ³rico.</p>}
+      <fieldset disabled={disabled} className="flex flex-wrap gap-4"><legend className="sr-only">Etapas incluÃ­das</legend>
+        {Object.entries(setores).filter(([sector])=>sector!=='estoque').map(([sector,label])=><label key={sector} htmlFor={`${id}-${sector}`} className="flex items-center gap-2 text-sm"><input id={`${id}-${sector}`} type="checkbox" checked={selected.includes(sector)} onChange={event=>{setMessage('');setError('');setSelected(current=>event.target.checked?[...current,sector]:current.filter(item=>item!==sector));}}/>{label}</label>)}
+      </fieldset>
+      <ol className="space-y-2">{selected.map((sector,index)=><li key={sector} className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
+        <span className="min-w-0 flex-1 break-words text-sm">{index+1}. {isSetor(sector)?setores[sector]:sector}</span>
+        <button type="button" className="btn-secondary shrink-0" disabled={disabled || index===0} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para cima`} onClick={()=>move(index,-1)}>â†‘</button>
+        <button type="button" className="btn-secondary shrink-0" disabled={disabled || index===selected.length-1} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para baixo`} onClick={()=>move(index,1)}>â†“</button>
+      </li>)}</ol>
+      <button type="submit" className="btn-primary shrink-0 whitespace-nowrap" disabled={disabled} aria-label={busy?'Salvando fluxo':flow.configurado?'Salvar sequÃªncia':'Configurar fluxo'}>{busy?'Salvandoâ€¦':flow.configurado?'Salvar sequÃªncia':'Configurar fluxo'}</button>
+    </form>}
+    <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={busy || loading} aria-label={loading?'Carregando fluxo':'Recarregar fluxo'} onClick={()=>{
+      if(flow && JSON.stringify(selected)!==JSON.stringify(flow.setores) && !window.confirm('Descartar a sequÃªncia nÃ£o salva e recarregar?'))return;
+      setRetry(n=>n+1);
+    }}>{loading?'Carregandoâ€¦':'Recarregar fluxo'}</button>
+  </section>;
+}
