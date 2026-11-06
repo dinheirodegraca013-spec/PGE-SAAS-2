@@ -639,7 +639,9 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
-  assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
+  assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
+  assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'/);
+  assert.match(atribuicaoFicha, /useEffect\(\(\)=>\{setCandidates\(\[\]\);\},\[serviceId,sector\]\)/);
 });
 
 test("responsável limpa feedback quando a ficha muda externamente", () => {

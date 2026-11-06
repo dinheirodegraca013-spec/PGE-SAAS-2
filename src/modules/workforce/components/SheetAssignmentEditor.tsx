@@ -11,9 +11,10 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
   const [message,setMessage] = useState('');
   const [retry,setRetry] = useState(0);
   useEffect(()=>{setSelected(current || '');setMessage('');},[current]);
+  useEffect(()=>{setCandidates([]);},[serviceId,sector]);
   useEffect(()=>{
     let active=true;
-    setLoading(true);setError('');setMessage('');setCandidates([]);
+    setLoading(true);setError('');setMessage('');
     technicalSheets.candidates(serviceId,sector).then(items=>{if(active)setCandidates(items);})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');})
       .finally(()=>{if(active)setLoading(false);});
@@ -33,11 +34,10 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
       {current && !candidates.some(item=>item.id===current) && <option value={current} disabled>Responsável anterior indisponível</option>}
       {candidates.map(item=><option key={item.id} value={item.id}>{item.nome || 'Funcionário sem nome'}{item.cargo?` — ${item.cargo}`:''}</option>)}
     </select>
-    {loading && <p role="status" aria-live="polite" className="text-sm">Carregando funcionários autorizados…</p>}
+    {loading && <p role="status" aria-live="polite" className="text-sm">{candidates.length ? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-slate-500">Nenhum funcionário autorizado para este setor.</p>}
     {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" aria-label="Tentar carregar os responsáveis novamente" disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     <button type="submit" className="btn-secondary" aria-label={busy?'Salvando responsável':'Salvar responsável da ficha'} disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
   </form>;
 }
-
