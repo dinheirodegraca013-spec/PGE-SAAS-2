@@ -1328,6 +1328,14 @@ test("editor de acesso quebra setores e permissões longas no mobile", () => {
   assert.match(editorFuncionario, /<p className="break-words text-xs text-slate-500">ID da conta:/);
 });
 
+test("tarefas preservam controles de filtro e paginação no mobile", () => {
+  assert.match(minhasTarefas, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
+  assert.match(minhasTarefas, /className="btn-secondary shrink-0 sm:whitespace-nowrap"/);
+  assert.match(minhasTarefas, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a página anterior de tarefas"/);
+  assert.match(minhasTarefas, /<span className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
+});
+
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
