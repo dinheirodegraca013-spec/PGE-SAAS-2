@@ -28,6 +28,8 @@ export const workTasks={
     if(error || !data)throw new Error(error?.message||'Não foi possível criar a tarefa.');if(!isCreateResult(data))throw new Error('A criação da tarefa retornou dados inválidos. Tente novamente.');return data;
   },
   async list(page:number,status:TaskStatus|null):Promise<TaskPage>{
+    if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de tarefas é inválida.');
+    if(status!==null&&!isTaskStatus(status))throw new Error('O filtro de tarefas é inválido.');
     const {data,error}=await supabase.rpc('minhas_tarefas',{p_pagina:page,p_status:status});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as tarefas.');if(!isTaskPage(data))throw new Error('As tarefas retornaram dados inválidos. Recarregue a lista.');return data;
   },
