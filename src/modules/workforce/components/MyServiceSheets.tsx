@@ -22,7 +22,7 @@ export default function MyServiceSheets() {
   useEffect(() => {
     let active = true;
     setLoading(true); setError('');
-    technicalSheets.list(page, query).then(result => { if (active) setList(result); })
+    technicalSheets.list(page, query).then(result => { if (active) { setList(result); setSelected(current => current && result.itens.some(item => item.servico_id === current.servico_id && item.setor === current.setor) ? current : null); } })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar as fichas.'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
