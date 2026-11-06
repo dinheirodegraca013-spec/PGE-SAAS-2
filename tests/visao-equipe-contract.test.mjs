@@ -737,6 +737,7 @@ test("responsável limpa feedback quando a ficha muda externamente", () => {
 test("ficha técnica e resolução de ocorrência anunciam estados críticos", () => {
   assert.match(fichaOperacional, /role="status" aria-live="polite"/);
   assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
+  assert.match(ocorrenciasFuncionario, /rows=\{3\} required minLength=\{10\} maxLength=\{5000\}/);
 });
 
 test("ficha técnica ignora respostas antigas de secagem e produção", () => {

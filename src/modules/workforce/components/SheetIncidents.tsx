@@ -16,7 +16,7 @@ function Resolution({incident,onSaved}:{incident:Incident;onSaved:()=>void}){
     if(!window.confirm('Registrar esta ocorrência como resolvida?'))return;
     lock.current=true;setBusy(true);setError('');
     try{await incidents.resolve(incident,text.trim());onSaved();}catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível resolver a ocorrência.');}finally{lock.current=false;setBusy(false);}
-  }}><label htmlFor={id} className="block text-sm">Como o problema foi resolvido?<textarea id={id} className="input-field mt-1" rows={3} maxLength={5000} disabled={busy} value={text} onChange={event=>{setText(event.target.value);clearError();}}/></label>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button type="submit" className="btn-secondary" aria-label={busy?'Salvando resolução da ocorrência':'Registrar resolução da ocorrência'} disabled={busy}>{busy?'Salvando…':'Registrar resolução'}</button></form>;
+  }}><label htmlFor={id} className="block text-sm">Como o problema foi resolvido?<textarea id={id} className="input-field mt-1" rows={3} required minLength={10} maxLength={5000} disabled={busy} value={text} onChange={event=>{setText(event.target.value);clearError();}}/></label>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button type="submit" className="btn-secondary" aria-label={busy?'Salvando resolução da ocorrência':'Registrar resolução da ocorrência'} disabled={busy}>{busy?'Salvando…':'Registrar resolução'}</button></form>;
 }
 
 export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:string;sector:string;canCreate:boolean}){
