@@ -731,6 +731,8 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /type="button" className="btn-secondary" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
   assert.match(editorFuncionario, /const clearError=\(\)=>setError\(''\)/);
   assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
+  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
+  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-job`\}[^>]*autoComplete="organization-title"/);
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
