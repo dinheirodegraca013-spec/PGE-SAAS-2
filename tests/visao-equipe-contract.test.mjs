@@ -1350,3 +1350,8 @@ test("resumo operacional protege indicadores longos no mobile", () => {
   assert.match(resumoFuncionario, /<p className="break-words text-sm text-slate-600">\{label\}<\/p>/);
   assert.match(resumoFuncionario, /className="mt-2 whitespace-nowrap text-2xl font-bold text-slate-900"/);
 });
+
+test("ações de anexos não comprimem o nome do arquivo no mobile", () => {
+  assert.match(anexos, /<div className="flex min-w-0 flex-wrap gap-2"><button type="button" className="btn-secondary shrink-0"/);
+  assert.match(anexos, /<a className="btn-secondary shrink-0" aria-label=\{`Abrir/);
+});
