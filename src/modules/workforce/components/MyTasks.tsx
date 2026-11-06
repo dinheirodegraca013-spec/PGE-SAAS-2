@@ -28,8 +28,8 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     !final && target!=='pendente' && hasPermission(context,'tarefas',operation(target)) &&
     (!['pausada','concluida'].includes(target) || task.status==='em_andamento') &&
     (target!=='cancelada' || !task.obrigatoria || hasPermission(context,'tarefas','aprovar')));
-  const overdue=task.prazo && !final && new Date(task.prazo).getTime()<Date.now();
   const displayedStatus=final?task.status:status;
+  const overdue=task.prazo && !['concluida','cancelada'].includes(displayedStatus) && new Date(task.prazo).getTime()<Date.now();
   const displayedProgress=displayedStatus==='concluida'?100:progress;
   const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
   return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4">
