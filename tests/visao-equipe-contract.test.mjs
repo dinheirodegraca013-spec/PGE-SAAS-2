@@ -1320,6 +1320,10 @@ test("anexos bloqueiam geração simultânea de links temporários", () => {
   assert.match(anexos, /itemBusy\?'Gerando…'/);
 });
 
+test("link de anexo libera o bloqueio após resposta tardia", () => {
+  assert.match(anexos, /finally\{setLinkBusy\(current=>current===item\.id\?null:current\);\}/);
+});
+
 test("anexos bloqueiam envio enquanto o link temporário é gerado", () => {
   assert.match(anexos, /if\(lock\.current \|\| !!linkBusy \|\| !file\)return/);
   assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
