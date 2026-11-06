@@ -15,7 +15,7 @@ export default function SheetAttachments({serviceId,sector,canUpload,onListed}:{
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar os anexos.');}).finally(()=>{if(request===generation.current)setLoading(false);});
     return()=>{generation.current++;};
   },[serviceId,sector,page,refresh,context?.funcionario.id,context?.funcionario.versao,onListed]);
-  return <section className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy || !!linkBusy}><h4 className="font-semibold">Anexos privados da ficha</h4>
+  return <section className="space-y-3 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy || !!linkBusy}><h4 id={`${id}-title`} className="font-semibold">Anexos privados da ficha</h4>
     {canUpload && <form className="space-y-3" onSubmit={async event=>{
       event.preventDefault();if(lock.current || !!linkBusy || !file)return;
       if(!['image/jpeg','image/png','image/webp','application/pdf'].includes(file.type) || !file.size || file.size>10485760){setError('Envie imagem JPEG, PNG, WebP ou PDF de até 10 MB.');return;}
