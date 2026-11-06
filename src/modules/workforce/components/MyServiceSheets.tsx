@@ -42,7 +42,7 @@ export default function MyServiceSheets() {
       <button type="button" className="btn-secondary" disabled={loading} onClick={() => {
         if (selected && !window.confirm('Abrir outra ficha? Alterações não salvas serão descartadas.')) return;
         setSelected(item);
-      }}>Abrir ficha</button>
+      }} aria-label={`Abrir ficha ${item.titulo}`}>Abrir ficha</button>
     </li>)}</ul>}
     {list && <nav aria-label="Paginação de fichas de serviço" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={loading || page === 0} onClick={() => setPage(p => p - 1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page + 1}</span><button type="button" className="btn-secondary" disabled={loading || !list.tem_mais} onClick={() => setPage(p => p + 1)}>Próxima</button></nav>}
     {selected && <div className="space-y-3"><div className="flex justify-end"><button type="button" className="btn-secondary" onClick={() => setSelected(null)}>Fechar ficha</button></div><ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} /></div>}
