@@ -37,7 +37,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     finally{lock.current=false;setBusy(false);}
   }}>
     <h4 className="font-semibold">Criar tarefa nesta etapa</h4>
-    <fieldset disabled={busy || loading} className="grid gap-3 sm:grid-cols-2">
+    <fieldset disabled={busy || loading} className="grid gap-3 sm:grid-cols-2"><legend className="sr-only">Dados da nova tarefa</legend>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-title`}>Título<input id={`${id}-title`} className="input-field mt-1" required maxLength={200} value={title} onChange={event=>{setTitle(event.target.value);setError('');setMessage('');}}/></label>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} maxLength={10000} value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-employee`}>Responsável<select id={`${id}-employee`} className="input-field mt-1" required value={employee} onChange={event=>{setEmployee(event.target.value);setError('');setMessage('');}}><option value="">Selecione um funcionário</option>{candidates.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
