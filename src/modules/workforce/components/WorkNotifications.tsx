@@ -5,6 +5,8 @@ import {workNotifications,type NotificationPage,type WorkNotification} from '../
 import ServiceTechnicalSheet from './ServiceTechnicalSheet';
 import TaskDetails from './TaskDetails';
 
+function formatNotificationDate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');}
+
 export default function WorkNotifications(){
   const {context}=useWorkforceAccess();
   const [data,setData]=useState<NotificationPage|null>(null);
@@ -35,7 +37,7 @@ export default function WorkNotifications(){
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
       <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='tarefa_atribuida'?'Nova tarefa atribuída':item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
-      <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{new Date(item.criada_em).toLocaleString('pt-BR')}</time>
+      <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{formatNotificationDate(item.criada_em)}</time>
       <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" disabled={!!busy} onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
         setError('');setSelected(item);
