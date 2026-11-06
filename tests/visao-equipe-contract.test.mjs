@@ -210,6 +210,11 @@ test("histórico de materiais quebra textos longos sem deslocar ações", () => 
   assert.match(solicitacaoMaterial, /<span className="flex shrink-0 items-center gap-2">/);
 });
 
+test("ficha técnica acomoda título longo junto do recarregamento", () => {
+  assert.match(fichaTecnica, /<h3 className="min-w-0 break-words font-semibold">\{sheet\.modelo\.titulo\}<\/h3>/);
+  assert.match(fichaTecnica, /<button type="button" className="btn-secondary shrink-0" aria-label="Recarregar ficha técnica"/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);

@@ -94,8 +94,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     </div>
     {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <h3 className="font-semibold">{sheet.modelo.titulo}</h3>
-      <button type="button" className="btn-secondary" aria-label="Recarregar ficha técnica" disabled={loading || saving || checklistBusy} onClick={() => {
+      <h3 className="min-w-0 break-words font-semibold">{sheet.modelo.titulo}</h3>
+      <button type="button" className="btn-secondary shrink-0" aria-label="Recarregar ficha técnica" disabled={loading || saving || checklistBusy} onClick={() => {
         if (JSON.stringify(values) !== JSON.stringify(sheet.dados) && !window.confirm('Descartar alterações não salvas e recarregar a ficha?')) return;
         setReload(n => n + 1);
       }}>Recarregar ficha</button>
