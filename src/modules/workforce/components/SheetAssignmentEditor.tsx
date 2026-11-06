@@ -19,7 +19,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
       .finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[serviceId,sector,retry]);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-label="Responsável pela ficha deste setor" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(disabled || busy || loading)return;
     if(selected && !candidates.some(item=>item.id===selected)){setError('Escolha um funcionário disponível.');return;}
     setBusy(true);setError('');setMessage('');
