@@ -7,6 +7,7 @@ import type { AccessGrant, EmployeeConfiguration, RecordScope } from '../types/a
 const formatEmployeeDate=(value:string,withTime=false)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR',withTime?undefined:{dateStyle:'short'});};
 const validSector=(value:string)=>Object.prototype.hasOwnProperty.call(setores,value)?value:'corte';
 const validStatus=(value:string)=>['ativo','inativo','suspenso'].includes(value)?value:'ativo';
+const validScope=(value:string):RecordScope=>['atribuidos','setor','empresa'].includes(value)?value as RecordScope:'atribuidos';
 
 export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userId:string;onSaved:()=>void;onCancel:()=>void}) {
   const [employee,setEmployee] = useState<EmployeeConfiguration|null>(null);
@@ -20,7 +21,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     Promise.all([workforceAccess.employee(userId),workforceAccess.context()]).then(([p,ctx])=>{
       if(!mounted)return;
       if(!ctx.proprietario)throw new Error('Somente o proprietário pode editar estas permissões.');
-      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');const primary=validSector(p.setor||'corte');setSector(primary);setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais.filter(value=>value!==primary&&Object.prototype.hasOwnProperty.call(setores,value)):[]);setStatus(validStatus(p.status==='suspenso_plano'?'ativo':p.status||'ativo'));setGrants(Array.isArray(p.permissoes)?p.permissoes:[]);
+      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');const primary=validSector(p.setor||'corte');setSector(primary);setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais.filter(value=>value!==primary&&Object.prototype.hasOwnProperty.call(setores,value)):[]);setStatus(validStatus(p.status==='suspenso_plano'?'ativo':p.status||'ativo'));setGrants(Array.isArray(p.permissoes)?p.permissoes.map(grant=>({...grant,escopo:validScope(grant.escopo)})):[]);
     }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');});
     return()=>{mounted=false;};
   },[userId,retry]);
