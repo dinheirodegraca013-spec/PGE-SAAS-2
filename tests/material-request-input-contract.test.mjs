@@ -42,3 +42,13 @@ test('consultas da ficha e de materiais validam o contexto antes da RPC',()=>{
   assert.match(source,/O serviço ou setor da ficha é inválido/);
   assert.match(source,/O serviço ou setor dos materiais é inválido/);
 });
+
+test('consultas e registro de secagem validam serviço e parâmetros antes da RPC',()=>{
+  assert.match(source,/O serviço da secagem é inválido/);
+  assert.match(source,/Os dados da secagem são inválidos/);
+  assert.match(source,/Number\.isFinite\(minutes\)\|\|minutes<=0/);
+});
+
+test('consulta de produção valida serviço e setor antes da RPC',()=>{
+  assert.match(source,/O serviço ou setor da produção é inválido/);
+});

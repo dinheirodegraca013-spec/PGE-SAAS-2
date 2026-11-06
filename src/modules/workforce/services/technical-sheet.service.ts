@@ -63,6 +63,7 @@ export type MaterialRequest = {
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 const materialStatuses=['pendente','aprovada','recusada','atendida','cancelada'];
+const isServiceId=(service:unknown):service is string=>typeof service==='string'&&service.trim().length>0;
 const isServiceSector=(service:unknown,sector:unknown):boolean=>typeof service==='string'&&service.trim().length>0&&typeof sector==='string'&&isSetor(sector);
 const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
 function isMaterialOption(value: unknown): value is MaterialOption {
@@ -219,12 +220,14 @@ export const technicalSheets = {
     return data;
   },
   async dryingLoad(service: string): Promise<FinishingDryingState> {
+    if(!isServiceId(service))throw new Error('O serviço da secagem é inválido.');
     const { data, error } = await supabase.rpc('acabamento_secagem_consultar', { p_servico: service });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar a secagem do acabamento.');
     if (!isDryingState(data)) throw new Error('A secagem retornou dados inválidos. Recarregue a ficha.');
     return data;
   },
   async dryingRegister(service: string, minutes: number, version: number): Promise<Pick<FinishingDryingState, 'prevista_ate' | 'em_secagem' | 'servidor_agora' | 'versao'>> {
+    if(!isServiceId(service)||!Number.isFinite(minutes)||minutes<=0||!Number.isSafeInteger(version)||version<1)throw new Error('Os dados da secagem são inválidos.');
     const { data, error } = await supabase.rpc('acabamento_secagem_registrar', { p_servico: service, p_minutos: minutes, p_versao: version });
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de registrar a secagem.' : error?.message || 'Não foi possível registrar a secagem.');
     const result = data as Record<string, unknown>;
@@ -236,6 +239,7 @@ export const technicalSheets = {
     return data;
   },
   async productionLoad(service: string, sector: string): Promise<ProductionState> {
+    if(!isServiceSector(service,sector))throw new Error('O serviço ou setor da produção é inválido.');
     const { data, error } = await supabase.rpc('ficha_producao_consultar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar os registros de produção.');
     if (!isProductionState(data)) throw new Error('A produção retornou dados inválidos. Recarregue a ficha.');
