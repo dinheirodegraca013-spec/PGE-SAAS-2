@@ -7,4 +7,5 @@ const source=await readFile(new URL('../src/modules/workforce/components/Persona
 test('resumo rejeita prazo com setor desconhecido',()=>{
   assert.match(source,/import \{isSetor\} from '@\/lib\/setores'/);
   assert.match(source,/typeof row\.setor!=='string'\|\|!isSetor\(row\.setor\)/);
+  assert.match(source,/Number\.isFinite\(new Date\(row\.prazo\)\.getTime\(\)\)/);
 });
