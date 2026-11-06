@@ -10,6 +10,7 @@ function safeActivityDateTime(value:string){const date=new Date(value);return Nu
 export default function MyActivityHistory(){
   const {context}=useWorkforceAccess();const [data,setData]=useState<Page|null>(null);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setError('');},[page]);
   useEffect(()=>{setData(null);setError('');},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{let active=true;setLoading(true);
