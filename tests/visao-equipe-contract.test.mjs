@@ -720,7 +720,12 @@ test("agenda ignora respostas de requisições antigas", () => {
 });
 
 test("agenda limpa atividades anteriores antes de nova consulta", () => {
-  assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);setItems\(\[\]\)/);
+  assert.match(agendaFuncionario, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[start,end,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+  assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);try/);
+});
+
+test("agenda preserva eventos durante nova sincronização", () => {
+  assert.match(agendaFuncionario, /items\.length\?'Atualizando agenda…':'Carregando agenda…'/);
 });
 
 test("agenda limpa atividades quando o período é inválido", () => {
