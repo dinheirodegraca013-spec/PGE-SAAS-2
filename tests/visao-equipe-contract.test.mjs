@@ -718,6 +718,7 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(inboxMateriais, /Tentar novamente/);
   assert.match(inboxMateriais, /aria-live="polite"/);
   assert.match(inboxMateriais, /actionBusy/);
+  assert.match(inboxMateriais, /aria-label=\{`Solicitação de \$\{item\.item_nome\} · \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} · \$\{formatStatus\(item\.status\)\}`\}/);
   assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\}/);
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
