@@ -70,7 +70,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       finally { mutation.current = false; }
     }}>{loading ? 'Liberando…' : 'Liberar ficha deste setor'}</button>}
   </div>;
-  return <section className="space-y-4" aria-busy={saving || checklistBusy}>
+  return <section className="space-y-4" aria-label="Ficha técnica do serviço" aria-busy={saving || checklistBusy}>
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Situação indisponível'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
