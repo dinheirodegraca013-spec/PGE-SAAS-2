@@ -35,7 +35,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     catch(e){setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível salvar.');}finally{setBusy(false);}
   }
   return <section className="card space-y-4 p-5" aria-labelledby="employee-access-title" aria-busy={busy || loading}>
-    <div className="flex items-center justify-between gap-3"><h2 id="employee-access-title" className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="employee-access-title" className="min-w-0 break-words text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary shrink-0" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
     {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span className="min-w-0 break-words">{error}</span><button type="button" className="shrink-0 rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Recarregar o acesso do funcionário" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
     {loading&&<p role="status" aria-live="polite">{employee?'Atualizando acesso…':'Carregando acesso…'}</p>}
     {busy&&<p role="status" aria-live="polite">Salvando acesso do funcionário…</p>}

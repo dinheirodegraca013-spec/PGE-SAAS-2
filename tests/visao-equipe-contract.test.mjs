@@ -675,6 +675,13 @@ test("erros inline de tarefa, ocorrência e responsável quebram no mobile", () 
   assert.match(assignment, /<p className="break-words">\{error\}<\/p>/);
 });
 
+test("ações de cabeçalho e formulários se reorganizam no mobile", () => {
+  assert.match(inboxMateriais, /className="min-w-0"><h2 id="material-requests-title" className="break-words/);
+  assert.match(inboxMateriais, /className="flex flex-wrap items-center gap-2"><select/);
+  assert.match(editorAcesso, /className="flex flex-wrap items-center justify-between gap-3"><h2 id="employee-access-title" className="min-w-0 break-words/);
+  assert.match(equipe, /<div className="flex flex-wrap gap-2"><button type="submit"/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
@@ -1052,7 +1059,7 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /employee\?'Atualizando acesso…':'Carregando acesso…'/);
   assert.match(editorFuncionario, /disabled=\{busy\}/);
   assert.match(editorFuncionario, /dateTime=\{safeEmployeeDateTime\(employee\.created_at\)\}/);
-  assert.match(editorFuncionario, /type="button" className="btn-secondary" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
+  assert.match(editorFuncionario, /type="button" className="btn-secondary shrink-0" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
   assert.match(editorFuncionario, /const clearError=\(\)=>setError\(''\)/);
   assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
   assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
