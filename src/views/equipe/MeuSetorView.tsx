@@ -39,6 +39,15 @@ function formatPrazo(value: string | null) {
   const date = new Date(`${value}T12:00:00`);
   return Number.isNaN(date.getTime()) ? 'Prazo não informado' : `Entrega: ${date.toLocaleDateString('pt-BR')}`;
 }
+function prazoStatus(value: string | null) {
+  if (!value) return null;
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return null;
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  const difference = Math.round((date.getTime() - today.getTime()) / 86400000);
+  return difference < 0 ? 'Atrasado' : difference === 0 ? 'Vence hoje' : difference === 1 ? 'Vence amanhã' : null;
+}
 function formatAccessDate(value: string | null) {
   if (!value) return 'Ainda não acessou';
   const date = new Date(value);
@@ -184,7 +193,7 @@ export default function MeuSetorView() {
       {carregando && !projetos.length ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro && !projetos.length ?
         <p className="py-6 text-sm text-slate-500">Os projetos não puderam ser exibidos agora. Use “Tentar novamente” para atualizar.</p> : !projetos.length ?
         <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-4 text-sm text-slate-500">Nenhum projeto encaminhado para este setor. O administrador poderá encaminhar novos projetos quando necessário.</p> :
-        <><p role="status" aria-live="polite" className={`mt-3 text-xs text-slate-500 ${carregando ? '' : 'sr-only'}`}>{carregando ? 'Atualizando projetos…' : ''}</p><ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4" aria-label={`${p.titulo} · ${formatPrazo(p.prazo)}`}><h3 className="block text-slate-900">{p.titulo}</h3><time className="mt-2 block text-sm text-slate-500" dateTime={p.prazo || undefined}>{formatPrazo(p.prazo)}</time></li>)}</ul></>}
+        <><p role="status" aria-live="polite" className={`mt-3 text-xs text-slate-500 ${carregando ? '' : 'sr-only'}`}>{carregando ? 'Atualizando projetos…' : ''}</p><ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => { const status = prazoStatus(p.prazo); return <li key={p.id} className={`rounded-xl border p-4 ${status === 'Atrasado' ? 'border-rose-200 bg-rose-50/60' : status ? 'border-amber-200 bg-amber-50/60' : 'border-slate-200 bg-slate-50/60'}`} aria-label={`${p.titulo} · ${formatPrazo(p.prazo)}${status ? ` · ${status}` : ''}`}><div className="flex flex-wrap items-start justify-between gap-2"><h3 className="block text-slate-900">{p.titulo}</h3>{status && <span className={`rounded-full px-2 py-1 text-xs font-semibold ${status === 'Atrasado' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800'}`}>{status}</span>}</div><time className={`mt-2 block text-sm ${status === 'Atrasado' ? 'text-rose-700' : status ? 'text-amber-700' : 'text-slate-500'}`} dateTime={p.prazo || undefined}>{formatPrazo(p.prazo)}</time></li>; })}</ul></>}
     </section>}
   </div>;
 }
