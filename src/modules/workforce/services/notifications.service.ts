@@ -15,14 +15,14 @@ const isNotification=(value:unknown):value is WorkNotification=>{
 const isNotificationPage=(value:unknown):value is NotificationPage=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return Array.isArray(row.itens)&&row.itens.every(isNotification)&&typeof row.tem_mais==='boolean'&&Number.isSafeInteger(row.nao_lidas)&&Number(row.nao_lidas)>=0;
+  return Array.isArray(row.itens)&&row.itens.every(isNotification)&&new Set(row.itens.map(item=>item.id)).size===row.itens.length&&typeof row.tem_mais==='boolean'&&Number.isSafeInteger(row.nao_lidas)&&Number(row.nao_lidas)>=0;
 };
 export const workNotifications={
   async list(page:number):Promise<NotificationPage>{
     if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de notificações é inválida.');
     const {data,error}=await supabase.rpc('minhas_notificacoes',{p_pagina:page});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as notificações.');
-    if(!isNotificationPage(data))throw new Error('As notificações retornaram dados inválidos. Recarregue a lista.');return data;
+    if(!isNotificationPage(data))throw new Error('As notificações retornaram dados inválidos. Recarregue a lista.');const pageData=data as NotificationPage;const itens=[...pageData.itens].sort((left,right)=>new Date(right.criada_em).getTime()-new Date(left.criada_em).getTime());return{...pageData,itens};
   },
   async read(id:string):Promise<{id:string;lida_em:string}>{
     if(typeof id!=='string'||!id.trim())throw new Error('A notificação é inválida.');
@@ -31,4 +31,3 @@ export const workNotifications={
     if(typeof data!=='object'||!data||Array.isArray(data)||typeof (data as Record<string,unknown>).id!=='string'||(data as Record<string,unknown>).id!==id||!isDate((data as Record<string,unknown>).lida_em))throw new Error('A confirmação da notificação retornou dados inválidos.');return data as {id:string;lida_em:string};
   },
 };
-
