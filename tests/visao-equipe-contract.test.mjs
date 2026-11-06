@@ -628,6 +628,12 @@ test("busca de fichas e atalhos da agenda têm semântica acessível", () => {
   assert.match(agendaFuncionario, /role="group" aria-label="Atalhos de período"/);
 });
 
+test("agenda relaciona datas inválidas à mensagem de erro", () => {
+  assert.match(agendaFuncionario, /id="agenda-start-date"[^>]*aria-describedby=\{invalidRange\?'agenda-range-error':undefined\}/);
+  assert.match(agendaFuncionario, /id="agenda-end-date"[^>]*aria-describedby=\{invalidRange\?'agenda-range-error':undefined\}/);
+  assert.match(agendaFuncionario, /<span id="agenda-range-error" className="sr-only">\{invalidRange \? error : ''\}<\/span>/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
