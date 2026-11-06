@@ -39,9 +39,9 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
         <div className="space-y-3">{rows.map((row, index) => <fieldset key={index} className="rounded-lg border border-slate-200 p-3">
           <legend className="px-1 text-sm">Item {index + 1}</legend>
           <div className="grid gap-3 sm:grid-cols-2">{(field.columns ?? []).map(column => renderField(column, row, next => update(rows.map((item, i) => i === index ? next : item)), `${path}.${index}.`))}</div>
-          <button type="button" disabled={locked} onClick={() => update(rows.filter((_, i) => i !== index))} className="mt-3 inline-flex shrink-0 whitespace-nowrap rounded-lg border px-3 py-2 text-sm">Remover item {index + 1}</button>
+          <button type="button" disabled={locked} onClick={() => update(rows.filter((_, i) => i !== index))} className="mt-3 inline-flex w-full shrink-0 whitespace-nowrap rounded-lg border px-3 py-2 text-sm sm:w-auto">Remover item {index + 1}</button>
         </fieldset>)}</div>
-        <button type="button" disabled={locked || rows.length >= 1000} onClick={() => update([...rows, {}])} className="mt-3 inline-flex shrink-0 whitespace-nowrap rounded-lg border px-3 py-2 text-sm">Adicionar item</button>
+        <button type="button" disabled={locked || rows.length >= 1000} onClick={() => update([...rows, {}])} className="mt-3 inline-flex w-full shrink-0 whitespace-nowrap rounded-lg border px-3 py-2 text-sm sm:w-auto">Adicionar item</button>
         {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
       </fieldset>;
     }
@@ -77,6 +77,6 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
   }} className="space-y-4" aria-busy={busy}>
     <div className="grid min-w-0 gap-4">{fields.map(field => renderField(field, value, onChange))}</div>
     {message && <p role={message.startsWith('Não foi') || message.startsWith('Revise') ? 'alert' : 'status'} aria-live="polite" className="text-sm">{message}</p>}
-    <button type="submit" disabled={busy || disabled} aria-label={busy ? 'Salvando ficha técnica' : 'Salvar ficha técnica'} className="inline-flex shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
+    <button type="submit" disabled={busy || disabled} aria-label={busy ? 'Salvando ficha técnica' : 'Salvar ficha técnica'} className="inline-flex w-full shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50 sm:w-auto">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
   </form>;
 }

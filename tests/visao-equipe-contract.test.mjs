@@ -1237,6 +1237,11 @@ test("ficha técnica limpa erros ao editar um campo", () => {
   assert.match(readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx"), /setMessage\(''\);\s*setIssues\(\[\]\);\s*change/);
 });
 
+test("formulário técnico acomoda ações de tabela no mobile", () => {
+  assert.match(formularioFichaTecnica, /className="mt-3 inline-flex w-full shrink-0 whitespace-nowrap rounded-lg border px-3 py-2 text-sm sm:w-auto"/);
+  assert.match(formularioFichaTecnica, /className="inline-flex w-full shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50 sm:w-auto"/);
+});
+
 test("serviço de fichas valida checklist e dados da resposta", () => {
   assert.match(technicalSheetService, /hasUniqueKeys\(checklistItems\) &&\s+!!row\.checklist/);
   assert.doesNotMatch(technicalSheetService, /hasUniqueKeys\(checklistItems\);\s+!!row\.checklist/);
