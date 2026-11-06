@@ -133,6 +133,18 @@ function isExecutionResult(value: unknown): value is Pick<ServiceSheet, 'status'
     (row.concluida_em === null || typeof row.concluida_em === 'string');
 }
 
+function isCandidate(value: unknown): value is {id:string;nome:string;cargo:string|null} {
+  if (!value || typeof value !== 'object') return false;
+  const row=value as Record<string,unknown>;
+  return typeof row.id==='string'&&typeof row.nome==='string'&&(row.cargo===null||typeof row.cargo==='string');
+}
+
+function isDryingState(value: unknown): value is FinishingDryingState {
+  if (!value || typeof value !== 'object') return false;
+  const row=value as Record<string,unknown>;
+  return (row.iniciada_em===null||typeof row.iniciada_em==='string')&&(row.prevista_ate===null||typeof row.prevista_ate==='string')&&typeof row.em_secagem==='boolean'&&(row.servidor_agora===null||typeof row.servidor_agora==='string')&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=0;
+}
+
 function isProductionState(value: unknown): value is ProductionState {
   if (!value || typeof value !== 'object') return false;
   const row = value as Record<string, unknown>;
@@ -160,6 +172,7 @@ export const technicalSheets = {
   async candidates(service: string, sector: string): Promise<{id:string;nome:string;cargo:string|null}[]> {
     const { data, error } = await supabase.rpc('ficha_responsaveis_disponiveis', {p_servico:service,p_setor:sector});
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar os responsáveis.');
+    if (!Array.isArray(data) || !data.every(isCandidate)) throw new Error('Os responsáveis retornaram dados inválidos. Recarregue a ficha.');
     return data;
   },
   async assign(service: string, sector: string, employee: string | null, version: number): Promise<{responsavel_id:string|null;versao:number}> {
@@ -198,6 +211,7 @@ export const technicalSheets = {
   async dryingLoad(service: string): Promise<FinishingDryingState> {
     const { data, error } = await supabase.rpc('acabamento_secagem_consultar', { p_servico: service });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar a secagem do acabamento.');
+    if (!isDryingState(data)) throw new Error('A secagem retornou dados inválidos. Recarregue a ficha.');
     return data;
   },
   async dryingRegister(service: string, minutes: number, version: number): Promise<Pick<FinishingDryingState, 'prevista_ate' | 'em_secagem' | 'servidor_agora' | 'versao'>> {
