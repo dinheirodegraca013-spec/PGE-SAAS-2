@@ -171,10 +171,10 @@ export default function MeuSetorView() {
     </section>}
     {context && <section className="card p-5" aria-labelledby="sector-projects-title"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="sector-projects-title" className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{carregando ? '…' : erro ? 'Indisponível' : `${projetos.length} ${projetos.length === 1 ? 'projeto' : 'projetos'}`}</span></div>
-      {carregando ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro ?
+      {carregando && !projetos.length ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro && !projetos.length ?
         <p className="py-6 text-sm text-slate-500">Os projetos não puderam ser exibidos agora. Use “Tentar novamente” para atualizar.</p> : !projetos.length ?
         <p className="rounded-lg border border-dashed border-slate-200 p-4 text-sm text-slate-500">Nenhum projeto encaminhado para este setor. O administrador poderá encaminhar novos projetos quando necessário.</p> :
-        <ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"><b className="block text-slate-900">{p.titulo}</b><span className="mt-2 block text-sm text-slate-500">{formatPrazo(p.prazo)}</span></li>)}</ul>}
+        <><p role="status" aria-live="polite" className={`mt-3 text-xs text-slate-500 ${carregando ? '' : 'sr-only'}`}>{carregando ? 'Atualizando projetos…' : ''}</p><ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"><b className="block text-slate-900">{p.titulo}</b><span className="mt-2 block text-sm text-slate-500">{formatPrazo(p.prazo)}</span></li>)}</ul></>}
     </section>}
   </div>;
 }
