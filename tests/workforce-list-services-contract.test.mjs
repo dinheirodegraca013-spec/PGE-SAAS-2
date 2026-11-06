@@ -30,3 +30,9 @@ test('solicitações de material rejeitam duplicatas e ordenam por criação',()
   assert.match(sheets,/new Set\(data\.map\(item => item\.id\)\)\.size!==data\.length/);
   assert.match(sheets,/new Date\(right\.criado_em\)\.getTime\(\)-new Date\(left\.criado_em\)\.getTime\(\)/);
 });
+
+test('responsáveis exigem identificação e são ordenados por nome',()=>{
+  assert.match(sheets,/row\.id\.trim\(\)\.length>0&&typeof row\.nome==='string'&&row\.nome\.trim\(\)\.length>0/);
+  assert.match(sheets,/new Set\(data\.map\(item => item\.id\)\)\.size!==data\.length/);
+  assert.match(sheets,/sort\(\(left,right\)=>left\.nome\.localeCompare\(right\.nome,'pt-BR'\)\)/);
+});

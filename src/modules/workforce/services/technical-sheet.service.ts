@@ -143,7 +143,7 @@ function isExecutionResult(value: unknown): value is Pick<ServiceSheet, 'status'
 function isCandidate(value: unknown): value is {id:string;nome:string;cargo:string|null} {
   if (!value || typeof value !== 'object') return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&typeof row.nome==='string'&&(row.cargo===null||typeof row.cargo==='string');
+  return typeof row.id==='string'&&row.id.trim().length>0&&typeof row.nome==='string'&&row.nome.trim().length>0&&(row.cargo===null||typeof row.cargo==='string');
 }
 
 function isDryingState(value: unknown): value is FinishingDryingState {
@@ -182,8 +182,8 @@ export const technicalSheets = {
     if(!isServiceSector(service,sector))throw new Error('O serviço ou setor dos responsáveis é inválido.');
     const { data, error } = await supabase.rpc('ficha_responsaveis_disponiveis', {p_servico:service,p_setor:sector});
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar os responsáveis.');
-    if (!Array.isArray(data) || !data.every(isCandidate)) throw new Error('Os responsáveis retornaram dados inválidos. Recarregue a ficha.');
-    return data;
+    if (!Array.isArray(data) || !data.every(isCandidate) || new Set(data.map(item => item.id)).size!==data.length) throw new Error('Os responsáveis retornaram dados inválidos. Recarregue a ficha.');
+    return [...data].sort((left,right)=>left.nome.localeCompare(right.nome,'pt-BR'));
   },
   async assign(service: string, sector: string, employee: string | null, version: number): Promise<{responsavel_id:string|null;versao:number}> {
     if(!isServiceSector(service,sector)||(employee!==null&&(typeof employee!=='string'||!employee.trim()))||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados da atribuição são inválidos.');
