@@ -818,7 +818,7 @@ test("editor de acesso preserva controles no mobile", () => {
   assert.match(editorAcesso, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy\} onClick=\{onCancel\}/);
   assert.match(editorAcesso, /className="min-w-0 max-w-full text-xs text-slate-500"/);
   assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
-  assert.match(editorAcesso, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{busy\}/);
+  assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
 });
 
 test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
