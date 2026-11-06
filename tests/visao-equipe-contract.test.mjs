@@ -1,3 +1,4 @@
+Attempting to perform the InitializeDefaultDrives operation on the 'FileSystem' provider failed.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -561,6 +562,11 @@ test("histórico diferencia carga inicial de sincronização", () => {
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
   assert.match(historicoFuncionario, /data\.itens\.length===1\?'atividade visível':'atividades visíveis'/);
   assert.match(historicoFuncionario, /data\.tem_mais\?' · Há mais atividades disponíveis\.':''/);
+});
+
+test("histórico e fichas ocultam paginação quando vazios", () => {
+  assert.match(historicoFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Paginação do histórico de atividades"/);
+  assert.match(fichasFuncionario, /list && \(list\.itens\.length \|\| page>0 \|\| list\.tem_mais\) && <nav aria-label="Paginação de fichas de serviço"/);
 });
 
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
