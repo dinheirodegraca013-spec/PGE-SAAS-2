@@ -1512,6 +1512,7 @@ test("aceite da instalação quebra confirmação longa no mobile", () => {
 
 test("cartão de tarefa mantém badges e prazo legíveis no mobile", () => {
   assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| !dirty/);
+  assert.match(minhasTarefas, /className="break-words whitespace-pre-wrap text-sm text-slate-500">\{task\.observacoes\}/);
   assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2\.5 py-1 text-xs font-semibold/);
   assert.match(minhasTarefas, /<span className="break-words">\{formatTaskSector\(task\.setor\)\}<\/span>/);
   assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2 py-1 font-semibold/);
