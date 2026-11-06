@@ -72,7 +72,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   </div>;
   return <section className="space-y-4" aria-busy={saving || checklistBusy}>
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
-      <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Pendente'}</span>
+      <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Situação indisponível'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
         (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary" disabled={saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
           if(mutation.current)return;
