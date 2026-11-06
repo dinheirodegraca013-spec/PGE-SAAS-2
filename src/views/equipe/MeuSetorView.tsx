@@ -14,11 +14,13 @@ import AgendaPanel from '@/modules/workforce/components/AgendaPanel';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 function normalizeProjects(value: unknown): ProjetoSetor[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(item => item && typeof item === 'object').map(item => {
+  if (!Array.isArray(value)) throw new Error('Resposta de projetos inválida.');
+  return value.map(item => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('Resposta de projetos inválida.');
     const row = item as Record<string, unknown>;
-    return { id: String(row.id ?? ''), titulo: String(row.titulo ?? 'Projeto sem título'), prazo: row.prazo == null ? null : String(row.prazo) };
-  }).filter(item => item.id);
+    if (typeof row.id !== 'string' || !row.id || typeof row.titulo !== 'string' || !row.titulo || (row.prazo !== null && row.prazo !== undefined && typeof row.prazo !== 'string')) throw new Error('Resposta de projetos inválida.');
+    return { id: row.id, titulo: row.titulo, prazo: row.prazo == null ? null : row.prazo };
+  });
 }
 
 function formatPrazo(value: string | null) {
