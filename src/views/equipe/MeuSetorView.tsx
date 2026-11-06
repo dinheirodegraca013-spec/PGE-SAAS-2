@@ -110,11 +110,11 @@ export default function MeuSetorView() {
       {quickActions.map(action => <a key={action.href} href={action.href} aria-label={`${action.label}: ${action.detail}`} className="card group p-4 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-sm"><span className="text-sm font-semibold text-slate-900 group-hover:text-cyan-700">{action.label} <span aria-hidden="true">↗</span></span><span className="mt-1 block text-xs text-slate-500">{action.detail}</span></a>)}
     </nav>}
     {(hasPermission(context,'tarefas') || hasPermission(context,'ordens')) && <PersonalWorkSummary />}
-    {hasPermission(context,'agenda') && <div id="agenda"><AgendaPanel /></div>}
-    {hasPermission(context,'tarefas') && <div id="tarefas"><MyTasks /></div>}
-    {hasPermission(context,'notificacoes') && <div id="notificacoes"><WorkNotifications /></div>}
-    {hasPermission(context,'ordens') && <div id="ordens"><MyServiceSheets /></div>}
-    {hasPermission(context,'atividades') && <div id="atividades"><MyActivityHistory /></div>}
+    {hasPermission(context,'agenda') && <div id="agenda" className="scroll-mt-6"><AgendaPanel /></div>}
+    {hasPermission(context,'tarefas') && <div id="tarefas" className="scroll-mt-6"><MyTasks /></div>}
+    {hasPermission(context,'notificacoes') && <div id="notificacoes" className="scroll-mt-6"><WorkNotifications /></div>}
+    {hasPermission(context,'ordens') && <div id="ordens" className="scroll-mt-6"><MyServiceSheets /></div>}
+    {hasPermission(context,'atividades') && <div id="atividades" className="scroll-mt-6"><MyActivityHistory /></div>}
     {context && <section className="card p-5" aria-labelledby="sector-projects-title"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="sector-projects-title" className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{carregando ? '…' : erro ? 'Indisponível' : `${projetos.length} ${projetos.length === 1 ? 'projeto' : 'projetos'}`}</span></div>
       {carregando ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro ?
