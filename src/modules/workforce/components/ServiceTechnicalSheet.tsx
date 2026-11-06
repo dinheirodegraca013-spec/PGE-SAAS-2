@@ -84,7 +84,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           mutation.current=true;setSaving(true);setError('');const request=generation.current;
           try{const result=await technicalSheets.execute(serviceId,sector,action,sheet.versao);if(request===generation.current)setSheet(current=>current?{...current,...result}:current);}
           catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível atualizar a execução.');}
-          finally{mutation.current=false;setSaving(false);}
+          finally{mutation.current=false;if(request===generation.current)setSaving(false);}
         }}>{saving?'Salvando…':action==='iniciar'?(sheet.status==='pausada'?'Retomar':'Iniciar'):action==='pausar'?'Pausar':'Concluir'}</button>)}
     </div>
     {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
@@ -102,7 +102,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       try{
         const result=await technicalSheets.assign(serviceId,sector,employee,sheet.versao);
         if(request===generation.current)setSheet(current=>current?{...current,...result}:current);
-      }finally{mutation.current=false;setSaving(false);}
+      }finally{mutation.current=false;if(request===generation.current)setSaving(false);}
     }} />}
     <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada} attachmentOptions={attachmentOptions} canLinkAttachments={sheet.pode_anexar}
       disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
@@ -113,7 +113,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           const version = await technicalSheets.save(serviceId, sector, data, sheet.versao);
           if (request !== generation.current) return;
           setSheet(current => current ? { ...current, dados: { ...current.dados, ...data }, versao: version } : current);
-        } finally { mutation.current = false; setSaving(false); }
+        } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
       }} />
     {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
@@ -125,7 +125,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           setDrying(current => current ? { ...current, ...result } : current);
           setSheet(current => current ? { ...current, versao: result.versao } : current);
         }
-      } finally { mutation.current = false; setSaving(false); }
+      } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
     {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
@@ -134,7 +134,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       try {
         const result = await technicalSheets.productionRegister(serviceId, sector, input, sheet.versao);
         if (request === generation.current) { setProduction(result); setSheet(current => current ? { ...current, versao: result.versao } : current); }
-      } finally { mutation.current = false; setSaving(false); }
+      } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
     {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
@@ -161,7 +161,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
             const result = await technicalSheets.checklist(serviceId, sector, {[item.key]:checked}, sheet.versao);
             if (request === generation.current) setSheet(current => current ? {...current,...result} : current);
           } catch (cause) { if (request === generation.current) setError(cause instanceof Error ? cause.message : 'Não foi possível salvar o checklist.'); }
-          finally { mutation.current = false; setChecklistBusy(false); }
+          finally { mutation.current = false; if (request === generation.current) setChecklistBusy(false); }
         }} />
         <span>{item.label}{item.automatic && <span className="block text-xs text-slate-500">Atualizado após registro da evidência.</span>}</span>
       </label>)}
