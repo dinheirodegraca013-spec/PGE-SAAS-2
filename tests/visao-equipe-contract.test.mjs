@@ -1497,8 +1497,8 @@ test("resumo operacional protege indicadores longos no mobile", () => {
 });
 
 test("ações de anexos não comprimem o nome do arquivo no mobile", () => {
-  assert.match(anexos, /<div className="flex min-w-0 flex-wrap gap-2"><button type="button" className="btn-secondary shrink-0 whitespace-nowrap"/);
-  assert.match(anexos, /<a className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{`Abrir/);
+  assert.match(anexos, /<div className="flex min-w-0 flex-wrap gap-2"><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto"/);
+  assert.match(anexos, /<a className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{`Abrir/);
 });
 
 test("detalhe da tarefa organiza título, atualização e recarga no mobile", () => {
