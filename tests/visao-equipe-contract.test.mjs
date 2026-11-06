@@ -124,6 +124,10 @@ test("painel exibe perfil somente quando a permissão foi concedida", () => {
   assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
 });
 
+test("ações rápidas possuem foco visível no teclado", () => {
+  assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
+});
+
 test("painel limpa o horário anterior ao atualizar projetos", () => {
   assert.match(meuSetor, /setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
 });
