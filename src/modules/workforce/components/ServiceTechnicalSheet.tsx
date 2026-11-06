@@ -61,7 +61,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   if (loading) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     <p role="alert" className="text-sm text-red-700">{error}</p>
-    <button type="button" className="btn-secondary" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
+    <button type="button" className="btn-secondary" aria-label="Tentar carregar a ficha técnica novamente" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
     {context?.proprietario && <button type="button" className="btn-primary" disabled={loading} onClick={async () => {
       if (mutation.current) return;
       mutation.current = true; setLoading(true); setError('');
