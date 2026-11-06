@@ -320,6 +320,7 @@ export default function EquipeView() {
               autoComplete="off"
               value={busca}
               onChange={(event) => setBusca(event.target.value)}
+              onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); setBusca(''); } }}
               placeholder="Nome, e-mail ou perfil"
               className="input-field mt-1"
             />

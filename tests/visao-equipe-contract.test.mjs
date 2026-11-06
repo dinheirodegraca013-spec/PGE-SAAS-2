@@ -190,6 +190,11 @@ test("busca de colaboradores usa campo de pesquisa controlado", () => {
   assert.match(equipeView, /<input\s+type="search"\s+aria-label="Buscar colaborador"\s+maxLength=\{120\}\s+autoComplete="off"/);
 });
 
+test("busca de colaboradores limpa com Escape", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /event\.key === 'Escape'.*setBusca\('\'\)/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
