@@ -3,17 +3,20 @@ import type { AccessGrant, EmployeeConfiguration, WorkforceContext } from '../ty
 
 const sectors=['corte','montagem','acabamento','instalacao','estoque','financeiro'];
 const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
-const isGrant=(value:unknown):value is AccessGrant=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).modulo==='string'&&String((value as Record<string,unknown>).modulo).length>0&&typeof (value as Record<string,unknown>).operacao==='string'&&String((value as Record<string,unknown>).operacao).length>0&&['atribuidos','setor','empresa'].includes(String((value as Record<string,unknown>).escopo)));
-const isCatalogItem=(value:unknown)=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).modulo==='string'&&String((value as Record<string,unknown>).modulo).length>0&&typeof (value as Record<string,unknown>).operacao==='string'&&String((value as Record<string,unknown>).operacao).length>0);
+const isNonEmptyString=(value:unknown):value is string=>typeof value==='string'&&value.trim().length>0;
+const permissionKey=(value:Pick<AccessGrant,'modulo'|'operacao'>):string=>`${value.modulo.trim()}:${value.operacao.trim()}`;
+const hasUniquePermissions=(value:unknown[]):boolean=>new Set(value.map(item=>permissionKey(item as AccessGrant))).size===value.length;
+const isGrant=(value:unknown):value is AccessGrant=>Boolean(value&&typeof value==='object'&&isNonEmptyString((value as Record<string,unknown>).modulo)&&isNonEmptyString((value as Record<string,unknown>).operacao)&&['atribuidos','setor','empresa'].includes(String((value as Record<string,unknown>).escopo)));
+const isCatalogItem=(value:unknown)=>Boolean(value&&typeof value==='object'&&isNonEmptyString((value as Record<string,unknown>).modulo)&&isNonEmptyString((value as Record<string,unknown>).operacao));
 const isEmployee=(value:unknown):value is EmployeeConfiguration=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&row.id.length>0&&typeof row.nome==='string'&&row.nome.trim().length>0&&typeof row.email==='string'&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email.trim())&&(row.cargo===null||typeof row.cargo==='string')&&(row.identificador_interno===null||typeof row.identificador_interno==='string')&&(row.setor===null||sectors.includes(String(row.setor)))&&['ativo','inativo','suspenso','suspenso_plano'].includes(String(row.status))&&typeof row.created_at==='string'&&Number.isFinite(new Date(row.created_at).getTime())&&isDateOrNull(row.ultimo_acesso)&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&Array.isArray(row.setores_adicionais)&&row.setores_adicionais.every(item=>sectors.includes(String(item)))&&new Set(row.setores_adicionais).size===row.setores_adicionais.length&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant);
+  return typeof row.id==='string'&&row.id.length>0&&typeof row.nome==='string'&&row.nome.trim().length>0&&typeof row.email==='string'&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email.trim())&&(row.cargo===null||typeof row.cargo==='string')&&(row.identificador_interno===null||typeof row.identificador_interno==='string')&&(row.setor===null||sectors.includes(String(row.setor)))&&['ativo','inativo','suspenso','suspenso_plano'].includes(String(row.status))&&typeof row.created_at==='string'&&Number.isFinite(new Date(row.created_at).getTime())&&isDateOrNull(row.ultimo_acesso)&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&Array.isArray(row.setores_adicionais)&&row.setores_adicionais.every(item=>sectors.includes(String(item)))&&new Set(row.setores_adicionais).size===row.setores_adicionais.length&&(row.setor===null||row.setores_adicionais.every(item=>item!==row.setor))&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&hasUniquePermissions(row.permissoes);
 };
 const isContext=(value:unknown):value is WorkforceContext=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return typeof row.empresa_id==='string'&&row.empresa_id.length>0&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(isCatalogItem));
+  return typeof row.empresa_id==='string'&&row.empresa_id.length>0&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&hasUniquePermissions(row.permissoes)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(isCatalogItem)&&hasUniquePermissions(row.catalogo_permissoes));
 };
 
 export const workforceAccess = {
