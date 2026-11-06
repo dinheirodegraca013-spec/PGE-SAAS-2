@@ -96,6 +96,7 @@ export default function MeuSetorView() {
         {additionalSectors.length > 0 && <span className="text-slate-400">Acesso adicional: {additionalSectors.map(s => setores[s]).join(', ')}</span>}
       </div>
     </header>
+    {accessLoading && <p role="status" aria-live="polite" className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">Validando seu acesso de funcionário…</p>}
     {erro && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{erro}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" onClick={() => setAtualizacao(value => value + 1)}>Tentar novamente</button></div>}
     {accessError && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{accessError}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" onClick={() => void reloadAccess()}>Validar acesso novamente</button></div>}
     {(sectorList.includes('estoque')&&hasPermission(context,'estoque') || sectorList.includes('financeiro')&&hasPermission(context,'financeiro')) && <div className="flex flex-wrap gap-3">
