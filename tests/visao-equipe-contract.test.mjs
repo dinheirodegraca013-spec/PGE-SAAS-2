@@ -674,14 +674,14 @@ test("agenda relaciona datas inválidas à mensagem de erro", () => {
 
 test("mensagens de erro operacionais quebram texto e preservam os botões", () => {
   assert.match(editorAcesso, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(editorAcesso, /className="shrink-0 rounded-lg border border-rose-200/);
+  assert.match(editorAcesso, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   assert.match(agendaFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(agendaFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
+  assert.match(agendaFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(ocorrenciasFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
+  assert.match(ocorrenciasFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
     assert.match(source, /className="min-w-0 break-words">\{error\}<\/span>/);
-    assert.match(source, /className="shrink-0 rounded-lg border border-rose-200/);
+    assert.match(source, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   }
 });
 
@@ -1395,9 +1395,9 @@ test("editor de acesso quebra setores e permissões longas no mobile", () => {
 });
 
 test("tarefas preservam controles de filtro e paginação no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0 sm:whitespace-nowrap"/);
-  assert.match(minhasTarefas, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a página anterior de tarefas"/);
+  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
+  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>setRefresh/);
+  assert.match(minhasTarefas, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior de tarefas"/);
   assert.match(minhasTarefas, /<span className="shrink-0 text-sm" aria-current="page"/);
   assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
 });
