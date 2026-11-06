@@ -883,6 +883,7 @@ test("detalhe de tarefa preserva a ficha durante sincronização", () => {
 
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
+  assert.match(fichaTecnica, /disabled=\{loading\} aria-label=\{loading \? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'\}/);
   assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
 });
 
