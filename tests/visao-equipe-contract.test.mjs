@@ -269,16 +269,97 @@ test("atualizaÃ§Ã£o do painel sincroniza os blocos de trabalho", () => {
   assert.match(workforceEvents, /workforceRefreshEvent/);
   assert.match(workforceEvents, /typeof window === 'undefined'/);
   assert.match(meuSetor, /requestWorkforceRefresh\(\)/);
-  assert.match(minhasTareg^;×{h‘éì¶»§q«^w\Ü[‹Lˆ‹ÊNÃBŸJNÃBƒB\İ
-œÙXØYÙ[H[\H™YY˜XÚÈ[ÈY]\ˆÈ˜^›È‹
+  assert.match(minhasTarefas, /workforceRefreshEvent/);
+  assert.match(notificacoesFuncionario, /workforceRefreshEvent/);
+  assert.match(agendaFuncionario, /workforceRefreshEvent/);
+  assert.match(historicoFuncionario, /workforceRefreshEvent/);
+  assert.match(fichasFuncionario, /workforceRefreshEvent/);
+  assert.match(resumoFuncionario, /workforceRefreshEvent/);
+});
 
-HOˆÃBˆ\ÜÙ\›X]Ú
-ÛÛ›ÛTÙXØYÙ[KÜÙ]Z[]\×
-]™[\™Ù]˜[YW
-NÈÙ]Y\ÜØYÙW
-	É×
-KÊNÃBˆ\ÜÙ\›X]Ú
-ÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
+test("painel exibe perfil somente quando a permissÃ£o foi concedida", () => {
+  assert.match(meuSetor, /hasPermission\(context,'perfil'\)/);
+  assert.match(meuSetor, /id="perfil"/);
+  assert.match(meuSetor, /employee-profile-title/);
+  assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
+  assert.match(meuSetor, /Setores autorizados/);
+});
+
+test("aÃ§Ãµes rÃ¡pidas possuem foco visÃ­vel no teclado", () => {
+  assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
+});
+
+test("painel do funcionÃ¡rio evita estouro de textos dinÃ¢micos no celular", () => {
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-300"/);
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-400"/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{erro\}<\/span>/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{accessError\}<\/span>/);
+  assert.match(meuSetor, /className="card group min-w-0 p-4/);
+  assert.match(meuSetor, /className="mt-1 block break-words text-xs text-slate-500"/);
+});
+
+test("painel oferece atalho de teclado para as aÃ§Ãµes rÃ¡pidas", () => {
+  assert.match(meuSetor, /quickActions\.length > 0 && <a href="#quick-actions"/);
+  assert.match(meuSetor, /href="#quick-actions"/);
+  assert.match(meuSetor, /Pular para as aÃ§Ãµes rÃ¡pidas/);
+  assert.match(meuSetor, /id="quick-actions" tabIndex=\{-1\}/);
+  assert.match(meuSetor, /!quickActions\.length && <p role="status" aria-live="polite"/);
+});
+
+test("saltos das aÃ§Ãµes rÃ¡pidas devolvem foco Ã  seÃ§Ã£o de destino", () => {
+  assert.match(meuSetor, /window\.addEventListener\('hashchange', focusHashTarget\)/);
+  assert.match(meuSetor, /window\.requestAnimationFrame\(focusHashTarget\)/);
+  assert.match(meuSetor, /window\.cancelAnimationFrame\(frame\)/);
+  assert.match(meuSetor, /lastFocusedHash\.current === id && document\.activeElement === target/);
+  assert.match(meuSetor, /\}, \[accessRenderKey\]\)/);
+  assert.match(meuSetor, /target\.setAttribute\('tabindex', '-1'\); target\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(meuSetor, /id="tarefas" tabIndex=\{-1\}/);
+  assert.match(meuSetor, /id="agenda" tabIndex=\{-1\}/);
+});
+
+test("painel preserva a Ãºltima atualizaÃ§Ã£o durante nova consulta", () => {
+  assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
+  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+});
+
+test("tarefas do funcionÃ¡rio permitem recuperar falhas de carregamento", () => {
+  assert.match(minhasTarefas, /Tentar novamente/);
+  assert.match(minhasTarefas, /aria-live="polite"/);
+  assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
+});
+
+test("aÃ§Ãµes da tarefa permanecem legÃ­veis no mobile", () => {
+  assert.match(minhasTarefas, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{busy \|\| !dirty/);
+  assert.match(minhasTarefas, /className="min-w-0 break-words text-sm text-slate-500"/);
+  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
+});
+
+test("tarefas refletem imediatamente status e progresso selecionados", () => {
+  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} Â· \$\{formatTaskStatus\(displayedStatus\)\} Â· \$\{formatTaskSector\(task\.setor\)\} Â· Prioridade \$\{formatPriority\(task\.prioridade\)\} Â· \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' Â· Atrasada':''\}`\}/);
+  assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
+  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
+  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
+  assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
+  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluÃ­do`\}/);
+});
+
+test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
+  assert.match(minhasTarefas, /const priorityTone=/);
+  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
+  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
+test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
+  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
+  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
+  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
+});
+
+test("tarefas prÃ³ximas do prazo recebem aviso relativo", () => {
+  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
+  assert.match(minhasTarefas]½÷‹h‘éì¶»§q«^tÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
 ÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWKÊNÃBŸJNÃBƒB\İ
 ˜Ø\0èÛÈHÛÛXÚ]péğèÛÈ[™›Ü›XH]X[^˜péğèÛÈ›È›İ0èÛÈ‹
 
@@ -910,10 +991,11 @@ OO—ÜÙ]š[\‹ÊNÃBˆ\ÜÙ\›X]Ú
 ››İYšXØpéğíY\È™\Ù\˜[HpéğíY\ÈHYÚ[˜péğèÛÈ›È[Øš[H‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
-›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËÏ]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLˆ\ØX›YWÈHX\ŞWH\šXK[X™[WÚ][W\™Y˜WÚYËÊNÃBˆ\ÜÙ\›X]Ú
+›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËÏ]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›YWÈHX\ŞWH\šXK[X™[WÚ][W\™Y˜WÚYËÊNÃBˆ\ÜÙ\›X]Ú
 ›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËØ\šXK[X™[WØX\˜Ø\ˆÛÛ[ÈYNˆŠØHÛÛXÚÏWØ\Ş[˜ËÊNÃBˆ\ÜÙ\›X]Ú
 ›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËÏÜ[ˆÛ\ÜÓ˜[YOHœÚš[šËL^\ÛHˆ\šXKXİ\œ™[HœYÙH‹ÊNÃBˆ\ÜÙ\›X]Ú
-›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËØ\šXK[X™[H’\ˆ\˜HH°ìŞ[XH0èYÚ[˜Hˆ\ØX›YWÈY]W[WÛXZ\ÈHX\ŞWKÊNÃBŸJNÃBƒB\İ
+›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËØ\šXK[X™[H’\ˆ\˜HH°ìŞ[XH0èYÚ[˜Hˆ\ØX›YWÈY]W[WÛXZ\ÈHX\ŞWKÊNÃBˆ\ÜÙ\›X]Ú
+›İYšXØXÛÙ\Ñ[˜Ú[Û˜\š[ËÏ]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\šXK[X™[H‘™XÚ\ˆ][HH›İYšXØpéğèÛÈ‹ÊNÃBŸJNÃBƒB\İ
 ›ØÛÜœ°ê›˜ÚX\È™\Ù\˜[HÛÛ][šXØpéğèÛË™\ÛÛpéğèÛÈHYÚ[˜péğèÛÈ›È[Øš[H‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
