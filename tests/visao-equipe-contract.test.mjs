@@ -909,6 +909,7 @@ test("serviço de fichas rejeita timestamps inválidos", () => {
 test("registro de secagem valida datas retornadas", () => {
   assert.match(technicalSheetService, /!isDateOrNull\(result\.prevista_ate\)/);
   assert.match(technicalSheetService, /!isDateOrNull\(result\.servidor_agora\)/);
+  assert.match(controleSecagem, /dateTime=\{safeServerDateTime\(state\?\.iniciada_em \?\? null\)\}/);
 });
 
 test("liberação da ficha bloqueia duplo clique", () => {

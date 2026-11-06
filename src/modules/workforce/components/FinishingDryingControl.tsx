@@ -6,6 +6,11 @@ function formatServerDate(value: string | null): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? 'Data indisponível' : new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(date);
 }
+function safeServerDateTime(value: string | null): string | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
 
 export default function FinishingDryingControl({
   state,
@@ -46,8 +51,8 @@ export default function FinishingDryingControl({
       </span>
     </div>
     <dl className="grid gap-2 text-sm sm:grid-cols-2">
-      <div><dt className="text-slate-500">Iniciada em</dt><dd>{formatServerDate(state?.iniciada_em ?? null)}</dd></div>
-      <div><dt className="text-slate-500">Liberada para concluir em</dt><dd>{formatServerDate(state?.prevista_ate ?? null)}</dd></div>
+      <div><dt className="text-slate-500">Iniciada em</dt><dd><time dateTime={safeServerDateTime(state?.iniciada_em ?? null)}>{formatServerDate(state?.iniciada_em ?? null)}</time></dd></div>
+      <div><dt className="text-slate-500">Liberada para concluir em</dt><dd><time dateTime={safeServerDateTime(state?.prevista_ate ?? null)}>{formatServerDate(state?.prevista_ate ?? null)}</time></dd></div>
     </dl>
     {canRegister && <form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy={busy} onSubmit={async event => {
       event.preventDefault();
