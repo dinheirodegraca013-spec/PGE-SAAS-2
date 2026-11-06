@@ -113,7 +113,7 @@ export default function MeuSetorView() {
     hasPermission(context, 'atividades') && { href: '#atividades', label: 'Histórico', detail: 'Consulte suas últimas ações' },
     hasPermission(context, 'perfil') && { href: '#perfil', label: 'Meu perfil', detail: 'Confira seus dados de acesso' },
   ].filter(Boolean) as { href: string; label: string; detail: string }[];
-  return <div className="space-y-6">
+  return <div className="space-y-6" aria-busy={carregando || accessLoading}>
     <header className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 p-6 text-white shadow-sm sm:p-8">
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div>

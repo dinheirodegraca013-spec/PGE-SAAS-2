@@ -121,6 +121,10 @@ test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
 });
 
+test("painel anuncia sincronização global para tecnologia assistiva", () => {
+  assert.match(meuSetor, /className="space-y-6" aria-busy=\{carregando \|\| accessLoading\}/);
+});
+
 test("painel informa conexão offline e retoma sincronização ao voltar", () => {
   assert.match(meuSetor, /window\.addEventListener\('online'/);
   assert.match(meuSetor, /window\.addEventListener\('offline'/);
