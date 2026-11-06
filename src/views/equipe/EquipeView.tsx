@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   CircleAlert,
   CircleCheck,
@@ -46,6 +46,7 @@ const isProjeto=(value:unknown):value is {id:string;titulo:string}=>Boolean(valu
 
 export default function EquipeView() {
   const { usuario } = useAuthStore();
+  const employeeFormId = useId();
   const [novo, setNovo] = useState(false);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
@@ -239,15 +240,15 @@ export default function EquipeView() {
       </section>}
       {sucesso && <p role="status" aria-live="polite" className="rounded-xl bg-emerald-50 p-4 text-emerald-800">{sucesso}</p>}
       {accessUser&&<EmployeeAccessEditor userId={accessUser} onCancel={()=>setAccessUser(null)} onSaved={()=>{setAccessUser(null);setSucesso('Setores e permissões atualizados.');void carregar();}}/>}
-      {novo && administrador && <form onSubmit={cadastrar} className="card space-y-4 p-5">
-        <h2 className="text-lg font-bold">{editingId ? 'Editar funcionário' : 'Cadastrar funcionário'}</h2>
+      {novo && administrador && <form onSubmit={cadastrar} className="card space-y-4 p-5" aria-labelledby={`${employeeFormId}-title`}>
+        <h2 id={`${employeeFormId}-title`} className="text-lg font-bold">{editingId ? 'Editar funcionário' : 'Cadastrar funcionário'}</h2>
         <p className="text-sm text-slate-500">O funcionário recebe acesso somente ao setor escolhido e define a própria senha por e-mail.</p>
         <div className="grid gap-3 sm:grid-cols-3">
-          <label className="text-sm">Nome completo<input required minLength={2} maxLength={120} autoComplete="name" className="input-field mt-1" value={nome} onChange={e => setNome(e.target.value)} disabled={salvando} /></label>
-          <label className="text-sm">E-mail<input required type="email" maxLength={254} autoComplete="email" className="input-field mt-1" value={email} onChange={e => setEmail(e.target.value)} disabled={salvando || Boolean(editingId)} /></label>
-          {!editingId && <><label className="text-sm">Cargo ou função<input className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm">Identificador interno<input className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label></>}
-          <label className="text-sm">Setor<select className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-        </div>{editingId && <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={editActive} onChange={e => setEditActive(e.target.checked)} disabled={salvando} /> Acesso ativo</label>}
+          <label className="text-sm" htmlFor={`${employeeFormId}-name`}>Nome completo<input id={`${employeeFormId}-name`} required minLength={2} maxLength={120} autoComplete="name" className="input-field mt-1" value={nome} onChange={e => setNome(e.target.value)} disabled={salvando} /></label>
+          <label className="text-sm" htmlFor={`${employeeFormId}-email`}>E-mail<input id={`${employeeFormId}-email`} required type="email" maxLength={254} autoComplete="email" className="input-field mt-1" value={email} onChange={e => setEmail(e.target.value)} disabled={salvando || Boolean(editingId)} /></label>
+          {!editingId && <><label className="text-sm" htmlFor={`${employeeFormId}-job`}>Cargo ou função<input id={`${employeeFormId}-job`} className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm" htmlFor={`${employeeFormId}-internal-id`}>Identificador interno<input id={`${employeeFormId}-internal-id`} className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label></>}
+          <label className="text-sm" htmlFor={`${employeeFormId}-sector`}>Setor<select id={`${employeeFormId}-sector`} className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
+        </div>{editingId && <label className="flex items-center gap-2 text-sm" htmlFor={`${employeeFormId}-active`}><input id={`${employeeFormId}-active`} type="checkbox" checked={editActive} onChange={e => setEditActive(e.target.checked)} disabled={salvando} /> Acesso ativo</label>}
         <div className="flex gap-2"><button type="submit" className="btn-primary" disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
       </form>}
       {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5"><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
