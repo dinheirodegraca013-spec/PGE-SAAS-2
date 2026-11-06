@@ -17,3 +17,8 @@ test('lista de tarefas rejeita identificadores e títulos vazios',()=>{
   assert.match(source,/typeof row\.id==='string'&&row\.id\.trim\(\)\.length>0/);
   assert.match(source,/typeof row\.titulo==='string'&&row\.titulo\.trim\(\)\.length>0/);
 });
+
+test('resultados de criação e atualização rejeitam IDs vazios',()=>{
+  assert.match(source,/\.id==='string'&&String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0&&Number\.isSafeInteger/);
+  assert.match(source,/typeof \(value as Record<string,unknown>\)\.id==='string'&&String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0&&\(!expectedId/);
+});
