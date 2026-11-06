@@ -374,6 +374,9 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
   assert.match(agendaFuncionario, /required disabled=\{loading\}/);
   assert.match(agendaFuncionario, /Tentar novamente/);
   assert.match(agendaFuncionario, /!start\|\|!end/);
+  assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
+  assert.match(agendaFuncionario, /min=\{start\|\|undefined\}/);
+  assert.match(agendaFuncionario, /aria-invalid=\{invalidRange\|\|undefined\}/);
 });
 
 test("agenda informa atualização no botão", () => {
