@@ -305,6 +305,14 @@ test("serviço de tarefas exige progresso inteiro", () => {
   assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
 });
 
+test("painel quebra títulos longos em telas estreitas", () => {
+  assert.match(minhasTarefas, /min-w-0 break-words font-semibold/);
+  assert.match(minhasTarefas, /break-words whitespace-pre-wrap text-sm text-slate-600/);
+  assert.match(agendaFuncionario, /min-w-0 flex-1/);
+  assert.match(agendaFuncionario, /shrink-0 text-sm font-semibold/);
+  assert.match(resumoFuncionario, /min-w-0 break-words/);
+});
+
 test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
   assert.match(minhasTarefas, /Última atualização às/);
