@@ -63,6 +63,7 @@ export type MaterialRequest = {
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 const materialStatuses=['pendente','aprovada','recusada','atendida','cancelada'];
+const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
 function isMaterialOption(value: unknown): value is MaterialOption {
   if (!value || typeof value !== 'object') return false;
   const row=value as Record<string,unknown>;
@@ -71,7 +72,7 @@ function isMaterialOption(value: unknown): value is MaterialOption {
 function isMaterialRequest(value: unknown, stock=false): value is MaterialRequest|MaterialStockRequest {
   if (!value || typeof value !== 'object') return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&typeof row.servico_id==='string'&&typeof row.setor_solicitante==='string'&&typeof row.item_id==='string'&&typeof row.item_nome==='string'&&typeof row.quantidade==='number'&&Number.isFinite(row.quantidade)&&row.quantidade>0&&typeof row.unidade==='string'&&typeof row.motivo==='string'&&materialStatuses.includes(String(row.status))&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&typeof row.criado_em==='string'&&(row.decidido_em===null||typeof row.decidido_em==='string')&&(row.atendido_em===null||typeof row.atendido_em==='string')&&(!stock||(typeof row.servico_nome==='string'&&typeof row.solicitante_nome==='string'));
+  return typeof row.id==='string'&&row.id.length>0&&typeof row.servico_id==='string'&&row.servico_id.length>0&&typeof row.setor_solicitante==='string'&&isSetor(row.setor_solicitante)&&typeof row.item_id==='string'&&row.item_id.length>0&&typeof row.item_nome==='string'&&row.item_nome.length>0&&typeof row.quantidade==='number'&&Number.isFinite(row.quantidade)&&row.quantidade>0&&typeof row.unidade==='string'&&row.unidade.length>0&&typeof row.motivo==='string'&&row.motivo.length>0&&materialStatuses.includes(String(row.status))&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&typeof row.criado_em==='string'&&Number.isFinite(new Date(row.criado_em).getTime())&&isDateOrNull(row.decidido_em)&&isDateOrNull(row.atendido_em)&&(!stock||(typeof row.servico_nome==='string'&&row.servico_nome.length>0&&typeof row.solicitante_nome==='string'&&row.solicitante_nome.length>0));
 }
 const isMaterialMutation=(value:unknown,status?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&typeof (value as Record<string,unknown>).status==='string'&&(!status||(value as Record<string,unknown>).status===status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
 
@@ -82,7 +83,7 @@ function normalizeServiceList(value: unknown): { itens: { servico_id: string; ti
   const itens = source.itens.map(item => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
     const row = item as Record<string, unknown>;
-    if (typeof row.servico_id !== 'string' || !row.servico_id || typeof row.titulo !== 'string' || !row.titulo || typeof row.setor !== 'string' || !isSetor(row.setor) || !Number.isSafeInteger(row.versao) || Number(row.versao)<0 || typeof row.atualizado_em !== 'string') return null;
+    if (typeof row.servico_id !== 'string' || !row.servico_id || typeof row.titulo !== 'string' || !row.titulo || typeof row.setor !== 'string' || !isSetor(row.setor) || !Number.isSafeInteger(row.versao) || Number(row.versao)<0 || typeof row.atualizado_em !== 'string' || !Number.isFinite(new Date(row.atualizado_em).getTime())) return null;
     return {servico_id:row.servico_id,titulo:row.titulo,setor:row.setor,versao:Number(row.versao),atualizado_em:row.atualizado_em};
   });
   if (itens.some(item=>item===null)) return null;
@@ -110,7 +111,7 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
   return typeof row.servico_id === 'string' && isSetor(row.setor) && Number.isSafeInteger(row.versao) && Number(row.versao)>=0 &&
     (row.responsavel_id===null||typeof row.responsavel_id==='string') &&
     ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
-    (row.iniciada_em===null||typeof row.iniciada_em==='string') && (row.concluida_em===null||typeof row.concluida_em==='string') &&
+    isDateOrNull(row.iniciada_em) && isDateOrNull(row.concluida_em) &&
     typeof row.inicio_liberado==='boolean' && (row.bloqueio_fluxo===null||row.bloqueio_fluxo==='fora_fluxo'||row.bloqueio_fluxo==='etapa_anterior') &&
     typeof row.pode_editar==='boolean' && typeof row.pode_anexar==='boolean' && typeof row.pode_comunicar==='boolean' &&
     Array.isArray(actions) && actions.every(item => typeof item === 'string') &&
@@ -141,7 +142,7 @@ function isCandidate(value: unknown): value is {id:string;nome:string;cargo:stri
 function isDryingState(value: unknown): value is FinishingDryingState {
   if (!value || typeof value !== 'object') return false;
   const row=value as Record<string,unknown>;
-  return (row.iniciada_em===null||typeof row.iniciada_em==='string')&&(row.prevista_ate===null||typeof row.prevista_ate==='string')&&typeof row.em_secagem==='boolean'&&(row.servidor_agora===null||typeof row.servidor_agora==='string')&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=0;
+  return isDateOrNull(row.iniciada_em)&&isDateOrNull(row.prevista_ate)&&typeof row.em_secagem==='boolean'&&isDateOrNull(row.servidor_agora)&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=0;
 }
 
 function isProductionState(value: unknown): value is ProductionState {
