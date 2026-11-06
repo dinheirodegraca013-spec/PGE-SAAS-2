@@ -28,6 +28,11 @@ type Perfil = {
   suspenso: boolean;
 };
 type Limits = { plan: string; sublogin_limit: number; device_limit: number; sublogins_active: number; sublogins_available: number; sublogins_suspended: number; owner_id: string; suspended_ids: string[] };
+const isLimits=(value:unknown):value is Limits=>{
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  const row=value as Record<string,unknown>;
+  return typeof row.plan==='string'&&row.plan.length>0&&typeof row.owner_id==='string'&&row.owner_id.length>0&&['sublogin_limit','device_limit','sublogins_active','sublogins_available','sublogins_suspended'].every(key=>Number.isSafeInteger(row[key])&&Number(row[key])>=0)&&Array.isArray(row.suspended_ids)&&row.suspended_ids.every(item=>typeof item==='string');
+};
 const actionLabels: Record<string,string> = {account_created:'Conta criada',account_changed:'Acesso alterado',device_authorized:'Dispositivo autorizado',device_revoked:'Dispositivo revogado',plan_changed:'Plano alterado',plan_limits_changed:'Limites do plano alterados'};
 const formatAuditDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
 const normalizeSearch=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -120,6 +125,7 @@ export default function EquipeView() {
       try {
         const [quota, history] = await Promise.all([supabase.rpc('limites_acesso'), supabase.rpc('historico_acessos')]);
         if (quota.error) throw quota.error;
+        if (!isLimits(quota.data)) throw new Error('Resposta de limites inválida.');
         setLimits(quota.data);
         if (!history.error) setAudit(history.data || []);
       } catch { setLimits(null); setErro('Não foi possível consultar os limites do plano. Atualize a página.'); }
