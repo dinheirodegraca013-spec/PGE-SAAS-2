@@ -100,7 +100,7 @@ function isTechnicalField(value: unknown): value is TechnicalField {
   if (!value || typeof value !== 'object') return false;
   const field = value as Record<string, unknown>;
   const types = ['text', 'textarea', 'number', 'integer', 'table', 'file', 'url', 'date'];
-  return typeof field.key === 'string' && field.key.length>0 && typeof field.label === 'string' && field.label.length>0 && types.includes(String(field.type)) &&
+  return typeof field.key === 'string' && field.key.trim().length>0 && typeof field.label === 'string' && field.label.trim().length>0 && types.includes(String(field.type)) &&
     (field.columns === undefined || Array.isArray(field.columns) && field.columns.every(isTechnicalField) && new Set(field.columns.map(column => column.key)).size===field.columns.length);
 }
 const hasUniqueKeys=(items:unknown[]):boolean=>new Set(items.map(item => (item as {key:string}).key)).size===items.length;
@@ -116,17 +116,17 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
   const actions = row.acoes_execucao;
   const privacy = row.privacidade_autorizada;
   const checklistKeys = checklistItems?.map(item => (item as Record<string, unknown>).key) ?? [];
-  return typeof row.servico_id === 'string' && isSetor(row.setor) && Number.isSafeInteger(row.versao) && Number(row.versao)>=0 &&
-    (row.responsavel_id===null||typeof row.responsavel_id==='string') &&
+  return typeof row.servico_id === 'string' && row.servico_id.trim().length>0 && isSetor(row.setor) && Number.isSafeInteger(row.versao) && Number(row.versao)>=0 &&
+    (row.responsavel_id===null||typeof row.responsavel_id==='string'&&row.responsavel_id.trim().length>0) &&
     ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
     isDateOrNull(row.iniciada_em) && isDateOrNull(row.concluida_em) &&
     typeof row.inicio_liberado==='boolean' && (row.bloqueio_fluxo===null||row.bloqueio_fluxo==='fora_fluxo'||row.bloqueio_fluxo==='etapa_anterior') &&
     typeof row.pode_editar==='boolean' && typeof row.pode_anexar==='boolean' && typeof row.pode_comunicar==='boolean' &&
-    Array.isArray(actions) && actions.every(item => typeof item === 'string') &&
-    Array.isArray(privacy) && privacy.every(item => typeof item === 'string') &&
-    modelRecord !== null && typeof modelRecord.titulo === 'string' &&
+    Array.isArray(actions) && actions.every(item => typeof item === 'string'&&item.trim().length>0) &&
+    Array.isArray(privacy) && privacy.every(item => typeof item === 'string'&&item.trim().length>0) &&
+    modelRecord !== null && typeof modelRecord.titulo === 'string' && modelRecord.titulo.trim().length>0 &&
     fields !== null && fields.every(isTechnicalField) && hasUniqueKeys(fields) &&
-    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && (item as Record<string, unknown>).key && typeof (item as Record<string, unknown>).label === 'string' && (item as Record<string, unknown>).label && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems) &&
+    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && String((item as Record<string, unknown>).key).trim().length>0 && typeof (item as Record<string, unknown>).label === 'string' && String((item as Record<string, unknown>).label).trim().length>0 && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems) &&
     !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') && Object.keys(row.checklist as Record<string, unknown>).every(key => checklistKeys.includes(key)) &&
     !!row.dados && typeof row.dados === 'object' && !Array.isArray(row.dados);
 }
