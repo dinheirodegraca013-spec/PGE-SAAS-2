@@ -1083,6 +1083,8 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /className="min-w-0 flex-1 break-words text-sm"/);
   assert.match(fluxoProducao, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{disabled\}/);
   assert.match(fluxoProducao, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy \|\| loading\}/);
+  assert.match(fluxoProducao, /className="flex min-w-0 items-start gap-2 text-sm"><input/);
+  assert.match(fluxoProducao, /<span className="min-w-0 break-words">\{label\}<\/span>/);
 });
 
 test("fluxo preserva a configuração durante sincronização", () => {

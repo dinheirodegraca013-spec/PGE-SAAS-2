@@ -44,7 +44,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     }}>
       {!flow.editavel && <p className="text-sm text-slate-500">A execução já começou. A sequência está bloqueada para preservar o histórico.</p>}
       <fieldset disabled={disabled} className="flex flex-wrap gap-4"><legend className="sr-only">Etapas incluídas</legend>
-        {Object.entries(setores).filter(([sector])=>sector!=='estoque').map(([sector,label])=><label key={sector} htmlFor={`${id}-${sector}`} className="flex items-center gap-2 text-sm"><input id={`${id}-${sector}`} type="checkbox" checked={selected.includes(sector)} onChange={event=>{setMessage('');setError('');setSelected(current=>event.target.checked?[...current,sector]:current.filter(item=>item!==sector));}}/>{label}</label>)}
+        {Object.entries(setores).filter(([sector])=>sector!=='estoque').map(([sector,label])=><label key={sector} htmlFor={`${id}-${sector}`} className="flex min-w-0 items-start gap-2 text-sm"><input id={`${id}-${sector}`} type="checkbox" checked={selected.includes(sector)} onChange={event=>{setMessage('');setError('');setSelected(current=>event.target.checked?[...current,sector]:current.filter(item=>item!==sector));}}/><span className="min-w-0 break-words">{label}</span></label>)}
       </fieldset>
       <ol className="space-y-2">{selected.map((sector,index)=><li key={sector} className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
         <span className="min-w-0 flex-1 break-words text-sm">{index+1}. {isSetor(sector)?setores[sector]:sector}</span>
