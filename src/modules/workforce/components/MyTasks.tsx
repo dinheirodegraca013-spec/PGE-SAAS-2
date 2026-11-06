@@ -44,7 +44,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{formatTaskSector(task.setor)} · Prioridade {formatPriority(task.prioridade)}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${formatTaskDeadline(task.prazo)}`:'Sem prazo definido'}</p>
-    <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
+    <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`} aria-valuetext={`${safeDisplayedProgress}% concluído`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
       if(!Number.isInteger(progress) || progress<0 || progress>100){setError('Informe um progresso entre 0 e 100.');return;}

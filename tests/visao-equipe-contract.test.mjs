@@ -213,6 +213,7 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
   assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
   assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
+  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluído`\}/);
 });
 
 test("serviço de tarefas exige progresso inteiro", () => {
