@@ -1353,8 +1353,9 @@ test("atalhos administrativos do funcionário preservam seus rótulos no mobile"
 });
 
 test("erro de projetos preserva o botão de recuperação no mobile", () => {
-  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white/);
-  assert.match(meuSetor, /aria-label="Tentar carregar os projetos novamente"/);
+  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-60"/);
+  assert.match(meuSetor, /disabled=\{carregando\} aria-label=\{carregando \? 'Atualizando projetos' : 'Tentar carregar os projetos novamente'\}/);
+  assert.match(meuSetor, /\{carregando \? 'Atualizando…' : 'Tentar novamente'\}/);
 });
 
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
