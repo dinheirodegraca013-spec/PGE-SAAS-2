@@ -15,11 +15,21 @@ import AgendaPanel from '@/modules/workforce/components/AgendaPanel';
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 function normalizeProjects(value: unknown): ProjetoSetor[] {
   if (!Array.isArray(value)) throw new Error('Resposta de projetos inválida.');
-  return value.map(item => {
+  const projects = value.map(item => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) throw new Error('Resposta de projetos inválida.');
     const row = item as Record<string, unknown>;
-    if (typeof row.id !== 'string' || !row.id || typeof row.titulo !== 'string' || !row.titulo || (row.prazo !== null && row.prazo !== undefined && typeof row.prazo !== 'string')) throw new Error('Resposta de projetos inválida.');
-    return { id: row.id, titulo: row.titulo, prazo: row.prazo == null ? null : row.prazo };
+    const id = typeof row.id === 'string' ? row.id.trim() : '';
+    const titulo = typeof row.titulo === 'string' ? row.titulo.trim() : '';
+    const prazo = row.prazo == null ? null : typeof row.prazo === 'string' ? row.prazo : '';
+    if (!id || !titulo || (prazo !== null && (!/^\d{4}-\d{2}-\d{2}$/.test(prazo) || Number.isNaN(new Date(`${prazo}T12:00:00`).getTime())))) throw new Error('Resposta de projetos inválida.');
+    return { id, titulo, prazo };
+  });
+  if (new Set(projects.map(project => project.id)).size !== projects.length) throw new Error('Resposta de projetos inválida.');
+  return projects.sort((a, b) => {
+    if (!a.prazo && !b.prazo) return a.titulo.localeCompare(b.titulo, 'pt-BR');
+    if (!a.prazo) return 1;
+    if (!b.prazo) return -1;
+    return a.prazo.localeCompare(b.prazo) || a.titulo.localeCompare(b.titulo, 'pt-BR');
   });
 }
 
@@ -146,4 +156,3 @@ export default function MeuSetorView() {
     </section>}
   </div>;
 }
-

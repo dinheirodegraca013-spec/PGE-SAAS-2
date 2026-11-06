@@ -335,6 +335,12 @@ test("projetos do setor atualizam ao retornar à aba", () => {
   assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
 });
 
+test("projetos do setor rejeitam duplicidades e ordenam prazos válidos", () => {
+  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
+  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
+  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
+});
+
 test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
   assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
 });
@@ -704,4 +710,3 @@ test("tarefas exibem um único bloco de carregamento e erro", () => {
   assert.equal((minhasTarefas.match(/Carregando tarefas…/g) || []).length, 1);
   assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
 });
-
