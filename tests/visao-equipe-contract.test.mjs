@@ -335,7 +335,7 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
 test("ações da tarefa permanecem legíveis no mobile", () => {
   assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| !dirty/);
   assert.match(minhasTarefas, /className="min-w-0 break-words text-sm text-slate-500"/);
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
+  assert.match(minhasTarefas, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{loading\}/);
 });
 
 test("tarefas refletem imediatamente status e progresso selecionados", () => {
@@ -383,7 +383,7 @@ test("painel quebra títulos longos em telas estreitas", () => {
 });
 
 test("resumo de trabalho preserva prazo e status no mobile", () => {
-  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?'shrink-0 font-semibold text-amber-700':'shrink-0 text-slate-600'\}/);
+  assert.match(resumoFuncionario, /<span className="flex (?:min-w-0 )?(?:w-full )?shrink-0 flex-wrap items-center justify-(?:start|end) gap-2(?: sm:w-auto sm:justify-end)?"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?'shrink-0 font-semibold text-amber-700':'shrink-0 text-slate-600'\}/);
   assert.match(resumoFuncionario, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-semibold/);
 });
 
@@ -416,7 +416,7 @@ test("tarefas bloqueiam o filtro durante sincronização", () => {
 });
 
 test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
-  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary shrink-0 whitespace-nowrap\"/);
+  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?\"/);
   assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
   assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
 });
@@ -543,8 +543,8 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
   assert.match(fichasFuncionario, /aria-current="page"/);
   assert.match(fichasFuncionario, /Tentar novamente/);
-  assert.match(fichasFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior de fichas"/);
-  assert.match(fichasFuncionario, /className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(fichasFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Ir para a página anterior de fichas"/);
+  assert.match(fichasFuncionario, /className="(?:self-center )?shrink-0 text-center text-sm(?: sm:text-left)?" aria-current="page"/);
   assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"[^>]*onClick=/);
 });
 
@@ -581,7 +581,7 @@ test("pesquisa de fichas informa o estado do botão", () => {
 test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-live="polite"/);
   assert.match(notificacoesFuncionario, /Tentar novamente/);
-  assert.match(notificacoesFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(notificacoesFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy\} aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
@@ -589,7 +589,7 @@ test("notificações permitem retry e paginação acessível", () => {
 
 test("notificações ocultam paginação quando vazias", () => {
   assert.match(notificacoesFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Paginação de notificações"/);
-  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior"/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Ir para a página anterior"/);
 });
 
 test("notificações atualizam ao retornar à aba", () => {
@@ -639,7 +639,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"/);
   assert.match(historicoFuncionario, /aria-current="page"/);
   assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
-  assert.match(historicoFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior do histórico"/);
+  assert.match(historicoFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Ir para a página anterior do histórico"/);
   assert.match(historicoFuncionario, /className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
 });
 
@@ -650,7 +650,7 @@ test("histórico informa atualização no botão", () => {
 });
 
 test("erro do histórico bloqueia retry durante sincronização", () => {
-  assert.match(historicoFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
   assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Tentar novamente'\}/);
 });
@@ -670,10 +670,10 @@ test("histórico e fichas ocultam paginação quando vazios", () => {
 });
 
 test("paginação do funcionário quebra em telas estreitas", () => {
-  assert.match(minhasTarefas, /aria-label="Paginação de tarefas"[^>]*className="flex flex-wrap items-center gap-3"/);
+  assert.match(minhasTarefas, /aria-label="Paginação de tarefas"[^>]*className="flex (?:flex-col items-stretch|flex-wrap) gap-3/);
   assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"[^>]*className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"/);
-  assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"[^>]*className="flex flex-wrap items-center gap-3"/);
-  assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"[^>]*className="flex flex-wrap items-center gap-3"/);
+  assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"[^>]*className="flex (?:flex-col items-stretch|flex-wrap) gap-3/);
+  assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"[^>]*className="flex (?:flex-col items-stretch|flex-wrap) gap-3/);
 });
 
 test("busca de fichas e atalhos da agenda têm semântica acessível", () => {
@@ -689,11 +689,11 @@ test("agenda relaciona datas inválidas à mensagem de erro", () => {
 
 test("mensagens de erro operacionais quebram texto e preservam os botões", () => {
   assert.match(editorAcesso, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(editorAcesso, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
+  assert.match(editorAcesso, /className="(?:w-full )?shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   assert.match(agendaFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(agendaFuncionario, /className="w-full shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(ocorrenciasFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
+  assert.match(ocorrenciasFuncionario, /className="(?:w-full )?shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
     assert.match(source, /className="min-w-0 break-words">\{error\}<\/span>/);
     assert.match(source, /className="(?:w-full )?shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
@@ -874,7 +874,7 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
   assert.match(detalheTarefa, /Tentar novamente/);
   assert.match(detalheTarefa, /Recarregar tarefa/);
   assert.match(detalheTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
-  assert.match(detalheTarefa, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(detalheTarefa, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(detalheTarefa, /disabled=\{loading\} aria-label=\{loading\?'Atualizando tarefa':'Tentar carregar a tarefa novamente'\}/);
 });
 
@@ -934,7 +934,7 @@ test("ocorrências e anexos ocultam paginação quando vazios", () => {
 test("ocorrências informam atualização no botão", () => {
   assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
-  assert.match(ocorrenciasFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(ocorrenciasFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy\} aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
 });
 
@@ -1027,8 +1027,8 @@ test("secagem e produção informam atualização nos botões", () => {
   assert.match(controleSecagem, /aria-label=\{busy\?'Aguarde a atualização da secagem':'Atualizar horário do servidor'\}/);
   assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualização dos registros':'Atualizar registros'\}/);
   assert.match(registroProducao, /<div className="min-w-0"><h4 id=\{`\$\{id\}-title`\} className="break-words font-semibold">/);
-  assert.match(registroProducao, /className="btn-secondary shrink-0 whitespace-nowrap" onClick=\{onRefresh\}/);
-  assert.match(registroProducao, /className="btn-primary shrink-0 whitespace-nowrap sm:col-span-2"/);
+  assert.match(registroProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" onClick=\{onRefresh\}/);
+  assert.match(registroProducao, /className="btn-primary (?:w-full )?shrink-0 whitespace-nowrap sm:col-span-2(?: sm:w-auto)?"/);
 });
 
 test("secagem limpa feedback ao editar o prazo", () => {
@@ -1086,8 +1086,8 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /\{loading\?'Carregando…':'Recarregar fluxo'\}/);
   assert.match(fluxoProducao, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{disabled\}/);
   assert.match(fluxoProducao, /className="min-w-0 flex-1 break-words text-sm"/);
-  assert.match(fluxoProducao, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{disabled\}/);
-  assert.match(fluxoProducao, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy \|\| loading\}/);
+  assert.match(fluxoProducao, /className="btn-primary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{disabled\}/);
+  assert.match(fluxoProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{busy \|\| loading\}/);
   assert.match(fluxoProducao, /className="flex min-w-0 items-start gap-2 text-sm"><input/);
   assert.match(fluxoProducao, /<span className="min-w-0 break-words">\{label\}<\/span>/);
 });
@@ -1338,7 +1338,7 @@ test("inbox preserva feedback após ação concluída", () => {
 test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
   const formularioTecnico = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
   assert.match(formularioTecnico, /role=\{message\.startsWith\('Não foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
-  assert.match(formularioTecnico, /className="inline-flex shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600/);
+  assert.match(formularioTecnico, /className="inline-flex (?:w-full )?shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600/);
 });
 
 test("formulário de ocorrência sinaliza o envio em andamento", () => {
@@ -1362,12 +1362,12 @@ test("tarefas informam atualização no botão durante carregamento", () => {
 
 test("tarefas exibem um único bloco de carregamento e erro", () => {
   assert.equal((minhasTarefas.match(/Carregando tarefas…/g) || []).length, 1);
-  assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
+  assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-col gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
 });
 
 test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", () => {
   assert.match(notificacoesFuncionario, /<div className="min-w-0"><h2 id="work-notifications-title" className="break-words text-lg font-bold"/);
-  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap"/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?"/);
   assert.match(historicoFuncionario, /<div className="min-w-0"><h2 id="activity-history-title" className="break-words text-lg font-bold"/);
   assert.match(minhasTarefas, /<h2 id="my-tasks-title" className="min-w-0 break-words text-lg font-bold"/);
   assert.match(minhasTarefas, /className="shrink-0 text-xs text-slate-500"/);
@@ -1411,7 +1411,7 @@ test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
 test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!actionBusy\} onClick=\{\(\)=>void load\(\)\}/);
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(inboxMateriais, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
+  assert.match(inboxMateriais, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
 });
 
@@ -1461,7 +1461,7 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
   assert.match(solicitacaoMaterial, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{refreshRequests\}/);
-  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
+  assert.match(solicitacaoMaterial, /<span className="flex min-w-0 w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">/);
   assert.match(solicitacaoMaterial, /className="shrink-0 rounded-full bg-white px-2 py-1 text-xs"/);
   assert.match(solicitacaoMaterial, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{`Cancelar solicitação/);
   assert.match(solicitacaoMaterial, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto"/);
@@ -1523,7 +1523,7 @@ test("ações de anexos não comprimem o nome do arquivo no mobile", () => {
 
 test("detalhe da tarefa organiza título, atualização e recarga no mobile", () => {
   assert.match(detalheTarefa, /<div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 id="task-details-title" className="break-words font-semibold">/);
-  assert.match(detalheTarefa, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
+  assert.match(detalheTarefa, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{loading\}/);
   assert.match(detalheTarefa, /<span className="text-xs text-slate-500" aria-live="polite">/);
 });
 
@@ -1543,3 +1543,4 @@ test("cartão de tarefa mantém badges e prazo legíveis no mobile", () => {
   assert.match(minhasTarefas, /<span className="break-words">Obrigatória para concluir a etapa<\/span>/);
   assert.match(minhasTarefas, /<span className="break-words">Prazo: <time/);
 });
+
