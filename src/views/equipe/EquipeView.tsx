@@ -158,10 +158,10 @@ export default function EquipeView() {
     void carregar();
   }, [administrador, usuario?.tenantId]);
   useEffect(() => {
-    const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void carregar(); } };
+    const refreshOnReturn = () => { if (salvando || encaminhando) return; const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void carregar(); } };
     window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn);
     return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); };
-  }, [administrador, usuario?.tenantId]);
+  }, [administrador, usuario?.tenantId, salvando, encaminhando]);
   useEffect(() => {
     if (!administrador || !usuario?.tenantId) return;
     let mounted = true;
