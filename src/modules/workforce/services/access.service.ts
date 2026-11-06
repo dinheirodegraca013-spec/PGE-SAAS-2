@@ -2,7 +2,8 @@ import { supabase } from '@/lib/supabase';
 import type { AccessGrant, EmployeeConfiguration, WorkforceContext } from '../types/access';
 
 const sectors=['corte','montagem','acabamento','instalacao','estoque','financeiro'];
-const isGrant=(value:unknown):value is AccessGrant=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).modulo==='string'&&typeof (value as Record<string,unknown>).operacao==='string'&&['atribuidos','setor','empresa'].includes(String((value as Record<string,unknown>).escopo)));
+const isGrant=(value:unknown):value is AccessGrant=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).modulo==='string'&&String((value as Record<string,unknown>).modulo).length>0&&typeof (value as Record<string,unknown>).operacao==='string'&&String((value as Record<string,unknown>).operacao).length>0&&['atribuidos','setor','empresa'].includes(String((value as Record<string,unknown>).escopo)));
+const isCatalogItem=(value:unknown)=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).modulo==='string'&&String((value as Record<string,unknown>).modulo).length>0&&typeof (value as Record<string,unknown>).operacao==='string'&&String((value as Record<string,unknown>).operacao).length>0);
 const isEmployee=(value:unknown):value is EmployeeConfiguration=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
@@ -11,7 +12,7 @@ const isEmployee=(value:unknown):value is EmployeeConfiguration=>{
 const isContext=(value:unknown):value is WorkforceContext=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return typeof row.empresa_id==='string'&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(item=>Boolean(item&&typeof item==='object'&&typeof (item as Record<string,unknown>).modulo==='string'&&typeof (item as Record<string,unknown>).operacao==='string')));
+  return typeof row.empresa_id==='string'&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(isCatalogItem));
 };
 
 export const workforceAccess = {
