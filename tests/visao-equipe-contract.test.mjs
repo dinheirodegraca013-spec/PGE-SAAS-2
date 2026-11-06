@@ -1405,6 +1405,7 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
 });
 
 test("fichas de serviço preservam busca e ação de abertura no mobile", () => {
+  assert.match(fichasFuncionario, /<p className="min-w-0 break-words text-sm text-slate-500">\{query \?/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\) => setRefresh\(value => value \+ 1\)\}/);
   assert.match(fichasFuncionario, /<button className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" type="submit" disabled=\{loading\}/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\) => \{ setSearch/);
