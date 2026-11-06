@@ -20,13 +20,20 @@ export default function FinishingDryingControl({
   disabled: boolean;
   error?: string;
   onRegister: (minutes: number) => Promise<void>;
-  onRefresh: () => void;
+  onRefresh: () => void | Promise<void>;
 }) {
   const id = useId();
   const [minutes, setMinutes] = useState('60');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
+  const refreshDrying = async () => {
+    if (disabled || busy) return;
+    setBusy(true); setMessage('');
+    try { await onRefresh(); setMessageKind('status'); setMessage('Horário atualizado.'); }
+    catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível atualizar o horário.'); }
+    finally { setBusy(false); }
+  };
 
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
@@ -58,7 +65,7 @@ export default function FinishingDryingControl({
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
-    <button type="button" className="btn-secondary" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
+    <button type="button" className="btn-secondary" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
   </section>;
 }
 
