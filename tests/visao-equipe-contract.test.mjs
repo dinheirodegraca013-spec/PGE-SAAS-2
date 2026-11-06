@@ -187,7 +187,7 @@ test("busca de colaboradores anuncia a quantidade de resultados", () => {
 
 test("busca de colaboradores usa campo de pesquisa controlado", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
-  assert.match(equipeView, /<input\s+type="search"\s+aria-label="Buscar colaborador"\s+maxLength=\{120\}\s+autoComplete="off"/);
+  assert.match(equipeView, /<input\s+type="search"\s+aria-label="Buscar colaborador"\s+aria-controls="team-list-results"\s+maxLength=\{120\}\s+autoComplete="off"/);
 });
 
 test("busca de colaboradores limpa com Escape", () => {
@@ -198,6 +198,12 @@ test("busca de colaboradores limpa com Escape", () => {
 test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
   assert.match(equipeView, /title=\{!limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
+});
+
+test("busca da equipe aponta para sua lista de resultados", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /aria-label="Buscar colaborador"\s+aria-controls="team-list-results"/);
+  assert.match(equipeView, /<section id="team-list-results" className="card overflow-hidden p-5"/);
 });
 
 test("solicitação de material relaciona bloqueio à mensagem de estoque vazio", () => {

@@ -303,7 +303,7 @@ export default function EquipeView() {
           <span className="text-xs text-amber-700">Acesso bloqueado</span>
         </div>
       </div>
-      <section className="card overflow-hidden p-5" aria-labelledby="team-list-title" aria-busy={carregando}>
+      <section id="team-list-results" className="card overflow-hidden p-5" aria-labelledby="team-list-title" aria-busy={carregando}>
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 id="team-list-title" className="gestio-section-title">Lista de colaboradores</h2>
@@ -316,6 +316,7 @@ export default function EquipeView() {
             <input
               type="search"
               aria-label="Buscar colaborador"
+              aria-controls="team-list-results"
               maxLength={120}
               autoComplete="off"
               value={busca}
