@@ -656,6 +656,10 @@ test("mensagens de erro operacionais quebram texto e preservam os botões", () =
   assert.match(agendaFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
   assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(ocorrenciasFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
+  for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
+    assert.match(source, /className="min-w-0 break-words">\{error\}<\/span>/);
+    assert.match(source, /className="shrink-0 rounded-lg border border-rose-200/);
+  }
 });
 
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
