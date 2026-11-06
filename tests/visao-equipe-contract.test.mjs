@@ -233,12 +233,223 @@ test("painel de projetos participa da atualizaÃ§Ã£o global", () => {
 });
 
 test("painel remove projetos antigos quando a autorizaÃ§Ã£o Ã© revogada", () => {
-  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s^tÓ{h‘éì¶»§q«^u\İ
-œÙXØYÙ[HH›ÙpéğèÛÈ[™›Ü›X[H]X[^˜péğèÛÈ›ÜÈ›İ0íY\È‹
+  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+});
 
-HOˆÃBˆ\ÜÙ\›X]Ú
-ÛÛ›ÛTÙXØYÙ[KØ\šXK[X™[WØ\ŞWÉĞYİX\™HH]X[^˜péğèÛÈHÙXØYÙ[IÎ‰Ğ]X[^˜\ˆÜ°è\š[ÈÈÙ\šYÜ‰×KÊNÃBˆ\ÜÙ\›X]Ú
-™YÚ\İ›Ô›ÙXØ[ËØ\šXK[X™[WØ\ŞWÉĞYİX\™HH]X[^˜péğèÛÈÜÈ™YÚ\İ›ÜÉÎ‰Ğ]X[^˜\ˆ™YÚ\İ›ÜÉ×KÊNÃBŸJNÃBƒB\İ
+test("painel anuncia sincronizaÃ§Ã£o global para tecnologia assistiva", () => {
+  assert.match(meuSetor, /className="space-y-6" aria-busy=\{carregando \|\| accessLoading\}/);
+});
+
+test("painel informa conexÃ£o offline e retoma sincronizaÃ§Ã£o ao voltar", () => {
+  assert.match(meuSetor, /window\.addEventListener\('online'/);
+  assert.match(meuSetor, /window\.addEventListener\('offline'/);
+  assert.match(meuSetor, /if \(isOnline\) requestWorkforceRefresh\(\)/);
+  assert.match(meuSetor, /Sem conexÃ£o com a internet/);
+  assert.match(meuSetor, /!online/);
+});
+
+test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
+  assert.match(gerenciadorDispositivos, /isDateString/);
+  assert.match(gerenciadorDispositivos, /new Set\(devices\.map\(\(device: Device\) => device\.id\)\)/);
+  assert.match(gerenciadorDispositivos, /length > data\.limit/);
+});
+
+test("revalidaÃ§Ã£o do funcionÃ¡rio preserva contexto vÃ¡lido durante o carregamento", () => {
+  assert.match(acessoWorkforce, /setContext\(current => current && current\.empresa_id===tenantId && current\.funcionario\.id===userId \? current : null\)/);
+});
+
+test("revalidaÃ§Ã£o ignora respostas antigas apÃ³s troca de identidade", () => {
+  assert.match(acessoWorkforce, /const generation=useRef\(0\)/);
+  assert.match(acessoWorkforce, /const request=\+\+generation\.current/);
+  assert.match(acessoWorkforce, /request===generation\.current&&identity\.current\.userId===userId&&identity\.current\.tenantId===tenantId/);
+  assert.match(acessoWorkforce, /useEffect\(\(\)=>\(\)=>\{generation\.current\+\+;\},\[\]\)/);
+});
+
+test("atualizaÃ§Ã£o do painel sincroniza os blocos de trabalho", () => {
+  assert.match(workforceEvents, /workforceRefreshEvent/);
+  assert.match(workforceEvents, /typeof window === 'undefined'/);
+  assert.match(meuSetor, /requestWorkforceRefresh\(\)/);
+  assert.match(minhasTarefas, /workforceRefreshEvent/);
+  assert.match(notificacoesFuncionario, /workforceRefreshEvent/);
+  assert.match(agendaFuncionario, /workforceRefreshEvent/);
+  assert.match(historicoFuncionario, /workforceRefreshEvent/);
+  assert.match(fichasFuncionario, /workforceRefreshEvent/);
+  assert.match(resumoFuncionario, /workforceRefreshEvent/);
+});
+
+test("painel exibe perfil somente quando a permissÃ£o foi concedida", () => {
+  assert.match(meuSetor, /hasPermission\(context,'perfil'\)/);
+  assert.match(meuSetor, /id="perfil"/);
+  assert.match(meuSetor, /employee-profile-title/);
+  assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
+  assert.match(meuSetor, /Setores autorizados/);
+});
+
+test("aÃ§Ãµes rÃ¡pidas possuem foco visÃ­vel no teclado", () => {
+  assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
+});
+
+test("painel do funcionÃ¡rio evita estouro de textos dinÃ¢micos no celular", () => {
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-300"/);
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-400"/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{erro\}<\/span>/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{accessError\}<\/span>/);
+  assert.match(meuSetor, /className="card group min-w-0 p-4/);
+  assert.match(meuSetor, /className="mt-1 block break-words text-xs text-slate-500"/);
+});
+
+test("painel oferece atalho de teclado para as aÃ§Ãµes rÃ¡pidas", () => {
+  assert.match(meuSetor, /quickActions\.length > 0 && <a href="#quick-actions"/);
+  assert.match(meuSetor, /href="#quick-actions"/);
+  assert.match(meuSetor, /Pular para as aÃ§Ãµes rÃ¡pidas/);
+  assert.match(meuSetor, /id="quick-actions" tabIndex=\{-1\}/);
+  assert.match(meuSetor, /!quickActions\.length && <p role="status" aria-live="polite"/);
+});
+
+test("saltos das aÃ§Ãµes rÃ¡pidas devolvem foco Ã  seÃ§Ã£o de destino", () => {
+  assert.match(meuSetor, /window\.addEventListener\('hashchange', focusHashTarget\)/);
+  assert.match(meuSetor, /window\.requestAnimationFrame\(focusHashTarget\)/);
+  assert.match(meuSetor, /window\.cancelAnimationFrame\(frame\)/);
+  assert.match(meuSetor, /lastFocusedHash\.current === id && document\.activeElement === target/);
+  assert.match(meuSetor, /\}, \[accessRenderKey\]\)/);
+  assert.match(meuSetor, /target\.setAttribute\('tabindex', '-1'\); target\.focus\(\{ preventScroll: true \}\)/);
+  assert.match(meuSetor, /id="tarefas" tabIndex=\{-1\}/);
+  assert.match(meuSetor, /id="agenda" tabIndex=\{-1\}/);
+});
+
+test("painel preserva a Ãºltima atualizaÃ§Ã£o durante nova consulta", () => {
+  assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
+  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+});
+
+test("tarefas do funcionÃ¡rio permitem recuperar falhas de carregamento", () => {
+  assert.match(minhasTarefas, /Tentar novamente/);
+  assert.match(minhasTarefas, /aria-live="polite"/);
+  assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
+});
+
+test("tarefas refletem imediatamente status e progresso selecionados", () => {
+  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} Â· \$\{formatTaskStatus\(displayedStatus\)\} Â· \$\{formatTaskSector\(task\.setor\)\} Â· Prioridade \$\{formatPriority\(task\.prioridade\)\} Â· \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' Â· Atrasada':''\}`\}/);
+  assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
+  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
+  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
+  assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
+  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluÃ­do`\}/);
+});
+
+test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
+  assert.match(minhasTarefas, /const priorityTone=/);
+  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
+  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
+test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
+  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
+  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
+  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
+});
+
+test("tarefas prÃ³ximas do prazo recebem aviso relativo", () => {
+  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
+  assert.match(minhasTarefas, /Vence hoje/);
+  assert.match(minhasTarefas, /Vence amanhÃ£/);
+  assert.match(minhasTarefas, /Vence em \$\{days\} dias/);
+});
+
+test("serviÃ§o de tarefas exige progresso inteiro", () => {
+  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
+  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
+  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
+});
+
+test("painel quebra tÃ­tulos longos em telas estreitas", () => {
+  assert.match(minhasTarefas, /min-w-0 break-words font-semibold/);
+  assert.match(minhasTarefas, /break-words whitespace-pre-wrap text-sm text-slate-600/);
+  assert.match(agendaFuncionario, /min-w-0 flex-1/);
+  assert.match(agendaFuncionario, /shrink-0 text-sm font-semibold/);
+  assert.match(resumoFuncionario, /min-w-0 break-words/);
+});
+
+test("resumo de trabalho preserva prazo e status no mobile", () => {
+  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?'shrink-0 font-semibold text-amber-700':'shrink-0 text-slate-600'\}/);
+  assert.match(resumoFuncionario, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-semibold/);
+});
+
+test("blocos operacionais quebram conteÃºdo longo no celular", () => {
+  assert.match(ocorrencias, /min-w-0 space-y-2 rounded-lg/);
+  assert.match(ocorrencias, /break-words whitespace-pre-wrap text-sm/);
+  assert.match(fichasFuncionario, /min-w-0"><p className="break-words font-medium/);
+  assert.match(inboxMateriais, /min-w-0 rounded-xl border/);
+  assert.match(inboxMateriais, /break-words text-sm/);
+});
+
+test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
+  assert.match(minhasTarefas, /updatedAt/);
+  assert.match(minhasTarefas, /Ãšltima atualizaÃ§Ã£o Ã s/);
+  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
+});
+
+test("tarefas limpam o horÃ¡rio anterior durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
+});
+
+test("tarefas preservam a lista durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
+  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
+  assert.match(minhasTarefas, /data \? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'/);
+});
+
+test("tarefas bloqueiam o filtro durante sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
+});
+
+test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
+  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
+  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
+  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
+});
+
+test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
+  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
+  assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
+});
+
+test("tarefas informam a quantidade visÃ­vel e a existÃªncia de mais pÃ¡ginas", () => {
+  assert.match(minhasTarefas, /data&&!loading&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
+  assert.match(minhasTarefas, /data\.itens\.length===1\?'tarefa visÃ­vel':'tarefas visÃ­veis'/);
+  assert.match(minhasTarefas, /data\.tem_mais\?' Â· HÃ¡ mais tarefas disponÃ­veis\.':''/);
+});
+
+test("tarefas identificam a paginaÃ§Ã£o para tecnologia assistiva", () => {
+  assert.match(minhasTarefas, /aria-label="PaginaÃ§Ã£o de tarefas"/);
+  assert.match(minhasTarefas, /aria-current="page"/);
+});
+
+test("tarefas ocultam paginaÃ§Ã£o quando a primeira pÃ¡gina estÃ¡ vazia", () => {
+  assert.match(minhasTarefas, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="PaginaÃ§Ã£o de tarefas"/);
+});
+
+test("tarefas atualizam ao retornar Ã  aba", () => {
+  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /lastReturnRefresh/);
+  assert.match(minhasTarefas, />1000/);
+});
+
+test("tarefas nÃ£o consultam dados sem vÃ­nculo validado", () => {
+  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
+  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
+});
+
+test("resumo do funcionÃ¡rio usa cores semÃ¢nticas nos indicadores", () => {
+  assert.match(resumoFuncionario, /function cardTone/);
+  assert.match(resumoFuncionario, /Atrasadas/);
+  assert.match(resumoFuncionario, /ConcluÃ­das/);
+  assert.match(resuo]uÓ[h‘éì¶»§q«^tİ›ÜÉ×KÊNÃBŸJNÃBƒB\İ
 œÙXØYÙ[H[\H™YY˜XÚÈ[ÈY]\ˆÈ˜^›È‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
@@ -328,7 +539,10 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 
 HOˆÃBˆ\ÜÙ\›X]Ú
 ›^Ô›ÙXØ[ËØ\šXK[X™[WØ\ŞWÉÔØ[˜[™È›^ÉÎ™›İ×˜ÛÛ™šYİ\˜Y×ÉÔØ[˜\ˆÙ\]pê›˜ÚXIÎ‰ĞÛÛ™šYİ\˜\ˆ›^É×KÊNÃBˆ\ÜÙ\›X]Ú
-›^Ô›ÙXØ[ËØ\šXK[X™[WÛØY[™×ÉĞØ\œ™YØ[™È›^ÉÎ‰Ô™XØ\œ™YØ\ˆ›^É×KÊNÃBŸJNÃBƒB\İ
+›^Ô›ÙXØ[ËØ\šXK[X™[WÛØY[™×ÉĞØ\œ™YØ[™È›^ÉÎ‰Ô™XØ\œ™YØ\ˆ›^É×KÊNÃBˆ\ÜÙ\›X]Ú
+›^Ô›ÙXØ[ËØÛ\ÜÓ˜[YOH›Z[‹]ËL›^LHœ™XZË]ÛÜ™È^\ÛH‹ÊNÃBˆ\ÜÙ\›X]Ú
+›^Ô›ÙXØ[ËØÛ\ÜÓ˜[YOH˜‹\š[X\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›YWÙ\ØX›YKÊNÃBˆ\ÜÙ\›X]Ú
+›^Ô›ÙXØ[ËØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›YWØ\ŞHØY[™×KÊNÃBŸJNÃBƒB\İ
 ™›^È™\Ù\˜HHÛÛ™šYİ\˜péğèÛÈ\˜[HÚ[˜Ü›Ûš^˜péğèÛÈ‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
