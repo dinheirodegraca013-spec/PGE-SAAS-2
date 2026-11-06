@@ -8,7 +8,7 @@ const workforceRefreshEvent = 'gestio:refresh-workforce';
 type List = Awaited<ReturnType<typeof technicalSheets.list>>;
 function formatSheetUpdate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Atualização não informada':`Atualizada em ${date.toLocaleString('pt-BR')}`;}
 export default function MyServiceSheets() {
-  const { context } = useWorkforceAccess();
+  const { context, loading: accessLoading, error: accessError } = useWorkforceAccess();
   const [list, setList] = useState<List | null>(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -20,17 +20,19 @@ export default function MyServiceSheets() {
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
   const lastReturnRefresh = useRef(0);
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
-  useEffect(() => { setList(null); setSelected(null); setUpdatedAt(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao]);
+  useEffect(() => { setList(null); setSelected(null); setUpdatedAt(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao, accessError]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => { const refreshPanel = () => setRefresh(value => value + 1); window.addEventListener(workforceRefreshEvent, refreshPanel); return () => window.removeEventListener(workforceRefreshEvent, refreshPanel); }, []);
   useEffect(() => {
     let active = true;
     setLoading(true); setError('');
+    if (accessLoading) { setList(null); setSelected(null); setUpdatedAt(null); return () => { active = false; }; }
+    if (accessError || !context) { setList(null); setSelected(null); setUpdatedAt(null); setLoading(false); return () => { active = false; }; }
     technicalSheets.list(page, query).then(result => { if (active) { setList(result); setUpdatedAt(new Date()); setSelected(current => current && result.itens.some(item => item.servico_id === current.servico_id && item.setor === current.setor) ? current : null); } })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar as fichas.'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [page, query, refresh, context?.funcionario.id, context?.funcionario.versao]);
+  }, [page, query, refresh, accessLoading, accessError, context?.funcionario.id, context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-labelledby="service-sheets-title" aria-busy={loading}>
     <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 id="service-sheets-title" className="text-lg font-bold">Minhas fichas de serviço</h2><span className="text-xs text-slate-500" aria-live="polite">{loading?'Atualizando fichas…':updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" disabled={loading} onClick={() => setRefresh(value => value + 1)} aria-label={loading?'Atualizando fichas':'Atualizar fichas'}>{loading?'Atualizando…':'Atualizar fichas'}</button></div>
     <form className="flex flex-wrap gap-2" aria-busy={loading} onSubmit={event => { event.preventDefault(); if (loading) return; setPage(0); setQuery(search.trim()); setRefresh(n => n + 1); }}>

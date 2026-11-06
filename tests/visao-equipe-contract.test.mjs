@@ -231,7 +231,8 @@ test("tarefas limpam o horário anterior durante nova sincronização", () => {
 });
 
 test("tarefas preservam a lista durante nova sincronização", () => {
-  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);\s*workTasks\.list/);
+  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
+  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
   assert.match(minhasTarefas, /data \? 'Atualizando tarefas…' : 'Carregando tarefas…'/);
 });
 
@@ -255,6 +256,12 @@ test("tarefas atualizam ao retornar à aba", () => {
   assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
   assert.match(minhasTarefas, /lastReturnRefresh/);
   assert.match(minhasTarefas, />1000/);
+});
+
+test("tarefas não consultam dados sem vínculo validado", () => {
+  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
+  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
 test("resumo do funcionário usa cores semânticas nos indicadores", () => {
@@ -322,6 +329,12 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"/);
   assert.match(fichasFuncionario, /aria-current="page"/);
   assert.match(fichasFuncionario, /Tentar novamente/);
+});
+
+test("fichas não consultam dados sem vínculo validado", () => {
+  assert.match(fichasFuncionario, /if \(accessLoading\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); return/);
+  assert.match(fichasFuncionario, /if \(accessError \|\| !context\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); setLoading\(false\)/);
+  assert.match(fichasFuncionario, /\[page, query, refresh, accessLoading, accessError, context\?\.funcionario\.id, context\?\.funcionario\.versao\]/);
 });
 
 test("fichas exibem a última atualização recebida", () => {
