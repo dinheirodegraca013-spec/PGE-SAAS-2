@@ -1454,7 +1454,7 @@ test("controle de secagem protege status e atualização no mobile", () => {
 test("agenda acomoda título e atualização em telas estreitas", () => {
   assert.match(agendaFuncionario, /<div className="min-w-0"><h2 id="work-agenda-title" className="break-words text-lg font-bold">/);
   assert.match(agendaFuncionario, /<p className="break-words text-sm text-slate-500">Prazos das tarefas atribuídas a você/);
-  assert.match(agendaFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>void load\(\)\}/);
+  assert.match(agendaFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>void load\(\)\}/);
 });
 
 test("resumo operacional protege indicadores longos no mobile", () => {
