@@ -1084,6 +1084,7 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /aria-label=\{busy\?'Salvando fluxo':flow\.configurado\?'Salvar sequência':'Configurar fluxo'\}/);
   assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
   assert.match(fluxoProducao, /\{loading\?'Carregando…':'Recarregar fluxo'\}/);
+  assert.match(fluxoProducao, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{disabled\}/);
   assert.match(fluxoProducao, /className="min-w-0 flex-1 break-words text-sm"/);
   assert.match(fluxoProducao, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{disabled\}/);
   assert.match(fluxoProducao, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy \|\| loading\}/);
