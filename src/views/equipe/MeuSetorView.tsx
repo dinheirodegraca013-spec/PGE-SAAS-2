@@ -29,14 +29,14 @@ function formatPrazo(value: string | null) {
 
 export default function MeuSetorView() {
   const { usuario } = useAuthStore();
-  const { context }=useWorkforceAccess();
+  const { context, loading: accessLoading }=useWorkforceAccess();
   const [projetos, setProjetos] = useState<ProjetoSetor[]>([]);
   const [erro, setErro] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [atualizacao, setAtualizacao] = useState(0);
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
   const lastReturnRefresh = useRef(0);
-  const setor = context?.funcionario.setor || usuario?.setor;
+  const setor = context?.funcionario.setor;
   const sectorList=authorizedSectors(context);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setAtualizacao(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
@@ -45,6 +45,7 @@ export default function MeuSetorView() {
     setErro('');
     setProjetos([]);
     setAtualizadoEm(null);
+    if (accessLoading || !context) return () => { mounted = false; };
     async function carregar() {
       try {
         const { data, error } = await supabase.rpc('meu_setor_projetos');
@@ -61,7 +62,7 @@ export default function MeuSetorView() {
     }
     void carregar();
     return () => { mounted = false; };
-  }, [setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao]);
+  }, [accessLoading, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao]);
   const nome = (context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador').trim() || 'colaborador';
   const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
   const quickActions = [
