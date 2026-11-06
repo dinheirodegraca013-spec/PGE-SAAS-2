@@ -1,29 +1,23 @@
-import React,{useId,useRef,useState} from 'react';
-import type {AcceptanceInput} from '../services/installation.service';
-const formatAttachmentName=(value:string)=>value||'Anexo sem nome';
-export default function InstallationAcceptanceForm({attachments,disabled,onRegister}:{attachments:{id:string;nome:string}[];disabled:boolean;onRegister:(input:AcceptanceInput)=>Promise<void>}){
-  const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
-  const clearError=()=>setError('');
-  const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy} onSubmit={async event=>{
-    event.preventDefault();if(disabled || lock.current)return;
-    if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
-    const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
-    if(receipt.current?.payload!==payload)receipt.current={payload,id:crypto.randomUUID()};
-    lock.current=true;setBusy(true);setError('');setMessage('');
-    try{await onRegister({...data,request:receipt.current.id});receipt.current=null;setName('');setProof('');setNotes('');setConfirmed(false);setMessage('Aceite registrado com sucesso.');}
-    catch(cause){setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel registrar o aceite.');}
-    finally{lock.current=false;setBusy(false);}
-  }}>
-    <h4 className="font-semibold">Registrar aceite da instalaÃ§Ã£o</h4>
-    <fieldset className="space-y-3" disabled={disabled || busy}><legend className="sr-only">Dados do aceite da instalaÃ§Ã£o</legend>
-      <label htmlFor={`${id}-name`} className="block text-sm">Nome do cliente que confirmou a entrega<input id={`${id}-name`} className="input-field mt-1" required minLength={2} maxLength={120} autoComplete="name" value={name} onChange={event=>{setName(event.target.value);clearError();}}/></label>
-      <label htmlFor={`${id}-proof`} className="block text-sm">Comprovante do aceite<select id={`${id}-proof`} className="input-field mt-1" required value={proof} onChange={event=>{setProof(event.target.value);clearError();}}><option value="">Selecione um anexo validado</option>{attachments.map(item=><option key={item.id} value={item.id}>{formatAttachmentName(item.nome)}</option>)}</select></label>
-      <p className="text-xs text-slate-500">Envie o comprovante em Anexos privados. As opÃ§Ãµes seguem a pÃ¡gina de anexos exibida.</p>{!attachments.length&&<p role="status" aria-live="polite" className="text-xs text-amber-700">Nenhum comprovante validado disponÃ­vel. Anexe e valide um comprovante antes de registrar o aceite.</p>}
-      <label htmlFor={`${id}-notes`} className="block text-sm">ObservaÃ§Ãµes<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={2000} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/></label>
-      <label htmlFor={`${id}-confirmed`} className="flex items-start gap-2 text-sm"><input id={`${id}-confirmed`} className="mt-1" type="checkbox" required checked={confirmed} onChange={event=>{setConfirmed(event.target.checked);clearError();}}/><span>Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instalaÃ§Ã£o.</span></label>
-      <button type="submit" className="btn-primary" aria-label={busy?'Registrando aceite da instalaÃ§Ã£o':'Registrar aceite da instalaÃ§Ã£o'} disabled={!attachments.length || disabled || busy}>{busy?'Registrandoâ€¦':'Registrar aceite recebido'}</button>
-    </fieldset>
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}{message && <p role="status" aria-live="polite" className="text-sm text-emerald-700">{message}</p>}
-  </form>;
-}
+Û^š›bh¥êß¢¹­…â'ŠØš–,ŞçÚº[C®+Ş²Š^­«b¢z'¶…ŠW’ÊË^ššè¾'^­ö¢•çZ[\Ü™XXİİ\ÙRY\ÙT™Y‹\ÙTİ]_Hœ›ÛH	Ü™XXİ	ÎÃBš[\Ü\HĞXØÙ\[˜ÙR[œ]Hœ›ÛH	Ë‹‹ÜÙ\šXÙ\ËÚ[œİ[][Û‹œÙ\šXÙIÎÃB˜ÛÛœİ›Ü›X]]XÚY[˜[YOJ˜[YNœİš[™ÊOO˜[Y_	Ğ[™^ÈÙ[H›ÛYIÎÃB™^ÜY˜][[˜İ[Ûˆ[œİ[][ÛXØÙ\[˜ÙQ›Ü›JØ]XÚY[Ë\ØX›YÛ”™YÚ\İ\ŸNØ]XÚY[ÎÚYœİš[™ÎÛ›ÛYNœİš[™ßV×NÙ\ØX›Y˜›ÛÛX[ÛÛ”™YÚ\İ\Š[œ]XØÙ\[˜ÙR[œ]
+OO”›ÛZ\ÙO›ÚYŸJ^ÃBˆÛÛœİY]\ÙRY
+
+NØÛÛœİÛ˜[YKÙ]˜[YWO]\ÙTİ]J	ÉÊNØÛÛœİÜ›ÛÙ‹Ù]›ÛÙ—O]\ÙTİ]J	ÉÊNØÛÛœİÛ›İ\ËÙ]›İ\×O]\ÙTİ]J	ÉÊNØÛÛœİØÛÛ™š\›YYÙ]ÛÛ™š\›YYO]\ÙTİ]J˜[ÙJNØÛÛœİØ\ŞKÙ]\ŞWO]\ÙTİ]J˜[ÙJNØÛÛœİÙ\œ›Ü‹Ù]\œ›Ü—O]\ÙTİ]J	ÉÊNØÛÛœİÛY\ÜØYÙKÙ]Y\ÜØYÙWO]\ÙTİ]J	ÉÊNÃBˆÛÛœİÛX\‘\œ›ÜJ
+OOœÙ]\œ›ÜŠ	ÉÊNÃBˆÛÛœİØÚÏ]\ÙT™YŠ˜[ÙJNØÛÛœİ™XÙZ\]\ÙT™YÜ^[ØYœİš[™ÎÚYœİš[™ß_[Š[
+NÃBˆ™]\›ˆ›Ü›HÛ\ÜÓ˜[YOHœÜXÙK^KLÈ›İ[™Y^›Ü™\ˆ›Ü™\‹\Û]KLŒMˆ\šXKX\ŞO^Ø\Ş_HÛ”İX›Z]^Ø\Ş[˜È]™[OÃBˆ]™[œ™]™[Y˜][
+
+NÚYŠ\ØX›YØÚË˜İ\œ™[
+\™]\›ÃBˆYŠ˜[YKš[J
+K›[™İˆXÛÛ™š\›YYX]XÚY[ËœÛÛYJ][OOš][KšYOO\›ÛÙŠJ^ÜÙ]\œ›ÜŠ	Ò[™›Ü›YHÈÛY[K\ØÛÛH[HÛÛ\›İ˜[H˜[YYÈHÛÛ™š\›YHÈXÙZ]H™XÙXšYË‰ÊNÜ™]\›ßCBˆÛÛœİ]O^ØÛY[˜[YN›˜[YKš[J
+K›ÛÙ‹ÛÛ™š\›YY›İ\ßNØÛÛœİ^[ØYR”ÓÓ‹œİš[™ÚYJ]JNÃBˆYŠ™XÙZ\˜İ\œ™[Ëœ^[ØYOO\^[ØY
+\™XÙZ\˜İ\œ™[^Ü^[ØYY˜Ü\Ëœ˜[™ÛUURQ
+
+_NÃBˆØÚË˜İ\œ™[]YNÜÙ]\ŞJYJNÜÙ]\œ›ÜŠ	ÉÊNÜÙ]Y\ÜØYÙJ	ÉÊNÃBˆ^Ø]ØZ]Û”™YÚ\İ\ŠË‹‹™]K™\]Y\İœ™XÙZ\˜İ\œ™[šYJNÜ™XÙZ\˜İ\œ™[[[ÜÙ]˜[YJ	ÉÊNÜÙ]›ÛÙŠ	ÉÊNÜÙ]›İ\Ê	ÉÊNÜÙ]ÛÛ™š\›YY
+˜[ÙJNÜÙ]Y\ÜØYÙJ	ĞXÙZ]H™YÚ\İ˜YÈÛÛHİXÙ\ÜÛË‰ÊNßCBˆØ]Ú
+Ø]\ÙJ^ÜÙ]\œ›ÜŠØ]\ÙH[œİ[˜Ù[Ùˆ\œ›ÜØØ]\ÙK›Y\ÜØYÙN‰Ó°èÛÈ›ÚHÜÜğë]™[™YÚ\İ˜\ˆÈXÙZ]K‰ÊNßCBˆš[˜[^ÛØÚË˜İ\œ™[Y˜[ÙNÜÙ]\ŞJ˜[ÙJNßCBˆ_OƒBˆÛ\ÜÓ˜[YOH™›Û\Ù[ZX›Û”™YÚ\İ˜\ˆXÙZ]HH[œİ[péğèÛÏÚƒBˆšY[Ù]Û\ÜÓ˜[YOHœÜXÙK^KLÈˆ\ØX›Y^Ù\ØX›Y\Ş_OYÙ[™Û\ÜÓ˜[YOHœÜ‹[Û›H‘YÜÈÈXÙZ]HH[œİ[péğèÛÏÛYÙ[™ƒBˆX™[[›Ü^Ø	ÚYK[˜[YXHÛ\ÜÓ˜[YOH˜›ØÚÈ^\ÛH“›ÛYHÈÛY[H]YHÛÛ™š\›[İHH[™YØO[œ]Y^Ø	ÚYK[˜[YXHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ™\]Z\™YZ[“[™İ^ÌŸHX^[™İ^ÌLŒH]]ĞÛÛ\]OH›˜[YHˆ˜[YO^Û˜[Y_HÛÚ[™ÙO^Ù]™[OÜÙ]˜[YJ]™[\™Ù]˜[YJNØÛX\‘\œ›ÜŠ
+Nß_KÏÛX™[ƒBˆX™[[›Ü^Ø	ÚYK\›ÛÙ˜HÛ\ÜÓ˜[YOH˜›ØÚÈ^\ÛHÛÛ\›İ˜[HÈXÙZ]OÙ[XİY^Ø	ÚYK\›ÛÙ˜HÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ\šXKY\ØÜšX™YO^Ø	ÚYK\›ÛÙ‹Z[H™\]Z\™Y˜[YO^Ü›ÛÙŸHÛÚ[™ÙO^Ù]™[OÜÙ]›ÛÙŠ]™[\™Ù]˜[YJNØÛX\‘\œ›ÜŠ
+Nß_OÜ[Ûˆ˜[YOHˆ”Ù[XÚ[Û™H[H[™^È˜[YYÏÛÜ[ÛØ]XÚY[Ë›X\
+][OOÜ[ÛˆÙ^O^Ú][KšYH˜[YO^Ú][KšYOÙ›Ü›X]]XÚY[˜[YJ][K››ÛYJ_OÛÜ[ÛŠ_OÜÙ[XİÛX™[ƒBˆY^Ø	ÚYK\›ÛÙ‹Z[HÛ\ÜÓ˜[YOH^^È^\Û]KML‘[šYHÈÛÛ\›İ˜[H[H[™^ÜÈš]˜YÜËˆ\ÈÜ0éğíY\ÈÙYİY[HH0èYÚ[˜HH[™^ÜÈ^XšYKÜÈX]XÚY[Ë›[™İ	‰›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]HˆÛ\ÜÓ˜[YOH^^È^X[X™\‹MÌ“™[š[HÛÛ\›İ˜[H˜[YYÈ\ÜÛ°ë]™[ˆ[™^HH˜[YH[HÛÛ\›İ˜[H[\ÈH™YÚ\İ˜\ˆÈXÙZ]KÜŸCBˆX™[[›Ü^Ø	ÚYK[›İ\ØHÛ\ÜÓ˜[YOH˜›ØÚÈ^\ÛH“ØœÙ\˜péğíY\Ï^\™XHY^Ø	ÚYK[›İ\ØHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ›İÜÏ^ÌßHX^[™İ^ÌŒH˜[YO^Û›İ\ßHÛÚ[™ÙO^Ù]™[OÜÙ]›İ\Ê]™[\™Ù]˜[YJNØÛX\‘\œ›ÜŠ
+Nß_KÏÛX™[ƒBˆX™[[›Ü^Ø	ÚYKXÛÛ™š\›YYHÛ\ÜÓ˜[YOH™›^][\Ë\İ\Ø\Lˆ^\ÛH[œ]Y^Ø	ÚYKXÛÛ™š\›YYHÛ\ÜÓ˜[YOH›]LHˆ\OH˜ÚXÚØ›Şˆ™\]Z\™YÚXÚÙY^ØÛÛ™š\›YYHÛÚ[™ÙO^Ù]™[OÜÙ]ÛÛ™š\›YY
+]™[\™Ù]˜ÚXÚÙY
+NØÛX\‘\œ›ÜŠ
+Nß_KÏÜ[ÛÛ™š\›[È]YHÈÛY[H[™›Ü›[İHÈXÙZ]HH[™YØHH]YHÈÛÛ\›İ˜[HÙ[XÚ[Û˜YÈÛÜœ™\ÜÛ™HH\İH[œİ[péğèÛËÜÜ[ÛX™[ƒBˆ]Ûˆ\OHœİX›Z]ˆÛ\ÜÓ˜[YOH˜‹\š[X\Hˆ\šXK[X™[^Ø\ŞOÉÔ™YÚ\İ˜[™ÈXÙZ]HH[œİ[péğèÛÉÎ‰Ô™YÚ\İ˜\ˆXÙZ]HH[œİ[péğèÛÉßH\ØX›Y^ÈX]XÚY[Ë›[™İ\ØX›Y\Ş_OØ\ŞOÉÔ™YÚ\İ˜[™ø )‰Î‰Ô™YÚ\İ˜\ˆXÙZ]H™XÙXšYÉßOØ]ÛƒBˆÙšY[Ù]ƒBˆÙ\œ›Üˆ	‰ˆ›ÛOH˜[\ˆÛ\ÜÓ˜[YOH^\ÛH^\™YMÌÙ\œ›ÜŸOÜŸ^ÛY\ÜØYÙH	‰ˆ›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]HˆÛ\ÜÓ˜[YOH^\ÛH^Y[Y\˜[MÌÛY\ÜØYÙ_OÜŸCBˆÙ›Ü›OÃBŸCB
