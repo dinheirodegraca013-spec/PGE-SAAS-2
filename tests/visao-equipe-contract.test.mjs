@@ -366,6 +366,11 @@ test("notificação limpa erro antigo ao abrir um registro", () => {
   assert.match(notificacoesFuncionario, /setError\('\'\);setSelected\(item\)/);
 });
 
+test("notificações preservam a lista durante nova sincronização", () => {
+  assert.match(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);setSelected\(null\)/);
+  assert.match(notificacoesFuncionario, /data \? 'Atualizando notificações…' : 'Carregando notificações…'/);
+});
+
 test("agenda usa datas locais para não deslocar o período no fuso horário", () => {
   assert.match(agendaFuncionario, /const isoDate=\(date:Date\)=>/);
   assert.doesNotMatch(agendaFuncionario, /Date\.now\(\)\+30\*86400000/);

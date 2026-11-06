@@ -24,13 +24,13 @@ export default function WorkNotifications(){
   const reading=useRef(false);
   const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{setData(null);setSelected(null);setUpdatedAt(null);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setSelected(null);setUpdatedAt(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{setSelected(null);setUpdatedAt(null);},[page]);
   useEffect(()=>{reading.current=false;setBusy(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
   useEffect(()=>{
-    const request=++generation.current;setLoading(true);setError('');setData(null);setUpdatedAt(null);setSelected(null);
+    const request=++generation.current;setLoading(true);setError('');setSelected(null);
     workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setUpdatedAt(new Date());setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar as notificações.');})
       .finally(()=>{if(request===generation.current)setLoading(false);});
@@ -38,7 +38,7 @@ export default function WorkNotifications(){
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-labelledby="work-notifications-title" aria-busy={loading || !!busy}>
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="work-notifications-title" className="text-lg font-bold">Notificações <span aria-live="polite">{data?`(${data.nao_lidas} não lidas)`:''}</span></h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
-    {loading && <p role="status" aria-live="polite">Carregando notificações…</p>}
+    {loading && <p role="status" aria-live="polite">{data ? 'Atualizando notificações…' : 'Carregando notificações…'}</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar as notificações novamente" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-4 text-sm text-slate-500">Nenhuma notificação disponível. Quando houver uma nova tarefa ou etapa liberada, ela aparecerá aqui.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3" aria-label={`${item.lida_em?'Notificação lida':'Notificação não lida'}: ${notificationLabels[item.evento]||'Atualização da operação'}`}>
