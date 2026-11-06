@@ -612,6 +612,11 @@ test("serviço de fichas valida checklist e dados da resposta", () => {
   assert.doesNotMatch(technicalSheetService, /hasUniqueKeys\(checklistItems\);\s+!!row\.checklist/);
 });
 
+test("serviço de fichas rejeita timestamps inválidos", () => {
+  assert.match(technicalSheetService, /isDateOrNull\(row\.iniciada_em\) && isDateOrNull\(row\.concluida_em\)/);
+  assert.match(technicalSheetService, /Number\.isFinite\(new Date\(record\.criado_em\)\.getTime\(\)\)/);
+});
+
 test("liberação da ficha bloqueia duplo clique", () => {
   assert.match(fichaOperacional, /disabled=\{loading\}/);
   assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
