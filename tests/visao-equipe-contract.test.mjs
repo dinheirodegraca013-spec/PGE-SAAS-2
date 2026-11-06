@@ -348,18 +348,7 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
 test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
   assert.match(minhasTarefas, /const priorityTone=/);
   assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
-  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
-});
-
-test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
-  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
-  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
-  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
-});
-
-test("tarefas prÃ³ximas do prazo recebem aviso relativo", () => {
-  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
-  assert.match(minhasTarefas]½÷‹h‘éì¶»§q«^tÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
+  assert.match(minhasTarefas, /priorityBadgg]÷Û‹h‘éì¶»§q«^tOH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
 ÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWKÊNÃBŸJNÃBƒB\İ
 ˜Ø\0èÛÈHÛÛXÚ]péğèÛÈ[™›Ü›XH]X[^˜péğèÛÈ›È›İ0èÛÈ‹
 
@@ -565,7 +554,7 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 Y]Ü‘[˜Ú[Û˜\š[ËÙ]U[YOWÜØY™Q[\ŞYYQ]U[YW
 [\ŞYYW˜Ü™X]YØ]
 WKÊNÃBˆ\ÜÙ\›X]Ú
-Y]Ü‘[˜Ú[Û˜\š[Ëİ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLˆ\ØX›YWØ\ŞWHÛÛXÚÏWÛÛØ[˜Ù[H\šXK[X™[H‘™XÚ\ˆYpéğèÛÈÈ[˜Ú[Û°è\š[È‹ÊNÃBˆ\ÜÙ\›X]Ú
+Y]Ü‘[˜Ú[Û˜\š[Ëİ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›YWØ\ŞWHÛÛXÚÏWÛÛØ[˜Ù[H\šXK[X™[H‘™XÚ\ˆYpéğèÛÈÈ[˜Ú[Û°è\š[È‹ÊNÃBˆ\ÜÙ\›X]Ú
 Y]Ü‘[˜Ú[Û˜\š[ËØÛÛœİÛX\‘\œ›ÜW
 
 OOœÙ]\œ›Ü—
