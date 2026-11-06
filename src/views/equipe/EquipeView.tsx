@@ -67,6 +67,7 @@ export default function EquipeView() {
   const [audit, setAudit] = useState<{id: number;action: string;subject_id: string | null;created_at: string}[]>([]);
   const [accessUser,setAccessUser]=useState<string|null>(null);
   const lastReturnRefresh = useRef(0);
+  const loadGeneration = useRef(0);
   const cadastrar = async (event: React.FormEvent) => {
     event.preventDefault();
     if (salvando) return;
@@ -108,10 +109,13 @@ export default function EquipeView() {
   const [erro, setErro] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const carregar = async () => {
+    const request = ++loadGeneration.current;
+    const current = () => request === loadGeneration.current;
     setCarregando(true);
     setErro(null);
     const tenantId = getCurrentTenantId();
     if (!tenantId) {
+      if (!current()) return;
       setErro("Sessão sem empresa vinculada. Faça login novamente.");
       setPerfis([]);
       setCarregando(false);
@@ -124,6 +128,7 @@ export default function EquipeView() {
       .order("nome_completo");
     query = query.eq("tenant_id", tenantId);
     const result = await query;
+    if (!current()) return;
     if (result.error) {
       setErro(
         "A equipe não pôde ser carregada. Verifique a permissão do administrador da empresa.",
@@ -136,14 +141,15 @@ export default function EquipeView() {
     if (administrador) {
       try {
         const [quota, history] = await Promise.all([supabase.rpc('limites_acesso'), supabase.rpc('historico_acessos')]);
+        if (!current()) return;
         if (quota.error) throw quota.error;
         if (!isLimits(quota.data)) throw new Error('Resposta de limites inválida.');
         setLimits(quota.data);
         if (!history.error && Array.isArray(history.data) && history.data.every(isAudit)) setAudit(history.data);
-      } catch { setLimits(null); setErro('Não foi possível consultar os limites do plano. Atualize a página.'); }
+      } catch { if (current()) { setLimits(null); setErro('Não foi possível consultar os limites do plano. Atualize a página.'); } }
     }
-    } catch { setErro('Não foi possível carregar a equipe. Confira sua conexão e tente novamente.'); }
-    finally { setCarregando(false); }
+    } catch { if (current()) setErro('Não foi possível carregar a equipe. Confira sua conexão e tente novamente.'); }
+    finally { if (current()) setCarregando(false); }
   };
   useEffect(() => {
     void carregar();
