@@ -9,7 +9,7 @@ const isAttachment=(value:unknown):value is Attachment=>{
   const row=value as Record<string,unknown>;
   return typeof row.id==='string'&&row.id.length>0&&typeof row.nome==='string'&&row.nome.length>0&&typeof row.tipo==='string'&&row.tipo.length>0&&Number.isSafeInteger(row.tamanho)&&Number(row.tamanho)>0&&typeof row.caminho==='string'&&row.caminho.length>0&&isDate(row.criado_em);
 };
-const isUploadReceipt=(value:unknown):value is UploadReceipt=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(value as Record<string,unknown>).id&&typeof (value as Record<string,unknown>).caminho==='string'&&(value as Record<string,unknown>).caminho&&(value as Record<string,unknown>).bucket==='workforce-private');
+const isUploadReceipt=(value:unknown):value is UploadReceipt=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(value as Record<string,unknown>).id&&typeof (value as Record<string,unknown>).caminho==='string'&&(value as Record<string,unknown>).caminho&&(value as Record<string,unknown>).bucket==='workforce-private'&&((value as Record<string,unknown>).uploaded===undefined||typeof (value as Record<string,unknown>).uploaded==='boolean'));
 export const attachments={
   async list(service:string,sector:string,page:number):Promise<{itens:Attachment[];tem_mais:boolean}>{
     if(typeof service!=='string'||!service.trim()||typeof sector!=='string'||!isSetor(sector))throw new Error('O serviço ou setor dos anexos é inválido.');

@@ -8,4 +8,5 @@ test('upload valida recibo e arquivo antes do Storage',()=>{
   assert.match(source,/O arquivo ou recibo do anexo é inválido/);
   assert.match(source,/!isUploadReceipt\(receipt\)/);
   assert.match(source,/Number\.isSafeInteger\(file\.size\)\|\|file\.size<=0/);
+  assert.match(source,/uploaded===undefined\|\|typeof .*uploaded==='boolean'/);
 });
