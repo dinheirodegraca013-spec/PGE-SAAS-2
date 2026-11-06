@@ -30,6 +30,7 @@ type Perfil = {
 type Limits = { plan: string; sublogin_limit: number; device_limit: number; sublogins_active: number; sublogins_available: number; sublogins_suspended: number; owner_id: string; suspended_ids: string[] };
 const actionLabels: Record<string,string> = {account_created:'Conta criada',account_changed:'Acesso alterado',device_authorized:'Dispositivo autorizado',device_revoked:'Dispositivo revogado',plan_changed:'Plano alterado',plan_limits_changed:'Limites do plano alterados'};
 const formatAuditDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
+const normalizeSearch=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 
 export default function EquipeView() {
   const { usuario } = useAuthStore();
@@ -146,12 +147,12 @@ export default function EquipeView() {
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
   const suspensos = perfis.filter((perfil) => perfil.suspenso || limits?.suspended_ids.includes(perfil.id)).length;
   const filtrados = useMemo(() => {
-    const termo = busca.trim().toLowerCase();
+    const termo = normalizeSearch(busca.trim());
     if (!termo) return perfis;
     return perfis.filter((perfil) =>
       [perfil.nome_completo, perfil.email, perfil.papel, perfil.cargo, perfil.identificador_interno, isSetor(perfil.setor) ? setores[perfil.setor] : perfil.setor]
         .filter(Boolean)
-        .some((valor) => String(valor).toLowerCase().includes(termo)),
+        .some((valor) => normalizeSearch(String(valor)).includes(termo)),
     );
   }, [busca, perfis]);
 
