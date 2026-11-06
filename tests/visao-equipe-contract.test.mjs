@@ -393,7 +393,84 @@ test("blocos operacionais quebram conteÃºdo longo no celular", () => {
 
 test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
-  assg]¹ßÛh‘éì¶»§q«^wÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
+  assert.match(minhasTarefas, /Ãšltima atualizaÃ§Ã£o Ã s/);
+  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
+});
+
+test("tarefas limpam o horÃ¡rio anterior durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
+});
+
+test("tarefas preservam a lista durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
+  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
+  assert.match(minhasTarefas, /data \? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'/);
+});
+
+test("tarefas bloqueiam o filtro durante sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
+});
+
+test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
+  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary shrink-0 whitespace-nowrap\"/);
+  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
+  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
+});
+
+test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
+  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
+  assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
+});
+
+test("tarefas informam a quantidade visÃ­vel e a existÃªncia de mais pÃ¡ginas", () => {
+  assert.match(minhasTarefas, /data&&!loading&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
+  assert.match(minhasTarefas, /data\.itens\.length===1\?'tarefa visÃ­vel':'tarefas visÃ­veis'/);
+  assert.match(minhasTarefas, /data\.tem_mais\?' Â· HÃ¡ mais tarefas disponÃ­veis\.':''/);
+});
+
+test("tarefas identificam a paginaÃ§Ã£o para tecnologia assistiva", () => {
+  assert.match(minhasTarefas, /aria-label="PaginaÃ§Ã£o de tarefas"/);
+  assert.match(minhasTarefas, /aria-current="page"/);
+});
+
+test("tarefas ocultam paginaÃ§Ã£o quando a primeira pÃ¡gina estÃ¡ vazia", () => {
+  assert.match(minhasTarefas, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="PaginaÃ§Ã£o de tarefas"/);
+});
+
+test("tarefas atualizam ao retornar Ã  aba", () => {
+  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
+  assert.match(minhasTarefas, /lastReturnRefresh/);
+  assert.match(minhasTarefas, />1000/);
+});
+
+test("tarefas nÃ£o consultam dados sem vÃ­nculo validado", () => {
+  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
+  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
+});
+
+test("resumo do funcionÃ¡rio usa cores semÃ¢nticas nos indicadores", () => {
+  assert.match(resumoFuncionario, /function cardTone/);
+  assert.match(resumoFuncionario, /Atrasadas/);
+  assert.match(resumoFuncionario, /ConcluÃ­das/);
+  assert.match(resumoFuncionario, /Em andamento/);
+});
+
+test("resumo informa atualizaÃ§Ã£o no botÃ£o durante carregamento", () => {
+  assert.match(resumoFuncionario, /aria-label=\{loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
+  assert.match(resumoFuncionario, /\{loading\?'Atualizandoâ€¦':'Atualizar indicadores'\}/);
+});
+
+test("resumo preserva indicadores durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);/);
+  assert.match(resumoFuncionario, /Promise\.resolve\(\)\.then\(\(\)=>supabase\.rpc\('meu_resumo_operacional'\)/);
+  assert.match(resumoFuncionario, /summary \? 'Atualizando indicadoresâ€¦' : 'Carregando indicadoresâ€¦'/);
+});
+
+test("resumo nÃ£o consulta dados sem vÃ­nculo de funcionÃ¡rio validado", () => {
+  assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\+]uë‹h‘éì¶»§q«^v\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
 ÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWKÊNÃBŸJNÃBƒB\İ
 ˜Ø\0èÛÈHÛÛXÚ]péğèÛÈ[™›Ü›XH]X[^˜péğèÛÈ›È›İ0èÛÈ‹
 
@@ -1067,7 +1144,7 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 HOˆÃBˆÛÛœİ\ÜÚYÛ›Y[H™XYÜ[Û˜[
 ‹‹‹ÜÜ˜ËÛ[Ù[\ËİÛÜšÙ›Ü˜ÙKØÛÛ\Û™[ËÔÚY]\ÜÚYÛ›Y[Y]Ü‹ŞŠNÃBˆ\ÜÙ\›X]Ú
 \ÜÚYÛ›Y[Ï]ˆ›ÛOH˜[\ˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\Ë\İ\\İYKX™]ÙY[ˆØ\Lˆ^\ÛH^\™YMÌÛ\ÜÓ˜[YOH›Z[‹]ËLœ™XZË]ÛÜ™È—Ù\œ›Ü—OÜ‹ÊNÃBˆ\ÜÙ\›X]Ú
-\ÜÚYÛ›Y[ØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLˆ\šXK[X™[H•[\ˆØ\œ™YØ\ˆÜÈ™\ÜÛœğè]™Z\È›İ˜[Y[H‹ÊNÃBŸJNÃBƒB\İ
+\ÜÚYÛ›Y[ØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\šXK[X™[H•[\ˆØ\œ™YØ\ˆÜÈ™\ÜÛœğè]™Z\È›İ˜[Y[H‹ÊNÃBŸJNÃBƒB\İ
 ˜ÛÛ›ÛHHÙXØYÙ[H›İYÙHİ]\ÈH]X[^˜péğèÛÈ›È[Øš[H‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
