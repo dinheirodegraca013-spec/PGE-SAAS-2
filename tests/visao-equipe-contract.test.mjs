@@ -117,6 +117,13 @@ test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : 'Atualizar projetos'\}/);
 });
 
+test("painel exibe perfil somente quando a permissão foi concedida", () => {
+  assert.match(meuSetor, /hasPermission\(context,'perfil'\)/);
+  assert.match(meuSetor, /id="perfil"/);
+  assert.match(meuSetor, /employee-profile-title/);
+  assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
+});
+
 test("painel limpa o horário anterior ao atualizar projetos", () => {
   assert.match(meuSetor, /setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
 });
