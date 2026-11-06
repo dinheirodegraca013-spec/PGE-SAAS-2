@@ -1426,10 +1426,10 @@ test("editor de acesso quebra setores e permissões longas no mobile", () => {
 });
 
 test("tarefas preservam controles de filtro e paginação no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>setRefresh/);
-  assert.match(minhasTarefas, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior de tarefas"/);
-  assert.match(minhasTarefas, /<span className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
+  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>setRefresh/);
+  assert.match(minhasTarefas, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a página anterior de tarefas"/);
+  assert.match(minhasTarefas, /<span className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
   assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
 });
 
