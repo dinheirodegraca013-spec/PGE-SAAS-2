@@ -88,6 +88,10 @@ test("perfil fecha o menu móvel ao navegar", () => {
   assert.match(appLayout, /to=\{employeeProfilePath\}\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
 });
 
+test("atalho de recursos também fecha o menu móvel", () => {
+  assert.match(appLayout, /to="\/configuracoes"\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
+});
+
 test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
   assert.doesNotMatch(visao, /R\$\s*10\.550|MDF 18mm \(chapa\).*6 de 10/);
   assert.match(visao, /estoque_itens|projetosService/);

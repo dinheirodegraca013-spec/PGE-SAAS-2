@@ -175,6 +175,7 @@ export default function AppLayout() {
             </div>
             {work.context?.proprietario && <NavLink
               to="/configuracoes"
+              onClick={() => setMobileMenuOpen(false)}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-violet-600 px-3 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-950/30 transition hover:brightness-110"
             >
               Ver recursos <ArrowRight className="h-4 w-4" />
