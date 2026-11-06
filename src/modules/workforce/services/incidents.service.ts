@@ -7,7 +7,7 @@ const isIncident=(value:unknown):value is Incident=>{
   const row=value as Record<string,unknown>;
   return typeof row.id==='string'&&typeof row.titulo==='string'&&typeof row.descricao==='string'&&['equipamento','material','defeito','outro'].includes(String(row.tipo))&&['informativa','atencao','critica'].includes(String(row.gravidade))&&['aberta','resolvida'].includes(String(row.status))&&typeof row.criada_em==='string'&&(row.resolvida_em===null||typeof row.resolvida_em==='string')&&(row.resolucao===null||typeof row.resolucao==='string')&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&typeof row.pode_resolver==='boolean';
 };
-const isMutation=(value:unknown,status?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(status===undefined||((value as Record<string,unknown>).status===status))&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
+const isMutation=(value:unknown,status?:string,expectedId?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(!expectedId||(value as Record<string,unknown>).id===expectedId)&&(status===undefined||((value as Record<string,unknown>).status===status))&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
 export const incidents={
   async list(service:string,sector:string,page:number):Promise<{itens:Incident[];tem_mais:boolean}>{
     const {data,error}=await supabase.rpc('ocorrencias_ficha_listar',{p_servico:service,p_setor:sector,p_pagina:page});
@@ -19,7 +19,7 @@ export const incidents={
   },
   async resolve(incident:Incident,resolution:string):Promise<void>{
     const {data,error}=await supabase.rpc('ocorrencia_resolver',{p_ocorrencia:incident.id,p_versao:incident.versao,p_resolucao:resolution});
-    if(error || !data)throw new Error(error?.code==='40001'?'A ocorrência foi alterada. Atualize a lista.':error?.message||'Não foi possível registrar a resolução.');if(!isMutation(data,'resolvida'))throw new Error('A resolução retornou dados inválidos. Recarregue a lista.');
+    if(error || !data)throw new Error(error?.code==='40001'?'A ocorrência foi alterada. Atualize a lista.':error?.message||'Não foi possível registrar a resolução.');if(!isMutation(data,'resolvida',incident.id))throw new Error('A resolução retornou dados inválidos. Recarregue a lista.');
   },
 };
 
