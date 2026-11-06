@@ -51,7 +51,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-amber-700">Nenhum funcionário autorizado está disponível para receber esta tarefa.</p>}
-    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={busy} onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label={busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{busy?'Aguarde…':'Atualizar responsáveis'}</button>}
-    <button type="submit" className="btn-primary shrink-0 whitespace-nowrap" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
+    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy} onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label={busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{busy?'Aguarde…':'Atualizar responsáveis'}</button>}
+    <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
