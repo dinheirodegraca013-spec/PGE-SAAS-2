@@ -1462,6 +1462,11 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
   assert.match(solicitacaoMaterial, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto"/);
 });
 
+test("inbox de materiais acomoda retry de erro no mobile", () => {
+  assert.match(inboxMateriais, /className="flex flex-col items-stretch gap-2 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"/);
+  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Tentar carregar as solicitações novamente"/);
+});
+
 test("registros de produção quebram observações sem deslocar o horário", () => {
   assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
   assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
