@@ -1340,6 +1340,11 @@ test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", 
   assert.match(fichasFuncionario, /<div className="min-w-0"><h2 id="service-sheets-title" className="break-words text-lg font-bold"/);
 });
 
+test("cabeçalho do painel mantém a atualização legível no mobile", () => {
+  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-xl border border-white\/20/);
+  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
+});
+
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
   assert.match(meuSetor, /<div className="min-w-0">\s*<p className="text-xs font-semibold uppercase/);
   assert.match(meuSetor, /<h1 className="mt-2 break-words text-3xl font-bold/);
