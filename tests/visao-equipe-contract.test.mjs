@@ -389,8 +389,9 @@ test("notificação limpa erro antigo ao abrir um registro", () => {
   assert.match(notificacoesFuncionario, /setError\('\'\);setSelected\(item\)/);
 });
 
-test("notificações preservam a lista durante nova sincronização", () => {
-  assert.match(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);setSelected\(null\)/);
+test("notificações preservam a lista e o detalhe durante nova sincronização", () => {
+  assert.match(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);/);
+  assert.doesNotMatch(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);setSelected\(null\)/);
   assert.match(notificacoesFuncionario, /data \? 'Atualizando notificações…' : 'Carregando notificações…'/);
 });
 
