@@ -179,6 +179,12 @@ test("ações administrativas da equipe têm nomes acessíveis", () => {
   assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
 });
 
+test("busca de colaboradores anuncia a quantidade de resultados", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /role="status" aria-live="polite">\{busca \? `\$\{filtrados\.length\}/);
+  assert.match(equipeView, /\$\{perfis\.length\} \$\{perfis\.length === 1 \? 'colaborador disponível' : 'colaboradores disponíveis'\}/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);

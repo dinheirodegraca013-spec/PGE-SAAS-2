@@ -322,6 +322,7 @@ export default function EquipeView() {
             />
           </label>
         </div>
+        {!carregando && <p className="mb-3 text-xs text-slate-500" role="status" aria-live="polite">{busca ? `${filtrados.length} ${filtrados.length === 1 ? 'colaborador corresponde' : 'colaboradores correspondem'} à busca.` : `${perfis.length} ${perfis.length === 1 ? 'colaborador disponível' : 'colaboradores disponíveis'}.`}</p>}
         {carregando ? (
           <p role="status" aria-live="polite" className="py-8 text-sm text-slate-500">Carregando equipe...</p>
         ) : !perfis.length ? (
