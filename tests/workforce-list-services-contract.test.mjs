@@ -18,3 +18,9 @@ test('fichas rejeitam duplicatas e ordenam pela atualização mais recente',()=>
   assert.match(sheets,/new Set\(validItens\.map\(item=>`\$\{item\.servico_id\}:\$\{item\.setor\}`\)\)\.size!==validItens\.length/);
   assert.match(sheets,/validItens\.sort\(\(left,right\)=>new Date\(right\.atualizado_em\)\.getTime\(\)-new Date\(left\.atualizado_em\)\.getTime\(\)\)/);
 });
+
+test('opções de material exigem textos identificáveis e IDs únicos',()=>{
+  assert.match(sheets,/row\.id\.trim\(\)\.length>0/);
+  assert.match(sheets,/new Set\(options\.map\(item=>item\.id\)\)\.size!==options\.length/);
+  assert.match(sheets,/sort\(\(left,right\)=>left\.nome\.localeCompare\(right\.nome,'pt-BR'\)\)/);
+});

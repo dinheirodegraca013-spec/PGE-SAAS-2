@@ -69,7 +69,7 @@ const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof v
 function isMaterialOption(value: unknown): value is MaterialOption {
   if (!value || typeof value !== 'object') return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&typeof row.nome==='string'&&typeof row.unidade==='string'&&typeof row.saldo==='number'&&Number.isFinite(row.saldo)&&row.saldo>=0;
+  return typeof row.id==='string'&&row.id.trim().length>0&&typeof row.nome==='string'&&row.nome.trim().length>0&&typeof row.unidade==='string'&&row.unidade.trim().length>0&&typeof row.saldo==='number'&&Number.isFinite(row.saldo)&&row.saldo>=0;
 }
 function isMaterialRequest(value: unknown, stock=false): value is MaterialRequest|MaterialStockRequest {
   if (!value || typeof value !== 'object') return false;
@@ -264,7 +264,7 @@ export const technicalSheets = {
     const { data, error } = await supabase.rpc('material_solicitacao_materiais', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar os materiais disponíveis.');
     if (!Array.isArray(data) || !data.every(isMaterialOption)) throw new Error('Os materiais retornaram dados inválidos. Recarregue a ficha.');
-    return data;
+    const options=data as MaterialOption[];if(new Set(options.map(item=>item.id)).size!==options.length)throw new Error('Os materiais retornaram itens duplicados. Recarregue a ficha.');return [...options].sort((left,right)=>left.nome.localeCompare(right.nome,'pt-BR'));
   },
   async materialRequests(service: string, sector: string): Promise<MaterialRequest[]> {
     if(!isServiceSector(service,sector))throw new Error('O serviço ou setor da ficha é inválido.');
