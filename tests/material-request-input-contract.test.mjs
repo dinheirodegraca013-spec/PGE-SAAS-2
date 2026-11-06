@@ -18,3 +18,8 @@ test('lista de solicitações valida serviço e setor antes do RPC',()=>{
   assert.match(source,/if\(!isServiceSector\(service,sector\)\)throw new Error\('O serviço ou setor da ficha é inválido\.'\)/);
 });
 
+test('registro de produção valida dados antes da RPC',()=>{
+  assert.match(source,/Os dados do registro de produção são inválidos/);
+  assert.match(source,/input\.description\.trim\(\)\.length<3/);
+});
+

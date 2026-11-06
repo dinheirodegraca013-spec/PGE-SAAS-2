@@ -237,6 +237,7 @@ export const technicalSheets = {
     return data;
   },
   async productionRegister(service: string, sector: string, input: { request: string; type: ProductionEntry['tipo']; quantity: number; unit: string; description: string }, version: number): Promise<ProductionState & { repetida?: boolean }> {
+    if(!isServiceSector(service,sector)||!input||typeof input.request!=='string'||!input.request.trim()||!['produzido','defeito','desperdicio'].includes(input.type)||!Number.isFinite(input.quantity)||input.quantity<=0||typeof input.unit!=='string'||!input.unit.trim()||typeof input.description!=='string'||input.description.trim().length<3||!Number.isSafeInteger(version)||version<1)throw new Error('Os dados do registro de produção são inválidos.');
     const { data, error } = await supabase.rpc('ficha_producao_registrar', {
       p_requisicao: input.request, p_servico: service, p_setor: sector, p_tipo: input.type,
       p_quantidade: input.quantity, p_unidade: input.unit, p_descricao: input.description, p_versao: version,
