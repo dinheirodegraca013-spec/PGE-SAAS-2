@@ -1408,7 +1408,7 @@ test("fichas de serviço preservam busca e ação de abertura no mobile", () => 
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\) => setRefresh\(value => value \+ 1\)\}/);
   assert.match(fichasFuncionario, /<button className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" type="submit" disabled=\{loading\}/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\) => \{ setSearch/);
-  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{event =>/);
+  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{event =>/);
 });
 
 test("editor de acesso quebra setores e permissões longas no mobile", () => {

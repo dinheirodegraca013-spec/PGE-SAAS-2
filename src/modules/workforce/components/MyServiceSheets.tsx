@@ -51,7 +51,7 @@ export default function MyServiceSheets() {
     {list && !list.itens.length && <div role="status" aria-live="polite" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 p-4"><p className="text-sm text-slate-500">{query ? `Nenhuma ficha encontrada para “${query}”.` : 'Nenhuma ficha liberada para você no momento.'}</p></div>}
     {list && <ul className="divide-y divide-slate-100">{list.itens.map(item => <li key={`${item.servico_id}:${item.setor}`} aria-label={`Ficha ${item.titulo} · ${isSetor(item.setor) ? setores[item.setor] : item.setor} · ${formatSheetUpdate(item.atualizado_em)}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
       <div className="min-w-0"><p className="break-words font-medium">{item.titulo}</p><p className="break-words text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p><time className="text-xs text-slate-500" dateTime={safeSheetDateTime(item.atualizado_em)}>{formatSheetUpdate(item.atualizado_em)}</time></div>
-      <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={loading} onClick={event => {
+      <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} onClick={event => {
         if (selected && !window.confirm('Abrir outra ficha? Alterações não salvas serão descartadas.')) return;
         openerRef.current = event.currentTarget;
         setSelected(item);
