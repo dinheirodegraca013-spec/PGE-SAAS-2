@@ -6,7 +6,11 @@ const isDate=(value:unknown):value is string=>typeof value==='string'&&Number.is
 const isNotification=(value:unknown):value is WorkNotification=>{
   if(!value||typeof value!=='object')return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&row.id.length>0&&(row.servico_id===null||typeof row.servico_id==='string'&&row.servico_id.length>0)&&(row.tarefa_id===null||typeof row.tarefa_id==='string'&&row.tarefa_id.length>0)&&typeof row.setor==='string'&&isSetor(row.setor)&&['ficha_atribuida','etapa_liberada','tarefa_atribuida'].includes(String(row.evento))&&isDate(row.criada_em)&&(row.lida_em===null||isDate(row.lida_em));
+  const event=row.evento;
+  const serviceLink=typeof row.servico_id==='string'&&row.servico_id.length>0;
+  const taskLink=typeof row.tarefa_id==='string'&&row.tarefa_id.length>0;
+  const relationValid=(event==='tarefa_atribuida'&&taskLink)||(event==='ficha_atribuida'||event==='etapa_liberada')&&serviceLink&&!taskLink;
+  return typeof row.id==='string'&&row.id.length>0&&(row.servico_id===null||serviceLink)&&(row.tarefa_id===null||taskLink)&&typeof row.setor==='string'&&isSetor(row.setor)&&relationValid&&isDate(row.criada_em)&&(row.lida_em===null||isDate(row.lida_em));
 };
 const isNotificationPage=(value:unknown):value is NotificationPage=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
