@@ -230,6 +230,11 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
   assert.match(fichasFuncionario, /Tentar novamente/);
 });
 
+test("fichas exibem a última atualização recebida", () => {
+  assert.match(fichasFuncionario, /formatSheetUpdate/);
+  assert.match(fichasFuncionario, /dateTime=\{item\.atualizado_em\}/);
+});
+
 test("pesquisa de fichas informa o estado do botão", () => {
   assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
   assert.match(fichasFuncionario, /\{loading\?'Pesquisando…':'Pesquisar'\}/);
