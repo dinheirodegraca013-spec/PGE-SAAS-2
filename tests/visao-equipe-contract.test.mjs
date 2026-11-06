@@ -348,7 +348,52 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
 test("tarefas destacam a prioridade com cores semÃ¢nticas", () => {
   assert.match(minhasTarefas, /const priorityTone=/);
   assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
-  assert.match(minhasTarefas, /priorityBadgg]÷Û‹h‘éì¶»§q«^tOH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
+  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
+test("tarefas vencidas recebem destaque visual e acessÃ­vel", () => {
+  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
+  assert.match(minhasTarefas, /overdue\?' Â· Atrasada':''/);
+  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
+});
+
+test("tarefas prÃ³ximas do prazo recebem aviso relativo", () => {
+  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
+  assert.match(minhasTarefas, /Vence hoje/);
+  assert.match(minhasTarefas, /Vence amanhÃ£/);
+  assert.match(minhasTarefas, /Vence em \$\{days\} dias/);
+});
+
+test("serviÃ§o de tarefas exige progresso inteiro", () => {
+  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
+  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
+  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
+});
+
+test("painel quebra tÃ­tulos longos em telas estreitas", () => {
+  assert.match(minhasTarefas, /min-w-0 break-words font-semibold/);
+  assert.match(minhasTarefas, /break-words whitespace-pre-wrap text-sm text-slate-600/);
+  assert.match(agendaFuncionario, /min-w-0 flex-1/);
+  assert.match(agendaFuncionario, /shrink-0 text-sm font-semibold/);
+  assert.match(resumoFuncionario, /min-w-0 break-words/);
+});
+
+test("resumo de trabalho preserva prazo e status no mobile", () => {
+  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?'shrink-0 font-semibold text-amber-700':'shrink-0 text-slate-600'\}/);
+  assert.match(resumoFuncionario, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-semibold/);
+});
+
+test("blocos operacionais quebram conteÃºdo longo no celular", () => {
+  assert.match(ocorrencias, /min-w-0 space-y-2 rounded-lg/);
+  assert.match(ocorrencias, /break-words whitespace-pre-wrap text-sm/);
+  assert.match(fichasFuncionario, /min-w-0"><p className="break-words font-medium/);
+  assert.match(inboxMateriais, /min-w-0 rounded-xl border/);
+  assert.match(inboxMateriais, /break-words text-sm/);
+});
+
+test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
+  assert.match(minhasTarefas, /updatedAt/);
+  assg]¹ßÛh‘éì¶»§q«^wÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
 ÛÛ›ÛTÙXØYÙ[Kİ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWKÊNÃBŸJNÃBƒB\İ
 ˜Ø\0èÛÈHÛÛXÚ]péğèÛÈ[™›Ü›XH]X[^˜péğèÛÈ›È›İ0èÛÈ‹
 
@@ -949,7 +994,7 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 
 HOˆÃBˆ\ÜÙ\›X]Ú
 [˜›ŞX]\šXZ\ËÏÜ[ˆÛ\ÜÓ˜[YOH›Z[‹]ËLœ™XZË]ÛÜ™È—Ù\œ›Ü—OÜÜ[‹ÊNÃBˆ\ÜÙ\›X]Ú
-[˜›ŞX]\šXZ\ËØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLˆ\šXK[X™[H•[\ˆØ\œ™YØ\ˆ\ÈÛÛXÚ]péğíY\È›İ˜[Y[Hˆ\ØX›YWÛØY[™ÈHXXİ[Û\ŞWKÊNÃBˆ\ÜÙ\›X]Ú
+[˜›ŞX]\šXZ\ËØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\šXK[X™[H•[\ˆØ\œ™YØ\ˆ\ÈÛÛXÚ]péğíY\È›İ˜[Y[Hˆ\ØX›YWÛØY[™ÈHXXİ[Û\ŞWKÊNÃBˆ\ÜÙ\›X]Ú
 [˜›ŞX]\šXZ\ËØÛ\ÜÓ˜[YOH˜œ™XZË]ÛÜ™È^\ÛH^Y[Y\˜[MÌ‹ÊNÃBŸJNÃBƒB\İ
 ™šXÚ\ÈHÙ\špéÛÈ™\Ù\˜[H\ØØHHpéğèÛÈHX™\\˜H›È[Øš[H‹
 
