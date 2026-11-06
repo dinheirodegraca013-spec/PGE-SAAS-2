@@ -313,6 +313,14 @@ test("painel quebra títulos longos em telas estreitas", () => {
   assert.match(resumoFuncionario, /min-w-0 break-words/);
 });
 
+test("blocos operacionais quebram conteúdo longo no celular", () => {
+  assert.match(ocorrencias, /min-w-0 space-y-2 rounded-lg/);
+  assert.match(ocorrencias, /break-words whitespace-pre-wrap text-sm/);
+  assert.match(fichasFuncionario, /min-w-0"><p className="break-words font-medium/);
+  assert.match(inboxMateriais, /min-w-0 rounded-xl border/);
+  assert.match(inboxMateriais, /break-words text-sm/);
+});
+
 test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
   assert.match(minhasTarefas, /Última atualização às/);
