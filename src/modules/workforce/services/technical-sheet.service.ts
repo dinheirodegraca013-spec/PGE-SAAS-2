@@ -83,15 +83,31 @@ function normalizeServiceList(value: unknown): { itens: { servico_id: string; ti
   return { itens, tem_mais: source.tem_mais === true, pagina: Number.isFinite(Number(source.pagina)) ? Number(source.pagina) : 0 };
 }
 
+function isTechnicalField(value: unknown): value is TechnicalField {
+  if (!value || typeof value !== 'object') return false;
+  const field = value as Record<string, unknown>;
+  const types = ['text', 'textarea', 'number', 'integer', 'table', 'file', 'url', 'date'];
+  return typeof field.key === 'string' && typeof field.label === 'string' && types.includes(String(field.type)) &&
+    (field.columns === undefined || Array.isArray(field.columns) && field.columns.every(isTechnicalField));
+}
+
 function isServiceSheet(value: unknown): value is ServiceSheet {
   if (!value || typeof value !== 'object') return false;
   const row = value as Record<string, unknown>;
   const model = row.modelo;
+  const checklist = model && typeof model === 'object' ? (model as Record<string, unknown>).checklist : null;
+  const checklistItems = Array.isArray(checklist) ? checklist : null;
+  const modelRecord = model && typeof model === 'object' ? model as Record<string, unknown> : null;
+  const fields = modelRecord && Array.isArray(modelRecord.campos) ? modelRecord.campos : null;
+  const actions = row.acoes_execucao;
+  const privacy = row.privacidade_autorizada;
   return typeof row.servico_id === 'string' && isSetor(row.setor) &&
     ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
-    Array.isArray(row.acoes_execucao) && Array.isArray(row.privacidade_autorizada) &&
-    !!model && typeof model === 'object' && Array.isArray((model as Record<string, unknown>).campos) &&
-    Array.isArray((model as Record<string, unknown>).checklist) &&
+    Array.isArray(actions) && actions.every(item => typeof item === 'string') &&
+    Array.isArray(privacy) && privacy.every(item => typeof item === 'string') &&
+    modelRecord !== null && typeof modelRecord.titulo === 'string' &&
+    fields !== null && fields.every(isTechnicalField) &&
+    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && typeof (item as Record<string, unknown>).label === 'string') &&
     !!row.checklist && typeof row.checklist === 'object' && !!row.dados && typeof row.dados === 'object';
 }
 
