@@ -627,7 +627,7 @@ test("agenda destaca urgência das atividades", () => {
 
 test("agenda mantém atalhos e badges inteiros no mobile", () => {
   assert.match(agendaFuncionario, /className="shrink-0 text-xs font-semibold text-slate-500">Período rápido:/);
-  assert.match(agendaFuncionario, /className=\{`btn-secondary shrink-0 whitespace-nowrap \$\{presetActive\(7\)/);
+  assert.match(agendaFuncionario, /className=\{`btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto \$\{presetActive\(7\)/);
   assert.match(agendaFuncionario, /className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-700"/);
   assert.match(agendaFuncionario, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-semibold/);
 });
@@ -691,7 +691,7 @@ test("mensagens de erro operacionais quebram texto e preservam os botões", () =
   assert.match(editorAcesso, /className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(editorAcesso, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   assert.match(agendaFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(agendaFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
+  assert.match(agendaFuncionario, /className="w-full shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(ocorrenciasFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
