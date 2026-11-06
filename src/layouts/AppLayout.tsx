@@ -247,14 +247,21 @@ export default function AppLayout() {
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               Sistema online
             </span>
-            <button
+            {work.context && !work.context.proprietario ? <NavLink
+              to="/meu-setor#notificacoes"
+              aria-label="Abrir notificações do funcionário"
+              className="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-white hover:text-violet-700"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-white bg-rose-500" />
+            </NavLink> : <button
               type="button"
               aria-label="Notificações"
               className="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-white hover:text-violet-700"
             >
               <Bell className="h-5 w-5" />
               <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-white bg-rose-500" />
-            </button>
+            </button>}
             <div className="hidden h-8 w-px bg-slate-200 sm:block" />
             <div className="hidden items-center gap-2.5 sm:flex">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white ring-2 ring-cyan-100">

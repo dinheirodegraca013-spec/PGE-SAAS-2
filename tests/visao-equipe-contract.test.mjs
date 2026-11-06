@@ -66,6 +66,12 @@ test("funcionário não recebe links administrativos de configurações", () => 
   assert.match(appLayout, /to=\{employeeProfilePath\}/);
 });
 
+test("sino do funcionário abre a central de notificações do painel", () => {
+  assert.match(appLayout, /to="\/meu-setor#notificacoes"/);
+  assert.match(appLayout, /aria-label="Abrir notificações do funcionário"/);
+  assert.match(appLayout, /work\.context && !work\.context\.proprietario \? <NavLink/);
+});
+
 test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
   assert.doesNotMatch(visao, /R\$\s*10\.550|MDF 18mm \(chapa\).*6 de 10/);
   assert.match(visao, /estoque_itens|projetosService/);
