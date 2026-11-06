@@ -471,8 +471,8 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
 });
 
 test("detalhe de tarefa informa recarregamento no botão", () => {
-  assert.match(detalheTarefa, /aria-label=\{loading\?'Carregando tarefa':'Recarregar tarefa'\}/);
-  assert.match(detalheTarefa, /\{loading\?'Carregando…':'Recarregar tarefa'\}/);
+  assert.match(detalheTarefa, /aria-label=\{loading\?\(task\?'Atualizando tarefa':'Carregando tarefa'\):'Recarregar tarefa'\}/);
+  assert.match(detalheTarefa, /\{loading\?\(task\?'Atualizando…':'Carregando…'\):'Recarregar tarefa'\}/);
 });
 
 test("detalhe de tarefa preserva a ficha durante sincronização", () => {
