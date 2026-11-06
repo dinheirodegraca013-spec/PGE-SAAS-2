@@ -8,6 +8,7 @@ test('resumo foca e posiciona a tarefa encontrada ao abrir o prazo',()=>{
   assert.match(source,/target\.setAttribute\('tabindex','-1'\)/);
   assert.match(source,/target\.focus\(\{preventScroll:true\}\)/);
   assert.match(source,/target\.scrollIntoView\(\{behavior:'smooth',block:'center'\}\)/);
+  assert.match(source,/list\.setAttribute\('tabindex','-1'\);list\.focus\(\{preventScroll:true\}\);list\.scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
 });
 
 test('resumo rejeita prazo com setor desconhecido',()=>{
