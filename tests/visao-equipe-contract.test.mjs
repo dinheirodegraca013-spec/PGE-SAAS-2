@@ -270,7 +270,7 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
 });
 
 test("tarefas refletem imediatamente status e progresso selecionados", () => {
-  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} · \$\{formatTaskStatus\(displayedStatus\)\} · \$\{formatTaskSector\(task\.setor\)\} · Prioridade \$\{formatPriority\(task\.prioridade\)\} · \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}`\}/);
+  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} · \$\{formatTaskStatus\(displayedStatus\)\} · \$\{formatTaskSector\(task\.setor\)\} · Prioridade \$\{formatPriority\(task\.prioridade\)\} · \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' · Atrasada':''\}`\}/);
   assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
@@ -284,6 +284,12 @@ test("tarefas destacam a prioridade com cores semânticas", () => {
   assert.match(minhasTarefas, /const priorityTone=/);
   assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
   assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
+test("tarefas vencidas recebem destaque visual e acessível", () => {
+  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
+  assert.match(minhasTarefas, /overdue\?' · Atrasada':''/);
+  assert.match(minhasTarefas, /bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800/);
 });
 
 test("serviço de tarefas exige progresso inteiro", () => {
