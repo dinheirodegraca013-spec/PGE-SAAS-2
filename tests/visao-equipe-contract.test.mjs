@@ -587,6 +587,11 @@ test("paginação do funcionário quebra em telas estreitas", () => {
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"[^>]*className="flex flex-wrap items-center gap-3"/);
 });
 
+test("busca de fichas e atalhos da agenda têm semântica acessível", () => {
+  assert.match(fichasFuncionario, /<form className="flex flex-wrap gap-2" role="search" aria-label="Pesquisar fichas de serviço"/);
+  assert.match(agendaFuncionario, /role="group" aria-label="Atalhos de período"/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
