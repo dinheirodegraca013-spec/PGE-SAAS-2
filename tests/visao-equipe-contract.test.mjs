@@ -1145,6 +1145,8 @@ test("responsável limpa feedback ao recarregar candidatos", () => {
   assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
   assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'/);
   assert.match(atribuicaoFicha, /useEffect\(\(\)=>\{setCandidates\(\[\]\);\},\[serviceId,sector\]\)/);
+  assert.match(atribuicaoFicha, /aria-label=\{loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
+  assert.match(atribuicaoFicha, /\{loading \|\| busy\?'Aguarde…':'Atualizar lista'\}/);
 });
 
 test("responsável limpa feedback quando a ficha muda externamente", () => {
@@ -1460,7 +1462,7 @@ test("ficha técnica quebra a situação sem perder as ações", () => {
 test("erro de responsáveis organiza retry no mobile", () => {
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
   assert.match(assignment, /<div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">\{error\}<\/p>/);
-  assert.match(assignment, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Tentar carregar os responsáveis novamente"/);
+  assert.match(assignment, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
 });
 
 test("controle de secagem protege status e atualização no mobile", () => {

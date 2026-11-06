@@ -1,4 +1,43 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíß]zá:-jZ.¶›­–)Ş³v–×÷'B&V7BÂ²W6TVffV7BÂW6T–BÂW6U7FFRÒg&öÒw&V7Bs°Ğ¦–×÷'B²FV6†æ–6Å6†VWG2Òg&öÒrââ÷6W'f–6W2÷FV6†æ–6Â×6†VWBç6W'f–6Rs°Ğ Ğ¦W‡÷'BFVfVÇBgVæ7F–öâ6†VWD76–væÖVçDVF—F÷"‡·6W'f–6T–BÇ6V7F÷"Æ7W'&VçBÆF—6&ÆVBÆöä76–vçÓ§·6W'f–6T–C§7G&–æs·6V7F÷#§7G&–æs¶7W'&VçC§7G&–æwÆçVÆÃ¶F—6&ÆVC¦&ööÆVã¶öä76–vã¢†V×Æ÷–VS§7G&–æwÆçVÆÂ“Óå&öÖ—6SÇfö–CçÒ’°Ğ¢6öç7B–BÒW6T–B‚“°Ğ¢6öç7B¶6æF–FFW2Ç6WD6æF–FFW5ÒÒW6U7FFSÄv—FVCÅ&WGW&åG—SÇG—VöbFV6†æ–6Å6†VWG2æ6æF–FFW3ããâ…µÒ“°Ğ¢6öç7B·6VÆV7FVBÇ6WE6VÆV7FVEÒÒW6U7FFR†7W'&VçBÇÂrr“°Ğ¢6öç7B¶ÆöF–ærÇ6WDÆöF–æuÒÒW6U7FFR‡G'VR“°Ğ¢6öç7B¶'W7’Ç6WD'W7•ÒÒW6U7FFR†fÇ6R“°Ğ¢6öç7B¶W'&÷"Ç6WDW'&÷%ÒÒW6U7FFR‚rr“°Ğ¢6öç7B¶ÖW76vRÇ6WDÖW76vUÒÒW6U7FFR‚rr“°Ğ¢6öç7B·&WG'’Ç6WE&WG'•ÒÒW6U7FFRƒ“°Ğ¢W6TVffV7B‚‚“Óç·6WE6VÆV7FVB†7W'&VçBÇÂrr“·6WDÖW76vR‚rr“·ÒÅ¶7W'&VçEÒ“°Ğ¢W6TVffV7B‚‚“Óç·6WD6æF–FFW2…µÒ“·ÒÅ·6W'f–6T–BÇ6V7F÷%Ò“°Ğ¢W6TVffV7B‚‚“Óç°Ğ¢ÆWB7F—fS×G'VS°Ğ¢6WDÆöF–ær‡G'VR“·6WDW'&÷"‚rr“·6WDÖW76vR‚rr“°Ğ¢FV6†æ–6Å6†VWG2æ6æF–FFW2‡6W'f–6T–BÇ6V7F÷"’çF†Vâ†—FV×3Óç¶–b†7F—fR—6WD6æF–FFW2†—FV×2“·ÒĞ¢æ6F6‚†6W6SÓç¶–b†7F—fR—6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷#ö6W6RæÖW76vS¢tì:6òfö’÷7<:×fVÂ6'&Vv"÷2&W7öç<:fV—2âr“·ÒĞ¢æf–æÆÇ’‚‚“Óç¶–b†7F—fR—6WDÆöF–ær†fÇ6R“·Ò“°Ğ¢&WGW&â‚“Óç¶7F—fSÖfÇ6S·Ó°Ğ¢ÒÅ·6W'f–6T–BÇ6V7F÷"Ç&WG'•Ò“°Ğ¢&WGW&âÆf÷&Ò6Æ74æÖSÒ'76R×’Ó2&÷VæFVB×†Â&÷&FW"&÷&FW"×6ÆFRÓ#ÓB"&–ÖÆ&VÃÒ%&W7öç<:fVÂVÆf–6†FW7FR6WF÷""&–Ö'W7“×¶ÆöF–ærÇÂ'W7—Òöå7V&Ö—C×¶7–æ2WfVçCÓç°Ğ¢WfVçBç&WfVçDFVfVÇB‚“¶–b†F—6&ÆVBÇÂ'W7’ÇÂÆöF–ær—&WGW&ã°Ğ¢–b‡6VÆV7FVBbb6æF–FFW2ç6öÖR†—FVÓÓæ—FVÒæ–CÓÓ×6VÆV7FVB’—·6WDW'&÷"‚tW66öÆ†VÒgVæ6–öì:&–òF—7öì:×fVÂâr“·&WGW&ã·ĞĞ¢6WD'W7’‡G'VR“·6WDW'&÷"‚rr“·6WDÖW76vR‚rr“°Ğ¢G'—¶v—Böä76–vâ‡6VÆV7FVBÇÂçVÆÂ“·6WDÖW76vR‚u&W7öç<:fVÂGVÆ—¦Fòâr“·ĞĞ¢6F6‚†6W6R—·6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷#ö6W6RæÖW76vS¢tì:6òfö’÷7<:×fVÂGVÆ—¦"ò&W7öç<:fVÂâr“·ĞĞ¢f–æÆÇ—·6WD'W7’†fÇ6R“·ĞĞ¢×ÓàĞ¢ÆÆ&VÂ‡FÖÄf÷#×¶–GÒ6Æ74æÖSÒ&&Æö6²FW‡B×6ÒföçBÖÖVF—VÒ#å&W7öç<:fVÂVÆf–6†FW7FR6WF÷#ÂöÆ&VÃàĞ¢Ç6VÆV7B–C×¶–GÒ6Æ74æÖSÒ&–çWBÖf–VÆBÖ‚×rÖgVÆÂ"F—6&ÆVC×¶F—6&ÆVBÇÂ'W7’ÇÂÆöF–ærÇÂW'&÷"bb6æF–FFW2æÆVæwF‡ÒfÇVS×·6VÆV7FVGÒöä6†ævS×¶WfVçCÓç·6WE6VÆV7FVB†WfVçBçF&vWBçfÇVR“·6WDÖW76vR‚rr“·6WDW'&÷"‚rr“·×ÓàĞ¢Æ÷F–öâfÇVSÒ"#å6VÒ&W7öç<:fVÃÂö÷F–öãàĞ¢¶7W'&VçBbb6æF–FFW2ç6öÖR†—FVÓÓæ—FVÒæ–CÓÓÖ7W'&VçB’bbÆ÷F–öâfÇVS×¶7W'&VçGÒF—6&ÆVCå&W7öç<:fVÂçFW&–÷"–æF—7öì:×fVÃÂö÷F–öãçĞĞ¢¶6æF–FFW2æÖ†—FVÓÓãÆ÷F–öâ¶W“×¶—FVÒæ–GÒfÇVS×¶—FVÒæ–GÓç¶—FVÒææöÖRÇÂtgVæ6–öì:&–ò6VÒæöÖRw×¶—FVÒæ6&vóö(	BG¶—FVÒæ6&v÷Ö¢rwÓÂö÷F–öãâ—ĞĞ¢Â÷6VÆV7CàĞ¢¶ÆöF–ærbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6Ò#ç¶6æF–FFW2æÆVæwF‚òtGVÆ—¦æFògVæ6–öì:&–÷2WF÷&—¦F÷>(
-br¢t6'&VvæFògVæ6–öì:&–÷2WF÷&—¦F÷>(
-bwÓÂ÷çĞĞ¢²ÆöF–ærbbW'&÷"bb6æF–FFW2æÆVæwF‚bbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓS#äæVæ‡VÒgVæ6–öì:&–òWF÷&—¦Fò&W7FR6WF÷"ãÂ÷çĞĞ¢¶W'&÷"bbÆF—b&öÆSÒ&ÆW'B"6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2×7F'B§W7F–g’Ö&WGvVVâvÓ"FW‡B×6ÒFW‡B×&VBÓs#ãÇ6Æ74æÖSÒ&Ö–â×rÓ'&V²×v÷&G2#ç¶W'&÷'ÓÂ÷ãÆ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"&–ÖÆ&VÃÒ%FVçF"6'&Vv"÷2&W7öç<:fV—2æ÷fÖVçFR"F—6&ÆVC×¶ÆöF–ærÇÂ'W7—Òöä6Æ–6³×²‚“Óç6WE&WG'’†ãÓæâ³—ÓäGVÆ—¦"Æ—7FÂö'WGFöããÂöF—cçĞĞ¢¶ÖW76vRbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6Ò#ç¶ÖW76vWÓÂ÷çĞĞ¢Æ'WGFöâG—SÒ'7V&Ö—B"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"&–ÖÆ&VÃ×¶'W7“òu6ÇfæFò&W7öç<:fVÂs¢u6Çf"&W7öç<:fVÂFf–6†wÒF—6&ÆVC×¶F—6&ÆVBÇÂ'W7’ÇÂÆöF–ærÇÂ6VÆV7FVCÓÓÒ†7W'&VçBÇÂrr—Óç¶'W7“òu6ÇfæFş(
-bs¢u6Çf"&W7öç<:fVÂwÓÂö'WGFöãàĞ¢Âöf÷&Óã°Ğ§ĞĞ 
+import React, { useEffect, useId, useState } from 'react';
+import { technicalSheets } from '../services/technical-sheet.service';
+
+export default function SheetAssignmentEditor({serviceId,sector,current,disabled,onAssign}:{serviceId:string;sector:string;current:string|null;disabled:boolean;onAssign:(employee:string|null)=>Promise<void>}) {
+  const id = useId();
+  const [candidates,setCandidates] = useState<Awaited<ReturnType<typeof technicalSheets.candidates>>>([]);
+  const [selected,setSelected] = useState(current || '');
+  const [loading,setLoading] = useState(true);
+  const [busy,setBusy] = useState(false);
+  const [error,setError] = useState('');
+  const [message,setMessage] = useState('');
+  const [retry,setRetry] = useState(0);
+  useEffect(()=>{setSelected(current || '');setMessage('');},[current]);
+  useEffect(()=>{setCandidates([]);},[serviceId,sector]);
+  useEffect(()=>{
+    let active=true;
+    setLoading(true);setError('');setMessage('');
+    technicalSheets.candidates(serviceId,sector).then(items=>{if(active)setCandidates(items);})
+      .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel carregar os responsÃ¡veis.');})
+      .finally(()=>{if(active)setLoading(false);});
+    return()=>{active=false;};
+  },[serviceId,sector,retry]);
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-label="ResponsÃ¡vel pela ficha deste setor" aria-busy={loading || busy} onSubmit={async event=>{
+    event.preventDefault();if(disabled || busy || loading)return;
+    if(selected && !candidates.some(item=>item.id===selected)){setError('Escolha um funcionÃ¡rio disponÃ­vel.');return;}
+    setBusy(true);setError('');setMessage('');
+    try{await onAssign(selected || null);setMessage('ResponsÃ¡vel atualizado.');}
+    catch(cause){setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel atualizar o responsÃ¡vel.');}
+    finally{setBusy(false);}
+  }}>
+    <label htmlFor={id} className="block text-sm font-medium">ResponsÃ¡vel pela ficha deste setor</label>
+    <select id={id} className="input-field max-w-full" disabled={disabled || busy || loading || !!error && !candidates.length} value={selected} onChange={event=>{setSelected(event.target.value);setMessage('');setError('');}}>
+      <option value="">Sem responsÃ¡vel</option>
+      {current && !candidates.some(item=>item.id===current) && <option value={current} disabled>ResponsÃ¡vel anterior indisponÃ­vel</option>}
+      {candidates.map(item=><option key={item.id} value={item.id}>{item.nome || 'FuncionÃ¡rio sem nome'}{item.cargo?` â€” ${item.cargo}`:''}</option>)}
+    </select>
+    {loading && <p role="status" aria-live="polite" className="text-sm">{candidates.length ? 'Atualizando funcionÃ¡rios autorizadosâ€¦' : 'Carregando funcionÃ¡rios autorizadosâ€¦'}</p>}
+    {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-slate-500">Nenhum funcionÃ¡rio autorizado para este setor.</p>}
+    {error && <div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">{error}</p><button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label={loading || busy?'Aguarde a atualizaÃ§Ã£o dos responsÃ¡veis':'Tentar carregar os responsÃ¡veis novamente'} disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>{loading || busy?'Aguardeâ€¦':'Atualizar lista'}</button></div>}
+    {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
+    <button type="submit" className="btn-secondary shrink-0 whitespace-nowrap" aria-label={busy?'Salvando responsÃ¡vel':'Salvar responsÃ¡vel da ficha'} disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvandoâ€¦':'Salvar responsÃ¡vel'}</button>
+  </form>;
+}
