@@ -367,6 +367,12 @@ test("resumo encaminha prazos para a lista quando a tarefa não está carregada"
   assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
 });
 
+test("indicadores de tarefas oferecem atalho acessível para a lista", () => {
+  assert.match(resumoFuncionario, /function focusTaskList\(\)/);
+  assert.match(resumoFuncionario, /href="#tarefas" onClick=\{focusTaskList\}/);
+  assert.match(resumoFuncionario, /Abrir minhas tarefas/);
+});
+
 test("resumo destaca urgência dos próximos prazos", () => {
   assert.match(resumoFuncionario, /function deadlineStatus\(value:string\)/);
   assert.match(resumoFuncionario, /Vence hoje/);
