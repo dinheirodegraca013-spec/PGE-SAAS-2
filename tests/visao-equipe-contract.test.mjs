@@ -217,7 +217,7 @@ test("solicitação de material relaciona bloqueio à mensagem de estoque vazio"
 
 test("histórico de materiais quebra textos longos sem deslocar ações", () => {
   assert.match(solicitacaoMaterial, /<span className="min-w-0 break-words"><strong>\{requestItem\.item_nome\}/);
-  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
+  assert.match(solicitacaoMaterial, /<span className="flex min-w-0 w-full flex-wrap items-center justify-start gap-2 sm:w-auto sm:justify-end">/);
 });
 
 test("ficha técnica acomoda título longo junto do recarregamento", () => {
