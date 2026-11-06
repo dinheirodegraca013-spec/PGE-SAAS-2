@@ -77,7 +77,7 @@ function isMaterialRequest(value: unknown, stock=false): value is MaterialReques
   const row=value as Record<string,unknown>;
   return typeof row.id==='string'&&row.id.trim().length>0&&typeof row.servico_id==='string'&&row.servico_id.trim().length>0&&typeof row.setor_solicitante==='string'&&isSetor(row.setor_solicitante)&&typeof row.item_id==='string'&&row.item_id.trim().length>0&&typeof row.item_nome==='string'&&row.item_nome.trim().length>0&&typeof row.quantidade==='number'&&Number.isFinite(row.quantidade)&&row.quantidade>0&&typeof row.unidade==='string'&&row.unidade.trim().length>0&&typeof row.motivo==='string'&&row.motivo.trim().length>0&&materialStatuses.includes(String(row.status))&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&typeof row.criado_em==='string'&&Number.isFinite(new Date(row.criado_em).getTime())&&isDateOrNull(row.decidido_em)&&isDateOrNull(row.atendido_em)&&(!stock||(typeof row.servico_nome==='string'&&row.servico_nome.trim().length>0&&typeof row.solicitante_nome==='string'&&row.solicitante_nome.trim().length>0));
 }
-const isMaterialMutation=(value:unknown,status?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&typeof (value as Record<string,unknown>).status==='string'&&(!status||(value as Record<string,unknown>).status===status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
+const isMaterialMutation=(value:unknown,status?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&String((value as Record<string,unknown>).id).trim().length>0&&typeof (value as Record<string,unknown>).status==='string'&&(!status||(value as Record<string,unknown>).status===status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
 
 function normalizeServiceList(value: unknown): { itens: { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[]; tem_mais: boolean; pagina: number } | null {
   if (!value || typeof value !== 'object') return null;
@@ -163,9 +163,9 @@ function isProductionState(value: unknown): value is ProductionState {
     records.every(item => {
       if (!item || typeof item !== 'object') return false;
       const record = item as Record<string, unknown>;
-      return typeof record.id === 'string' && ['produzido', 'defeito', 'desperdicio'].includes(String(record.tipo)) &&
+      return typeof record.id === 'string' && record.id.trim().length>0 && ['produzido', 'defeito', 'desperdicio'].includes(String(record.tipo)) &&
         typeof record.quantidade === 'number' && Number.isFinite(record.quantidade) && record.quantidade >= 0 &&
-        typeof record.unidade === 'string' && typeof record.descricao === 'string' && typeof record.criado_em === 'string' && Number.isFinite(new Date(record.criado_em).getTime());
+        typeof record.unidade === 'string' && record.unidade.trim().length>0 && typeof record.descricao === 'string' && record.descricao.trim().length>0 && typeof record.criado_em === 'string' && Number.isFinite(new Date(record.criado_em).getTime());
     });
 }
 const sortProductionState=(state:ProductionState):ProductionState=>({...state,registros:[...state.registros].sort((left,right)=>new Date(right.criado_em).getTime()-new Date(left.criado_em).getTime())});
