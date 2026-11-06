@@ -195,6 +195,11 @@ test("busca de colaboradores limpa com Escape", () => {
   assert.match(equipeView, /event\.key === 'Escape'.*setBusca\('\'\)/);
 });
 
+test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /title=\{!limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
