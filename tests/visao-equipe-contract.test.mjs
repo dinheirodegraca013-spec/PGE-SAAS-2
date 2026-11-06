@@ -168,7 +168,8 @@ test("ações rápidas possuem foco visível no teclado", () => {
 });
 
 test("painel limpa o horário anterior ao atualizar projetos", () => {
-  assert.match(meuSetor, /setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+  assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
+  assert.match(meuSetor, /setAtualizadoEm\(null\);/);
 });
 
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {

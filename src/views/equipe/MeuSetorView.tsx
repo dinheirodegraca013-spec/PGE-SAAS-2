@@ -58,6 +58,7 @@ export default function MeuSetorView() {
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
   const [online, setOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
   const lastReturnRefresh = useRef(0);
+  const lastContextKey = useRef('');
   const setor = context?.funcionario.setor;
   const sectorList=authorizedSectors(context);
   useEffect(() => {
@@ -75,7 +76,11 @@ export default function MeuSetorView() {
     let mounted = true;
     setCarregando(true);
     setErro('');
-    setProjetos([]);
+    const contextKey = context ? `${context.empresa_id}:${context.funcionario.id}` : '';
+    if (contextKey !== lastContextKey.current) {
+      lastContextKey.current = contextKey;
+      setProjetos([]);
+    }
     setAtualizadoEm(null);
     if (accessLoading || !context) {
       setCarregando(accessLoading);
