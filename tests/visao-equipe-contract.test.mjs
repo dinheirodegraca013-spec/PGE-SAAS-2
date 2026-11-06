@@ -702,6 +702,12 @@ test("criação de tarefa limpa validação ao corrigir campos", () => {
   assert.match(criacaoTarefa, /setDeadline\(event\.target\.value\);clearFeedback\(\)/);
 });
 
+test("criação de tarefa valida descrição antes do envio", () => {
+  assert.match(criacaoTarefa, /description\.trim\(\)\.length<2/);
+  assert.match(criacaoTarefa, /Informe uma descrição com pelo menos 2 caracteres/);
+  assert.match(criacaoTarefa, /minLength=\{2\} maxLength=\{10000\} required/);
+});
+
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| loading\}/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);

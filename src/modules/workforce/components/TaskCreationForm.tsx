@@ -27,6 +27,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(lock.current || loading)return;
     if(!title.trim() || !candidates.some(item=>item.id===employee)){setError('Informe o título e escolha um responsável disponível.');return;}
+    if(description.trim().length<2){setError('Informe uma descrição com pelo menos 2 caracteres.');return;}
     const parsed=deadline?new Date(deadline):null;
     if(parsed && !Number.isFinite(parsed.getTime())){setError('Informe um prazo válido.');return;}
     const input={sector,title:title.trim(),description,employee,service:serviceId,deadline:parsed?.toISOString()||null,priority,mandatory};
@@ -40,7 +41,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     <h4 className="font-semibold">Criar tarefa nesta etapa</h4>
     <fieldset disabled={busy || loading} className="grid gap-3 sm:grid-cols-2"><legend className="sr-only">Dados da nova tarefa</legend>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-title`}>Título<input id={`${id}-title`} className="input-field mt-1" required maxLength={200} value={title} onChange={event=>{setTitle(event.target.value);setError('');setMessage('');}}/></label>
-      <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} maxLength={10000} value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
+      <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} minLength={2} maxLength={10000} required value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-employee`}>Responsável<select id={`${id}-employee`} className="input-field mt-1" required value={employee} onChange={event=>{setEmployee(event.target.value);setError('');setMessage('');}}><option value="">Selecione um funcionário</option>{candidates.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
       <label className="text-sm" htmlFor={`${id}-deadline`}>Prazo (horário local)<input id={`${id}-deadline`} className="input-field mt-1" type="datetime-local" value={deadline} onChange={event=>{setDeadline(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>{setPriority(event.target.value as WorkTask['prioridade']);clearFeedback();}}>{(Object.keys(priorityLabels) as WorkTask['prioridade'][]).map(value=><option key={value} value={value}>{priorityLabels[value]}</option>)}</select></label>
