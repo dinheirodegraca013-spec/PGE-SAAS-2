@@ -568,6 +568,10 @@ test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => 
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
 });
 
+test("notificações expõem o estado de leitura semanticamente", () => {
+  assert.match(notificacoesFuncionario, /aria-label=\{`\$\{item\.lida_em\?'Notificação lida':'Notificação não lida'\}/);
+});
+
 test("notificações informam atualização no botão", () => {
   assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Atualizar notificações'\}/);
   assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguarde…':'Atualizar notificações'\}/);
