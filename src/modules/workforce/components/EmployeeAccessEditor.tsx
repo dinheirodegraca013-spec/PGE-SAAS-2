@@ -14,16 +14,17 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
   const [catalog,setCatalog] = useState<{modulo:string;operacao:string}[]>([]);
   const [name,setName] = useState(''); const [job,setJob] = useState(''); const [internalId,setInternalId] = useState(''); const [sector,setSector] = useState('corte');
   const [additional,setAdditional] = useState<string[]>([]); const [status,setStatus] = useState('ativo');
-  const [grants,setGrants] = useState<AccessGrant[]>([]); const [busy,setBusy] = useState(false); const [error,setError] = useState(''); const [retry,setRetry] = useState(0);
+  const [grants,setGrants] = useState<AccessGrant[]>([]); const [busy,setBusy] = useState(false); const [loading,setLoading] = useState(true); const [error,setError] = useState(''); const [retry,setRetry] = useState(0);
   const fieldId=useId();
   const clearError=()=>setError('');
+  useEffect(()=>{setEmployee(null);},[userId]);
   useEffect(() => {
-    let mounted=true; setEmployee(null);setError('');
+    let mounted=true; setLoading(true);setError('');
     Promise.all([workforceAccess.employee(userId),workforceAccess.context()]).then(([p,ctx])=>{
       if(!mounted)return;
       if(!ctx.proprietario)throw new Error('Somente o proprietário pode editar estas permissões.');
       setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');const primary=validSector(p.setor||'corte');setSector(primary);setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais.filter(value=>value!==primary&&Object.prototype.hasOwnProperty.call(setores,value)):[]);setStatus(validStatus(p.status||'ativo'));setGrants(Array.isArray(p.permissoes)?p.permissoes.map(grant=>({...grant,escopo:validScope(grant.escopo)})):[]);
-    }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');});
+    }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');}).finally(()=>{if(mounted)setLoading(false);});
     return()=>{mounted=false;};
   },[userId,retry]);
   const toggle=(module:string,operation:string,enabled:boolean)=>{clearError();setGrants(current=>enabled?[...current,{modulo:module,operacao:operation,escopo:module==='estoque'?'setor':'atribuidos'}]:current.filter(g=>g.modulo!==module||g.operacao!==operation));};
@@ -32,10 +33,10 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     try{await workforceAccess.save({id:employee.id,nome:name,cargo:job,identificador_interno:internalId,setor:sector,setores_adicionais:additional,status,permissoes:grants,versao:employee.versao});onSaved();}
     catch(e){setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível salvar.');}finally{setBusy(false);}
   }
-  return <section className="card space-y-4 p-5" aria-labelledby="employee-access-title" aria-busy={busy || (!employee && !error)}>
+  return <section className="card space-y-4 p-5" aria-labelledby="employee-access-title" aria-busy={busy || loading}>
     <div className="flex items-center justify-between gap-3"><h2 id="employee-access-title" className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
     {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar o acesso novamente" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
-    {!employee&&!error&&<p role="status" aria-live="polite">Carregando acesso…</p>}
+    {loading&&<p role="status" aria-live="polite">{employee?'Atualizando acesso…':'Carregando acesso…'}</p>}
     {employee&&<form className="space-y-5" onSubmit={save}>
       <fieldset disabled={busy} className="space-y-5">
         <div className="grid gap-3 sm:grid-cols-2"><label className="text-sm" htmlFor={`${fieldId}-name`}>Nome completo<input id={`${fieldId}-name`} className="input-field mt-1" required minLength={2} maxLength={120} value={name} onChange={e=>{setName(e.target.value);clearError();}}/></label>
@@ -57,4 +58,3 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     </form>}
   </section>;
 }
-
