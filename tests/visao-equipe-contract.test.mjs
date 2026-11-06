@@ -399,7 +399,7 @@ test("fichas não consultam dados sem vínculo validado", () => {
 
 test("fichas exibem a última atualização recebida", () => {
   assert.match(fichasFuncionario, /formatSheetUpdate/);
-  assert.match(fichasFuncionario, /dateTime=\{item\.atualizado_em\}/);
+  assert.match(fichasFuncionario, /dateTime=\{safeSheetDateTime\(item\.atualizado_em\)\}/);
 });
 
 test("fichas de serviço nomeiam título, setor e atualização", () => {
