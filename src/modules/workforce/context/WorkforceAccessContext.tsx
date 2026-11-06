@@ -22,7 +22,7 @@ export function WorkforceAccessProvider({children}:{children:React.ReactNode}) {
       if(!current())return;
       if(next.empresa_id!==tenantId||next.funcionario.id!==userId)throw new Error('A sessão mudou. Entre novamente para validar as permissões.');
       setContext(next);setError('');
-    }catch(e){if(current()){setContext(null);setError((e as Error).message||'Não foi possível validar o acesso de trabalho.');}}
+    }catch(e){if(current()){setContext(null);setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível validar o acesso de trabalho.');}}
     finally{if(current())setLoading(false);}
   },[userId,tenantId]);
   useEffect(()=>{void reload();},[reload]);
@@ -42,3 +42,4 @@ export function useWorkforceAccess():AccessState {
   if(!value)throw new Error('WorkforceAccessProvider não encontrado.');
   return value;
 }
+
