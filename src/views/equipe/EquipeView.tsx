@@ -27,6 +27,11 @@ type Perfil = {
   identificador_interno: string | null;
   suspenso: boolean;
 };
+const isPerfil=(value:unknown):value is Perfil=>{
+  if(!value||typeof value!=='object'||Array.isArray(value))return false;
+  const row=value as Record<string,unknown>;
+  return typeof row.id==='string'&&row.id.length>0&&(row.nome_completo===null||typeof row.nome_completo==='string')&&(row.email===null||typeof row.email==='string')&&(row.papel===null||typeof row.papel==='string')&&(row.ativo===null||typeof row.ativo==='boolean')&&(row.setor===null||isSetor(String(row.setor)))&&(row.cargo===null||typeof row.cargo==='string')&&(row.identificador_interno===null||typeof row.identificador_interno==='string')&&typeof row.suspenso==='boolean';
+};
 type Limits = { plan: string; sublogin_limit: number; device_limit: number; sublogins_active: number; sublogins_available: number; sublogins_suspended: number; owner_id: string; suspended_ids: string[] };
 const isLimits=(value:unknown):value is Limits=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
@@ -120,7 +125,10 @@ export default function EquipeView() {
         "A equipe não pôde ser carregada. Verifique a permissão do administrador da empresa.",
       );
       setPerfis([]);
-    } else setPerfis((result.data || []) as Perfil[]);
+    } else if (!Array.isArray(result.data) || !result.data.every(isPerfil)) {
+      setPerfis([]);
+      setErro('A equipe retornou dados inválidos. Atualize a página.');
+    } else setPerfis(result.data);
     if (administrador) {
       try {
         const [quota, history] = await Promise.all([supabase.rpc('limites_acesso'), supabase.rpc('historico_acessos')]);
