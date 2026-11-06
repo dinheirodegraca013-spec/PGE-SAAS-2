@@ -59,7 +59,7 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
       <label htmlFor={controlId} className="mb-1 block text-sm font-medium">{field.label}{field.required ? ' *' : ''}</label>
       {field.type === 'textarea'
         ? <textarea {...common} rows={3} maxLength={10000} value={typeof current === 'string' ? current : ''} onChange={e => update(e.target.value)} />
-        : <input {...common} type={['number', 'integer'].includes(field.type) ? 'number' : field.type === 'url' ? 'url' : field.type === 'date' ? 'date' : 'text'} min={field.type === 'number' || field.type === 'integer' ? 0 : undefined} step={field.type === 'integer' ? 1 : 'any'} maxLength={2000} value={typeof current === 'string' || typeof current === 'number' ? current : ''} onChange={e => update(field.type === 'number' || field.type === 'integer' ? e.target.value === '' ? null : Number(e.target.value) : e.target.value)} />}
+        : <input {...common} type={['number', 'integer'].includes(field.type) ? 'number' : field.type === 'url' ? 'url' : field.type === 'date' ? 'date' : 'text'} inputMode={field.type === 'integer' ? 'numeric' : field.type === 'number' ? 'decimal' : undefined} min={field.type === 'number' || field.type === 'integer' ? 0 : undefined} step={field.type === 'integer' ? 1 : 'any'} maxLength={2000} value={typeof current === 'string' || typeof current === 'number' ? current : ''} onChange={e => update(field.type === 'number' || field.type === 'integer' ? e.target.value === '' ? null : Number(e.target.value) : e.target.value)} />}
       {error && <p id={`${controlId}-error`} role="alert" className="mt-1 text-sm text-red-700">{error}</p>}
     </div>;
   }

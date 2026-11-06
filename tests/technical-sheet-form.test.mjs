@@ -28,6 +28,11 @@ test('listas exibem campos rotulados e campos calculados ficam desabilitados', (
   assert.ok(html.includes('value="P1"'));
   assert.match(html, /Código da peça \*<\/label><input[^>]*required=""/);
 });
+test('campos numéricos da ficha indicam o teclado adequado', () => {
+  const html = render({fields:[{key:'quantidade',label:'Quantidade',type:'number'},{key:'unidades',label:'Unidades',type:'integer'}],value:{quantidade:1.5,unidades:2}});
+  assert.match(html, /type="number" inputMode="decimal"/);
+  assert.match(html, /type="number" inputMode="numeric"/);
+});
 test('campo técnico seleciona somente anexos listados e conserva referência fora da página',()=>{
   const fields=[{key:'plano',label:'Plano de corte',type:'file'}];
   const html=render({fields,value:{plano:'12345678-1234-1234-1234-123456789012'},canLinkAttachments:true,attachmentOptions:[{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',nome:'Plano validado.pdf'}]});
