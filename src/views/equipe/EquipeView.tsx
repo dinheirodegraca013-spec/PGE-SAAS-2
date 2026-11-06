@@ -39,6 +39,7 @@ const isLimits=(value:unknown):value is Limits=>{
   return typeof row.plan==='string'&&row.plan.length>0&&typeof row.owner_id==='string'&&row.owner_id.length>0&&['sublogin_limit','device_limit','sublogins_active','sublogins_available','sublogins_suspended'].every(key=>Number.isSafeInteger(row[key])&&Number(row[key])>=0)&&Array.isArray(row.suspended_ids)&&row.suspended_ids.every(item=>typeof item==='string');
 };
 const actionLabels: Record<string,string> = {account_created:'Conta criada',account_changed:'Acesso alterado',device_authorized:'Dispositivo autorizado',device_revoked:'Dispositivo revogado',plan_changed:'Plano alterado',plan_limits_changed:'Limites do plano alterados'};
+const isAudit=(value:unknown):value is {id:number;action:string;subject_id:string|null;created_at:string}=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&Number.isSafeInteger((value as Record<string,unknown>).id)&&typeof (value as Record<string,unknown>).action==='string'&&String((value as Record<string,unknown>).action).length>0&&((value as Record<string,unknown>).subject_id===null||typeof (value as Record<string,unknown>).subject_id==='string')&&typeof (value as Record<string,unknown>).created_at==='string');
 const formatAuditDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
 const normalizeSearch=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 
@@ -135,7 +136,7 @@ export default function EquipeView() {
         if (quota.error) throw quota.error;
         if (!isLimits(quota.data)) throw new Error('Resposta de limites inválida.');
         setLimits(quota.data);
-        if (!history.error) setAudit(history.data || []);
+        if (!history.error && Array.isArray(history.data) && history.data.every(isAudit)) setAudit(history.data);
       } catch { setLimits(null); setErro('Não foi possível consultar os limites do plano. Atualize a página.'); }
     }
     } catch { setErro('Não foi possível carregar a equipe. Confira sua conexão e tente novamente.'); }
