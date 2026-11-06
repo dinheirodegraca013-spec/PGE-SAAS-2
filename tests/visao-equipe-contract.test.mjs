@@ -194,6 +194,12 @@ test("resumo nomeia cada indicador para acessibilidade", () => {
   assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
 });
 
+test("resumo encaminha prazos para a lista quando a tarefa não está carregada", () => {
+  assert.match(resumoFuncionario, /function focusTask\(taskId:string\)/);
+  assert.match(resumoFuncionario, /scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
+  assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
+});
+
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
