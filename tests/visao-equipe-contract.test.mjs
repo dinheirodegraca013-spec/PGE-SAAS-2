@@ -143,6 +143,13 @@ test("revalidação do funcionário preserva contexto válido durante o carregam
   assert.match(acessoWorkforce, /setContext\(current => current && current\.empresa_id===tenantId && current\.funcionario\.id===userId \? current : null\)/);
 });
 
+test("revalidação ignora respostas antigas após troca de identidade", () => {
+  assert.match(acessoWorkforce, /const generation=useRef\(0\)/);
+  assert.match(acessoWorkforce, /const request=\+\+generation\.current/);
+  assert.match(acessoWorkforce, /request===generation\.current&&identity\.current\.userId===userId&&identity\.current\.tenantId===tenantId/);
+  assert.match(acessoWorkforce, /useEffect\(\(\)=>\(\)=>\{generation\.current\+\+;\},\[\]\)/);
+});
+
 test("atualização do painel sincroniza os blocos de trabalho", () => {
   assert.match(workforceEvents, /workforceRefreshEvent/);
   assert.match(workforceEvents, /typeof window === 'undefined'/);
