@@ -17,7 +17,7 @@ export default function PersonalWorkSummary(){
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRetry(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{setSummary(null);setError('');},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
-    Promise.resolve(supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}setSummary(data);})
+    Promise.resolve().then(()=>supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}setSummary(data);})
       .catch(()=>{if(active)setError('Não foi possível carregar os indicadores.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[context?.funcionario.id,context?.funcionario.versao,retry]);
