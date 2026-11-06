@@ -799,6 +799,7 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /candidates\.length \? 'Atualizando responsáveis…' : 'Carregando responsáveis…'/);
+  assert.match(criacaoTarefa, /!loading && !error && !candidates\.length && <p role="status" aria-live="polite"/);
   assert.match(criacaoTarefa, /type="datetime-local" autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\} value=\{deadline\}/);
   assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
   assert.match(criacaoTarefa, /O horário será salvo conforme o fuso local deste dispositivo/);
