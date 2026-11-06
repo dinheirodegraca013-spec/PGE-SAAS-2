@@ -879,6 +879,7 @@ test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => 
 
 test("notificações expõem o estado de leitura semanticamente", () => {
   assert.match(notificacoesFuncionario, /aria-label=\{`\$\{item\.lida_em\?'Notificação lida':'Notificação não lida'\}/);
+  assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: \$\{notificationLabels\[item\.evento\]\|\|'Atualização da operação'\}`\}/);
 });
 
 test("notificações informam atualização no botão", () => {
