@@ -629,6 +629,12 @@ test("inbox de estoque informa atualização no botão", () => {
   assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
 });
 
+test("inbox de estoque participa da atualização global", () => {
+  assert.match(inboxMateriais, /workforceRefreshEvent/);
+  assert.match(inboxMateriais, /addEventListener\(workforceRefreshEvent,refreshPanel\)/);
+  assert.match(inboxMateriais, /void load\(false\)/);
+});
+
 test("inbox limpa confirmação antes de nova ação", () => {
   assert.match(inboxMateriais, /setActionBusy\(item\.id\);setError\(''\);setMessage\(''\)/);
 });
