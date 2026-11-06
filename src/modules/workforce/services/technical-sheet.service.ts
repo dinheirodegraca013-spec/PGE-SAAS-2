@@ -83,6 +83,18 @@ function normalizeServiceList(value: unknown): { itens: { servico_id: string; ti
   return { itens, tem_mais: source.tem_mais === true, pagina: Number.isFinite(Number(source.pagina)) ? Number(source.pagina) : 0 };
 }
 
+function isServiceSheet(value: unknown): value is ServiceSheet {
+  if (!value || typeof value !== 'object') return false;
+  const row = value as Record<string, unknown>;
+  const model = row.modelo;
+  return typeof row.servico_id === 'string' && isSetor(row.setor) &&
+    ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
+    Array.isArray(row.acoes_execucao) && Array.isArray(row.privacidade_autorizada) &&
+    !!model && typeof model === 'object' && Array.isArray((model as Record<string, unknown>).campos) &&
+    Array.isArray((model as Record<string, unknown>).checklist) &&
+    !!row.checklist && typeof row.checklist === 'object' && !!row.dados && typeof row.dados === 'object';
+}
+
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
     const {data,error}=await supabase.rpc('ficha_execucao_atualizar',{p_servico:service,p_setor:sector,p_acao:action,p_versao:version});
@@ -114,6 +126,7 @@ export const technicalSheets = {
   async load(service: string, sector: string): Promise<ServiceSheet> {
     const { data, error } = await supabase.rpc('ficha_execucao_consultar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar a ficha técnica.');
+    if (!isServiceSheet(data)) throw new Error('A ficha retornou dados incompletos.');
     return data;
   },
   async dryingLoad(service: string): Promise<FinishingDryingState> {
