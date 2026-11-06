@@ -1,13 +1,15 @@
 import {supabase} from '@/lib/supabase';
+import {isSetor} from '@/lib/setores';
 export const taskStatusLabels={pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',aguardando_material:'Aguardando material',aguardando_aprovacao:'Aguardando aprovação',concluida:'Concluída',cancelada:'Cancelada'} as const;
 export type TaskStatus=keyof typeof taskStatusLabels;
 export type WorkTask={id:string;servico_id:string|null;setor:string;titulo:string;descricao:string;responsavel_id:string;criado_por:string;criada_em:string;iniciada_em:string|null;prazo:string|null;prioridade:'baixa'|'normal'|'alta'|'urgente';status:TaskStatus;progresso:number;obrigatoria:boolean;observacoes:string;versao:number};
 export type TaskPage={itens:WorkTask[];tem_mais:boolean};
 const isTaskStatus=(value:unknown):value is TaskStatus=>typeof value==='string'&&value in taskStatusLabels;
+const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
 const isWorkTask=(value:unknown):value is WorkTask=>{
   if(!value||typeof value!=='object')return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&(row.servico_id===null||typeof row.servico_id==='string')&&typeof row.setor==='string'&&typeof row.titulo==='string'&&typeof row.descricao==='string'&&typeof row.responsavel_id==='string'&&typeof row.criado_por==='string'&&typeof row.criada_em==='string'&&(row.iniciada_em===null||typeof row.iniciada_em==='string')&&(row.prazo===null||typeof row.prazo==='string')&&['baixa','normal','alta','urgente'].includes(String(row.prioridade))&&isTaskStatus(row.status)&&typeof row.progresso==='number'&&Number.isFinite(row.progresso)&&row.progresso>=0&&row.progresso<=100&&typeof row.obrigatoria==='boolean'&&typeof row.observacoes==='string'&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1;
+  return typeof row.id==='string'&&row.id.length>0&&(row.servico_id===null||typeof row.servico_id==='string')&&typeof row.setor==='string'&&isSetor(row.setor)&&typeof row.titulo==='string'&&row.titulo.length>0&&typeof row.descricao==='string'&&typeof row.responsavel_id==='string'&&row.responsavel_id.length>0&&typeof row.criado_por==='string'&&row.criado_por.length>0&&typeof row.criada_em==='string'&&Number.isFinite(new Date(row.criada_em).getTime())&&isDateOrNull(row.iniciada_em)&&isDateOrNull(row.prazo)&&['baixa','normal','alta','urgente'].includes(String(row.prioridade))&&isTaskStatus(row.status)&&typeof row.progresso==='number'&&Number.isFinite(row.progresso)&&row.progresso>=0&&row.progresso<=100&&typeof row.obrigatoria==='boolean'&&typeof row.observacoes==='string'&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1;
 };
 const isTaskPage=(value:unknown):value is TaskPage=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
