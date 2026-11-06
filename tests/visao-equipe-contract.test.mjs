@@ -332,1093 +332,751 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} ¬∑ \$\{formatTaskStatus\(displayedStatus\)\} ¬∑ \$\{formatTaskSector\(task\.setor\)\} ¬∑ Prioridade \$\{formatPriority\(task\.prioridade\)\} ¬∑ \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}\$\{overdue\?' ¬∑ Atrasada':''\}`\}/);
   assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
-  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
-  assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
-  assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
-  assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
-  assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% conclu√≠do`\}/);
-});
-
-test("tarefas destacam a prioridade com cores sem√¢nticas", () => {
-  assert.match(minhasTarefas, /const priorityTone=/);
-  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
-  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
-});
-
-test("tarefas vencidas recebem destaque visual e acess√≠vel", () => {
-  assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
-  assert.match(minhasTarefas, /overdue\?' ¬∑ Atrasada':''/);
-  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
-});
-
-test("tarefas pr√≥ximas do prazo recebem aviso relativo", () => {
-  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
-  assert.match(minhasTarefas, /Vence hoje/);
-  assert.match(minhasTarefas, /Vence amanh√£/);
-  assert.match(minhasTarefas, /Vence em \$\{days\} dias/);
-});
-
-test("servi√ßo de tarefas exige progresso inteiro", () => {
-  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
-  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
-  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
-});
-
-test("painel quebra t√≠tulos longos em telas estreitas", () => {
-  assert.match(minhasTarefas, /min-w-0 break-words font-semibold/);
-  assert.match(minhasTarefas, /break-words whitespace-pre-wrap text-sm text-slate-600/);
-  assert.match(agendaFuncionario, /min-w-0 flex-1/);
-  assert.match(agendaFuncionario, /shrink-0 text-sm font-semibold/);
-  assert.match(resumoFuncionario, /min-w-0 break-words/);
-});
-
-test("blocos operacionais quebram conte√∫do longo no celular", () => {
-  assert.match(ocorrencias, /min-w-0 space-y-2 rounded-lg/);
-  assert.match(ocorrencias, /break-words whitespace-pre-wrap text-sm/);
-  assert.match(fichasFuncionario, /min-w-0"><p className="break-words font-medium/);
-  assert.match(inboxMateriais, /min-w-0 rounded-xl border/);
-  assert.match(inboxMateriais, /break-words text-sm/);
-});
-
-test("tarefas informam a √∫ltima atualiza√ß√£o da lista", () => {
-  assert.match(minhasTarefas, /updatedAt/);
-  assert.match(minhasTarefas, /√öltima atualiza√ß√£o √†s/);
-  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
-});
-
-test("tarefas limpam o hor√°rio anterior durante nova sincroniza√ß√£o", () => {
-  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
-});
-
-test("tarefas preservam a lista durante nova sincroniza√ß√£o", () => {
-  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
-  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
-  assert.match(minhasTarefas, /data \? 'Atualizando tarefas‚Ä¶' : 'Carregando tarefas‚Ä¶'/);
-});
-
-test("tarefas bloqueiam o filtro durante sincroniza√ß√£o", () => {
-  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
-});
-
-test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
-  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
-  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
-  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
-});
-
-test("tarefas n√£o enviam atualiza√ß√£o sem mudan√ßa", () => {
-  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
-  assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
-});
-
-test("tarefas informam a quantidade vis√≠vel e a exist√™ncia de mais p√°ginas", () => {
-  assert.match(minhasTarefas, /data&&!loading&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
-  assert.match(minhasTarefas, /data\.itens\.length===1\?'tarefa vis√≠vel':'tarefas vis√≠veis'/);
-  assert.match(minhasTarefas, /data\.tem_mais\?' ¬∑ H√° mais tarefas dispon√≠veis\.':''/);
-});
-
-test("tarefas identificam a pagina√ß√£o para tecnologia assistiva", () => {
-  assert.match(minhasTarefas, /aria-label="Pagina√ß√£o de tarefas"/);
-  assert.match(minhasTarefas, /aria-current="page"/);
-});
-
-test("tarefas ocultam pagina√ß√£o quando a primeira p√°gina est√° vazia", () => {
-  assert.match(minhasTarefas, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Pagina√ß√£o de tarefas"/);
-});
-
-test("tarefas atualizam ao retornar √† aba", () => {
-  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /lastReturnRefresh/);
-  assert.match(minhasTarefas, />1000/);
-});
-
-test("tarefas n√£o consultam dados sem v√≠nculo validado", () => {
-  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
-});
-
-test("resumo do funcion√°rio usa cores sem√¢nticas nos indicadores", () => {
-  assert.match(resumoFuncionario, /function cardTone/);
-  assert.match(resumoFuncionario, /Atrasadas/);
-  assert.match(resumoFuncionario, /Conclu√≠das/);
-  assert.match(resumoFuncionario, /Em andamento/);
-});
-
-test("resumo informa atualiza√ß√£o no bot√£o durante carregamento", () => {
-  assert.match(resumoFuncionario, /aria-label=\{loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
-  assert.match(resumoFuncionario, /\{loading\?'Atualizando‚Ä¶':'Atualizar indicadores'\}/);
-});
-
-test("resumo preserva indicadores durante nova sincroniza√ß√£o", () => {
-  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);/);
-  assert.match(resumoFuncionario, /Promise\.resolve\(\)\.then\(\(\)=>supabase\.rpc\('meu_resumo_operacional'\)/);
-  assert.match(resumoFuncionario, /summary \? 'Atualizando indicadores‚Ä¶' : 'Carregando indicadores‚Ä¶'/);
-});
-
-test("resumo n√£o consulta dados sem v√≠nculo de funcion√°rio validado", () => {
-  assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\);setUpdatedAt\(null\);return/);
-  assert.match(resumoFuncionario, /if\(accessError\|\|!context\)\{setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(resumoFuncionario, /setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(resumoFuncionario, /\[accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
-});
-
-test("resumo nomeia cada indicador para acessibilidade", () => {
-  assert.match(resumoFuncionario, /role="group"/);
-  assert.match(resumoFuncionario, /card min-w-0 border p-4/);
-  assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
-});
-
-test("resumo encaminha prazos para a lista quando a tarefa n√£o est√° carregada", () => {
-  assert.match(resumoFuncionario, /function focusTask\(taskId:string\)/);
-  assert.match(resumoFuncionario, /scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
-  assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
-});
-
-test("indicadores de tarefas oferecem atalho acess√≠vel para a lista", () => {
-  assert.match(resumoFuncionario, /function focusTaskList\(event\?:React\.MouseEvent<HTMLAnchorElement>\)/);
-  assert.match(resumoFuncionario, /href="#tarefas" data-task-filter=\{taskFilter\|\|undefined\} onClick=\{focusTaskList\}/);
-  assert.match(resumoFuncionario, /Abrir minhas tarefas/);
-});
-
-test("indicadores de status filtram a lista de tarefas", () => {
-  assert.match(resumoFuncionario, /taskFilterEvent='gestio:filter-workforce-tasks'/);
-  assert.match(resumoFuncionario, /data-task-filter=\{taskFilter\|\|undefined\}/);
-  assert.match(minhasTarefas, /window\.addEventListener\(taskFilterEvent,applyFilter\)/);
-  assert.match(minhasTarefas, /setFilter\(status as TaskStatus\);setPage\(0\)/);
-});
-
-test("resumo destaca urg√™ncia dos pr√≥ximos prazos", () => {
-  assert.match(resumoFuncionario, /function deadlineStatus\(value:string\)/);
-  assert.match(resumoFuncionario, /Vence hoje/);
-  assert.match(resumoFuncionario, /Vence amanh√£/);
-  assert.match(resumoFuncionario, /Vence em \$\{difference\} dias/);
-  assert.match(resumoFuncionario, /status==='Atrasado'/);
-});
-
-test("editor de acesso permite repetir o carregamento", () => {
-  assert.match(editorAcesso, /const \[retry,setRetry\]/);
-  assert.match(editorAcesso, /\},\[userId,retry\]\)/);
-  assert.match(editorAcesso, /aria-label="Recarregar o acesso do funcion√°rio"/);
-  assert.match(editorAcesso, /Tentar novamente/);
-});
-
-test("editor de acesso informa cat√°logo de permiss√µes vazio", () => {
-  assert.match(editorAcesso, /!catalog\.length/);
-  assert.match(editorAcesso, /Nenhuma permiss√£o est√° dispon√≠vel para configura√ß√£o/);
-});
-
-test("equipe recarrega ap√≥s a sess√£o e o tenant ficarem dispon√≠veis", () => {
-  assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
-});
-
-test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
-  assert.match(equipe, /Tentar novamente/);
-  assert.match(equipe, /aria-busy=\{carregando\}/);
-  assert.match(equipe, /role="status" aria-live="polite"/);
-  assert.match(equipe, /role="status" aria-live="polite" className="rounded-xl/);
-});
-
-test("fichas de servi√ßo exp√µem carregamento e pagina√ß√£o acess√≠veis", () => {
-  assert.match(fichasFuncionario, /aria-busy=\{loading\}/);
-  assert.match(fichasFuncionario, /aria-live="polite"/);
-  assert.match(fichasFuncionario, /aria-label="Pagina√ß√£o de fichas de servi√ßo"/);
-  assert.match(fichasFuncionario, /aria-current="page"/);
-  assert.match(fichasFuncionario, /Tentar novamente/);
-});
-
-test("fichas n√£o consultam dados sem v√≠nculo validado", () => {
-  assert.match(fichasFuncionario, /if \(accessLoading\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); return/);
-  assert.match(fichasFuncionario, /if \(accessError \|\| !context\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); setLoading\(false\)/);
-  assert.match(fichasFuncionario, /\[page, query, refresh, accessLoading, accessError, context\?\.funcionario\.id, context\?\.funcionario\.versao\]/);
-});
-
-test("fichas exibem a √∫ltima atualiza√ß√£o recebida", () => {
-  assert.match(fichasFuncionario, /formatSheetUpdate/);
-  assert.match(fichasFuncionario, /dateTime=\{safeSheetDateTime\(item\.atualizado_em\)\}/);
-});
-
-test("fichas de servi√ßo nomeiam t√≠tulo, setor e atualiza√ß√£o", () => {
-  assert.match(fichasFuncionario, /aria-label=\{`Ficha \$\{item\.titulo\} ¬∑ \$\{isSetor\(item\.setor\) \? setores\[item\.setor\] : item\.setor\} ¬∑ \$\{formatSheetUpdate\(item\.atualizado_em\)\}`\}/);
-});
-
-test("fichas informam a quantidade vis√≠vel e a exist√™ncia de mais p√°ginas", () => {
-  assert.match(fichasFuncionario, /list\.itens\.length === 1 \? 'ficha vis√≠vel' : 'fichas vis√≠veis'/);
-  assert.match(fichasFuncionario, /list\.tem_mais \? ' ¬∑ H√° mais fichas dispon√≠veis\.' : ''/);
-});
-
-test("fichas diferenciam carga inicial de sincroniza√ß√£o", () => {
-  assert.match(fichasFuncionario, /list \? 'Atualizando fichas‚Ä¶' : 'Carregando fichas‚Ä¶'/);
-});
-
-test("pesquisa de fichas informa o estado do bot√£o", () => {
-  assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
-  assert.match(fichasFuncionario, /\{loading\?'Pesquisando‚Ä¶':'Pesquisar'\}/);
-  assert.match(fichasFuncionario, /<input type="search" className="input-field"/);
-});
-
-test("notifica√ß√µes permitem retry e pagina√ß√£o acess√≠vel", () => {
-  assert.match(notificacoesFuncionario, /aria-live="polite"/);
-  assert.match(notificacoesFuncionario, /Tentar novamente/);
-  assert.match(notificacoesFuncionario, /aria-label="Pagina√ß√£o de notifica√ß√µes"/);
-  assert.match(notificacoesFuncionario, /aria-current="page"/);
-});
-
-test("notifica√ß√µes ocultam pagina√ß√£o quando vazias", () => {
-  assert.match(notificacoesFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Pagina√ß√£o de notifica√ß√µes"/);
-});
-
-test("notifica√ß√µes atualizam ao retornar √† aba", () => {
-  assert.match(notificacoesFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /removeEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(notificacoesFuncionario, /lastReturnRefresh/);
-  assert.match(notificacoesFuncionario, />1000/);
-});
-
-test("agenda do funcion√°rio informa carregamento, valida per√≠odo e permite retry", () => {
-  assert.match(agendaFuncionario, /aria-busy=\{loading\}/);
-  assert.match(agendaFuncionario, /aria-live="polite"/);
-  assert.match(agendaFuncionario, /required disabled=\{loading\}/);
-  assert.match(agendaFuncionario, /Tentar novamente/);
-  assert.match(agendaFuncionario, /!start\|\|!end/);
-  assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
-  assert.match(agendaFuncionario, /min=\{start\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-invalid=\{invalidRange\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem t√≠tulo'\} ¬∑ \$\{formatAgendaDate\(item\.inicio\)\} ¬∑ \$\{formatAgendaStatus\(item\.status\)\}/);
-});
-
-test("agenda informa atualiza√ß√£o no bot√£o", () => {
-  assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
-  assert.match(agendaFuncionario, /\{loading\?'Atualizando‚Ä¶':'Atualizar'\}/);
-});
-
-test("agenda destaca urg√™ncia das atividades", () => {
-  assert.match(agendaFuncionario, /const agendaTiming=\(value:string,status:string\)=>/);
-  assert.match(agendaFuncionario, /'Atrasada'/);
-  assert.match(agendaFuncionario, /'Hoje'/);
-  assert.match(agendaFuncionario, /'Amanh√£'/);
-  assert.match(agendaFuncionario, /`Em \$\{days\} dias`/);
-});
-
-test("hist√≥rico do funcion√°rio oferece retry e pagina√ß√£o acess√≠vel", () => {
-  assert.match(historicoFuncionario, /aria-busy=\{loading\}/);
-  assert.match(historicoFuncionario, /aria-live="polite"/);
-  assert.match(historicoFuncionario, /Tentar novamente/);
-  assert.match(historicoFuncionario, /aria-label="Pagina√ß√£o do hist√≥rico de atividades"/);
-  assert.match(historicoFuncionario, /aria-current="page"/);
-  assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
-});
-
-test("hist√≥rico informa atualiza√ß√£o no bot√£o", () => {
-  assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando hist√≥rico':'Atualizar hist√≥rico'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizando‚Ä¶':'Atualizar hist√≥rico'\}/);
-});
-
-test("hist√≥rico diferencia carga inicial de sincroniza√ß√£o", () => {
-  assert.match(historicoFuncionario, /data \? 'Atualizando hist√≥rico‚Ä¶' : 'Carregando hist√≥rico‚Ä¶'/);
-});
-
-test("hist√≥rico informa a quantidade vis√≠vel e a exist√™ncia de mais p√°ginas", () => {
-  assert.match(historicoFuncionario, /data\.itens\.length===1\?'atividade vis√≠vel':'atividades vis√≠veis'/);
-  assert.match(historicoFuncionario, /data\.tem_mais\?' ¬∑ H√° mais atividades dispon√≠veis\.':''/);
-});
-
-test("hist√≥rico e fichas ocultam pagina√ß√£o quando vazios", () => {
-  assert.match(historicoFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Pagina√ß√£o do hist√≥rico de atividades"/);
-  assert.match(fichasFuncionario, /list && \(list\.itens\.length \|\| page>0 \|\| list\.tem_mais\) && <nav aria-label="Pagina√ß√£o de fichas de servi√ßo"/);
-});
-
-test("pagina√ß√£o do funcion√°rio quebra em telas estreitas", () => {
-  assert.match(minhasTarefas, /aria-label="Pagina√ß√£o de tarefas"[^>]*className="flex flex-wrap items-center gap-3"/);
-  assert.match(historicoFuncionario, /aria-label="Pagina√ß√£o do hist√≥rico de atividades"[^>]*className="flex flex-wrap items-center gap-3"/);
-  assert.match(fichasFuncionario, /aria-label="Pagina√ß√£o de fichas de servi√ßo"[^>]*className="flex flex-wrap items-center gap-3"/);
-  assert.match(notificacoesFuncionario, /aria-label="Pagina√ß√£o de notifica√ß√µes"[^>]*className="flex flex-wrap items-center gap-3"/);
-});
-
-test("busca de fichas e atalhos da agenda t√™m sem√¢ntica acess√≠vel", () => {
-  assert.match(fichasFuncionario, /<form className="flex flex-wrap gap-2" role="search" aria-label="Pesquisar fichas de servi√ßo"/);
-  assert.match(agendaFuncionario, /role="group" aria-label="Atalhos de per√≠odo"/);
-});
-
-test("agenda relaciona datas inv√°lidas √† mensagem de erro", () => {
-  assert.match(agendaFuncionario, /id="agenda-start-date"[^>]*aria-describedby=\{invalidRange\?'agenda-range-error':undefined\}/);
-  assert.match(agendaFuncionario, /id="agenda-end-date"[^>]*aria-describedby=\{invalidRange\?'agenda-range-error':undefined\}/);
-  assert.match(agendaFuncionario, /<span id="agenda-range-error" className="sr-only">\{invalidRange \? error : ''\}<\/span>/);
-});
-
-test("mensagens de erro operacionais quebram texto e preservam os bot√µes", () => {
-  assert.match(editorAcesso, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(editorAcesso, /className="shrink-0 rounded-lg border border-rose-200/);
-  assert.match(agendaFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(agendaFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
-  assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(ocorrenciasFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
-  for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
-    assert.match(source, /className="min-w-0 break-words">\{error\}<\/span>/);
-    assert.match(source, /className="shrink-0 rounded-lg border border-rose-200/);
-  }
-});
-
-test("formul√°rios operacionais quebram mensagens de valida√ß√£o longas", () => {
-  for (const source of [aceiteInstalacao, controleSecagem, solicitacaoMaterial, fichaTecnica, criacaoTarefa, registroProducao, fluxoProducao, formularioFichaTecnica]) {
-    assert.match(source, /className="(?:[^" ]+ )*break-words[^\"]*text-sm text-red-700"/);
-  }
-});
-
-test("erros inline de tarefa, ocorr√™ncia e respons√°vel quebram no mobile", () => {
-  assert.match(minhasTarefas, /className="break-words text-sm text-red-700 sm:col-span-2"/);
-  assert.match(ocorrenciasFuncionario, /className="break-words text-sm text-red-700">\{error\}<\/p>/);
-  const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
-  assert.match(assignment, /<p className="min-w-0 break-words">\{error\}<\/p>/);
-});
-
-test("a√ß√µes de cabe√ßalho e formul√°rios se reorganizam no mobile", () => {
-  assert.match(inboxMateriais, /className="min-w-0"><h2 id="material-requests-title" className="break-words/);
-  assert.match(inboxMateriais, /className="flex flex-wrap items-center gap-2"><select/);
-  assert.match(editorAcesso, /className="flex flex-wrap items-center justify-between gap-3"><h2 id="employee-access-title" className="min-w-0 break-words/);
-  assert.match(equipe, /<div className="flex flex-wrap gap-2"><button type="submit"/);
-});
-
-test("lista administrativa quebra identificadores e hist√≥rico longos", () => {
-  assert.match(equipe, /<b className="break-words">\{perfil\.nome_completo/);
-  assert.match(equipe, /className="break-all text-xs text-slate-500">\{perfil\.email/);
-  assert.match(equipe, /className="mt-1 block break-words text-xs font-semibold/);
-  assert.match(equipe, /<span className="break-words">\{perfil\.cargo/);
-  assert.match(equipe, /<li key=\{a\.id\} className="break-words">/);
-});
-
-test("notifica√ß√µes e hist√≥rico quebram r√≥tulos operacionais longos", () => {
-  assert.match(notificacoesFuncionario, /break-words text-sm text-slate-600/);
-  assert.match(notificacoesFuncionario, /items-center gap-2 break-words text-sm font-semibold/);
-  assert.match(notificacoesFuncionario, /className="shrink-0 rounded-full bg-cyan-100/);
-  assert.match(historicoFuncionario, /className="break-words text-sm font-medium"/);
-  assert.match(historicoFuncionario, /className="break-words text-xs text-slate-500"/);
-});
-
-test("hist√≥rico n√£o consulta dados sem v√≠nculo de funcion√°rio validado", () => {
-  assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(historicoFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
-});
-
-test("hist√≥rico reinicia a pagina√ß√£o ao trocar de funcion√°rio", () => {
-  assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-});
-
-test("listas do funcion√°rio reiniciam filtros e pagina√ß√£o ao trocar de contexto", () => {
-  assert.match(notificacoesFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(minhasTarefas, /useEffect\(\(\)=>\{setPage\(0\);setFilter\(''\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(fichasFuncionario, /useEffect\(\(\) => \{ setPage\(0\); setSearch\(''\); setQuery\(''\); \}, \[context\?\.funcionario\.id, context\?\.funcionario\.versao\]\)/);
-});
-
-test("notifica√ß√£o limpa erro antigo ao abrir um registro", () => {
-  assert.match(notificacoesFuncionario, /setError\('\'\);openerRef\.current=event\.currentTarget;setSelected\(item\)/);
-  assert.match(notificacoesFuncionario, /ficha_atribuida:'Ficha atribu√≠da'/);
-});
-
-test("notifica√ß√µes preservam a lista e o detalhe durante nova sincroniza√ß√£o", () => {
-  assert.match(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);/);
-  assert.doesNotMatch(notificacoesFuncionario, /setLoading\(true\);setError\('\'\);setSelected\(null\)/);
-  assert.match(notificacoesFuncionario, /data \? 'Atualizando notifica√ß√µes‚Ä¶' : 'Carregando notifica√ß√µes‚Ä¶'/);
-});
-
-test("notifica√ß√£o anuncia leitura em andamento no item correto", () => {
-  assert.match(notificacoesFuncionario, /<li key=\{item\.id\} className="space-y-2 py-3" aria-busy=\{busy===item\.id\}/);
-});
-
-test("agenda usa datas locais para n√£o deslocar o per√≠odo no fuso hor√°rio", () => {
-  assert.match(agendaFuncionario, /const isoDate=\(date:Date\)=>/);
-  assert.doesNotMatch(agendaFuncionario, /Date\.now\(\)\+30\*86400000/);
-  assert.doesNotMatch(agendaFuncionario, /new Date\(\)\.toISOString\(\)\.slice\(0,10\)/);
-});
-
-test("agenda limpa o erro ao corrigir o per√≠odo", () => {
-  assert.match(agendaFuncionario, /setStart\(event\.target\.value\);setError\('\'\)/);
-  assert.match(agendaFuncionario, /setEnd\(event\.target\.value\);setError\('\'\)/);
-});
-
-test("detalhes abertos oferecem fechamento expl√≠cito", () => {
-  assert.match(notificacoesFuncionario, /onClick=\{\(\)=>\{returnFocus\.current=true;setSelected\(null\);\}\}>Fechar detalhe/);
-  assert.match(notificacoesFuncionario, /aria-label="Fechar detalhe da notifica√ß√£o"/);
-  assert.match(notificacoesFuncionario, /selectedRef\.current\?\.focus\(\)/);
-  assert.match(notificacoesFuncionario, /openerRef\.current\?\.focus\(\)/);
-  assert.match(fichasFuncionario, /onClick=\{\(\) => \{ returnFocus\.current = true; setSelected\(null\); \}\}>Fechar ficha/);
-  assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"/);
-  assert.match(fichasFuncionario, /selectedRef\.current\?\.focus\(\)/);
-  assert.match(fichasFuncionario, /tabIndex=\{-1\}[^>]*aria-label=\{`Ficha aberta:/);
-  assert.match(fichasFuncionario, /returnFocus\.current = true; setSelected\(null\)/);
-  assert.match(fichasFuncionario, /openerRef\.current\?\.focus\(\)/);
-});
-
-test("produ√ß√£o e secagem usam estado expl√≠cito para mensagens acess√≠veis", () => {
-  assert.match(registroProducao, /messageKind === 'status' \? 'status' : 'alert'/);
-  assert.match(controleSecagem, /messageKind === 'status' \? 'status' : 'alert'/);
-});
-
-test("resumo do funcion√°rio atualiza ao retornar √† aba", () => {
-  assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("projetos do setor atualizam ao retornar √† aba", () => {
-  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("projetos do setor rejeitam duplicidades e ordenam prazos v√°lidos", () => {
-  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
-  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
-  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
-});
-
-test("edi√ß√£o de acesso limpa erro ao alterar escopo de permiss√£o", () => {
-  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
-});
-
-test("anexos reiniciam pagina√ß√£o e arquivo ao trocar de contexto", () => {
-  assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
-});
-
-test("pesquisa de fichas limpa erro ao editar o termo", () => {
-  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
-});
-
-test("fichas de servi√ßo atualizam ao retornar √† aba", () => {
-  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("contador de notifica√ß√µes anuncia mudan√ßas", () => {
-  assert.match(notificacoesFuncionario, /Notifica√ß√µes <span aria-live="polite">/);
-  assert.match(notificacoesFuncionario, /Tudo lido/);
-  assert.match(notificacoesFuncionario, /notifica√ß√µes n√£o lidas/);
-});
-
-test("anexos atualizam ao retornar √† aba", () => {
-  assert.match(anexos, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(anexos, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(anexos, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("agenda atualiza ao retornar √† aba", () => {
-  assert.match(agendaFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(agendaFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(agendaFuncionario, /void load\(\)/);
-});
-
-test("hist√≥rico atualiza ao retornar √† aba", () => {
-  assert.match(historicoFuncionario, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(historicoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("ocorr√™ncias reiniciam p√°gina e atualizam ao retornar √† aba", () => {
-  assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
-  assert.match(ocorrencias, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("detalhe de tarefa oferece retry contextual e estado de carregamento acess√≠vel", () => {
-  assert.match(detalheTarefa, /aria-busy=\{loading\}/);
-  assert.match(detalheTarefa, /aria-live="polite"/);
-  assert.match(detalheTarefa, /Tentar novamente/);
-  assert.match(detalheTarefa, /Recarregar tarefa/);
-});
-
-test("detalhe de tarefa informa recarregamento no bot√£o", () => {
-  assert.match(detalheTarefa, /aria-label=\{loading\?\(task\?'Atualizando tarefa':'Carregando tarefa'\):'Recarregar tarefa'\}/);
-  assert.match(detalheTarefa, /\{loading\?\(task\?'Atualizando‚Ä¶':'Carregando‚Ä¶'\):'Recarregar tarefa'\}/);
-});
-
-test("detalhe de tarefa preserva a ficha durante sincroniza√ß√£o", () => {
-  assert.match(detalheTarefa, /task \? 'Atualizando tarefa‚Ä¶' : 'Carregando tarefa‚Ä¶'/);
-  assert.doesNotMatch(detalheTarefa, /setLoading\(true\);setError\(''\);setTask\(null\);setUpdatedAt\(null\)/);
-});
-
-test("ficha t√©cnica anuncia carregamento e opera√ß√µes em andamento", () => {
-  assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha t√©cnica/);
-  assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
-});
-
-test("ficha t√©cnica anuncia aus√™ncia de anexo vinculado", () => {
-  assert.match(formularioFichaTecnica, /role=\{current \? undefined : 'status'\}/);
-});
-
-test("ficha t√©cnica preserva o conte√∫do durante sincroniza√ß√£o", () => {
-  assert.match(fichaTecnica, /if \(loading && !sheet\) return/);
-  assert.match(fichaTecnica, /Atualizando ficha t√©cnica‚Ä¶/);
-  assert.match(fichaTecnica, /setSheet\(null\); setValues\(\{\}\)/);
-});
-
-test("ficha t√©cnica bloqueia edi√ß√£o e a√ß√µes durante sincroniza√ß√£o", () => {
-  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| !sheet\.pode_editar/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy \|\| sheet\.status\s*===\s*'concluida'\}/);
-});
-
-test("ocorr√™ncias e anexos exp√µem retry e pagina√ß√£o acess√≠vel", () => {
-  assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(ocorrencias, /aria-label="Pagina√ß√£o de ocorr√™ncias"/);
-  assert.match(ocorrencias, /role="status" aria-live="polite" className="text-sm text-slate-500">Nenhuma ocorr√™ncia dispon√≠vel nesta p√°gina/);
-  assert.match(ocorrencias, /aria-label=\{`Ocorr√™ncia \$\{incidentTitle\} ¬∑ \$\{formatIncidentSeverity\(item\.gravidade\)\} ¬∑ \$\{incidentStatus\}`\}/);
-  assert.match(ocorrencias, /Tentar novamente/);
-  assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /aria-label="Pagina√ß√£o de anexos"/);
-  assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} ¬∑ \$\{attachmentSize\}`\}/);
-  assert.match(anexos, /Tentar novamente/);
-  assert.match(anexos, /Nenhum anexo validado nesta p√°gina/);
-});
-
-test("ocorr√™ncias e anexos ocultam pagina√ß√£o quando vazios", () => {
-  assert.match(ocorrencias, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Pagina√ß√£o de ocorr√™ncias"/);
-  assert.match(anexos, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Pagina√ß√£o de anexos"/);
-});
-
-test("ocorr√™ncias informam atualiza√ß√£o no bot√£o", () => {
-  assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualiza√ß√£o das ocorr√™ncias':'Atualizar ocorr√™ncias'\}/);
-  assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde‚Ä¶':'Atualizar ocorr√™ncias'\}/);
-});
-
-test("ocorr√™ncias limpam feedback ao editar", () => {
-  assert.match(ocorrenciasFuncionario, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
-  assert.match(ocorrenciasFuncionario, /setTitle\(event\.target\.value\);clearFeedback\(\)/);
-  assert.match(ocorrenciasFuncionario, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
-});
-
-test("anexos e ocorr√™ncias diferenciam carga inicial de sincroniza√ß√£o", () => {
-  assert.match(anexos, /items\.length \? 'Atualizando anexos‚Ä¶' : 'Carregando anexos‚Ä¶'/);
-  assert.match(ocorrenciasFuncionario, /items\.length\?'Atualizando ocorr√™ncias‚Ä¶':'Carregando ocorr√™ncias‚Ä¶'/);
-  assert.match(anexos, /setItems\(\[\]\);setLinks\(\{\}\);onListed\?\.\(\[\]\)/);
-  assert.match(ocorrenciasFuncionario, /setItems\(\[\]\);setMore\(false\)/);
-});
-
-test("ocorr√™ncias resetam o formul√°rio ao trocar de contexto", () => {
-  assert.match(ocorrenciasFuncionario, /useEffect\(\(\)=>\{setTitle\(''\);setDescription\(''\);setType\('outro'\);setSeverity\('atencao'\);setMessage\(''\);receipt\.current=null;\},\[serviceId,sector\]\)/);
-});
-
-test("aceite da instala√ß√£o sinaliza salvamento e bloqueia envio concorrente", () => {
-  assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
-  assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
-  assert.match(aceiteInstalacao, /!attachments\.length&&<p role="status" aria-live="polite"/);
-  assert.match(aceiteInstalacao, /type="checkbox" required checked=\{confirmed\}/);
-});
-
-test("aceite libera o identificador ap√≥s confirma√ß√£o", () => {
-  assert.match(aceiteInstalacao, /await onRegister\(\{\.\.\.data,request:receipt\.current\.id\}\);receipt\.current=null/);
-});
-
-test("aceite limpa erro ao corrigir campos", () => {
-  assert.match(aceiteInstalacao, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(aceiteInstalacao, /setName\(event\.target\.value\);clearError\(\)/);
-  assert.match(aceiteInstalacao, /setProof\(event\.target\.value\);clearError\(\)/);
-  assert.match(aceiteInstalacao, /id=\{`\$\{id\}-name`\}[^>]*autoComplete="name"/);
-  assert.match(aceiteInstalacao, /aria-describedby=\{`\$\{id\}-proof-help`\}/);
-});
-
-test("produ√ß√£o e estoque sinalizam opera√ß√µes e mensagens ao funcion√°rio", () => {
-  assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
-  assert.match(solicitacaoMaterial, /aria-live="polite"/);
-  assert.match(registroProducao, /aria-busy=\{busy\}/);
-  assert.match(registroProducao, /dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
-  assert.match(registroProducao, /aria-live="polite"/);
-  assert.match(registroProducao, /Nenhum evento de produ√ß√£o registrado nesta ficha/);
-  assert.match(registroProducao, /aria-label=\{`Evento \$\{formatType\(item\.tipo\)\} ¬∑ \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} ¬∑ \$\{formatEntryDate\(item\.criado_em\)\}`\}/);
-});
-
-test("registros operacionais liberam o identificador ap√≥s sucesso", () => {
-  assert.match(registroProducao, /await onRegister\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
-  assert.match(solicitacaoMaterial, /await onCreate\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
-});
-
-test("produ√ß√£o limpa o feedback ao editar novo evento", () => {
-  assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
-});
-
-test("produ√ß√£o valida observa√ß√£o antes do envio", () => {
-  assert.match(registroProducao, /description\.trim\(\)\.length < 3/);
-  assert.match(registroProducao, /Informe uma observa√ß√£o com pelo menos 3 caracteres/);
-  assert.match(registroProducao, /minLength=\{3\} maxLength=\{1000\} required/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*required min=/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-unit`\}[^>]*required maxLength=\{40\}/);
-  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*inputMode="decimal"/);
-});
-
-test("solicita√ß√£o de material limpa feedback ao editar", () => {
-  assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
-  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*inputMode="decimal"/);
-});
-
-test("secagem, inbox de estoque e resumo anunciam estados de opera√ß√£o", () => {
-  assert.match(controleSecagem, /aria-busy=\{busy\}/);
-  assert.match(controleSecagem, /aria-live="polite"/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
-  assert.match(inboxMateriais, /Tentar novamente/);
-  assert.match(inboxMateriais, /aria-live="polite"/);
-  assert.match(inboxMateriais, /actionBusy/);
-  assert.match(inboxMateriais, /aria-label=\{`Solicita√ß√£o de \$\{item\.item_nome\} ¬∑ \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} ¬∑ \$\{formatStatus\(item\.status\)\}`\}/);
-  assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\}/);
-  assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
-});
-
-test("secagem e produ√ß√£o informam atualiza√ß√£o nos bot√µes", () => {
-  assert.match(controleSecagem, /aria-label=\{busy\?'Aguarde a atualiza√ß√£o da secagem':'Atualizar hor√°rio do servidor'\}/);
-  assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualiza√ß√£o dos registros':'Atualizar registros'\}/);
-});
-
-test("secagem limpa feedback ao editar o prazo", () => {
-  assert.match(controleSecagem, /setMinutes\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\} max=\{10080\}/);
-  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\}/);
-});
-
-test("cart√£o de solicita√ß√£o informa atualiza√ß√£o no bot√£o", () => {
-  assert.match(solicitacaoMaterial, /aria-label=\{busy\?'Atualizando solicita√ß√µes':'Atualizar solicita√ß√µes'\}/);
-  assert.match(solicitacaoMaterial, /\{busy\?'Atualizando‚Ä¶':'Atualizar'\}/);
-});
-
-test("cart√£o de solicita√ß√£o preserva o hor√°rio durante sincroniza√ß√£o", () => {
-  assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
-  assert.match(solicitacaoMaterial, /busy\?'Atualizando solicita√ß√µes‚Ä¶':updatedAt/);
-});
-
-test("cancelamento de material confirma sucesso", () => {
-  assert.match(solicitacaoMaterial, /aria-label=\{`Solicita√ß√£o de \$\{requestItem\.item_nome\} ¬∑ \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} ¬∑ \$\{formatStatus\(requestItem\.status\)\}`\}/);
-  assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('Solicita√ß√£o cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);
-  assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('Solicita√ß√£o cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /role=\{messageKind === 'status' \? 'status' : 'alert'\}/);
-});
-
-test("inbox de estoque informa atualiza√ß√£o no bot√£o", () => {
-  assert.match(inboxMateriais, /aria-label=\{loading \|\| !!actionBusy\?'Aguarde a atualiza√ß√£o das solicita√ß√µes':'Atualizar solicita√ß√µes'\}/);
-  assert.match(inboxMateriais, /\{loading \|\| !!actionBusy\?'Aguarde‚Ä¶':'Atualizar'\}/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
-});
-
-test("inbox de estoque participa da atualiza√ß√£o global", () => {
-  assert.match(inboxMateriais, /workforceRefreshEvent/);
-  assert.match(inboxMateriais, /addEventListener\(workforceRefreshEvent,refreshPanel\)/);
-  assert.match(inboxMateriais, /void load\(false\)/);
-});
-
-test("inbox limpa confirma√ß√£o antes de nova a√ß√£o", () => {
-  assert.match(inboxMateriais, /setActionBusy\(item\.id\);setError\(''\);setMessage\(''\)/);
-});
-
-test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
-  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(criacaoTarefa, /aria-live="polite"/);
-  assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(atribuicaoFicha, /aria-live="polite"/);
-  assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy\}/);
-  assert.match(fluxoProducao, /aria-live="polite"/);
-});
-
-test("fluxo informa as a√ß√µes de salvar e recarregar", () => {
-  assert.match(fluxoProducao, /aria-label=\{busy\?'Salvando fluxo':flow\.configurado\?'Salvar sequ√™ncia':'Configurar fluxo'\}/);
-  assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
-});
-
-test("fluxo preserva a configura√ß√£o durante sincroniza√ß√£o", () => {
-  assert.match(fluxoProducao, /flow \? 'Atualizando fluxo‚Ä¶' : 'Carregando fluxo‚Ä¶'/);
-  assert.doesNotMatch(fluxoProducao, /setLoading\(true\);setError\(''\);setFlow\(null\)/);
-  assert.match(fluxoProducao, /useEffect\(\(\)=>\{setFlow\(null\);setSelected\(\[\]\);\},\[serviceId,context\?\.proprietario\]\)/);
-});
-
-test("fluxo limpa feedback ao alterar a sequ√™ncia", () => {
-  assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
-});
-
-test("cria√ß√£o de tarefa informa carregamento dos respons√°veis", () => {
-  assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando respons√°veis':busy\?'Criando tarefa':'Criar tarefa'\}/);
-  assert.match(criacaoTarefa, /\{loading\?'Carregando‚Ä¶':busy\?'Criando‚Ä¶':'Criar tarefa'\}/);
-  assert.match(criacaoTarefa, /candidates\.length \? 'Atualizando respons√°veis‚Ä¶' : 'Carregando respons√°veis‚Ä¶'/);
-  assert.match(criacaoTarefa, /!loading && !error && !candidates\.length && <p role="status" aria-live="polite"/);
-  assert.match(criacaoTarefa, /type="datetime-local" autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\} value=\{deadline\}/);
-  assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
-  assert.match(criacaoTarefa, /O hor√°rio ser√° salvo conforme o fuso local deste dispositivo/);
-});
-
-test("cria√ß√£o de tarefa limpa feedback ao trocar o contexto", () => {
-  assert.match(criacaoTarefa, /setCandidates\(\[\]\);setEmployee\(''\);setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
-  assert.doesNotMatch(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
-});
-
-test("cria√ß√£o de tarefa limpa valida√ß√£o ao corrigir campos", () => {
-  assert.match(criacaoTarefa, /setTitle\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
-  assert.match(criacaoTarefa, /setEmployee\(event\.target\.value\);setError\(''\);setMessage\(''\)/);
-  assert.match(criacaoTarefa, /const clearFeedback=\(\)=>\{setError\(''\);setMessage\(''\);\}/);
-  assert.match(criacaoTarefa, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
-  assert.match(criacaoTarefa, /setDeadline\(event\.target\.value\);clearFeedback\(\)/);
-});
-
-test("cria√ß√£o de tarefa valida descri√ß√£o antes do envio", () => {
-  assert.match(criacaoTarefa, /id=\{`\$\{id\}-title`\}[^>]*required minLength=\{2\} maxLength=\{200\}/);
-  assert.match(criacaoTarefa, /description\.trim\(\)\.length<2/);
-  assert.match(criacaoTarefa, /Informe uma descri√ß√£o com pelo menos 2 caracteres/);
-  assert.match(criacaoTarefa, /minLength=\{2\} maxLength=\{10000\} required/);
-});
-
-test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
-  assert.match(editorFuncionario, /aria-busy=\{busy \|\| loading\}/);
-  assert.match(editorFuncionario, /busy&&<p role="status" aria-live="polite">Salvando acesso do funcion√°rio‚Ä¶<\/p>/);
-  assert.match(editorFuncionario, /role="status" aria-live="polite"/);
-  assert.match(editorFuncionario, /employee\?'Atualizando acesso‚Ä¶':'Carregando acesso‚Ä¶'/);
-  assert.match(editorFuncionario, /disabled=\{busy\}/);
-  assert.match(editorFuncionario, /dateTime=\{safeEmployeeDateTime\(employee\.created_at\)\}/);
-  assert.match(editorFuncionario, /type="button" className="btn-secondary shrink-0" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edi√ß√£o do funcion√°rio"/);
-  assert.match(editorFuncionario, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
-  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
-  assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-job`\}[^>]*autoComplete="organization-title"/);
-});
-
-test("respons√°vel limpa feedback ao recarregar candidatos", () => {
-  assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
-  assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcion√°rios autorizados‚Ä¶' : 'Carregando funcion√°rios autorizados‚Ä¶'/);
-  assert.match(atribuicaoFicha, /useEffect\(\(\)=>\{setCandidates\(\[\]\);\},\[serviceId,sector\]\)/);
-});
-
-test("respons√°vel limpa feedback quando a ficha muda externamente", () => {
-  assert.match(atribuicaoFicha, /setSelected\(current \|\| ''\);setMessage\(''\)/);
-});
-
-test("ficha t√©cnica e resolu√ß√£o de ocorr√™ncia anunciam estados cr√≠ticos", () => {
-  assert.match(fichaTecnica, /\{error && <p role="alert"/);
-  assert.match(fichaOperacional, /role="status" aria-live="polite"/);
-  assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
-  assert.match(ocorrenciasFuncionario, /rows=\{3\} required minLength=\{10\} maxLength=\{5000\}/);
-});
-
-test("ficha t√©cnica ignora respostas antigas de secagem e produ√ß√£o", () => {
-  assert.match(fichaTecnica, /const result = await technicalSheets\.dryingLoad\(serviceId\); if \(request === generation\.current\) setDrying\(result\)/);
-  assert.match(fichaTecnica, /const result = await technicalSheets\.productionLoad\(serviceId, sector\); if \(request === generation\.current\) setProduction\(result\)/);
-});
-
-test("cart√£o de tarefa sinaliza atualiza√ß√£o concorrente", () => {
-  assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-});
-
-test("cart√£o de tarefa informa o estado do salvamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem altera√ß√µes'\}/);
-  assert.match(minhasTarefas, /\{busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700 sm:col-span-2">Salvando tarefa‚Ä¶<\/p>\}/);
-});
-
-test("cart√£o de tarefa limpa erro ao editar", () => {
-  assert.match(minhasTarefas, /const clearError=\(\)=>setError\(''\)/);
-  assert.match(minhasTarefas, /setStatus\(event\.target\.value as TaskStatus\);clearError\(\)/);
-  assert.match(minhasTarefas, /setProgress\(event\.target\.value===''\?NaN:Number\(event\.target\.value\)\);clearError\(\)/);
-});
-
-test("notifica√ß√µes sinalizam leitura e bloqueiam abertura concorrente", () => {
-  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
-  assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
-  assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notifica√ß√£o‚Ä¶<\/p>\}/);
-  assert.match(notificacoesFuncionario, /setMessage\('Notifica√ß√£o marcada como lida\.'\)/);
-});
-
-test("notifica√ß√µes exp√µem o estado de leitura semanticamente", () => {
-  assert.match(notificacoesFuncionario, /aria-label=\{`\$\{item\.lida_em\?'Notifica√ß√£o lida':'Notifica√ß√£o n√£o lida'\}/);
-  assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: \$\{notificationLabels\[item\.evento\]\|\|'Atualiza√ß√£o da opera√ß√£o'\}`\}/);
-});
-
-test("notifica√ß√µes informam atualiza√ß√£o no bot√£o", () => {
-  assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualiza√ß√£o das notifica√ß√µes':'Atualizar notifica√ß√µes'\}/);
-  assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguarde‚Ä¶':'Atualizar notifica√ß√µes'\}/);
-});
-
-test("notifica√ß√µes destacam cada item n√£o lido", () => {
-  assert.match(notificacoesFuncionario, /!item\.lida_em&&<span className="shrink-0 rounded-full bg-cyan-100/);
-  assert.match(notificacoesFuncionario, />N√£o lida<\/span>/);
-});
-
-test("fichas bloqueiam abertura e pagina√ß√£o durante sincroniza√ß√£o", () => {
-  assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| !list\.tem_mais\}/);
-});
-
-test("pesquisa de fichas n√£o cria nova carga durante sincroniza√ß√£o", () => {
-  assert.match(fichasFuncionario, /aria-busy=\{loading\} onSubmit=\{event => \{ event\.preventDefault\(\); if \(loading\) return;/);
-  assert.match(fichasFuncionario, /disabled=\{loading\} value=\{search\}/);
-});
-
-test("opera√ß√µes de produ√ß√£o e secagem sinalizam o formul√°rio em andamento", () => {
-  assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-  assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
-});
-
-test("a√ß√µes de execu√ß√£o da ficha informam salvamento", () => {
-  assert.match(fichaOperacional, /saving\?'Salvando‚Ä¶'/);
-  assert.match(fichaTecnica, /saving && <p role="status" aria-live="polite">Salvando altera√ß√µes da ficha t√©cnica‚Ä¶<\/p>/);
-  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situa√ß√£o:/);
-});
-
-test("ficha t√©cnica limpa erros ao editar um campo", () => {
-  assert.match(readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx"), /setMessage\(''\);\s*setIssues\(\[\]\);\s*change/);
-});
-
-test("servi√ßo de fichas valida checklist e dados da resposta", () => {
-  assert.match(technicalSheetService, /hasUniqueKeys\(checklistItems\) &&\s+!!row\.checklist/);
-  assert.doesNotMatch(technicalSheetService, /hasUniqueKeys\(checklistItems\);\s+!!row\.checklist/);
-});
-
-test("servi√ßo de fichas rejeita timestamps inv√°lidos", () => {
-  assert.match(technicalSheetService, /isDateOrNull\(row\.iniciada_em\) && isDateOrNull\(row\.concluida_em\)/);
-  assert.match(technicalSheetService, /Number\.isFinite\(new Date\(record\.criado_em\)\.getTime\(\)\)/);
-});
-
-test("registro de secagem valida datas retornadas", () => {
-  assert.match(technicalSheetService, /!isDateOrNull\(result\.prevista_ate\)/);
-  assert.match(technicalSheetService, /!isDateOrNull\(result\.servidor_agora\)/);
-  assert.match(controleSecagem, /dateTime=\{safeServerDateTime\(state\?\.iniciada_em \?\? null\)\}/);
-});
-
-test("libera√ß√£o da ficha bloqueia duplo clique", () => {
-  assert.match(fichaOperacional, /disabled=\{loading\}/);
-  assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
-  assert.match(fichaOperacional, /loading \? 'Liberando‚Ä¶' : 'Liberar ficha deste setor'/);
-});
-
-test("agenda ignora respostas de requisi√ß√µes antigas", () => {
-  assert.match(agendaFuncionario, /const generation=useRef\(0\)/);
-  assert.match(agendaFuncionario, /if\(request===generation\.current\)setItems/);
-  assert.match(agendaFuncionario, /return\(\)=>\{generation\.current\+\+;\}/);
-});
-
-test("agenda limpa atividades anteriores antes de nova consulta", () => {
-  assert.match(agendaFuncionario, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[start,end,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
-  assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);try/);
-});
-
-test("agenda preserva eventos durante nova sincroniza√ß√£o", () => {
-  assert.match(agendaFuncionario, /items\.length\?'Atualizando agenda‚Ä¶':'Carregando agenda‚Ä¶'/);
-});
-
-test("agenda oferece atalhos de per√≠odo", () => {
-  assert.match(agendaFuncionario, /function setPreset\(days:number\)/);
-  assert.match(agendaFuncionario, /aria-label="Atalhos de per√≠odo"/);
-  assert.match(agendaFuncionario, /Pr√≥ximos 7 dias/);
-  assert.match(agendaFuncionario, /Pr√≥ximos 30 dias/);
-});
-
-test("agenda informa a quantidade de atividades do per√≠odo", () => {
-  assert.match(agendaFuncionario, /items\.length===1\?'atividade encontrada':'atividades encontradas'/);
-  assert.match(agendaFuncionario, /no per√≠odo\.<\/p>/);
-});
-
-test("agenda marca o atalho de per√≠odo selecionado", () => {
-  assert.match(agendaFuncionario, /const presetActive=\(days:number\)=>/);
-  assert.match(agendaFuncionario, /aria-pressed=\{presetActive\(7\)\}/);
-});
-
-test("agenda limpa atividades quando o per√≠odo √© inv√°lido", () => {
-  assert.match(agendaFuncionario, /if\(!start\|\|!end\)\{setItems\(\[\]\);setError/);
-  assert.match(agendaFuncionario, /if\(end<start\)\{setItems\(\[\]\);setError/);
-});
-
-test("anexos bloqueiam gera√ß√£o simult√¢nea de links tempor√°rios", () => {
-  assert.match(anexos, /linkBusy/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /itemBusy\?'Gerando‚Ä¶'/);
-});
-
-test("anexos bloqueiam envio enquanto o link tempor√°rio √© gerado", () => {
-  assert.match(anexos, /if\(lock\.current \|\| !!linkBusy \|\| !file\)return/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| !file\}/);
-});
-
-test("anexos orientam formatos e tamanho do arquivo", () => {
-  assert.match(anexos, /aria-describedby=\{`\$\{id\}-help`\}/);
-  assert.match(anexos, /Formatos aceitos: JPEG, PNG, WebP ou PDF\. Tamanho m√°ximo: 10 MB\./);
-});
-
-test("inbox de estoque ignora respostas de filtros antigos", () => {
-  assert.match(inboxMateriais, /const generation=useRef\(0\)/);
-  assert.match(inboxMateriais, /if\(request===generation\.current\)setItems/);
-  assert.match(inboxMateriais, /return\(\)=>\{generation\.current\+\+;\}/);
-});
-
-test("inbox de estoque preserva dados durante nova consulta", () => {
-  assert.doesNotMatch(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
-  assert.match(inboxMateriais, /items\.length\?'Atualizando solicita√ß√µes‚Ä¶':'Carregando solicita√ß√µes‚Ä¶'/);
-  assert.match(inboxMateriais, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[status,allowed/);
-});
-
-test("inbox preserva feedback ap√≥s a√ß√£o conclu√≠da", () => {
-  assert.match(inboxMateriais, /async function load\(clearMessage=true\)/);
-  assert.match(inboxMateriais, /setMessage\('Solicita√ß√£o aprovada\.'\);await load\(false\)/);
-});
-
-test("ficha t√©cnica diferencia erro de sucesso na mensagem acess√≠vel", () => {
-  const formularioTecnico = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
-  assert.match(formularioTecnico, /role=\{message\.startsWith\('N√£o foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
-});
-
-test("formul√°rio de ocorr√™ncia sinaliza o envio em andamento", () => {
-  assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-});
-
-test("hist√≥rico bloqueia pagina√ß√£o durante carregamento", () => {
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| page===0\}/);
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| !data\.tem_mais\}/);
-});
-
-test("tarefas bloqueiam pagina√ß√£o durante carregamento", () => {
-  assert.match(minhasTarefas, /disabled=\{loading \|\| page===0\}/);
-  assert.match(minhasTarefas, /disabled=\{loading \|\| !data\.tem_mais\}/);
-});
-
-test("tarefas informam atualiza√ß√£o no bot√£o durante carregamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
-  assert.match(minhasTarefas, /\{loading\?'Atualizando‚Ä¶':'Atualizar tarefas'\}/);
-});
-
-test("tarefas exibem um √∫nico bloco de carregamento e erro", () => {
-  assert.equal((minhasTarefas.match(/Carregando tarefas‚Ä¶/g) || []).length, 1);
-  assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
-});
-
-test("cabe√ßalhos do funcion√°rio acomodam t√≠tulos e atualiza√ß√£o no mobile", () => {
-  assert.match(notificacoesFuncionario, /<div className="min-w-0"><h2 id="work-notifications-title" className="break-words text-lg font-bold"/);
-  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0"/);
-  assert.match(historicoFuncionario, /<div className="min-w-0"><h2 id="activity-history-title" className="break-words text-lg font-bold"/);
-  assert.match(minhasTarefas, /<h2 id="my-tasks-title" className="min-w-0 break-words text-lg font-bold"/);
-  assert.match(minhasTarefas, /className="shrink-0 text-xs text-slate-500"/);
-  assert.match(fichasFuncionario, /<div className="min-w-0"><h2 id="service-sheets-title" className="break-words text-lg font-bold"/);
-});
-
-test("cabe√ßalho e perfil do painel quebram dados longos no mobile", () => {
-  assert.match(meuSetor, /<div className="min-w-0">\s*<p className="text-xs font-semibold uppercase/);
-  assert.match(meuSetor, /<h1 className="mt-2 break-words text-3xl font-bold/);
-  assert.match(meuSetor, /className="flex shrink-0 flex-col items-end gap-2"/);
-  assert.match(meuSetor, /<dd className="mt-1 break-words font-semibold text-slate-900">\{context\.funcionario\.nome/);
-  assert.match(meuSetor, /<dd className="mt-1 break-words text-slate-900">\{context\.funcionario\.cargo/);
-  assert.match(meuSetor, /<div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold"/);
-  assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100/);
-});
-
-test("inbox de materiais preserva erro e retry em telas estreitas", () => {
-  assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(inboxMateriais, /className="btn-secondary shrink-0" aria-label="Tentar carregar as solicita√ß√µes novamente" disabled=\{loading \|\| !!actionBusy\}/);
-  assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
-});
-
-test("fichas de servi√ßo preservam busca e a√ß√£o de abertura no mobile", () => {
-  assert.match(fichasFuncionario, /<button className="btn-secondary shrink-0" type="submit" disabled=\{loading\}/);
-  assert.match(fichasFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\) => \{ setSearch/);
-  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{event =>/);
-});
-
-test("editor de acesso quebra setores e permiss√µes longas no mobile", () => {
-  assert.match(editorFuncionario, /className="flex min-w-0 items-start gap-2 text-sm"><input type="checkbox"/);
-  assert.match(editorFuncionario, /<span className="break-words">\{label\}<\/span>/);
-  assert.match(editorFuncionario, /<summary className="cursor-pointer break-words font-semibold">/);
-  assert.match(editorFuncionario, /<span className="break-words">\{permissionLabels\[c\.operacao\]\|\|c\.operacao\}<\/span>/);
-  assert.match(editorFuncionario, /<p className="break-words text-xs text-slate-500">ID da conta:/);
-});
-
-test("tarefas preservam controles de filtro e pagina√ß√£o no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
-  assert.match(minhasTarefas, /className="btn-secondary shrink-0 sm:whitespace-nowrap"/);
-  assert.match(minhasTarefas, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a p√°gina anterior de tarefas"/);
-  assert.match(minhasTarefas, /<span className="shrink-0 text-sm" aria-current="page"/);
-  assert.match(minhasTarefas, /aria-label="Ir para a pr√≥xima p√°gina de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
-});
-
-test("notifica√ß√µes preservam a√ß√µes e pagina√ß√£o no mobile", () => {
-  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary shrink-0" disabled=\{!!busy\} aria-label=\{item\.tarefa_id\?/);
-  assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: .*?`\} onClick=\{async/);
-  assert.match(notificacoesFuncionario, /<span className="shrink-0 text-sm" aria-current="page"/);
-  assert.match(notificacoesFuncionario, /aria-label="Ir para a pr√≥xima p√°gina" disabled=\{!data\.tem_mais \|\| !!busy\}/);
-});
-
-test("ocorr√™ncias preservam comunica√ß√£o, resolu√ß√£o e pagina√ß√£o no mobile", () => {
-  assert.match(ocorrencias, /<button type="submit" className="btn-primary shrink-0" aria-label=\{busy\?'Registrando ocorr√™ncia':'Comunicar ocorr√™ncia'\}/);
-  assert.match(ocorrencias, /<button type="submit" className="btn-secondary shrink-0" aria-label=\{busy\?'Salvando resolu√ß√£o da ocorr√™ncia'/);
-  assert.match(ocorrencias, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a p√°gina anterior de ocorr√™ncias"/);
-  assert.match(ocorrencias, /<span className="self-center shrink-0 text-sm" aria-current="page"/);
-  assert.match(ocorrencias, /aria-label=\{loading \|\| busy\?'Aguarde a atualiza√ß√£o das ocorr√™ncias':'Atualizar ocorr√™ncias'\}/);
-});
-
-test("solicita√ß√µes de materiais acomodam cabe√ßalho e a√ß√µes no mobile", () => {
-  assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
-  assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Pe√ßa materiais para esta ordem/);
-  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" onClick=\{refreshRequests\}/);
-  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
-  assert.match(solicitacaoMaterial, /className="shrink-0 rounded-full bg-white px-2 py-1 text-xs"/);
-  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" aria-label=\{`Cancelar solicita√ß√£o/);
-});
-
-test("registros de produ√ß√£o quebram observa√ß√µes sem deslocar o hor√°rio", () => {
-  assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
-  assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
-});
-
-test("ficha t√©cnica quebra a situa√ß√£o sem perder as a√ß√µes", () => {
-  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situa√ß√£o:/);
-  assert.match(fichaTecnica, /<div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">/);
-});
-
-test("erro de respons√°veis organiza retry no mobile", () => {
-  const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
-  assert.match(assignment, /<div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">\{error\}<\/p>/);
-  assert.match(assignment, /className="btn-secondary shrink-0" aria-label="Tentar carregar os respons√°veis novamente"/);
-});
-
-test("controle de secagem protege status e atualiza√ß√£o no mobile", () => {
-  assert.match(controleSecagem, /<div className="min-w-0">\s*<h4 id=\{`\$\{id\}-title`\}/);
-  assert.match(controleSecagem, /className="break-words text-sm text-slate-500"/);
-  assert.match(controleSecagem, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-medium/);
-  assert.match(controleSecagem, /className="btn-secondary shrink-0" onClick=\{refreshDrying\}/);
-});
-
-test("agenda acomoda t√≠tulo e atualiza√ß√£o em telas estreitas", () => {
-  assert.match(agendaFuncionario, /<div className="min-w-0"><h2 id="work-agenda-title" className="break-words text-lg font-bold">/);
-  assert.match(agendaFuncionario, /<p className="break-words text-sm text-slate-500">Prazos das tarefas atribu√≠das a voc√™/);
-  assert.match(agendaFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>void load\(\)\}/);
-});
-
-test("resumo operacional protege indicadores longos no mobile", () => {
-  assert.match(resumoFuncionario, /<div className="min-w-0"><h2 id="personal-work-summary-title" className="break-words text-lg font-bold">/);
-  assert.match(resumoFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
-  assert.match(resumoFuncionario, /className=\{`card min-w-0 border p-4/);
-  assert.match(resumoFuncionario, /<p className="break-words text-sm text-slate-600">\{label\}<\/p>/);
-  assert.match(resumoFuncionario, /className="mt-2 whitespace-nowrap text-2xl font-bold text-slate-900"/);
-});
-
-test("a√ß√µes de anexos n√£o comprimem o nome do arquivo no mobile", () => {
-  assert.match(anexos, /<div className="flex min-w-0 flex-wrap gap-2"><button type="button" className="btn-secondary shrink-0"/);
-  assert.match(anexos, /<a className="btn-secondary shrink-0" aria-label=\{`Abrir/);
-});
-
-test("detalhe da tarefa organiza t√≠tulo, atualiza√ß√£o e recarga no mobile", () => {
-  assert.match(detalheTarefa, /<div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 id="task-details-title" className="break-words font-semibold">/);
-  assert.match(detalheTarefa, /className="btn-secondary shrink-0" disabled=\{loading\}/);
-  assert.match(detalheTarefa, /<span className="text-xs text-slate-500" aria-live="polite">/);
-});
-
-test("aceite da instala√ß√£o quebra confirma√ß√£o longa no mobile", () => {
-  assert.match(aceiteInstalacao, /<h4 className="break-words font-semibold">Registrar aceite da instala√ß√£o<\/h4>/);
-  assert.match(aceiteInstalacao, /className="mt-1 shrink-0" type="checkbox"/);
-  assert.match(aceiteInstalacao, /<span className="min-w-0 break-words">Confirmo que o cliente/);
-  assert.match(aceiteInstalacao, /className="btn-primary shrink-0" aria-label=/);
-});
-
-test("cart√£o de tarefa mant√©m badges e prazo leg√≠veis no mobile", () => {
-  assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2\.5 py-1 text-xs font-semibold/);
-  assert.match(minhasTarefas, /<span className="break-words">\{formatTaskSector\(task\.setor\)\}<\/span>/);
-  assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2 py-1 font-semibold/);
-  assert.match(minhasTarefas, /<span className="break-words">Obrigat√≥ria para concluir a etapa<\/span>/);
-  assert.match(minhasTarefas, /<span className="break-words">Prazo: <time/);
-});
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}/]∏ÛãhëÈÏ∂ªßq´^tùõX]⁄
+[òõﬁX]\öXZ\ÀÿX›[€êù\ﬁK N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ\öXK[Xô[Wÿ€€X⁄]pÈË€»H	⁄][Wö][W€õ€YWH0≠»	Ÿõ‹õX]]X[ù]W
+][Wú]X[ùYYW
+WH	⁄][Wù[öYYWH0≠»	Ÿõ‹õX]›]\◊
+][Wú›]\◊
+WXK N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\ÀŸ\ÿXõYW€ÿY[ô◊HXX›[€êù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àÿ\öXKXù\ﬁOW€ÿY[ô◊K N√BüJN√BÉBù\›
+úŸXÿYŸ[HHõŸpÈË€»[ôõ‹õX[H]X[^òpÈË€»õ‹»õ›0ÌY\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kÿ\öXK[Xô[Wÿù\ﬁW…–Y›X\ôHH]X[^òpÈË€»HŸXÿYŸ[IŒâ–]X[^ò\à‹∞Ë\ö[»»Ÿ\ùöY‹â◊K N√Bà\‹Ÿ\ùõX]⁄
+ôY⁄\›õ‘õŸXÿ[Àÿ\öXK[Xô[Wÿù\ﬁW…–Y›X\ôHH]X[^òpÈË€»‹»ôY⁄\›õ‹…Œâ–]X[^ò\àôY⁄\›õ‹…◊K N√BüJN√BÉBù\›
+úŸXÿYŸ[H[\HôYYòX⁄»[»Y]\à»ò^õ»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[K‹Ÿ]Z[ù]\◊
+]ô[ùù\ôŸ]ùò[YW
+N»Ÿ]Y\‹ÿYŸW
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[K›\OHõù[Xô\àà[ú][ŸOHõù[Y\öX»àô\]Z\ôYZ[èWÃWHX^WÃLK N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[K›\OHõù[Xô\àà[ú][ŸOHõù[Y\öX»àô\]Z\ôYZ[èWÃWK N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H€€X⁄]pÈË€»[ôõ‹õXH]X[^òpÈË€»õ»õ›0Ë€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ\öXK[Xô[Wÿù\ﬁW…–]X[^ò[ô»€€X⁄]pÈÌY\…Œâ–]X[^ò\à€€X⁄]pÈÌY\…◊K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[◊ÿù\ﬁW…–]X[^ò[ô¯†)âŒâ–]X[^ò\â◊K N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H€€X⁄]pÈË€»ô\Ÿ\ùòH»‹∞Ë\ö[»\ò[ùH⁄[ò‹õ€ö^òpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùôŸ\”õ›X]⁄
+€€X⁄]Xÿ[”X]\öX[‹Ÿ]ù\ﬁW
+ùYW
+N»Ÿ]Y\‹ÿYŸW
+	…◊
+N»Ÿ]\]Y]
+ù[
+K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿù\ﬁW…–]X[^ò[ô»€€X⁄]pÈÌY\¯†)âŒù\]Y] N√BüJN√BÉBù\›
+òÿ[òŸ[[Y[ù»HX]\öX[€€ôö\õXH›XŸ\‹€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ\öXK[Xô[Wÿ€€X⁄]pÈË€»H	‹ô\]Y\›][Wö][W€õ€YWH0≠»	Ÿõ‹õX]]X[ù]W
+ô\]Y\›][Wú]X[ùYYW
+WH	‹ô\]Y\›][Wù[öYYWH0≠»	Ÿõ‹õX]›]\◊
+ô\]Y\›][Wú›]\◊
+WXK N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ]ÿZ]€êÿ[òŸ[
+ô\]Y\›][W
+N»Ÿ]Y\‹ÿYŸR⁄[ô
+	‹›]\…◊
+N»Ÿ]Y\‹ÿYŸW
+	‘€€X⁄]pÈË€»ÿ[òŸ[YWâ◊
+K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[€Y\‹ÿYŸR⁄[ô úŸ]Y\‹ÿYŸR⁄[ôKäù\ŸT›]O	‹›]\…»	Ÿ\úõ‹âœó
+	‹›]\…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[‹Ÿ]Y\‹ÿYŸR⁄[ô
+	‹›]\…◊
+N◊ úŸ]Y\‹ÿYŸW
+	‘€€X⁄]pÈË€»ÿ[òŸ[YWâ◊
+K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[‹õ€OW€Y\‹ÿYŸR⁄[ôOOH	‹›]\…»»	‹›]\…»à	ÿ[\ù	◊K N√BüJN√BÉBù\›
+ö[òõﬁH\›‹]YH[ôõ‹õXH]X[^òpÈË€»õ»õ›0Ë€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ\öXK[Xô[W€ÿY[ô»HXX›[€êù\ﬁW…–Y›X\ôHH]X[^òpÈË€»\»€€X⁄]pÈÌY\…Œâ–]X[^ò\à€€X⁄]pÈÌY\…◊K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À◊€ÿY[ô»HXX›[€êù\ﬁW…–Y›X\ôx†)âŒâ–]X[^ò\â◊K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ\öXKXù\ﬁOW€ÿY[ô»HXX›[€êù\ﬁWK N√BüJN√BÉBù\›
+ö[òõﬁH\›‹]YH\ùX⁄\HH]X[^òpÈË€»€ÿò[ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À›€‹öŸõ‹òŸTôYúô\⁄]ô[ù N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\ÀÿY]ô[ù\›[ô\ó
+€‹öŸõ‹òŸTôYúô\⁄]ô[ùôYúô\⁄[ô[
+K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À›õ⁄YÿY
+ò[ŸW
+K N√BüJN√BÉBù\›
+ö[òõﬁ[\H€€ôö\õXpÈË€»[ù\»Hõ›òHpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À‹Ÿ]X›[€êù\ﬁW
+][WöY
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+K N√BüJN√BÉBù\›
+ôY]‹ô\»‹\òX⁄[€òZ\»[ù[ò⁄X[Hÿ\úôYÿ[Y[ù»Hõ‹]YZX[H\›Y‹»€€ò€‹úô[ù\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿ\öXKXù\ﬁOW€ÿY[ô»ù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿ\öXK[]ôOHú€]Hã N√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄Kÿ\öXKXù\ﬁOW€ÿY[ô»ù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄Kÿ\öXK[]ôOHú€]Hã N√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[Àÿ\öXKXù\ﬁOW€ÿY[ô»ù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[Àÿ\öXK[]ôOHú€]Hã N√BüJN√BÉBù\›
+ôõ^»[ôõ‹õXH\»pÈÌY\»Hÿ[ò\àHôXÿ\úôYÿ\àã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[Àÿ\öXK[Xô[Wÿù\ﬁW…‘ÿ[ò[ô»õ^…Œôõ›◊ò€€ôöY›\òY◊…‘ÿ[ò\àŸ\]pÍõò⁄XIŒâ–€€ôöY›\ò\àõ^…◊K N√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[Àÿ\öXK[Xô[W€ÿY[ô◊…–ÿ\úôYÿ[ô»õ^…Œâ‘ôXÿ\úôYÿ\àõ^…◊K N√BüJN√BÉBù\›
+ôõ^»ô\Ÿ\ùòHH€€ôöY›\òpÈË€»\ò[ùH⁄[ò‹õ€ö^òpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[ÀŸõ›»»	–]X[^ò[ô»õ^¯†)â»à	–ÿ\úôYÿ[ô»õ^¯†)âÀ N√Bà\‹Ÿ\ùôŸ\”õ›X]⁄
+õ^‘õŸXÿ[À‹Ÿ]ÿY[ô◊
+ùYW
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]õ›◊
+ù[
+K N√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[À›\ŸQYôôX›
+
+
+OOó‹Ÿ]õ›◊
+ù[
+N‹Ÿ]Ÿ[X›Y
+◊W
+N◊K‹Ÿ\ùöXŸRY€€ù^◊úõ‹öY]\ö[◊W
+K N√BüJN√BÉBù\›
+ôõ^»[\HôYYòX⁄»[»[\ò\àHŸ\]pÍõò⁄XHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ^‘õŸXÿ[À‹Ÿ]Y\‹ÿYŸW
+	…◊
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Ÿ[X›Y N√BüJN√BÉBù\›
+ò‹öXpÈË€»H\ôYòH[ôõ‹õXHÿ\úôYÿ[Y[ù»‹»ô\‹€úË]ôZ\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿ\öXK[Xô[W€ÿY[ô◊…–ÿ\úôYÿ[ô»ô\‹€úË]ôZ\…Œòù\ﬁW…–‹öX[ô»\ôYòIŒâ–‹öX\à\ôYòI◊K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK◊€ÿY[ô◊…–ÿ\úôYÿ[ô¯†)âŒòù\ﬁW…–‹öX[ô¯†)âŒâ–‹öX\à\ôYòI◊K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿÿ[ôY]\◊õ[ô›»	–]X[^ò[ô»ô\‹€úË]ôZ\¯†)â»à	–ÿ\úôYÿ[ô»ô\‹€úË]ôZ\¯†)âÀ N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK»[ÿY[ô»	âàY\úõ‹à	âàXÿ[ôY]\◊õ[ô›	âàõ€OHú›]\»à\öXK[]ôOHú€]Hã N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK›\OHô]][YK[ÿÿ[à]]–€€\]OHõŸôàà\öXKY\ÿ‹öXôYûOWÿ	⁄YKYXY[ôKZ[Hò[YOWŸXY[ôWK N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿ]]–€€\]OHõŸôàà\öXKY\ÿ‹öXôYûOWÿ	⁄YKYXY[ôKZ[K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK”»‹∞Ë\ö[»Ÿ\∞ËHÿ[õ»€€ôõ‹õYH»ù\€»ÿÿ[\›H\‹‹⁄]]õÀ N√BüJN√BÉBù\›
+ò‹öXpÈË€»H\ôYòH[\HôYYòX⁄»[»õÿÿ\à»€€ù^»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK‹Ÿ]ÿ[ôY]\◊
+◊W
+N‹Ÿ][\ﬁYYW
+	…◊
+N‹Ÿ]]W
+	…◊
+N‹Ÿ]\ÿ‹ö\[€ó
+	…◊
+N‹Ÿ]XY[ôW
+	…◊
+N‹Ÿ]ö[‹ö]W
+	€õ‹õX[	◊
+N‹Ÿ]X[ô]‹ûW
+ò[ŸW
+N‹ôXŸZ\ò›\úô[ù[ù[ N√Bà\‹Ÿ\ùôŸ\”õ›X]⁄
+‹öXXÿ[’\ôYòK‹Ÿ]ÿY[ô◊
+ùYW
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+N‹Ÿ]ÿ[ôY]\◊
+◊W
+K N√BüJN√BÉBù\›
+ò‹öXpÈË€»H\ôYòH[\Hò[YpÈË€»[»€‹úöY⁄\àÿ[\‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK‹Ÿ]]W
+]ô[ùù\ôŸ]ùò[YW
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK‹Ÿ][\ﬁYYW
+]ô[ùù\ôŸ]ùò[YW
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKÿ€€ú›€X\ëôYYòX⁄œW
+
+OOó‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+N◊K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK‹Ÿ]\ÿ‹ö\[€ó
+]ô[ùù\ôŸ]ùò[YW
+Nÿ€X\ëôYYòX⁄◊
+
+K N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK‹Ÿ]XY[ôW
+]ô[ùù\ôŸ]ùò[YW
+Nÿ€X\ëôYYòX⁄◊
+
+K N√BüJN√BÉBù\›
+ò‹öXpÈË€»H\ôYòHò[YH\ÿ‹öpÈË€»[ù\»»[ùö[»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK⁄YWÿ	⁄YK]]XV◊èóJúô\]Z\ôYZ[ì[ô›WÃóHX^[ô›WÃåK N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòKŸ\ÿ‹ö\[€óùö[W
+
+Wõ[ô›ã N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK“[ôõ‹õYH[XH\ÿ‹öpÈË€»€€H[»Y[õ‹»àÿ\òX›\ô\À N√Bà\‹Ÿ\ùõX]⁄
+‹öXXÿ[’\ôYòK€Z[ì[ô›WÃóHX^[ô›WÃLHô\]Z\ôY N√BüJN√BÉBù\›
+ôY]‹àHXŸ\‹€»[ù[ò⁄XHÿ\úôYÿ[Y[ù»Hõ‹]YZXHÿ[ò[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àÿ\öXKXù\ﬁOWÿù\ﬁHÿY[ô◊K N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àÿù\ﬁIâèõ€OHú›]\»à\öXK[]ôOHú€]Hèîÿ[ò[ô»XŸ\‹€»»ù[ò⁄[€∞Ë\ö[¯†)è‹ã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[À‹õ€OHú›]\»à\öXK[]ôOHú€]Hã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[ÀŸ[\ﬁYYW…–]X[^ò[ô»XŸ\‹€¯†)âŒâ–ÿ\úôYÿ[ô»XŸ\‹€¯†)âÀ N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[ÀŸ\ÿXõYWÿù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[ÀŸ]U[YOW‹ÿYôQ[\ﬁYYQ]U[YW
+[\ﬁYYWò‹ôX]Yÿ]
+WK N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[À›\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYWÿù\ﬁWH€ê€X⁄œW€€êÿ[òŸ[H\öXK[Xô[HëôX⁄\àYpÈË€»»ù[ò⁄[€∞Ë\ö[»ã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àÿ€€ú›€X\ë\úõ‹èW
+
+OOúŸ]\úõ‹ó
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[À‹Ÿ]ò[YW
+Wù\ôŸ]ùò[YW
+Nÿ€X\ë\úõ‹ó
+
+K N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[À⁄YWÿ	ŸöY[YK[ò[YXV◊èóJò]]–€€\]OHõò[YHã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[À⁄YWÿ	ŸöY[YKZõÿòV◊èóJò]]–€€\]OHõ‹ôÿ[ö^ò][€ã]]Hã N√BüJN√BÉBù\›
+úô\‹€úË]ô[[\HôYYòX⁄»[»ôXÿ\úôYÿ\àÿ[ôY]‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄K‹Ÿ]ÿY[ô◊
+ùYW
+N‹Ÿ]\úõ‹ó
+	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄Kÿÿ[ôY]\◊õ[ô›»	–]X[^ò[ô»ù[ò⁄[€∞Ë\ö[‹»]]‹ö^òY‹¯†)â»à	–ÿ\úôYÿ[ô»ù[ò⁄[€∞Ë\ö[‹»]]‹ö^òY‹¯†)âÀ N√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄K›\ŸQYôôX›
+
+
+OOó‹Ÿ]ÿ[ôY]\◊
+◊W
+N◊K‹Ÿ\ùöXŸRYŸX›‹óW
+K N√BüJN√BÉBù\›
+úô\‹€úË]ô[[\HôYYòX⁄»]X[ô»HöX⁄H]YH^\õò[Y[ùHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+]öXùZXÿ[—öX⁄K‹Ÿ]Ÿ[X›Y
+›\úô[ù	…◊
+N‹Ÿ]Y\‹ÿYŸW
+	…◊
+K N√BüJN√BÉBù\›
+ôöX⁄H0ÍX€öXÿHHô\€€pÈË€»Hÿ€‹ú∞Íõò⁄XH[ù[ò⁄X[H\›Y‹»‹∞Î]X€‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿK◊Ÿ\úõ‹à	âàõ€OHò[\ùã N√Bà\‹Ÿ\ùõX]⁄
+öX⁄S‹\òX⁄[€ò[‹õ€OHú›]\»à\öXK[]ôOHú€]Hã N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\—ù[ò⁄[€ò\ö[Àœõ‹õH€\‹”ò[YOHú‹XŸK^KLàà\öXKXù\ﬁOWÿù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\—ù[ò⁄[€ò\ö[À‹õ›‹œWÃ◊Hô\]Z\ôYZ[ì[ô›WÃLHX^[ô›WÕLK N√BüJN√BÉBù\›
+ôöX⁄H0ÍX€öXÿHY€õ‹òHô\‹‹›\»[ùYÿ\»HŸXÿYŸ[HHõŸpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿKÿ€€ú›ô\›[H]ÿZ]X⁄öXÿ[⁄Y]◊ôûZ[ô”ÿY
+Ÿ\ùöXŸRY
+N»Yà
+ô\]Y\›OOHŸ[ô\ò][€óò›\úô[ù
+HŸ]ûZ[ô◊
+ô\›[
+K N√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿKÿ€€ú›ô\›[H]ÿZ]X⁄öXÿ[⁄Y]◊úõŸX›[€ìÿY
+Ÿ\ùöXŸRYŸX›‹ó
+N»Yà
+ô\]Y\›OOHŸ[ô\ò][€óò›\úô[ù
+HŸ]õŸX›[€ó
+ô\›[
+K N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H\ôYòH⁄[ò[^òH]X[^òpÈË€»€€ò€‹úô[ùHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœõ‹õH€\‹”ò[YOHô‹öYÿ\L»€Nô‹öYX€€ÀLàà\öXKXù\ﬁOWÿù\ﬁWK N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H\ôYòH[ôõ‹õXH»\›Y»»ÿ[ò[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ\öXK[Xô[Wÿù\ﬁW…‘ÿ[ò[ô»\ôYòIŒô\ùW…–]X[^ò\à\ôYòIŒâ‘Ÿ[H[\òpÈÌY\…◊K N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\À◊ÿù\ﬁH	âàõ€OHú›]\»à\öXK[]ôOHú€]Hà€\‹”ò[YOHù^\€H^XﬁX[ãMÃ€Nò€€\‹[ãLàèîÿ[ò[ô»\ôYòx†)è‹óK N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H\ôYòH[\H\úõ»[»Y]\àã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€€ú›€X\ë\úõ‹èW
+
+OOúŸ]\úõ‹ó
+	…◊
+K N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\À‹Ÿ]›]\◊
+]ô[ùù\ôŸ]ùò[YH\»\⁄‘›]\◊
+Nÿ€X\ë\úõ‹ó
+
+K N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\À‹Ÿ]õŸ‹ô\‹◊
+]ô[ùù\ôŸ]ùò[YOOOI…◊”òSéìù[Xô\ó
+]ô[ùù\ôŸ]ùò[YW
+W
+Nÿ€X\ë\úõ‹ó
+
+K N√BüJN√BÉBù\›
+õõ›YöXÿpÈÌY\»⁄[ò[^ò[HZ]\òHHõ‹]YZX[HXô\ù\òH€€ò€‹úô[ùHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXKXù\ﬁOW€ÿY[ô»HXù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW»HXù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[À◊ÿù\ﬁH	âàõ€OHú›]\»à\öXK[]ôOHú€]Hèîÿ[ò[ô»Z]\òHHõ›YöXÿpÈË€¯†)è‹óK N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[À‹Ÿ]Y\‹ÿYŸW
+	”õ›YöXÿpÈË€»X\òÿYH€€[»YWâ◊
+K N√BüJN√BÉBù\›
+õõ›YöXÿpÈÌY\»^0ÌY[H»\›Y»HZ]\òHŸ[X[ùXÿ[Y[ùHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXK[Xô[Wÿ	⁄][WõYWŸ[W…”õ›YöXÿpÈË€»YIŒâ”õ›YöXÿpÈË€»∞Ë€»YI◊K N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXK[Xô[WÿX\òÿ\à€€[»YNà	€õ›YöXÿ][€ìXô[◊⁄][Wô]ô[ù◊W	–]X[^òpÈË€»H‹\òpÈË€…◊XK N√BüJN√BÉBù\›
+õõ›YöXÿpÈÌY\»[ôõ‹õX[H]X[^òpÈË€»õ»õ›0Ë€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXK[Xô[W€ÿY[ô»HXù\ﬁW…–Y›X\ôHH]X[^òpÈË€»\»õ›YöXÿpÈÌY\…Œâ–]X[^ò\àõ›YöXÿpÈÌY\…◊K N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[À◊€ÿY[ô»HXù\ﬁW…–Y›X\ôx†)âŒâ–]X[^ò\àõ›YöXÿpÈÌY\…◊K N√BüJN√BÉBù\›
+õõ›YöXÿpÈÌY\»\›Xÿ[HÿYH][H∞Ë€»Y»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[À»Z][WõYWŸ[Iâè‹[à€\‹”ò[YOHú⁄ö[öÀLõ›[ôYYù[ôÀXﬁX[ãLL N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àœì∞Ë€»YO‹‹[èã N√BüJN√BÉBù\›
+ôöX⁄\»õ‹]YZX[HXô\ù\òHHY⁄[òpÈË€»\ò[ùH⁄[ò‹õ€ö^òpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô◊H€ê€X⁄œW◊
+
+HOã N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô»YŸHOOHK N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô»[\›ù[W€XZ\◊K N√BüJN√BÉBù\›
+ú\‹]Z\ÿHHöX⁄\»∞Ë€»‹öXHõ›òHÿ\ôÿH\ò[ùH⁄[ò‹õ€ö^òpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[Àÿ\öXKXù\ﬁOW€ÿY[ô◊H€î›XõZ]WŸ]ô[ùOà»]ô[ùúô]ô[ùYò][
+
+N»Yà
+ÿY[ô◊
+Hô]\õéÀ N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô◊Hò[YOW‹ŸX\ò⁄K N√BüJN√BÉBù\›
+õ‹\òpÈÌY\»HõŸpÈË€»HŸXÿYŸ[H⁄[ò[^ò[H»õ‹õ][0Ë\ö[»[H[ô[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ôY⁄\›õ‘õŸXÿ[Àœõ‹õH€\‹”ò[YOHô‹öYÿ\L»õ‹ô\ã]õ‹ô\ã\€]KLLL»€Nô‹öYX€€ÀLàà\öXKXù\ﬁOWÿù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kœõ‹õH€\‹”ò[YOHôõ^õ^]‹ò\][\ÀY[ôÿ\L»õ‹ô\ã]õ‹ô\ã\€]KLLL»à\öXKXù\ﬁOWÿù\ﬁWK N√BüJN√BÉBù\›
+òpÈÌY\»H^X›pÈË€»HöX⁄H[ôõ‹õX[Hÿ[ò[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄S‹\òX⁄[€ò[‹ÿ]ö[ô◊…‘ÿ[ò[ô¯†)âÀ N√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿK‹ÿ]ö[ô»	âàõ€OHú›]\»à\öXK[]ôOHú€]Hèîÿ[ò[ô»[\òpÈÌY\»HöX⁄H0ÍX€öXÿx†)è‹ã N√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿKœ‹[àõ€OHú›]\»à\öXK[]ôOHú€]Hà€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»^\€Hõ€ù[YY][Hèî⁄]XpÈË€Œã N√BüJN√BÉBù\›
+ôöX⁄H0ÍX€öXÿH[\H\úõ‹»[»Y]\à[Hÿ[\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ôXY‹[€ò[
+ããã‹‹òÀ€[Ÿ[\À›€‹öŸõ‹òŸKÿ€€\€ô[ùÀ’X⁄öXÿ[⁄Y]õ‹õKùﬁäK‹Ÿ]Y\‹ÿYŸW
+	…◊
+N◊ úŸ]\‹›Y\◊
+◊W
+N◊ ò⁄[ôŸK N√BüJN√BÉBù\›
+úŸ\ùöpÈ€»HöX⁄\»ò[YH⁄X⁄€\›HY‹»Hô\‹‹›Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK⁄\’[ö\]YRŸ^\◊
+⁄X⁄€\›][\◊
+H	âó »H\õ›◊ò⁄X⁄€\› N√Bà\‹Ÿ\ùôŸ\”õ›X]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK⁄\’[ö\]YRŸ^\◊
+⁄X⁄€\›][\◊
+N◊ »H\õ›◊ò⁄X⁄€\› N√BüJN√BÉBù\›
+úŸ\ùöpÈ€»HöX⁄\»ôZôZ]H[Y\›[\»[ù∞Ë[Y‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK⁄\—]S‹ìù[
+õ›◊ö[öX⁄XYWŸ[W
+H	âà\—]S‹ìù[
+õ›◊ò€€ò€ZYWŸ[W
+K N√Bà\‹Ÿ\ùõX]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK”ù[Xô\óö\—ö[ö]W
+ô]»]W
+ôX€‹ôò‹öXY◊Ÿ[W
+WôŸ][YW
+
+W
+K N√BüJN√BÉBù\›
+úôY⁄\›õ»HŸXÿYŸ[Hò[YH]\»ô]‹õòY\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK»Z\—]S‹ìù[
+ô\›[úô]ö\›Wÿ]W
+K N√Bà\‹Ÿ\ùõX]⁄
+X⁄öXÿ[⁄Y]Ÿ\ùöXŸK»Z\—]S‹ìù[
+ô\›[úŸ\ùöY‹óÿY€‹òW
+K N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[KŸ]U[YOW‹ÿYôTŸ\ùô\ë]U[YW
+›]W◊ö[öX⁄XYWŸ[H◊»ù[
+WK N√BüJN√BÉBù\›
+õXô\òpÈË€»HöX⁄Hõ‹]YZXH\»€\]YHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄S‹\òX⁄[€ò[Ÿ\ÿXõYW€ÿY[ô◊K N√Bà\‹Ÿ\ùõX]⁄
+öX⁄S‹\òX⁄[€ò[⁄Yà
+]]][€óò›\úô[ù
+Hô]\õéÀ N√Bà\‹Ÿ\ùõX]⁄
+öX⁄S‹\òX⁄[€ò[€ÿY[ô»»	”Xô\ò[ô¯†)â»à	”Xô\ò\àöX⁄H\›HŸ]‹âÀ N√BüJN√BÉBù\›
+òYŸ[ôHY€õ‹òHô\‹‹›\»Hô\]Z\⁄pÈÌY\»[ùYÿ\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àÿ€€ú›Ÿ[ô\ò][€è]\ŸTôYó
+
+K N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À⁄Yó
+ô\]Y\›OOYŸ[ô\ò][€óò›\úô[ù
+\Ÿ]][\À N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À‹ô]\õó
+
+OOóŸŸ[ô\ò][€óò›\úô[ù
+◊
+Œ◊K N√BüJN√BÉBù\›
+òYŸ[ôH[\H]]öYY\»[ù\ö[‹ô\»[ù\»Hõ›òH€€ú›[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À›\ŸQYôôX›
+
+
+OOó‹Ÿ]][\◊
+◊W
+N‹Ÿ]\]Y]
+ù[
+N◊K‹›\ù[ô€€ù^◊ôù[ò⁄[€ò\ö[◊öY€€ù^◊ôù[ò⁄[€ò\ö[◊ùô\úÿ[◊W
+K N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À‹Ÿ]ÿY[ô◊
+ùYW
+N‹Ÿ]\úõ‹ó
+	…◊
+N›ûK N√BüJN√BÉBù\›
+òYŸ[ôHô\Ÿ\ùòH]ô[ù‹»\ò[ùHõ›òH⁄[ò‹õ€ö^òpÈË€»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À⁄][\◊õ[ô›…–]X[^ò[ô»YŸ[ôx†)âŒâ–ÿ\úôYÿ[ô»YŸ[ôx†)âÀ N√BüJN√BÉBù\›
+òYŸ[ôHŸô\ôXŸH][‹»H\∞Î[Ÿ»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[ÀŸù[ò›[€àŸ]ô\Ÿ]
+^\Œõù[Xô\ó
+K N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àÿ\öXK[Xô[Hê][‹»H\∞Î[Ÿ»ã N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À‘∞Ïﬁ[[‹»»X\À N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À‘∞Ïﬁ[[‹»ÃX\À N√BüJN√BÉBù\›
+òYŸ[ôH[ôõ‹õXHH]X[ùYYHH]]öYY\»»\∞Î[Ÿ»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À⁄][\◊õ[ô›OOLW…ÿ]]öYYH[ò€€ùòYIŒâÿ]]öYY\»[ò€€ùòY\…À N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À€õ»\∞Î[Ÿ◊è‹ã N√BüJN√BÉBù\›
+òYŸ[ôHX\òÿH»][»H\∞Î[Ÿ»Ÿ[X⁄[€òY»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àÿ€€ú›ô\Ÿ]X›]ôOW
+^\Œõù[Xô\ó
+OOã N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àÿ\öXK\ô\‹ŸYW‹ô\Ÿ]X›]ôW
+◊
+WK N√BüJN√BÉBù\›
+òYŸ[ôH[\H]]öYY\»]X[ô»»\∞Î[Ÿ»0ÍH[ù∞Ë[Y»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À⁄Yó
+\›\ùY[ô
+W‹Ÿ]][\◊
+◊W
+N‹Ÿ]\úõ‹ã N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[À⁄Yó
+[ô›\ù
+W‹Ÿ]][\◊
+◊W
+N‹Ÿ]\úõ‹ã N√BüJN√BÉBù\›
+ò[ô^‹»õ‹]YZX[HŸ\òpÈË€»⁄[][0ËõôXHH[ö‹»[\‹∞Ë\ö[‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[ô^‹À€[ö–ù\ﬁK N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹ÀŸ\ÿXõYWÿù\ﬁHH[[ö–ù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹À⁄][Pù\ﬁW…—Ÿ\ò[ô¯†)âÀ N√BüJN√BÉBù\›
+ò[ô^‹»õ‹]YZX[H[ùö[»[ú]X[ù»»[ö»[\‹∞Ë\ö[»0ÍHŸ\òY»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[ô^‹À⁄Yó
+ÿ⁄◊ò›\úô[ùH[[ö–ù\ﬁHYö[W
+\ô]\õã N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹ÀŸ\ÿXõYWÿù\ﬁHH[[ö–ù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹ÀŸ\ÿXõYWÿù\ﬁHH[[ö–ù\ﬁHYö[WK N√BüJN√BÉBù\›
+ò[ô^‹»‹öY[ù[Hõ‹õX]‹»H[X[ö»»\ú]Z]õ»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[ô^‹Àÿ\öXKY\ÿ‹öXôYûOWÿ	⁄YKZ[K N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹À—õ‹õX]‹»XŸZ]‹ŒàîQÀëÀŸXî›Hóà[X[ö»pË^[[ŒàLPóã N√BüJN√BÉBù\›
+ö[òõﬁH\›‹]YHY€õ‹òHô\‹‹›\»Hö[õ‹»[ùY€‹»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ€€ú›Ÿ[ô\ò][€è]\ŸTôYó
+
+K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À⁄Yó
+ô\]Y\›OOYŸ[ô\ò][€óò›\úô[ù
+\Ÿ]][\À N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À‹ô]\õó
+
+OOóŸŸ[ô\ò][€óò›\úô[ù
+◊
+Œ◊K N√BüJN√BÉBù\›
+ö[òõﬁH\›‹]YHô\Ÿ\ùòHY‹»\ò[ùHõ›òH€€ú›[Hã
+
+HOà√Bà\‹Ÿ\ùôŸ\”õ›X]⁄
+[òõﬁX]\öXZ\À‹Ÿ]ÿY[ô◊
+ùYW
+N‹Ÿ]\úõ‹ó
+	…◊
+N⁄Yó
+€X\ìY\‹ÿYŸW
+\Ÿ]Y\‹ÿYŸW
+	…◊
+N‹Ÿ]][\◊
+◊W
+K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À⁄][\◊õ[ô›…–]X[^ò[ô»€€X⁄]pÈÌY\¯†)âŒâ–ÿ\úôYÿ[ô»€€X⁄]pÈÌY\¯†)âÀ N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À›\ŸQYôôX›
+
+
+OOó‹Ÿ]][\◊
+◊W
+N‹Ÿ]\]Y]
+ù[
+N◊K‹›]\À[›ŸY N√BüJN√BÉBù\›
+ö[òõﬁô\Ÿ\ùòHôYYòX⁄»\0Ï‹»pÈË€»€€ò€pÎYHã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ\ﬁ[ò»ù[ò›[€àÿY
+€X\ìY\‹ÿYŸO]ùYW
+K N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\À‹Ÿ]Y\‹ÿYŸW
+	‘€€X⁄]pÈË€»\õ›òYWâ◊
+Nÿ]ÿZ]ÿY
+ò[ŸW
+K N√BüJN√BÉBù\›
+ôöX⁄H0ÍX€öXÿHYô\ô[ò⁄XH\úõ»H›XŸ\‹€»òHY[úÿYŸ[HXŸ\‹Î]ô[ã
+
+HOà√Bà€€ú›õ‹õ][\ö[’X€öX€»HôXY‹[€ò[
+ããã‹‹òÀ€[Ÿ[\À›€‹öŸõ‹òŸKÿ€€\€ô[ùÀ’X⁄öXÿ[⁄Y]õ‹õKùﬁäN√Bà\‹Ÿ\ùõX]⁄
+õ‹õ][\ö[’X€öX€À‹õ€OW€Y\‹ÿYŸWú›\ù’⁄]
+	”∞Ë€»õ⁄I◊
+HY\‹ÿYŸWú›\ù’⁄]
+	‘ô]ö\ŸI◊
+H»	ÿ[\ù	»à	‹›]\…◊K N√BüJN√BÉBù\›
+ôõ‹õ][0Ë\ö[»Hÿ€‹ú∞Íõò⁄XH⁄[ò[^òH»[ùö[»[H[ô[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\—ù[ò⁄[€ò\ö[Àœõ‹õH€\‹”ò[YOHô‹öYÿ\L»€Nô‹öYX€€ÀLàà\öXKXù\ﬁOWÿù\ﬁWK N√BüJN√BÉBù\›
+ö\›0Ï‹öX€»õ‹]YZXHY⁄[òpÈË€»\ò[ùHÿ\úôYÿ[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+\›‹öX€—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô»YŸOOOLK N√Bà\‹Ÿ\ùõX]⁄
+\›‹öX€—ù[ò⁄[€ò\ö[ÀŸ\ÿXõYW€ÿY[ô»Y]Wù[W€XZ\◊K N√BüJN√BÉBù\›
+ù\ôYò\»õ‹]YZX[HY⁄[òpÈË€»\ò[ùHÿ\úôYÿ[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\ÀŸ\ÿXõYW€ÿY[ô»YŸOOOLK N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\ÀŸ\ÿXõYW€ÿY[ô»Y]Wù[W€XZ\◊K N√BüJN√BÉBù\›
+ù\ôYò\»[ôõ‹õX[H]X[^òpÈË€»õ»õ›0Ë€»\ò[ùHÿ\úôYÿ[Y[ù»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ\öXK[Xô[W€ÿY[ô◊…–]X[^ò[ô»\ôYò\…Œâ–]X[^ò\à\ôYò\…◊K N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\À◊€ÿY[ô◊…–]X[^ò[ô¯†)âŒâ–]X[^ò\à\ôYò\…◊K N√BüJN√BÉBù\›
+ù\ôYò\»^Xô[H[H0ÓõöX€»õÿ€»Hÿ\úôYÿ[Y[ù»H\úõ»ã
+
+HOà√Bà\‹Ÿ\ùô\]X[
+
+Z[ö\’\ôYò\ÀõX]⁄
+–ÿ\úôYÿ[ô»\ôYò\¯†)ãŸ H◊JKõ[ô›JN√Bà\‹Ÿ\ùô\]X[
+
+Z[ö\’\ôYò\ÀõX]⁄
+‹õ€OWò[\ùà€\‹”ò[YOWôõ^õ^]‹ò\][\ÀXŸ[ù\àù\›YûKXô]ŸY[àÿ\L»õ›[ôY[»ôÀ\õ‹ŸKMLŸ H◊JKõ[ô›JN√BüJN√BÉBù\›
+òÿXôpÈÿ[‹»»ù[ò⁄[€∞Ë\ö[»X€€[Ÿ[H0Î][‹»H]X[^òpÈË€»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHù€‹öÀ[õ›YöXÿ][€úÀ]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€ã N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLã N√Bà\‹Ÿ\ùõX]⁄
+\›‹öX€—ù[ò⁄[€ò\ö[Àœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHòX›]ö]KZ\›‹ûK]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€ã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\ÀœàYHõ^K]\⁄‹À]]Hà€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»^[»õ€ùXõ€ã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€\‹”ò[YOHú⁄ö[öÀL^^»^\€]KMLã N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[Àœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHúŸ\ùöXŸK\⁄Y]À]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€ã N√BüJN√BÉBù\›
+òÿXôpÈÿ[»H\ôö[»Z[ô[]YXúò[HY‹»€ô€‹»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãœ]à€\‹”ò[YOHõZ[ã]ÀLèó è€\‹”ò[YOHù^^»õ€ù\Ÿ[ZXõ€\\òÿ\ŸK N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãœH€\‹”ò[YOHõ]LàúôXZÀ]€‹ô»^Lﬁõ€ùXõ€ N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãÿ€\‹”ò[YOHôõ^⁄ö[öÀLõ^X€€][\ÀY[ôÿ\Làã N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãœ€\‹”ò[YOHõ]LHúôXZÀ]€‹ô»õ€ù\Ÿ[ZXõ€^\€]KNLèóÿ€€ù^ôù[ò⁄[€ò\ö[◊õõ€YK N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãœ€\‹”ò[YOHõ]LHúôXZÀ]€‹ô»^\€]KNLèóÿ€€ù^ôù[ò⁄[€ò\ö[◊òÿ\ô€À N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHúŸX›‹ã\õ⁄ôX›À]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€ã N√Bà\‹Ÿ\ùõX]⁄
+Y]TŸ]‹ãÿ€\‹”ò[YOHú⁄ö[öÀLõ›[ôYYù[ôÀ\€]KLL N√BüJN√BÉBù\›
+ö[òõﬁHX]\öXZ\»ô\Ÿ\ùòH\úõ»Hô]ûH[H[\»\›ôZ]\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àœ‹[à€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»èóŸ\úõ‹óO‹‹[èã N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Hï[ù\àÿ\úôYÿ\à\»€€X⁄]pÈÌY\»õ›ò[Y[ùHà\ÿXõYW€ÿY[ô»HXX›[€êù\ﬁWK N√Bà\‹Ÿ\ùõX]⁄
+[òõﬁX]\öXZ\Àÿ€\‹”ò[YOHòúôXZÀ]€‹ô»^\€H^Y[Y\ò[MÃã N√BüJN√BÉBù\›
+ôöX⁄\»HŸ\ùöpÈ€»ô\Ÿ\ùò[Hù\ÿÿHHpÈË€»HXô\ù\òHõ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[Àœù]€à€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\OHú›XõZ]à\ÿXõYW€ÿY[ô◊K N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊H€ê€X⁄œW◊
+
+HOà»Ÿ]ŸX\ò⁄ N√Bà\‹Ÿ\ùõX]⁄
+öX⁄\—ù[ò⁄[€ò\ö[Àœù]€à\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊H€ê€X⁄œWŸ]ô[ùOã N√BüJN√BÉBù\›
+ôY]‹àHXŸ\‹€»]YXúòHŸ]‹ô\»H\õZ\‹ÌY\»€ôÿ\»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHôõ^Z[ã]ÀL][\À\›\ùÿ\Là^\€Hèè[ú]\OHò⁄X⁄ÿõﬁã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àœ‹[à€\‹”ò[YOHòúôXZÀ]€‹ô»èó€Xô[O‹‹[èã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àœ›[[X\ûH€\‹”ò[YOHò›\ú€‹ã\⁄[ù\àúôXZÀ]€‹ô»õ€ù\Ÿ[ZXõ€èã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àœ‹[à€\‹”ò[YOHòúôXZÀ]€‹ô»èó‹\õZ\‹⁄[€ìXô[◊ÿ◊õ‹\òXÿ[◊W◊õ‹\òXÿ[◊O‹‹[èã N√Bà\‹Ÿ\ùõX]⁄
+Y]‹ëù[ò⁄[€ò\ö[Àœ€\‹”ò[YOHòúôXZÀ]€‹ô»^^»^\€]KMLèíQH€€ùNã N√BüJN√BÉBù\›
+ù\ôYò\»ô\Ÿ\ùò[H€€ùõ€\»Hö[õ»HY⁄[òpÈË€»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊H€ê€X⁄œW◊
+
+OOó‹Ÿ]ö[\ã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀL€Nù⁄]\‹XŸK[õ›‹ò\ã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœù]€à\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Hí\à\òHH0ËY⁄[òH[ù\ö[‹àH\ôYò\»ã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœ‹[à€\‹”ò[YOHú⁄ö[öÀL^\€Hà\öXKX›\úô[ùHúYŸHã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ\öXK[Xô[Hí\à\òHH∞Ïﬁ[XH0ËY⁄[òHH\ôYò\»à\ÿXõYW€ÿY[ô»Y]Wù[W€XZ\◊K N√BüJN√BÉBù\›
+õõ›YöXÿpÈÌY\»ô\Ÿ\ùò[HpÈÌY\»HY⁄[òpÈË€»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àœù]€à\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW»HXù\ﬁWH\öXK[Xô[W⁄][Wù\ôYòW⁄YÀ N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXK[Xô[WÿX\òÿ\à€€[»YNàäèÿH€ê€X⁄œWÿ\ﬁ[òÀ N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àœ‹[à€\‹”ò[YOHú⁄ö[öÀL^\€Hà\öXKX›\úô[ùHúYŸHã N√Bà\‹Ÿ\ùõX]⁄
+õ›YöXÿX€Ÿ\—ù[ò⁄[€ò\ö[Àÿ\öXK[Xô[Hí\à\òHH∞Ïﬁ[XH0ËY⁄[òHà\ÿXõYW»Y]Wù[W€XZ\»HXù\ﬁWK N√BüJN√BÉBù\›
+õÿ€‹ú∞Íõò⁄X\»ô\Ÿ\ùò[H€€][öXÿpÈË€Àô\€€pÈË€»HY⁄[òpÈË€»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\Àœù]€à\OHú›XõZ]à€\‹”ò[YOHòùã\ö[X\ûH⁄ö[öÀLà\öXK[Xô[Wÿù\ﬁW…‘ôY⁄\›ò[ô»ÿ€‹ú∞Íõò⁄XIŒâ–€€][öXÿ\àÿ€‹ú∞Íõò⁄XI◊K N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\Àœù]€à\OHú›XõZ]à€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Wÿù\ﬁW…‘ÿ[ò[ô»ô\€€pÈË€»Hÿ€‹ú∞Íõò⁄XIÀ N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\Àœù]€à\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Hí\à\òHH0ËY⁄[òH[ù\ö[‹àHÿ€‹ú∞Íõò⁄X\»ã N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\Àœ‹[à€\‹”ò[YOHúŸ[ãXŸ[ù\à⁄ö[öÀL^\€Hà\öXKX›\úô[ùHúYŸHã N√Bà\‹Ÿ\ùõX]⁄
+ÿ€‹úô[ò⁄X\Àÿ\öXK[Xô[W€ÿY[ô»ù\ﬁW…–Y›X\ôHH]X[^òpÈË€»\»ÿ€‹ú∞Íõò⁄X\…Œâ–]X[^ò\àÿ€‹ú∞Íõò⁄X\…◊K N√BüJN√BÉBù\›
+ú€€X⁄]pÈÌY\»HX]\öXZ\»X€€[Ÿ[HÿXôpÈÿ[»HpÈÌY\»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[œ]à€\‹”ò[YOHõZ[ã]ÀLèèYWÿ	ŸöY[ôYö^K]]XH€\‹”ò[YOHòúôXZÀ]€‹ô»õ€ù\Ÿ[ZXõ€èã N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[œ€\‹”ò[YOHòúôXZÀ]€‹ô»^\€H^\€]KMLèîpÈÿHX]\öXZ\»\òH\›H‹ô[K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà€ê€X⁄œW‹ôYúô\⁄ô\]Y\›◊K N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[œ‹[à€\‹”ò[YOHôõ^⁄ö[öÀLõ^]‹ò\][\ÀXŸ[ù\àù\›YûKY[ôÿ\Làèã N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ€\‹”ò[YOHú⁄ö[öÀLõ›[ôYYù[ôÀ]⁄]HLàKLH^^»ã N√Bà\‹Ÿ\ùõX]⁄
+€€X⁄]Xÿ[”X]\öX[ÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Wÿÿ[òŸ[\à€€X⁄]pÈË€À N√BüJN√BÉBù\›
+úôY⁄\›õ‹»HõŸpÈË€»]YXúò[HÿúŸ\ùòpÈÌY\»Ÿ[H\€ÿÿ\à»‹∞Ë\ö[»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ôY⁄\›õ‘õŸXÿ[Àœ‹[à€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»èè›õ€ôœóŸõ‹õX]\W
+][Wù\◊
+WK N√Bà\‹Ÿ\ùõX]⁄
+ôY⁄\›õ‘õŸXÿ[Àœ[YH€\‹”ò[YOHú⁄ö[öÀL^^»^\€]KMLà]U[YOW‹ÿYôQ[ùûQ]U[YW
+][Wò‹öXY◊Ÿ[W
+WK N√BüJN√BÉBù\›
+ôöX⁄H0ÍX€öXÿH]YXúòHH⁄]XpÈË€»Ÿ[H\ô\à\»pÈÌY\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿKœ‹[àõ€OHú›]\»à\öXK[]ôOHú€]Hà€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»^\€Hõ€ù[YY][Hèî⁄]XpÈË€Œã N√Bà\‹Ÿ\ùõX]⁄
+öX⁄UX€öXÿKœ]à€\‹”ò[YOHôõ^õ^]‹ò\][\ÀXŸ[ù\àÿ\L»õ›[ôY^ôÀ\€]KMLL»èã N√BüJN√BÉBù\›
+ô\úõ»Hô\‹€úË]ôZ\»‹ôÿ[ö^òHô]ûHõ»[ÿö[Hã
+
+HOà√Bà€€ú›\‹⁄Y€õY[ùHôXY‹[€ò[
+ããã‹‹òÀ€[Ÿ[\À›€‹öŸõ‹òŸKÿ€€\€ô[ùÀ‘⁄Y]\‹⁄Y€õY[ùY]‹ãùﬁäN√Bà\‹Ÿ\ùõX]⁄
+\‹⁄Y€õY[ùœ]àõ€OHò[\ùà€\‹”ò[YOHôõ^õ^]‹ò\][\À\›\ùù\›YûKXô]ŸY[àÿ\Là^\€H^\ôYMÃèè€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»èóŸ\úõ‹óO‹ã N√Bà\‹Ÿ\ùõX]⁄
+\‹⁄Y€õY[ùÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[Hï[ù\àÿ\úôYÿ\à‹»ô\‹€úË]ôZ\»õ›ò[Y[ùHã N√BüJN√BÉBù\›
+ò€€ùõ€HHŸXÿYŸ[Hõ›YŸH›]\»H]X[^òpÈË€»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kœ]à€\‹”ò[YOHõZ[ã]ÀLèó èYWÿ	⁄YK]]XK N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kÿ€\‹”ò[YOHòúôXZÀ]€‹ô»^\€H^\€]KMLã N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kÿ€\‹”ò[YOWÿ⁄ö[öÀLõ›[ôYYù[LàKLH^^»õ€ù[YY][K N√Bà\‹Ÿ\ùõX]⁄
+€€ùõ€TŸXÿYŸ[Kÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà€ê€X⁄œW‹ôYúô\⁄ûZ[ô◊K N√BüJN√BÉBù\›
+òYŸ[ôHX€€[ŸH0Î][»H]X[^òpÈË€»[H[\»\›ôZ]\»ã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHù€‹öÀXYŸ[ôK]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€èã N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àœ€\‹”ò[YOHòúôXZÀ]€‹ô»^\€H^\€]KMLèîò^õ‹»\»\ôYò\»]öXùpÎY\»HõÿÍã N√Bà\‹Ÿ\ùõX]⁄
+YŸ[ôQù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊H€ê€X⁄œW◊
+
+OOùõ⁄YÿY
+
+WK N√BüJN√BÉBù\›
+úô\›[[»‹\òX⁄[€ò[õ›YŸH[ôXÿY‹ô\»€ô€‹»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àœ]à€\‹”ò[YOHõZ[ã]ÀLèèàYHú\ú€€ò[]€‹öÀ\›[[X\ûK]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»^[»õ€ùXõ€èã N√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊H€ê€X⁄œW◊
+
+OOúŸ]ô]ûW
+èOõó
+ÃW
+WK N√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOWÿÿ\ôZ[ã]ÀLõ‹ô\àM N√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àœ€\‹”ò[YOHòúôXZÀ]€‹ô»^\€H^\€]KMåèó€Xô[O‹ã N√Bà\‹Ÿ\ùõX]⁄
+ô\›[[—ù[ò⁄[€ò\ö[Àÿ€\‹”ò[YOHõ]Là⁄]\‹XŸK[õ›‹ò\^Lûõ€ùXõ€^\€]KNLã N√BüJN√BÉBù\›
+òpÈÌY\»H[ô^‹»∞Ë€»€€\ö[Y[H»õ€YH»\ú]Z]õ»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+[ô^‹Àœ]à€\‹”ò[YOHôõ^Z[ã]ÀLõ^]‹ò\ÿ\Làèèù]€à\OHòù]€àà€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLã N√Bà\‹Ÿ\ùõX]⁄
+[ô^‹ÀœH€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\öXK[Xô[WÿXúö\ã N√BüJN√BÉBù\›
+ô][HH\ôYòH‹ôÿ[ö^òH0Î][À]X[^òpÈË€»HôXÿ\ôÿHõ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+][U\ôYòKœ]à€\‹”ò[YOHôõ^õ^]‹ò\][\À\›\ùù\›YûKXô]ŸY[àÿ\L»èè]à€\‹”ò[YOHõZ[ã]ÀLèè»YHù\⁄ÀY]Z[À]]Hà€\‹”ò[YOHòúôXZÀ]€‹ô»õ€ù\Ÿ[ZXõ€èã N√Bà\‹Ÿ\ùõX]⁄
+][U\ôYòKÿ€\‹”ò[YOHòùã\ŸX€€ô\ûH⁄ö[öÀLà\ÿXõYW€ÿY[ô◊K N√Bà\‹Ÿ\ùõX]⁄
+][U\ôYòKœ‹[à€\‹”ò[YOHù^^»^\€]KMLà\öXK[]ôOHú€]Hèã N√BüJN√BÉBù\›
+òXŸZ]HH[ú›[pÈË€»]YXúòH€€ôö\õXpÈË€»€ôÿHõ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+XŸZ]R[ú›[Xÿ[Àœ€\‹”ò[YOHòúôXZÀ]€‹ô»õ€ù\Ÿ[ZXõ€èîôY⁄\›ò\àXŸZ]HH[ú›[pÈË€œ⁄ã N√Bà\‹Ÿ\ùõX]⁄
+XŸZ]R[ú›[Xÿ[Àÿ€\‹”ò[YOHõ]LH⁄ö[öÀLà\OHò⁄X⁄ÿõﬁã N√Bà\‹Ÿ\ùõX]⁄
+XŸZ]R[ú›[Xÿ[Àœ‹[à€\‹”ò[YOHõZ[ã]ÀLúôXZÀ]€‹ô»èê€€ôö\õ[»]YH»€Y[ùK N√Bà\‹Ÿ\ùõX]⁄
+XŸZ]R[ú›[Xÿ[Àÿ€\‹”ò[YOHòùã\ö[X\ûH⁄ö[öÀLà\öXK[Xô[K N√BüJN√BÉBù\›
+òÿ\ù0Ë€»H\ôYòHX[ù0Í[HòYŸ\»Hò^õ»YÎ]ôZ\»õ»[ÿö[Hã
+
+HOà√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€\‹”ò[YOWÿ⁄ö[öÀLõ›[ôYYù[LóçHKLH^^»õ€ù\Ÿ[ZXõ€ N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœ‹[à€\‹”ò[YOHòúôXZÀ]€‹ô»èóŸõ‹õX]\⁄‘ŸX›‹ó
+\⁄◊úŸ]‹ó
+WO‹‹[èã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àÿ€\‹”ò[YOWÿ⁄ö[öÀLõ›[ôYYù[LàKLHõ€ù\Ÿ[ZXõ€ N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœ‹[à€\‹”ò[YOHòúôXZÀ]€‹ô»èìÿúöYÿ]0Ï‹öXH\òH€€ò€Z\àH]\O‹‹[èã N√Bà\‹Ÿ\ùõX]⁄
+Z[ö\’\ôYò\Àœ‹[à€\‹”ò[YOHòúôXZÀ]€‹ô»èîò^õŒà[YK N√BüJN√B
