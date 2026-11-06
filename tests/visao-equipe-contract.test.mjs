@@ -318,6 +318,12 @@ test("tarefas bloqueiam o filtro durante sincronização", () => {
   assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
 });
 
+test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
+  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
+  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
+  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
+});
+
 test("tarefas não enviam atualização sem mudança", () => {
   assert.match(minhasTarefas, /const dirty=status!==task\.status/);
   assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);

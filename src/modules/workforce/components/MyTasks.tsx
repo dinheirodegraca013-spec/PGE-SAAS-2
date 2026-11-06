@@ -1,101 +1,90 @@
-Û^š›bh¥êß¢¹­…â'ŠØš–,ŞçÚº[C®+Ş²Š^­«b¢z'¶…ŠW’ÊË^ššè¾'^­ö¢•çZ[\Ü™XXİİ\ÙQY™™Xİ\ÙRY\ÙT™Y‹\ÙTİ]_Hœ›ÛH	Ü™XXİ	ÎÃBš[\ÜÚ\ÔÙ]Ü‹Ù]Ü™\ßHœ›ÛH	ĞÛX‹ÜÙ]Ü™\ÉÎÃBš[\Üİ\ÙUÛÜšÙ›Ü˜ÙPXØÙ\ÜßHœ›ÛH	Ë‹‹ØÛÛ^ÕÛÜšÙ›Ü˜ÙPXØÙ\ÜĞÛÛ^	ÎÃBš[\ÜÚ\Ô\›Z\ÜÚ[ÛŸHœ›ÛH	Ë‹‹ÛX‹ØXØÙ\ÜÉÎÃBš[\ÜİÛÜšÕ\ÚÜË\ÚÔİ]\ÓX™[Ë\H\ÚÔYÙK\HÛÜšÕ\ÚË\H\ÚÔİ]\ßHœ›ÛH	Ë‹‹ÜÙ\šXÙ\Ëİ\ÚÜËœÙ\šXÙIÎÃBƒB˜ÛÛœİİ]\ÕÛ™Nˆ™XÛÜ™\ÚÔİ]\Ëİš[™ÏˆHÃBˆ[™[Nˆ	Ø™Ë\Û]KLL^\Û]KMÌ	ËBˆ[WØ[™[Y[Îˆ	Ø™ËXŞX[‹LL^XŞX[‹N	ËBˆ]\ØYNˆ	Ø™ËX[X™\‹LL^X[X™\‹N	ËBˆYİX\™[™×ÛX]\šX[ˆ	Ø™Ë[Ü˜[™ÙKLL^[Ü˜[™ÙKN	ËBˆYİX\™[™×Ø\›İ˜XØ[Îˆ	Ø™Ë]š[Û]LL^]š[Û]N	ËBˆÛÛ˜ÛZYNˆ	Ø™ËY[Y\˜[LL^Y[Y\˜[N	ËBˆØ[˜Ù[YNˆ	Ø™Ë\›ÜÙKLL^\›ÜÙKN	ËBŸNÃB˜ÛÛœİš[Üš]SX™[Ï^Ø˜Z^N‰Ğ˜Z^IË›Ü›X[‰Ó›Ü›X[	Ë[N‰Ğ[IË\™Ù[N‰Õ\™Ù[IßNÃB˜ÛÛœİš[Üš]UÛ™O^Ø˜Z^N‰Ø™Ë\Û]KLL^\Û]KMÌ	Ë›Ü›X[‰Ø™ËXŞX[‹LL^XŞX[‹N	Ë[N‰Ø™ËX[X™\‹LL^X[X™\‹N	Ë\™Ù[N‰Ø™Ë\›ÜÙKLL^\›ÜÙKN	ßNÃB˜ÛÛœİÛÜšÙ›Ü˜ÙT™Yœ™\Ú]™[IÙÙ\İ[Îœ™Yœ™\Ú]ÛÜšÙ›Ü˜ÙIÎÃB˜ÛÛœİ›Ü›X]\ÚÔİ]\ÏJ˜[YNœİš[™ÊOO\ÚÔİ]\ÓX™[Öİ˜[YH\È\ÚÔİ]\×OÏÉÔÚ]XpéğèÛÈ[™\ÜÛ°ë]™[	ÎÃB˜ÛÛœİ\ÚÕÛ™OJ˜[YNœİš[™ÊOOœİ]\ÕÛ™Vİ˜[YH\È\ÚÔİ]\×OÏÉØ™Ë\Û]KLL^\Û]KMÌ	ÎÃB˜ÛÛœİ›Ü›X]š[Üš]OJ˜[YNœİš[™ÊOOœš[Üš]SX™[Öİ˜[YH\ÈÙ^[Ùˆ\[Ùˆš[Üš]SX™[×OÏÉÓ°èÛÈ[™›Ü›XYIÎÃB˜ÛÛœİš[Üš]P˜YÙUÛ™OJ˜[YNœİš[™ÊOOœš[Üš]UÛ™Vİ˜[YH\ÈÙ^[Ùˆ\[Ùˆš[Üš]UÛ™WOÏÉØ™Ë\Û]KLL^\Û]KMÌ	ÎÃB˜ÛÛœİ›Ü›X]\ÚÔÙXİÜJ˜[YNœİš[™ÊOOš\ÔÙ]ÜŠ˜[YJOÜÙ]Ü™\Öİ˜[YWNŠ˜[Y_	ÔÙ]Üˆ°èÛÈ[™›Ü›XYÉÊNÃB™[˜İ[Ûˆ›Ü›X]\ÚÑXY[™J˜[YNœİš[™Ê^ØÛÛœİ]O[™]È]J˜[YJNÜ™]\›ˆ[X™\‹š\Ó˜SŠ]K™Ù][YJ
-JOÉÔ˜^›È°èÛÈ[™›Ü›XYÉÎ™]KÓØØ[Tİš[™Ê	ÜP”‰ÊNßCB™[˜İ[ÛˆØY™U\ÚÑ]U[YJ˜[YNœİš[™Ê^ØÛÛœİ]O[™]È]J˜[YJNÜ™]\›ˆ[X™\‹š\Ó˜SŠ]K™Ù][YJ
-JOİ[™Yš[™Y™]KÒTÓÔİš[™Ê
-NßCBƒB™^Ü[˜İ[Ûˆ\ÚĞØ\™
-İ\ÚËÛ”Ø]™YNİ\ÚÎ•ÛÜšÕ\ÚÎÛÛ”Ø]™YŠ
-OO›ÚYJ^ÃBˆÛÛœİØÛÛ^O]\ÙUÛÜšÙ›Ü˜ÙPXØÙ\ÜÊ
-NØÛÛœİY]\ÙRY
+import React,{useEffect,useId,useRef,useState} from 'react';
+import {isSetor,setores} from '@/lib/setores';
+import {useWorkforceAccess} from '../context/WorkforceAccessContext';
+import {hasPermission} from '../lib/access';
+import {workTasks,taskStatusLabels,type TaskPage,type WorkTask,type TaskStatus} from '../services/tasks.service';
 
-NÃBˆÛÛœİÜİ]\ËÙ]İ]\×O]\ÙTİ]O\ÚÔİ]\ÏŠ\ÚËœİ]\ÊNÃBˆÛÛœİÜ›ÙÜ™\ÜËÙ]›ÙÜ™\Ü×O]\ÙTİ]J\ÚËœ›ÙÜ™\ÜÛÊNÃBˆÛÛœİÛ›İ\ËÙ]›İ\×O]\ÙTİ]J\ÚË›ØœÙ\˜XÛÙ\ÊNÃBˆÛÛœİØ\ŞKÙ]\ŞWO]\ÙTİ]J˜[ÙJNØÛÛœİÙ\œ›Ü‹Ù]\œ›Ü—O]\ÙTİ]J	ÉÊNØÛÛœİØÚÏ]\ÙT™YŠ˜[ÙJNÃBˆÛÛœİÛX\‘\œ›ÜJ
-OOœÙ]\œ›ÜŠ	ÉÊNÃBˆÛÛœİš[˜[VÉØÛÛ˜ÛZYIË	ØØ[˜Ù[YI×Kš[˜ÛY\Ê\ÚËœİ]\ÊNÃBˆÛÛœİÜ\˜][ÛJ\™Ù]•\ÚÔİ]\ÊOO\™Ù]OO]\ÚËœİ]\ÏÉÙY]\‰Î\™Ù]OOIÙ[WØ[™[Y[ÉÏÉÚ[šXÚX\‰Î\™Ù]OOIÜ]\ØYIÏÉÜ]\Ø\‰Î\™Ù]OOIØÛÛ˜ÛZYIÏÉØÛÛ˜ÛZ\‰Î\™Ù]OOIØØ[˜Ù[YIÏÉÙ^ÛZ\‰Î‰ÙY]\‰ÎÃBˆÛÛœİÜ[ÛœÏJØš™XİšÙ^\Ê\ÚÔİ]\ÓX™[ÊH\È\ÚÔİ]\Ö×JK™š[\Š\™Ù]O\™Ù]OO]\ÚËœİ]\ÈBˆYš[˜[	‰ˆ\™Ù]OOIÜ[™[IÈ	‰ˆ\Ô\›Z\ÜÚ[ÛŠÛÛ^	İ\™Y˜\ÉËÜ\˜][ÛŠ\™Ù]
-JH	‰ƒBˆ
-VÉÜ]\ØYIË	ØÛÛ˜ÛZYI×Kš[˜ÛY\Ê\™Ù]
-H\ÚËœİ]\ÏOOIÙ[WØ[™[Y[ÉÊH	‰ƒBˆ
-\™Ù]OOIØØ[˜Ù[YIÈ]\ÚË›ØœšYØ]ÜšXH\Ô\›Z\ÜÚ[ÛŠÛÛ^	İ\™Y˜\ÉË	Ø\›İ˜\‰ÊJJNÃBˆÛÛœİ\Ü^YYİ]\ÏYš[˜[İ\ÚËœİ]\Îœİ]\ÎÃBˆÛÛœİİ™\™YO]\ÚËœ˜^›È	‰ˆVÉØÛÛ˜ÛZYIË	ØØ[˜Ù[YI×Kš[˜ÛY\Ê\Ü^YYİ]\ÊH	‰ˆ™]È]J\ÚËœ˜^›ÊK™Ù][YJ
-O]K››İÊ
-NÃBˆÛÛœİ\Ü^YY›ÙÜ™\ÜÏY\Ü^YYİ]\ÏOOIØÛÛ˜ÛZYIÏÌLœ›ÙÜ™\ÜÎÃBˆÛÛœİØY™Q\Ü^YY›ÙÜ™\ÜÏS[X™\‹š\Ñš[š]J\Ü^YY›ÙÜ™\ÜÊOÓX]›Z[ŠLX]›X^
-\Ü^YY›ÙÜ™\ÜÊJNŒÃBˆÛÛœİ\O\İ]\ÈOO]\ÚËœİ]\È›ÙÜ™\ÜÈOO]\ÚËœ›ÙÜ™\ÜÛÈ›İ\ÈOO]\ÚË›ØœÙ\˜XÛÙ\ÎÃBˆ™]\›ˆHY^Ø\™Y˜KIİ\ÚËšYXHÛ\ÜÓ˜[YO^ØØÜ›Û[]MÜXÙK^KLÈ›İ[™Y^›Ü™\ˆM	Ûİ™\™YOÉØ›Ü™\‹\›ÜÙKLŒ™Ë\›ÜÙKMLÍ	Î‰Ø›Ü™\‹\Û]KLŒ	ßXH\šXK[X™[^Ø\™Y˜H	İ\ÚË][ßH0­È	Ù›Ü›X]\ÚÔİ]\Ê\Ü^YYİ]\Ê_H0­È	Ù›Ü›X]\ÚÔÙXİÜŠ\ÚËœÙ]ÜŠ_H0­Èš[ÜšYYH	Ù›Ü›X]š[Üš]J\ÚËœš[ÜšYYJ_H0­È	İ\ÚËœ˜^›ÏØ˜^›È	Ù›Ü›X]\ÚÑXY[™J\ÚËœ˜^›Ê_X‰ÔÙ[H˜^›ÉßIÛİ™\™YOÉÈ0­È]˜\ØYIÎ‰ÉßXOƒBˆ]ˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\\İYKX™]ÙY[ˆØ\LˆÈÛ\ÜÓ˜[YOH™›Û\Ù[ZX›Ûİ\ÚË][ßOÚÏÜ[ˆÛ\ÜÓ˜[YO^Ø›İ[™YY[L‹HKLH^^È›Û\Ù[ZX›Û	İ\ÚÕÛ™J\Ü^YYİ]\Ê_XOÙ›Ü›X]\ÚÔİ]\Ê\Ü^YYİ]\Ê_OÜÜ[Ù]ƒBˆÛ\ÜÓ˜[YOHÚ]\ÜXÙK\™K]Ü˜\^\ÛH^\Û]KMŒİ\ÚË™\ØÜšXØ[ßOÜƒBˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\ËXÙ[\ˆØ\Lˆ^^È^\Û]KMLÜ[Ù›Ü›X]\ÚÔÙXİÜŠ\ÚËœÙ]ÜŠ_OÜÜ[Ü[ˆÛ\ÜÓ˜[YO^Ø›İ[™YY[LˆKLH›Û\Ù[ZX›Û	Üš[Üš]P˜YÙUÛ™J\ÚËœš[ÜšYYJ_XO”š[ÜšYYHÙ›Ü›X]š[Üš]J\ÚËœš[ÜšYYJ_OÜÜ[İ\ÚË›ØœšYØ]ÜšXI‰Ü[“ØœšYØ]0ìÜšXH\˜HÛÛ˜ÛZ\ˆH]\OÜÜ[ŸOÜƒBˆÛ\ÜÓ˜[YO^Ûİ™\™YOÉÙ›^›^]Ü˜\][\ËXÙ[\ˆØ\Lˆ^\ÛH^\™YMÌ	Î‰İ^\ÛH^\Û]KML	ßOİ\ÚËœ˜^›ÏÏÛİ™\™YI‰Ü[ˆÛ\ÜÓ˜[YOHœ›İ[™YY[™Ë\›ÜÙKLLLˆKLH^^È›Û\Ù[ZX›Û^\›ÜÙKN]˜\ØYOÜÜ[ŸOÜ[”˜^›Îˆ[YH]U[YO^ÜØY™U\ÚÑ]U[YJ\ÚËœ˜^›Ê_OÙ›Ü›X]\ÚÑXY[™J\ÚËœ˜^›Ê_Oİ[YOÜÜ[Ï‰ÔÙ[H˜^›ÈYš[šYÉßOÜƒBˆ›ÙÜ™\ÜÈÛ\ÜÓ˜[YOHËY[ˆX^^ÌLH˜[YO^ÜØY™Q\Ü^YY›ÙÜ™\ÜßH\šXK[X™[^Ø›ÙÜ™\ÜÛÈH	İ\ÚË][ßXH\šXK]˜[Y]^^Ø	ÜØY™Q\Ü^YY›ÙÜ™\ÜßIHÛÛ˜ÛpëYØKÏÜ[ˆÛ\ÜÓ˜[YOH^^Èˆ\šXK[]™OHœÛ]HÜØY™Q\Ü^YY›ÙÜ™\ÜßIOÜÜ[ƒBˆÙš[˜[ÏÛ\ÜÓ˜[YOHÚ]\ÜXÙK\™K]Ü˜\^\ÛH^\Û]KMLİ\ÚË›ØœÙ\˜XÛÙ\ßOÜ›Ü›HÛ\ÜÓ˜[YOH™ÜšYØ\LÈÛN™ÜšYXÛÛËLˆˆ\šXKX\ŞO^Ø\Ş_HÛ”İX›Z]^Ø\Ş[˜È]™[OÃBˆ]™[œ™]™[Y˜][
+const statusTone: Record<TaskStatus,string> = {
+  pendente: 'bg-slate-100 text-slate-700',
+  em_andamento: 'bg-cyan-100 text-cyan-800',
+  pausada: 'bg-amber-100 text-amber-800',
+  aguardando_material: 'bg-orange-100 text-orange-800',
+  aguardando_aprovacao: 'bg-violet-100 text-violet-800',
+  concluida: 'bg-emerald-100 text-emerald-800',
+  cancelada: 'bg-rose-100 text-rose-800',
+};
+const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
+const priorityTone={baixa:'bg-slate-100 text-slate-700',normal:'bg-cyan-100 text-cyan-800',alta:'bg-amber-100 text-amber-800',urgente:'bg-rose-100 text-rose-800'};
+const workforceRefreshEvent='gestio:refresh-workforce';
+const formatTaskStatus=(value:string)=>taskStatusLabels[value as TaskStatus]??'SituaÃ§Ã£o indisponÃ­vel';
+const taskTone=(value:string)=>statusTone[value as TaskStatus]??'bg-slate-100 text-slate-700';
+const formatPriority=(value:string)=>priorityLabels[value as keyof typeof priorityLabels]??'NÃ£o informada';
+const priorityBadgeTone=(value:string)=>priorityTone[value as keyof typeof priorityTone]??'bg-slate-100 text-slate-700';
+const formatTaskSector=(value:string)=>isSetor(value)?setores[value]:(value||'Setor nÃ£o informado');
+function formatTaskDeadline(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Prazo nÃ£o informado':date.toLocaleString('pt-BR');}
+function safeTaskDateTime(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();}
 
-NÚYŠØÚË˜İ\œ™[Z\Ô\›Z\ÜÚ[ÛŠÛÛ^	İ\™Y˜\ÉËÜ\˜][ÛŠİ]\ÊJJ\™]\›ÃBˆYŠS[X™\‹š\Ò[YÙ\Š›ÙÜ™\ÜÊH›ÙÜ™\ÜÏ›ÙÜ™\ÜÏŒL
-^ÜÙ]\œ›ÜŠ	Ò[™›Ü›YH[H›ÙÜ™\ÜÛÈ[™HHL‰ÊNÜ™]\›ßCBˆYŠİ]\ÏOOIØØ[˜Ù[YIÈ	‰ˆ›İ\Ëš[J
-K›[™İL
-^ÜÙ]\œ›ÜŠ	Ñ^\]YHÈØ[˜Ù[[Y[È[H[ÈY[›ÜÈLØ\˜Xİ\™\Ë‰ÊNÜ™]\›ßCBˆYŠÉØÛÛ˜ÛZYIË	ØØ[˜Ù[YI×Kš[˜ÛY\Êİ]\ÊH	‰ˆ]Ú[™İË˜ÛÛ™š\›J	Ñš[˜[^˜\ˆ\İH\™Y˜OÈ[HšXØ\°èH›Ü]YXYH\˜HYpéğèÛË‰ÊJ\™]\›ÃBˆØÚË˜İ\œ™[]YNÜÙ]\ŞJYJNÜÙ]\œ›ÜŠ	ÉÊNÃBˆ^Ø]ØZ]ÛÜšÕ\ÚÜË\]J\ÚËİ]\Ë›ÙÜ™\ÜË›İ\ÊNÛÛ”Ø]™Y
+export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
+  const {context}=useWorkforceAccess();const id=useId();
+  const [status,setStatus]=useState<TaskStatus>(task.status);
+  const [progress,setProgress]=useState(task.progresso);
+  const [notes,setNotes]=useState(task.observacoes);
+  const [busy,setBusy]=useState(false);const [error,setError]=useState('');const lock=useRef(false);
+  const clearError=()=>setError('');
+  const final=['concluida','cancelada'].includes(task.status);
+  const operation=(target:TaskStatus)=>target===task.status?'editar':target==='em_andamento'?'iniciar':target==='pausada'?'pausar':target==='concluida'?'concluir':target==='cancelada'?'excluir':'editar';
+  const options=(Object.keys(taskStatusLabels) as TaskStatus[]).filter(target=>target===task.status ||
+    !final && target!=='pendente' && hasPermission(context,'tarefas',operation(target)) &&
+    (!['pausada','concluida'].includes(target) || task.status==='em_andamento') &&
+    (target!=='cancelada' || !task.obrigatoria || hasPermission(context,'tarefas','aprovar')));
+  const displayedStatus=final?task.status:status;
+  const overdue=task.prazo && !['concluida','cancelada'].includes(displayedStatus) && new Date(task.prazo).getTime()<Date.now();
+  const displayedProgress=displayedStatus==='concluida'?100:progress;
+  const safeDisplayedProgress=Number.isFinite(displayedProgress)?Math.min(100,Math.max(0,displayedProgress)):0;
+  const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
+  return <li id={`tarefa-${task.id}`} className={`scroll-mt-4 space-y-3 rounded-xl border p-4 ${overdue?'border-rose-200 bg-rose-50/40':'border-slate-200'}`} aria-label={`Tarefa ${task.titulo} Â· ${formatTaskStatus(displayedStatus)} Â· ${formatTaskSector(task.setor)} Â· Prioridade ${formatPriority(task.prioridade)} Â· ${task.prazo?`Prazo ${formatTaskDeadline(task.prazo)}`:'Sem prazo'}${overdue?' Â· Atrasada':''}`}>
+    <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${taskTone(displayedStatus)}`}>{formatTaskStatus(displayedStatus)}</span></div>
+    <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
+    <p className="flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>{formatTaskSector(task.setor)}</span><span className={`rounded-full px-2 py-1 font-semibold ${priorityBadgeTone(task.prioridade)}`}>Prioridade {formatPriority(task.prioridade)}</span>{task.obrigatoria&&<span>ObrigatÃ³ria para concluir a etapa</span>}</p>
+    <p className={overdue?'flex flex-wrap items-center gap-2 text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?<>{overdue&&<span className="rounded-full bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800">Atrasada</span>}<span>Prazo: <time dateTime={safeTaskDateTime(task.prazo)}>{formatTaskDeadline(task.prazo)}</time></span></>:'Sem prazo definido'}</p>
+    <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`} aria-valuetext={`${safeDisplayedProgress}% concluÃ­do`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
+    {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
+      event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
+      if(!Number.isInteger(progress) || progress<0 || progress>100){setError('Informe um progresso entre 0 e 100.');return;}
+      if(status==='cancelada' && notes.trim().length<10){setError('Explique o cancelamento em pelo menos 10 caracteres.');return;}
+      if(['concluida','cancelada'].includes(status) && !window.confirm('Finalizar esta tarefa? Ela ficarÃ¡ bloqueada para ediÃ§Ã£o.'))return;
+      lock.current=true;setBusy(true);setError('');
+      try{await workTasks.update(task,status,progress,notes);onSaved();}
+      catch(cause){setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel atualizar a tarefa.');}
+      finally{lock.current=false;setBusy(false);}
+    }}>
+      <label className="text-sm" htmlFor={`${id}-status`}>SituaÃ§Ã£o<select id={`${id}-status`} className="input-field mt-1" disabled={busy} value={status} onChange={event=>{setStatus(event.target.value as TaskStatus);clearError();}}>{options.map(value=><option key={value} value={value}>{taskStatusLabels[value]}</option>)}</select></label>
+      <label className="text-sm" htmlFor={`${id}-progress`}>Progresso (%)<input id={`${id}-progress`} className="input-field mt-1" type="number" inputMode="numeric" required min={0} max={100} step={1} aria-describedby={`${id}-progress-help`} disabled={busy || status==='concluida'} value={status==='concluida'?100:Number.isFinite(progress)?progress:''} onChange={event=>{setProgress(event.target.value===''?NaN:Number(event.target.value));clearError();}}/><span id={`${id}-progress-help`} className="mt-1 block text-xs text-slate-500">Informe um valor inteiro entre 0 e 100.</span></label>
+      <label className="text-sm sm:col-span-2" htmlFor={`${id}-notes`}>ObservaÃ§Ãµes ou impedimentos<textarea id={`${id}-notes`} className="input-field mt-1" aria-describedby={`${id}-notes-help`} rows={3} maxLength={10000} disabled={busy} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/><span id={`${id}-notes-help`} className="mt-1 block text-xs text-slate-500">{status==='cancelada'?'Explique o cancelamento com pelo menos 10 caracteres.':'Registre impedimentos ou informaÃ§Ãµes relevantes para a equipe.'}</span></label>
+      {error && <p role="alert" className="text-sm text-red-700 sm:col-span-2">{error}</p>}{busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700 sm:col-span-2">Salvando tarefaâ€¦</p>}
+      <button type="submit" className="btn-primary" disabled={busy || !dirty || !hasPermission(context,'tarefas',operation(status))} aria-label={busy?'Salvando tarefa':dirty?'Atualizar tarefa':'Sem alteraÃ§Ãµes'}>{busy?'Salvandoâ€¦':dirty?'Atualizar tarefa':'Sem alteraÃ§Ãµes'}</button>
+    </form>}
+  </li>;
+}
 
-NßCBˆØ]Ú
-Ø]\ÙJ^ÜÙ]\œ›ÜŠØ]\ÙH[œİ[˜Ù[Ùˆ\œ›ÜØØ]\ÙK›Y\ÜØYÙN‰Ó°èÛÈ›ÚHÜÜğë]™[]X[^˜\ˆH\™Y˜K‰ÊNßCBˆš[˜[^ÛØÚË˜İ\œ™[Y˜[ÙNÜÙ]\ŞJ˜[ÙJNßCBˆ_OƒBˆX™[Û\ÜÓ˜[YOH^\ÛHˆ[›Ü^Ø	ÚYK\İ]\ØO”Ú]XpéğèÛÏÙ[XİY^Ø	ÚYK\İ]\ØHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ\ØX›Y^Ø\Ş_H˜[YO^Üİ]\ßHÛÚ[™ÙO^Ù]™[OÜÙ]İ]\Ê]™[\™Ù]˜[YH\È\ÚÔİ]\ÊNØÛX\‘\œ›ÜŠ
-Nß_OÛÜ[ÛœË›X\
-˜[YOOÜ[ÛˆÙ^O^İ˜[Y_H˜[YO^İ˜[Y_Oİ\ÚÔİ]\ÓX™[Öİ˜[YW_OÛÜ[ÛŠ_OÜÙ[XİÛX™[ƒBˆX™[Û\ÜÓ˜[YOH^\ÛHˆ[›Ü^Ø	ÚYK\›ÙÜ™\ÜØO”›ÙÜ™\ÜÛÈ
-	JO[œ]Y^Ø	ÚYK\›ÙÜ™\ÜØHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[^ÌHX^^ÌLHİ\^Ì_H\šXKY\ØÜšX™YO^Ø	ÚYK\›ÙÜ™\ÜËZ[H\ØX›Y^Ø\ŞHİ]\ÏOOIØÛÛ˜ÛZYIßH˜[YO^Üİ]\ÏOOIØÛÛ˜ÛZYIÏÌL“[X™\‹š\Ñš[š]J›ÙÜ™\ÜÊOÜ›ÙÜ™\ÜÎ‰ÉßHÛÚ[™ÙO^Ù]™[OÜÙ]›ÙÜ™\ÜÊ]™[\™Ù]˜[YOOOIÉÏÓ˜S“[X™\Š]™[\™Ù]˜[YJJNØÛX\‘\œ›ÜŠ
-Nß_KÏÜ[ˆY^Ø	ÚYK\›ÙÜ™\ÜËZ[HÛ\ÜÓ˜[YOH›]LH›ØÚÈ^^È^\Û]KML’[™›Ü›YH[H˜[Üˆ[Z\›È[™HHLÜÜ[ÛX™[ƒBˆX™[Û\ÜÓ˜[YOH^\ÛHÛN˜ÛÛ\Ü[‹Lˆˆ[›Ü^Ø	ÚYK[›İ\ØO“ØœÙ\˜péğíY\ÈİH[\Y[Y[ÜÏ^\™XHY^Ø	ÚYK[›İ\ØHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ\šXKY\ØÜšX™YO^Ø	ÚYK[›İ\ËZ[H›İÜÏ^ÌßHX^[™İ^ÌLH\ØX›Y^Ø\Ş_H˜[YO^Û›İ\ßHÛÚ[™ÙO^Ù]™[OÜÙ]›İ\Ê]™[\™Ù]˜[YJNØÛX\‘\œ›ÜŠ
-Nß_KÏÜ[ˆY^Ø	ÚYK[›İ\ËZ[HÛ\ÜÓ˜[YOH›]LH›ØÚÈ^^È^\Û]KMLÜİ]\ÏOOIØØ[˜Ù[YIÏÉÑ^\]YHÈØ[˜Ù[[Y[ÈÛÛH[ÈY[›ÜÈLØ\˜Xİ\™\Ë‰Î‰Ô™YÚ\İ™H[\Y[Y[ÜÈİH[™›Ü›XpéğíY\È™[]˜[\È\˜HH\]Z\K‰ßOÜÜ[ÛX™[ƒBˆÙ\œ›Üˆ	‰ˆ›ÛOH˜[\ˆÛ\ÜÓ˜[YOH^\ÛH^\™YMÌÛN˜ÛÛ\Ü[‹LˆÙ\œ›ÜŸOÜŸ^Ø\ŞH	‰ˆ›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]HˆÛ\ÜÓ˜[YOH^\ÛH^XŞX[‹MÌÛN˜ÛÛ\Ü[‹Lˆ”Ø[˜[™È\™Y˜x )ÜŸCBˆ]Ûˆ\OHœİX›Z]ˆÛ\ÜÓ˜[YOH˜‹\š[X\Hˆ\ØX›Y^Ø\ŞHY\HZ\Ô\›Z\ÜÚ[ÛŠÛÛ^	İ\™Y˜\ÉËÜ\˜][ÛŠİ]\ÊJ_H\šXK[X™[^Ø\ŞOÉÔØ[˜[™È\™Y˜IÎ™\OÉĞ]X[^˜\ˆ\™Y˜IÎ‰ÔÙ[H[\˜péğíY\ÉßOØ\ŞOÉÔØ[˜[™ø )‰Î™\OÉĞ]X[^˜\ˆ\™Y˜IÎ‰ÔÙ[H[\˜péğíY\ÉßOØ]ÛƒBˆÙ›Ü›OŸCBˆÛOÃBŸCBƒB™^ÜY˜][[˜İ[Ûˆ^U\ÚÜÊ
-^ÃBˆÛÛœİØÛÛ^ØY[™Î˜XØÙ\ÜÓØY[™Ë\œ›Ü˜XØÙ\ÜÑ\œ›ÜŸO]\ÙUÛÜšÙ›Ü˜ÙPXØÙ\ÜÊ
-NØÛÛœİÙ]KÙ]]WO]\ÙTİ]O\ÚÔYÙ_[Š[
-NØÛÛœİÜYÙKÙ]YÙWO]\ÙTİ]J
-NØÛÛœİÙš[\‹Ù]š[\—O]\ÙTİ]O\ÚÔİ]\ß	ÉÏŠ	ÉÊNØÛÛœİÜ™Yœ™\ÚÙ]™Yœ™\ÚO]\ÙTİ]J
-NØÛÛœİÛØY[™ËÙ]ØY[™×O]\ÙTİ]JYJNØÛÛœİÙ\œ›Ü‹Ù]\œ›Ü—O]\ÙTİ]J	ÉÊNØÛÛœİİ\]Y]Ù]\]Y]O]\ÙTİ]O]_[Š[
-NØÛÛœİY]\ÙRY
-
-NØÛÛœİ\İ™]\›”™Yœ™\Ú]\ÙT™YŠ
-NÃBˆ\ÙQY™™Xİ
-
-
-OOÜÙ]YÙJ
-NÜÙ]š[\Š	ÉÊNßKØÛÛ^Ë™[˜Ú[Û˜\š[ËšYÛÛ^Ë™[˜Ú[Û˜\š[Ë™\œØ[×JNÃBˆ\ÙQY™™Xİ
-
-
-OOÜÙ]]J[
-NÜÙ]\]Y]
-[
-NßKÜYÙKš[\‹ÛÛ^Ë™[˜Ú[Û˜\š[ËšYÛÛ^Ë™[˜Ú[Û˜\š[Ë™\œØ[ËXØÙ\ÜÑ\œ›Ü—JNÃBˆ\ÙQY™™Xİ
-
-
-OOØÛÛœİ™Yœ™\ÚÛ”™]\›J
-OOØÛÛœİ›İÏQ]K››İÊ
-NÚYŠØİ[Y[š\ÚXš[]Tİ]OOOIİš\ÚX›IÉ‰››İË[\İ™]\›”™Yœ™\Ú˜İ\œ™[ŒL
-^Û\İ™]\›”™Yœ™\Ú˜İ\œ™[[›İÎÜÙ]™Yœ™\Ú
-˜[YOO˜[YJÌJNß_NİÚ[™İË˜Y]™[\İ[™\Š	Ù›Øİ\ÉË™Yœ™\ÚÛ”™]\›ŠNÙØİ[Y[˜Y]™[\İ[™\Š	İš\ÚXš[]XÚ[™ÙIË™Yœ™\ÚÛ”™]\›ŠNÜ™]\›Š
-OOİÚ[™İËœ™[[İ™Q]™[\İ[™\Š	Ù›Øİ\ÉË™Yœ™\ÚÛ”™]\›ŠNÙØİ[Y[œ™[[İ™Q]™[\İ[™\Š	İš\ÚXš[]XÚ[™ÙIË™Yœ™\ÚÛ”™]\›ŠNßNßKØÛÛ^Ë™[˜Ú[Û˜\š[ËšYJNÃBˆ\ÙQY™™Xİ
-
-
-OOØÛÛœİ™Yœ™\Ú[™[J
-OOœÙ]™Yœ™\Ú
-˜[YOO˜[YJÌJNİÚ[™İË˜Y]™[\İ[™\ŠÛÜšÙ›Ü˜ÙT™Yœ™\Ú]™[™Yœ™\Ú[™[
-NÜ™]\›Š
-OOÚ[™İËœ™[[İ™Q]™[\İ[™\ŠÛÜšÙ›Ü˜ÙT™Yœ™\Ú]™[™Yœ™\Ú[™[
-NßK×JNÃBˆ\ÙQY™™Xİ
-
-
-OOÛ]Xİ]™O]YNÜÙ]ØY[™ÊYJNÜÙ]\œ›ÜŠ	ÉÊNÃBˆYŠXØÙ\ÜÓØY[™Ê^ÜÙ]]J[
-NÜÙ]\]Y]
-[
-NÜ™]\›Š
-OOØXİ]™OY˜[ÙNßNßCBˆYŠXØÙ\ÜÑ\œ›ÜŸXÛÛ^
-^ÜÙ]]J[
-NÜÙ]\]Y]
-[
-NÜÙ]ØY[™Ê˜[ÙJNÜ™]\›Š
-OOØXİ]™OY˜[ÙNßNßCBˆÛÜšÕ\ÚÜË›\İ
-YÙKš[\Ÿ[
-K[Š™\İ[OÚYŠXİ]™J^ÜÙ]]J™\İ[
-NÜÙ]\]Y]
-™]È]J
-JNß_JK˜Ø]Ú
-Ø]\ÙOOÚYŠXİ]™J\Ù]\œ›ÜŠØ]\ÙH[œİ[˜Ù[Ùˆ\œ›ÜØØ]\ÙK›Y\ÜØYÙN‰Ó°èÛÈ›ÚHÜÜğë]™[Ø\œ™YØ\ˆ\È\™Y˜\Ë‰ÊNßJK™š[˜[J
-
-OOÚYŠXİ]™J\Ù]ØY[™Ê˜[ÙJNßJNÃBˆ™]\›Š
-OOØXİ]™OY˜[ÙNßNÃBˆKÜYÙKš[\‹™Yœ™\ÚXØÙ\ÜÓØY[™ËXØÙ\ÜÑ\œ›Ü‹ÛÛ^Ë™[˜Ú[Û˜\š[ËšYÛÛ^Ë™[˜Ú[Û˜\š[Ë™\œØ[×JNÃBˆ™]\›ˆÙXİ[ÛˆÛ\ÜÓ˜[YOH˜Ø\™ÜXÙK^KMMHˆ\šXK[X™[YOH›^K]\ÚÜË]]Hˆ\šXKX\ŞO^ÛØY[™ßO]ˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\ËXÙ[\ˆ\İYKX™]ÙY[ˆØ\LˆˆYH›^K]\ÚÜË]]HˆÛ\ÜÓ˜[YOH^[È›ÛX›Û“Z[š\È\™Y˜\ÏÚÜ[ˆÛ\ÜÓ˜[YOH^^È^\Û]KMLˆ\šXK[]™OHœÛ]Hİ\]Y]Ø0æ›[XH]X[^˜péğèÛÈ0èÈ	İ\]Y]ÓØØ[U[YTİš[™Ê	ÜP”‰ËÚİ\‰Ì‹YYÚ]	ËZ[]N‰Ì‹YYÚ]	ßJ_X‰ĞYİX\™[™È]X[^˜péğèÛÉßOÜÜ[Ù]ƒBˆ]ˆÛ\ÜÓ˜[YOH™ÜšYØ\LÈÛN™ÜšYXÛÛËVÛZ[›X^
-YœŠWØ]]×HÛNš][\ËY[™X™[[›Ü^ÚYHÛ\ÜÓ˜[YOH˜›ØÚÈ^\ÛH‘š[˜\ˆÜˆÚ]XpéğèÛÏÙ[XİY^ÚYHÛ\ÜÓ˜[YOHš[œ]YšY[]LHˆ\ØX›Y^ÛØY[™ßH˜[YO^Ùš[\ŸHÛÚ[™ÙO^Ù]™[OÜÙ]š[\Š]™[\™Ù]˜[YH\È\ÚÔİ]\ß	ÉÊNÜÙ]YÙJ
-Nß_OÜ[Ûˆ˜[YOHˆ•Ù\È\ÈÚ]XpéğíY\ÏÛÜ[ÛÓØš™Xİ™[šY\Ê\ÚÔİ]\ÓX™[ÊK›X\
-
-İ˜[YKX™[JOOÜ[ÛˆÙ^O^İ˜[Y_H˜[YO^İ˜[Y_OÛX™[OÛÜ[ÛŠ_OÜÙ[XİÛX™[ƒBˆ]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÛNÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›Y^ÛØY[™ßHÛÛXÚÏ^Ê
-OOœÙ]™Yœ™\Ú
-O›ŠÌJ_H\šXK[X™[^ÛØY[™ÏÉĞ]X[^˜[™È\™Y˜\ÉÎ‰Ğ]X[^˜\ˆ\™Y˜\ÉßOÛØY[™ÏÉĞ]X[^˜[™ø )‰Î‰Ğ]X[^˜\ˆ\™Y˜\ÉßOØ]ÛÙ]ƒBˆÛØY[™È	‰ˆ›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]HÙ]HÈ	Ğ]X[^˜[™È\™Y˜\ø )‰Èˆ	ĞØ\œ™YØ[™È\™Y˜\ø )‰ßOÜŸ^Ù\œ›Üˆ	‰ˆ]ˆ›ÛOH˜[\ˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\ËXÙ[\ˆ\İYKX™]ÙY[ˆØ\LÈ›İ[™Y[È™Ë\›ÜÙKMLLÈ^\ÛH^\™YMÌÜ[Ù\œ›ÜŸOÜÜ[]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOHœ›İ[™Y[È›Ü™\ˆ›Ü™\‹\›ÜÙKLŒ™Ë]Ú]HLÈKLˆ›Û\Ù[ZX›Û^\›ÜÙKMÌİ™\˜™Ë\›ÜÙKLLˆ\šXK[X™[H•[\ˆØ\œ™YØ\ˆ\È\™Y˜\È›İ˜[Y[HˆÛÛXÚÏ^Ê
-OOœÙ]™Yœ™\Ú
-O›ŠÌJ_O•[\ˆ›İ˜[Y[OØ]ÛÙ]ŸCBˆÙ]H	‰ˆY]Kš][œË›[™İ	‰ˆ]ˆ›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]HˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\ËXÙ[\ˆ\İYKX™]ÙY[ˆØ\LÈ›İ[™Y[È›Ü™\ˆ›Ü™\‹Y\ÚY›Ü™\‹\Û]KLŒMÛ\ÜÓ˜[YOH^\ÛH^\Û]KMLÙš[\Ø™[š[XH\™Y˜HÛÛHÚ]XpéğèÛÈ8 '	Ù›Ü›X]\ÚÔİ]\Êš[\Š_x 'IÜYÙOŒÉÈ™\İH0èYÚ[˜IÎ‰ÉßK˜œYÙOŒÉÓ™[š[XH\™Y˜H™\İH0èYÚ[˜Kˆ›ÛH[XH0èYÚ[˜H\˜HÛÛœİ[\ˆ™\İ[YÜÈ[\š[Ü™\Ë‰Î‰Ó™[š[XH\™Y˜H\ÜÛ°ë]™[›È[ÛY[Ë‰ßOÜÙš[\‰‰]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\Hˆ\ØX›Y^ÛØY[™ßHÛÛXÚÏ^Ê
-OOÜÙ]š[\Š	ÉÊNÜÙ]YÙJ
-Nß_O“[\\ˆš[›ÏØ]ÛŸOÙ]ŸCBˆÙ]H	‰ˆ[Û\ÜÓ˜[YOHœÜXÙK^KMÙ]Kš][œË›X\
-\ÚÏO\ÚĞØ\™Ù^O^Ø	İ\ÚËšYN‰İ\ÚË™\œØ[ßXH\ÚÏ^İ\ÚßHÛ”Ø]™Y^Ê
-OOœÙ]™Yœ™\Ú
-O›ŠÌJ_KÏŠ_Oİ[ŸCBˆÙ]H	‰ˆ˜]ˆ\šXK[X™[H”YÚ[˜péğèÛÈH\™Y˜\ÈˆÛ\ÜÓ˜[YOH™›^][\ËXÙ[\ˆØ\LÈ]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\Hˆ\šXK[X™[H’\ˆ\˜HH0èYÚ[˜H[\š[ÜˆH\™Y˜\Èˆ\ØX›Y^ÛØY[™ÈYÙOOOLHÛÛXÚÏ^Ê
-OOœÙ]YÙJO›‹LJ_O[\š[ÜØ]ÛÜ[ˆÛ\ÜÓ˜[YOH^\ÛHˆ\šXKXİ\œ™[HœYÙHˆ\šXK[]™OHœÛ]H”0èYÚ[˜HÜYÙJÌ_OÜÜ[]Ûˆ\OH˜]ÛˆˆÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\Hˆ\šXK[X™[H’\ˆ\˜HH°ìŞ[XH0èYÚ[˜HH\™Y˜\Èˆ\ØX›Y^ÛØY[™ÈY]K[WÛXZ\ßHÛÛXÚÏ^Ê
-OOœÙ]YÙJO›ŠÌJ_O”°ìŞ[XOØ]ÛÛ˜]ŸCBˆÜÙXİ[ÛÃBŸCB
+export default function MyTasks(){
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const [data,setData]=useState<TaskPage|null>(null);const [page,setPage]=useState(0);const [filter,setFilter]=useState<TaskStatus|''>('');const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [updatedAt,setUpdatedAt]=useState<Date|null>(null);const id=useId();const lastReturnRefresh=useRef(0);
+  useEffect(()=>{setPage(0);setFilter('');},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setUpdatedAt(null);},[page,filter,context?.funcionario.id,context?.funcionario.versao,accessError]);
+  useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
+  useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
+  useEffect(()=>{let active=true;setLoading(true);setError('');
+    if(accessLoading){setData(null);setUpdatedAt(null);return()=>{active=false;};}
+    if(accessError||!context){setData(null);setUpdatedAt(null);setLoading(false);return()=>{active=false;};}
+    workTasks.list(page,filter||null).then(result=>{if(active){setData(result);setUpdatedAt(new Date());}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel carregar as tarefas.');}).finally(()=>{if(active)setLoading(false);});
+    return()=>{active=false;};
+  },[page,filter,refresh,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
+  return <section className="card space-y-4 p-5" aria-labelledby="my-tasks-title" aria-busy={loading}><div className="flex flex-wrap items-center justify-between gap-2"><h2 id="my-tasks-title" className="text-lg font-bold">Minhas tarefas</h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Ãšltima atualizaÃ§Ã£o Ã s ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualizaÃ§Ã£o'}</span></div>
+    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"><label htmlFor={id} className="block text-sm">Filtrar por situaÃ§Ã£o<select id={id} className="input-field mt-1" disabled={loading} value={filter} onChange={event=>{setFilter(event.target.value as TaskStatus|'');setPage(0);}}><option value="">Todas as situaÃ§Ãµes</option>{Object.entries(taskStatusLabels).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>
+    <div className="flex flex-wrap gap-2 sm:justify-end">{filter&&<button type="button" className="btn-secondary" disabled={loading} onClick={()=>{setFilter('');setPage(0);}} aria-label="Limpar filtro de tarefas">Limpar filtro</button>}<button type="button" className="btn-secondary sm:whitespace-nowrap" disabled={loading} onClick={()=>setRefresh(n=>n+1)} aria-label={loading?'Atualizando tarefas':'Atualizar tarefas'}>{loading?'Atualizandoâ€¦':'Atualizar tarefas'}</button></div></div>
+    {loading && <p role="status" aria-live="polite">{data ? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'}</p>}{error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar as tarefas novamente" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
+    {data && !data.itens.length && <div role="status" aria-live="polite" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 p-4"><p className="text-sm text-slate-500">{filter?`Nenhuma tarefa com situaÃ§Ã£o â€œ${formatTaskStatus(filter)}â€${page>0?' nesta pÃ¡gina':''}.`:page>0?'Nenhuma tarefa nesta pÃ¡gina. Volte uma pÃ¡gina para consultar resultados anteriores.':'Nenhuma tarefa disponÃ­vel no momento.'}</p>{filter&&<button type="button" className="btn-secondary" disabled={loading} onClick={()=>{setFilter('');setPage(0);}}>Limpar filtro</button>}</div>}
+    {data && <ul className="space-y-4">{data.itens.map(task=><TaskCard key={`${task.id}:${task.versao}`} task={task} onSaved={()=>setRefresh(n=>n+1)}/>)}</ul>}
+    {data && <nav aria-label="PaginaÃ§Ã£o de tarefas" className="flex items-center gap-3"><button type="button" className="btn-secondary" aria-label="Ir para a pÃ¡gina anterior de tarefas" disabled={loading || page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm" aria-current="page" aria-live="polite">PÃ¡gina {page+1}</span><button type="button" className="btn-secondary" aria-label="Ir para a prÃ³xima pÃ¡gina de tarefas" disabled={loading || !data.tem_mais} onClick={()=>setPage(n=>n+1)}>PrÃ³xima</button></nav>}
+  </section>;
+}
