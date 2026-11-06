@@ -1196,6 +1196,7 @@ test("notificações expõem o estado de leitura semanticamente", () => {
 });
 
 test("notificações informam atualização no botão", () => {
+  assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Atualizar notificações'\}/);
   assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguarde…':'Atualizar notificações'\}/);
 });
