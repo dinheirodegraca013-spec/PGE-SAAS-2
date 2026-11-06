@@ -352,6 +352,10 @@ test("histórico informa atualização no botão", () => {
   assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
 });
 
+test("histórico diferencia carga inicial de sincronização", () => {
+  assert.match(historicoFuncionario, /data \? 'Atualizando histórico…' : 'Carregando histórico…'/);
+});
+
 test("histórico reinicia a paginação ao trocar de funcionário", () => {
   assert.match(historicoFuncionario, /useEffect\(\(\)=>\{setPage\(0\);\},\[context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
 });
