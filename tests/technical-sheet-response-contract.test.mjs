@@ -17,3 +17,7 @@ test('produção e mutações de material rejeitam IDs e textos vazios',()=>{
   assert.match(source,/record\.descricao === 'string' && record\.descricao\.trim\(\)\.length>0/);
   assert.match(source,/String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0/);
 });
+
+test('produção valida registros antes de acessar seus IDs',()=>{
+  assert.match(source,/records\.every\(item => item && typeof item === 'object' && !Array\.isArray\(item\)\)/);
+});

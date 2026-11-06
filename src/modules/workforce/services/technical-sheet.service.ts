@@ -86,7 +86,7 @@ function normalizeServiceList(value: unknown): { itens: { servico_id: string; ti
   const itens = source.itens.map(item => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
     const row = item as Record<string, unknown>;
-    if (typeof row.servico_id !== 'string' || !row.servico_id || typeof row.titulo !== 'string' || !row.titulo || typeof row.setor !== 'string' || !isSetor(row.setor) || !Number.isSafeInteger(row.versao) || Number(row.versao)<0 || typeof row.atualizado_em !== 'string' || !Number.isFinite(new Date(row.atualizado_em).getTime())) return null;
+    if (typeof row.servico_id !== 'string' || !row.servico_id.trim() || typeof row.titulo !== 'string' || !row.titulo.trim() || typeof row.setor !== 'string' || !isSetor(row.setor) || !Number.isSafeInteger(row.versao) || Number(row.versao)<0 || typeof row.atualizado_em !== 'string' || !Number.isFinite(new Date(row.atualizado_em).getTime())) return null;
     return {servico_id:row.servico_id,titulo:row.titulo,setor:row.setor,versao:Number(row.versao),atualizado_em:row.atualizado_em};
   });
   if (itens.some(item=>item===null)) return null;
@@ -159,7 +159,7 @@ function isProductionState(value: unknown): value is ProductionState {
   const records = row.registros;
   if (!Number.isSafeInteger(row.versao) || Number(row.versao) < 0 || !totals || typeof totals !== 'object' || Array.isArray(totals) || !Array.isArray(records)) return false;
   const totalValues = totals as Record<string, unknown>;
-  return ['produzido', 'defeito', 'desperdicio'].every(key => typeof totalValues[key] === 'number' && Number.isFinite(totalValues[key]) && Number(totalValues[key]) >= 0) && new Set(records.map(item => (item as Record<string, unknown>).id)).size === records.length &&
+  return ['produzido', 'defeito', 'desperdicio'].every(key => typeof totalValues[key] === 'number' && Number.isFinite(totalValues[key]) && Number(totalValues[key]) >= 0) && records.every(item => item && typeof item === 'object' && !Array.isArray(item)) && new Set(records.map(item => (item as Record<string, unknown>).id)).size === records.length &&
     records.every(item => {
       if (!item || typeof item !== 'object') return false;
       const record = item as Record<string, unknown>;
