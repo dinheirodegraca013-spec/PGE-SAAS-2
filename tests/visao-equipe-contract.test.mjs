@@ -640,7 +640,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
 });
 
 test("histórico informa atualização no botão", () => {
-  assert.match(historicoFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
+  assert.match(historicoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
   assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
   assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
 });
