@@ -9,3 +9,6 @@ test('lista de tarefas valida página e filtro antes da RPC',()=>{
   assert.match(source,/if\(status!==null&&!isTaskStatus\(status\)\)throw new Error\('O filtro de tarefas é inválido\.'\)/);
 });
 
+test('lista de tarefas rejeita IDs duplicados na mesma página',()=>{
+  assert.match(source,/new Set\(row\.itens\.map\(item=>item\.id\)\)\.size===row\.itens\.length/);
+});

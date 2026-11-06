@@ -14,7 +14,7 @@ const isWorkTask=(value:unknown):value is WorkTask=>{
 const isTaskPage=(value:unknown):value is TaskPage=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return Array.isArray(row.itens)&&typeof row.tem_mais==='boolean'&&row.itens.every(isWorkTask);
+  return Array.isArray(row.itens)&&typeof row.tem_mais==='boolean'&&row.itens.every(isWorkTask)&&new Set(row.itens.map(item=>item.id)).size===row.itens.length;
 };
 const isCreateResult=(value:unknown):value is {id:string;versao:number;repetida:boolean}=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).id==='string'&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1&&typeof (value as Record<string,unknown>).repetida==='boolean');
 const isUpdateResult=(value:unknown,expectedId?:string):value is Partial<WorkTask>=>Boolean(value&&typeof value==='object'&&typeof (value as Record<string,unknown>).id==='string'&&(!expectedId||(value as Record<string,unknown>).id===expectedId)&&isTaskStatus((value as Record<string,unknown>).status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1&&typeof (value as Record<string,unknown>).progresso==='number'&&Number.isInteger((value as Record<string,unknown>).progresso)&&Number((value as Record<string,unknown>).progresso)>=0&&Number((value as Record<string,unknown>).progresso)<=100&&typeof (value as Record<string,unknown>).observacoes==='string');
