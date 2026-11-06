@@ -33,3 +33,8 @@ test('execução da ficha valida ação e versão antes da RPC',()=>{
   assert.match(source,/\['iniciar','pausar','concluir'\]\.includes\(action\)/);
 });
 
+test('checklist valida itens e versão antes da RPC',()=>{
+  assert.match(source,/Os dados do checklist são inválidos/);
+  assert.match(source,/Object\.values\(items\)\.every\(item=>typeof item===\'boolean\'\)/);
+});
+

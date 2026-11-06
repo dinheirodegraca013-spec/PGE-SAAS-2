@@ -191,6 +191,7 @@ export const technicalSheets = {
     return data;
   },
   async checklist(service: string, sector: string, items: Record<string, boolean>, version: number): Promise<{versao:number;checklist:Record<string,boolean>}> {
+    if(!isServiceSector(service,sector)||!items||typeof items!=='object'||Array.isArray(items)||!Object.values(items).every(item=>typeof item==='boolean')||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados do checklist são inválidos.');
     const { data, error } = await supabase.rpc('ficha_checklist_salvar', {p_servico:service,p_setor:sector,p_itens:items,p_versao:version});
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de continuar.' : error?.message || 'Não foi possível salvar o checklist.');
     if (typeof data !== 'object' || data === null || Array.isArray(data) || !Number.isSafeInteger((data as Record<string, unknown>).versao) ||
