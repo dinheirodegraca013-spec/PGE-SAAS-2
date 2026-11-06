@@ -158,7 +158,7 @@ function isProductionState(value: unknown): value is ProductionState {
   const records = row.registros;
   if (!Number.isSafeInteger(row.versao) || Number(row.versao) < 0 || !totals || typeof totals !== 'object' || Array.isArray(totals) || !Array.isArray(records)) return false;
   const totalValues = totals as Record<string, unknown>;
-  return ['produzido', 'defeito', 'desperdicio'].every(key => typeof totalValues[key] === 'number' && Number.isFinite(totalValues[key]) && Number(totalValues[key]) >= 0) &&
+  return ['produzido', 'defeito', 'desperdicio'].every(key => typeof totalValues[key] === 'number' && Number.isFinite(totalValues[key]) && Number(totalValues[key]) >= 0) && new Set(records.map(item => (item as Record<string, unknown>).id)).size === records.length &&
     records.every(item => {
       if (!item || typeof item !== 'object') return false;
       const record = item as Record<string, unknown>;
@@ -167,6 +167,7 @@ function isProductionState(value: unknown): value is ProductionState {
         typeof record.unidade === 'string' && typeof record.descricao === 'string' && typeof record.criado_em === 'string' && Number.isFinite(new Date(record.criado_em).getTime());
     });
 }
+const sortProductionState=(state:ProductionState):ProductionState=>({...state,registros:[...state.registros].sort((left,right)=>new Date(right.criado_em).getTime()-new Date(left.criado_em).getTime())});
 
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
@@ -246,7 +247,7 @@ export const technicalSheets = {
     const { data, error } = await supabase.rpc('ficha_producao_consultar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar os registros de produção.');
     if (!isProductionState(data)) throw new Error('A produção retornou dados inválidos. Recarregue a ficha.');
-    return data;
+    return sortProductionState(data);
   },
   async productionRegister(service: string, sector: string, input: { request: string; type: ProductionEntry['tipo']; quantity: number; unit: string; description: string }, version: number): Promise<ProductionState & { repetida?: boolean }> {
     if(!isServiceSector(service,sector)||!input||typeof input.request!=='string'||!input.request.trim()||!['produzido','defeito','desperdicio'].includes(input.type)||!Number.isFinite(input.quantity)||input.quantity<=0||typeof input.unit!=='string'||!input.unit.trim()||typeof input.description!=='string'||input.description.trim().length<3||!Number.isSafeInteger(version)||version<1)throw new Error('Os dados do registro de produção são inválidos.');
@@ -256,7 +257,7 @@ export const technicalSheets = {
     });
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de registrar a produção.' : error?.message || 'Não foi possível registrar a produção.');
     if (!isProductionState(data)) throw new Error('O registro de produção retornou dados inválidos. Recarregue a ficha.');
-    return data;
+    return sortProductionState(data);
   },
   async materialOptions(service: string, sector: string): Promise<MaterialOption[]> {
     if(!isServiceSector(service,sector))throw new Error('O serviço ou setor dos materiais é inválido.');
