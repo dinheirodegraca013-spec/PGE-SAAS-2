@@ -58,6 +58,7 @@ export default function EquipeView() {
   const [projetos, setProjetos] = useState<{id: string; titulo: string}[]>([]);
   const [projetosCarregando, setProjetosCarregando] = useState(false);
   const [projetosErro, setProjetosErro] = useState('');
+  const projetosGeneration = useRef(0);
   const [setorProjeto, setSetorProjeto] = useState('corte');
   const administrador = podeCadastrarFuncionario(usuario?.papel);
   const [limits, setLimits] = useState<Limits | null>(null);
@@ -162,25 +163,28 @@ export default function EquipeView() {
   useEffect(() => {
     if (!administrador || !usuario?.tenantId) return;
     let mounted = true;
+    const request = ++projetosGeneration.current;
+    const current = () => mounted && request === projetosGeneration.current;
     setProjetosCarregando(true); setProjetosErro(''); setProjetos([]); setProjetoId('');
     Promise.resolve(supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo'))
       .then(({ data, error }) => {
-        if (!mounted) return;
+        if (!current()) return;
         if (error) { setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); return; }
         if (!Array.isArray(data) || !data.every(isProjeto)) { setProjetosErro('A lista de projetos retornou dados inválidos.'); return; }
         setProjetos(data);
-      }).catch(() => { if (mounted) setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); })
-      .finally(() => { if (mounted) setProjetosCarregando(false); });
+      }).catch(() => { if (current()) setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); })
+      .finally(() => { if (current()) setProjetosCarregando(false); });
     return () => { mounted = false; };
   }, [administrador, usuario?.tenantId]);
 
   const recarregarProjetos = () => {
     if (!administrador || !usuario?.tenantId) return;
+    const request = ++projetosGeneration.current;
     setProjetosCarregando(true); setProjetosErro('');
     Promise.resolve(supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo'))
-      .then(({ data, error }) => { if (error) throw error; if (!Array.isArray(data) || !data.every(isProjeto)) throw new Error('A lista de projetos retornou dados inválidos.'); setProjetos(data); setProjetoId(''); })
-      .catch(() => setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'))
-      .finally(() => setProjetosCarregando(false));
+      .then(({ data, error }) => { if (request !== projetosGeneration.current) return; if (error) throw error; if (!Array.isArray(data) || !data.every(isProjeto)) throw new Error('A lista de projetos retornou dados inválidos.'); setProjetos(data); setProjetoId(''); })
+      .catch(() => { if (request === projetosGeneration.current) setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); })
+      .finally(() => { if (request === projetosGeneration.current) setProjetosCarregando(false); });
   };
 
   const ativos = perfis.filter((perfil) => perfil.ativo && !perfil.suspenso && !limits?.suspended_ids.includes(perfil.id)).length;
