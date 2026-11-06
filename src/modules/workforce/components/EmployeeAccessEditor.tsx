@@ -6,7 +6,7 @@ import type { AccessGrant, EmployeeConfiguration, RecordScope } from '../types/a
 
 const formatEmployeeDate=(value:string,withTime=false)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR',withTime?undefined:{dateStyle:'short'});};
 const validSector=(value:string)=>Object.prototype.hasOwnProperty.call(setores,value)?value:'corte';
-const validStatus=(value:string)=>['ativo','inativo','suspenso'].includes(value)?value:'ativo';
+const validStatus=(value:string)=>['ativo','inativo','suspenso','suspenso_plano'].includes(value)?value:'ativo';
 const validScope=(value:string):RecordScope=>['atribuidos','setor','empresa'].includes(value)?value as RecordScope:'atribuidos';
 
 export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userId:string;onSaved:()=>void;onCancel:()=>void}) {
@@ -21,7 +21,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     Promise.all([workforceAccess.employee(userId),workforceAccess.context()]).then(([p,ctx])=>{
       if(!mounted)return;
       if(!ctx.proprietario)throw new Error('Somente o proprietário pode editar estas permissões.');
-      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');const primary=validSector(p.setor||'corte');setSector(primary);setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais.filter(value=>value!==primary&&Object.prototype.hasOwnProperty.call(setores,value)):[]);setStatus(validStatus(p.status==='suspenso_plano'?'ativo':p.status||'ativo'));setGrants(Array.isArray(p.permissoes)?p.permissoes.map(grant=>({...grant,escopo:validScope(grant.escopo)})):[]);
+      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');const primary=validSector(p.setor||'corte');setSector(primary);setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais.filter(value=>value!==primary&&Object.prototype.hasOwnProperty.call(setores,value)):[]);setStatus(validStatus(p.status||'ativo'));setGrants(Array.isArray(p.permissoes)?p.permissoes.map(grant=>({...grant,escopo:validScope(grant.escopo)})):[]);
     }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');});
     return()=>{mounted=false;};
   },[userId,retry]);
@@ -41,7 +41,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
           <label className="text-sm">Cargo ou função<input className="input-field mt-1" maxLength={120} value={job} onChange={e=>{setJob(e.target.value);clearError();}}/></label>
           <label className="text-sm">Identificador interno<input className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" value={internalId} onChange={e=>{setInternalId(e.target.value);clearError();}} placeholder="Ex.: FUNC-001"/><span className="mt-1 block text-xs text-slate-500">Opcional; único dentro da empresa.</span></label>
           <label className="text-sm">Setor principal<select className="input-field mt-1" value={sector} onChange={e=>{setSector(e.target.value);setAdditional(current=>current.filter(s=>s!==e.target.value));clearError();}}>{Object.entries(setores).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
-          <label className="text-sm">Situação do acesso<select className="input-field mt-1" value={status} onChange={e=>{setStatus(e.target.value);clearError();}}><option value="ativo">Ativo</option><option value="inativo">Inativo</option><option value="suspenso">Suspenso</option></select></label>
+          <label className="text-sm">Situação do acesso<select className="input-field mt-1" value={status} disabled={status==='suspenso_plano'} onChange={e=>{setStatus(e.target.value);clearError();}}><option value="ativo">Ativo</option><option value="inativo">Inativo</option><option value="suspenso">Suspenso</option><option value="suspenso_plano">Suspenso pelo plano</option></select></label>
         </div>
         {employee.status==='suspenso_plano'&&<p className="text-sm text-amber-700">Este acesso também está sujeito ao limite do plano. Alterar permissões não amplia a quantidade contratada.</p>}
         <fieldset className="rounded-xl border border-slate-200 p-4"><legend className="px-1 text-sm font-semibold">Setores adicionais autorizados</legend><div className="flex flex-wrap gap-4">{Object.entries(setores).filter(([id])=>id!==sector).map(([id,label])=><label key={id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={additional.includes(id)} onChange={e=>{setAdditional(current=>e.target.checked?[...current,id]:current.filter(s=>s!==id));clearError();}}/>{label}</label>)}</div></fieldset>
