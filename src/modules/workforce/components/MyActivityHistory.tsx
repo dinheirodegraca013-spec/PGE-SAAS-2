@@ -12,7 +12,7 @@ export default function MyActivityHistory(){
   useEffect(()=>{setData(null);setError('');},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{let active=true;setLoading(true);
-    Promise.resolve(supabase.rpc('minhas_atividades',{p_pagina:page})).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar o histórico.');return;}setData(data);})
+    Promise.resolve().then(()=>supabase.rpc('minhas_atividades',{p_pagina:page})).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar o histórico.');return;}setData(data);})
       .catch(()=>{if(active)setError('Não foi possível carregar o histórico.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
