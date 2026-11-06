@@ -205,6 +205,11 @@ test("solicitação de material relaciona bloqueio à mensagem de estoque vazio"
   assert.match(solicitacaoMaterial, /aria-describedby=\{!options\.length \? `\$\{fieldPrefix\}-no-materials` : undefined\}/);
 });
 
+test("histórico de materiais quebra textos longos sem deslocar ações", () => {
+  assert.match(solicitacaoMaterial, /<span className="min-w-0 break-words"><strong>\{requestItem\.item_nome\}/);
+  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 items-center gap-2">/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
