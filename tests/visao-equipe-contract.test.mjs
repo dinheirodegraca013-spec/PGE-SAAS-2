@@ -401,6 +401,10 @@ test("fichas exibem a última atualização recebida", () => {
   assert.match(fichasFuncionario, /dateTime=\{item\.atualizado_em\}/);
 });
 
+test("fichas de serviço nomeiam título, setor e atualização", () => {
+  assert.match(fichasFuncionario, /aria-label=\{`Ficha \$\{item\.titulo\} · \$\{isSetor\(item\.setor\) \? setores\[item\.setor\] : item\.setor\} · \$\{formatSheetUpdate\(item\.atualizado_em\)\}`\}/);
+});
+
 test("fichas diferenciam carga inicial de sincronização", () => {
   assert.match(fichasFuncionario, /list \? 'Atualizando fichas…' : 'Carregando fichas…'/);
 });
