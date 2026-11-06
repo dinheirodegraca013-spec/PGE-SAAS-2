@@ -26,7 +26,9 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   if(!context?.proprietario)return null;
   const disabled=busy || loading || !flow?.editavel;
   const move=(index:number,offset:number)=>{setMessage('');setError('');setSelected(current=>{
-    const next=[...current];[next[index],next[index+offset]]=[next[index+offset],next[index]];return next;
+    const next=[...current];const targetIndex=index+offset;[next[index],next[targetIndex]]=[next[targetIndex],next[index]];
+    const moved=isSetor(next[targetIndex])?setores[next[targetIndex]]:next[targetIndex];
+    setMessage(`${moved} movida para a posição ${targetIndex+1}.`);return next;
   });};
   return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy}>
     <h3 id={`${id}-title`} className="font-semibold">Fluxo de produção</h3>
@@ -48,8 +50,8 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
       </fieldset>
       <ol className="space-y-2">{selected.map((sector,index)=><li key={sector} className="flex flex-wrap items-center gap-2 rounded-lg border p-3">
         <span className="min-w-0 flex-1 break-words text-sm">{index+1}. {isSetor(sector)?setores[sector]:sector}</span>
-        <button type="button" className="btn-secondary shrink-0" disabled={disabled || index===0} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para cima`} onClick={()=>move(index,-1)}>↑</button>
-        <button type="button" className="btn-secondary shrink-0" disabled={disabled || index===selected.length-1} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para baixo`} onClick={()=>move(index,1)}>↓</button>
+        <button type="button" className="btn-secondary min-h-11 min-w-11 shrink-0 px-3" disabled={disabled || index===0} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para cima`} onClick={()=>move(index,-1)}>↑</button>
+        <button type="button" className="btn-secondary min-h-11 min-w-11 shrink-0 px-3" disabled={disabled || index===selected.length-1} aria-label={`Mover ${isSetor(sector)?setores[sector]:sector} para baixo`} onClick={()=>move(index,1)}>↓</button>
       </li>)}</ol>
       <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={disabled} aria-label={busy?'Salvando fluxo':flow.configurado?'Salvar sequência':'Configurar fluxo'}>{busy?'Salvando…':flow.configurado?'Salvar sequência':'Configurar fluxo'}</button>
     </form>}
@@ -59,3 +61,4 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     }}>{loading?'Carregando…':'Recarregar fluxo'}</button>
   </section>;
 }
+

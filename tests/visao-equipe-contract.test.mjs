@@ -1102,6 +1102,11 @@ test("fluxo limpa feedback ao alterar a sequência", () => {
   assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
 });
 
+test("fluxo anuncia a nova posição e mantém alvos de toque no celular", () => {
+  assert.match(fluxoProducao, /movida para a posição/);
+  assert.match(fluxoProducao, /className="btn-secondary min-h-11 min-w-11 shrink-0 px-3"/);
+});
+
 test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
