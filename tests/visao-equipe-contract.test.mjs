@@ -28,6 +28,7 @@ const agendaFuncionario = readOptional("../src/modules/workforce/components/Agen
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
 const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
+const technicalSheetService = readOptional("../src/modules/workforce/services/technical-sheet.service.ts");
 const ocorrencias = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 const anexos = readOptional("../src/modules/workforce/components/SheetAttachments.tsx");
 const aceiteInstalacao = readOptional("../src/modules/workforce/components/InstallationAcceptanceForm.tsx");
@@ -604,6 +605,11 @@ test("ações de execução da ficha informam salvamento", () => {
 
 test("ficha técnica limpa erros ao editar um campo", () => {
   assert.match(readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx"), /setMessage\(''\);\s*setIssues\(\[\]\);\s*change/);
+});
+
+test("serviço de fichas valida checklist e dados da resposta", () => {
+  assert.match(technicalSheetService, /hasUniqueKeys\(checklistItems\) &&\s+!!row\.checklist/);
+  assert.doesNotMatch(technicalSheetService, /hasUniqueKeys\(checklistItems\);\s+!!row\.checklist/);
 });
 
 test("liberação da ficha bloqueia duplo clique", () => {
