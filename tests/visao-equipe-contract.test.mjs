@@ -347,6 +347,10 @@ test("tarefas identificam a paginação para tecnologia assistiva", () => {
   assert.match(minhasTarefas, /aria-current="page"/);
 });
 
+test("tarefas ocultam paginação quando a primeira página está vazia", () => {
+  assert.match(minhasTarefas, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Paginação de tarefas"/);
+});
+
 test("tarefas atualizam ao retornar à aba", () => {
   assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
   assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
