@@ -1,5 +1,6 @@
 import React,{useId,useRef,useState} from 'react';
 import type {AcceptanceInput} from '../services/installation.service';
+const formatAttachmentName=(value:string)=>value||'Anexo sem nome';
 export default function InstallationAcceptanceForm({attachments,disabled,onRegister}:{attachments:{id:string;nome:string}[];disabled:boolean;onRegister:(input:AcceptanceInput)=>Promise<void>}){
   const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
   const clearError=()=>setError('');
@@ -17,7 +18,7 @@ export default function InstallationAcceptanceForm({attachments,disabled,onRegis
     <h4 className="font-semibold">Registrar aceite da instalação</h4>
     <fieldset className="space-y-3" disabled={disabled || busy}>
       <label htmlFor={`${id}-name`} className="block text-sm">Nome do cliente que confirmou a entrega<input id={`${id}-name`} className="input-field mt-1" required minLength={2} maxLength={120} value={name} onChange={event=>{setName(event.target.value);clearError();}}/></label>
-      <label htmlFor={`${id}-proof`} className="block text-sm">Comprovante do aceite<select id={`${id}-proof`} className="input-field mt-1" required value={proof} onChange={event=>{setProof(event.target.value);clearError();}}><option value="">Selecione um anexo validado</option>{attachments.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
+      <label htmlFor={`${id}-proof`} className="block text-sm">Comprovante do aceite<select id={`${id}-proof`} className="input-field mt-1" required value={proof} onChange={event=>{setProof(event.target.value);clearError();}}><option value="">Selecione um anexo validado</option>{attachments.map(item=><option key={item.id} value={item.id}>{formatAttachmentName(item.nome)}</option>)}</select></label>
       <p className="text-xs text-slate-500">Envie o comprovante em Anexos privados. As opções seguem a página de anexos exibida.</p>
       <label htmlFor={`${id}-notes`} className="block text-sm">Observações<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={2000} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/></label>
       <label className="flex items-start gap-2 text-sm"><input className="mt-1" type="checkbox" checked={confirmed} onChange={event=>{setConfirmed(event.target.checked);clearError();}}/><span>Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instalação.</span></label>
