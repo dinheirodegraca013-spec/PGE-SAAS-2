@@ -1352,6 +1352,11 @@ test("atalhos administrativos do funcionário preservam seus rótulos no mobile"
   assert.match(meuSetor, /className="btn-primary inline-flex shrink-0 whitespace-nowrap" to="\/meu-financeiro"/);
 });
 
+test("erro de projetos preserva o botão de recuperação no mobile", () => {
+  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white/);
+  assert.match(meuSetor, /aria-label="Tentar carregar os projetos novamente"/);
+});
+
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
   assert.match(meuSetor, /<div className="min-w-0">\s*<p className="text-xs font-semibold uppercase/);
   assert.match(meuSetor, /<h1 className="mt-2 break-words text-3xl font-bold/);
