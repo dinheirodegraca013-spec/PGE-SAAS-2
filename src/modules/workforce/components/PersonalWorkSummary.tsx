@@ -28,7 +28,7 @@ function cardTone(label:string){
 }
 function formatDeadline(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Prazo não informado':date.toLocaleString('pt-BR');}
 function safeDateTime(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();}
-function deadlineStatus(value:string){const date=new Date(value);if(Number.isNaN(date.getTime()))return null;const today=new Date();today.setHours(0,0,0,0);date.setHours(0,0,0,0);const difference=Math.round((date.getTime()-today.getTime())/86400000);return difference<0?'Atrasado':difference===0?'Vence hoje':difference===1?'Vence amanhã':null;}
+function deadlineStatus(value:string){const date=new Date(value);if(Number.isNaN(date.getTime()))return null;const today=new Date();today.setHours(0,0,0,0);date.setHours(0,0,0,0);const difference=Math.round((date.getTime()-today.getTime())/86400000);return difference<0?'Atrasado':difference===0?'Vence hoje':difference===1?'Vence amanhã':difference<=7?`Vence em ${difference} dias`:null;}
 function focusTask(taskId:string){const target=document.getElementById(`tarefa-${taskId}`);if(target){target.setAttribute('tabindex','-1');target.focus({preventScroll:true});target.scrollIntoView({behavior:'smooth',block:'center'});return;}const list=document.getElementById('tarefas');if(list){list.setAttribute('tabindex','-1');list.focus({preventScroll:true});list.scrollIntoView({behavior:'smooth',block:'start'});}}
 function focusTaskList(){const list=document.getElementById('tarefas');if(list){list.setAttribute('tabindex','-1');list.focus({preventScroll:true});list.scrollIntoView({behavior:'smooth',block:'start'});}}
 function isTaskCard(label:string){return label!=='Serviços em execução';}
