@@ -25,6 +25,7 @@ export const workNotifications={
     if(!isNotificationPage(data))throw new Error('As notificações retornaram dados inválidos. Recarregue a lista.');return data;
   },
   async read(id:string):Promise<{id:string;lida_em:string}>{
+    if(typeof id!=='string'||!id.trim())throw new Error('A notificação é inválida.');
     const {data,error}=await supabase.rpc('notificacao_marcar_lida',{p_notificacao:id});
     if(error || !data)throw new Error(error?.message||'Não foi possível marcar a notificação como lida.');
     if(typeof data!=='object'||!data||Array.isArray(data)||typeof (data as Record<string,unknown>).id!=='string'||(data as Record<string,unknown>).id!==id||!isDate((data as Record<string,unknown>).lida_em))throw new Error('A confirmação da notificação retornou dados inválidos.');return data as {id:string;lida_em:string};
