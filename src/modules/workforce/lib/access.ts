@@ -1,6 +1,7 @@
 import type { WorkforceContext } from '../types/access';
 
 const validSectorKeys = new Set(['corte', 'montagem', 'acabamento', 'instalacao', 'estoque', 'financeiro']);
+const employeePanelModules = ['painel', 'ordens', 'tarefas', 'agenda', 'documentos', 'notificacoes', 'atividades', 'ocorrencias', 'perfil'];
 
 export function hasPermission(context: WorkforceContext | null, module: string, operation = 'visualizar'): boolean {
   return Boolean(context?.permissoes.some(grant => grant.modulo === module && grant.operacao === operation));
@@ -13,7 +14,7 @@ export function authorizedSectors(context: WorkforceContext | null): string[] {
 export function workforcePathAllowed(context: WorkforceContext | null,path:string):boolean {
   if(!context)return false;
   if(context.proprietario)return true;
-  if(path==='/meu-setor')return hasPermission(context,'painel')||hasPermission(context,'ordens');
+  if(path==='/meu-setor')return employeePanelModules.some(module => hasPermission(context, module));
   if(path==='/estoque')return hasPermission(context,'estoque')&&authorizedSectors(context).includes('estoque');
   if(path==='/meu-financeiro')return hasPermission(context,'financeiro')&&authorizedSectors(context).includes('financeiro');
   return false;
@@ -27,3 +28,4 @@ export const moduleLabels: Record<string,string> = {
   painel:'Meu painel',ordens:'Ordens de serviço',tarefas:'Tarefas',agenda:'Agenda',documentos:'Documentos e arquivos',notificacoes:'Notificações',atividades:'Histórico de atividades',ocorrencias:'Ocorrências',perfil:'Meu perfil',
   clientes:'Clientes e atendimento',orcamentos:'Orçamentos',pedidos:'Pedidos',descontos:'Descontos',estoque:'Estoque',financeiro:'Financeiro',relatorios:'Relatórios',
 };
+
