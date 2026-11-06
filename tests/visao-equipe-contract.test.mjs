@@ -206,6 +206,11 @@ test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /Tentar novamente/);
 });
 
+test("editor de acesso informa catálogo de permissões vazio", () => {
+  assert.match(editorAcesso, /!catalog\.length/);
+  assert.match(editorAcesso, /Nenhuma permissão está disponível para configuração/);
+});
+
 test("equipe recarrega após a sessão e o tenant ficarem disponíveis", () => {
   assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
 });
