@@ -280,6 +280,12 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /aria-valuetext=\{`\$\{safeDisplayedProgress\}% concluído`\}/);
 });
 
+test("tarefas destacam a prioridade com cores semânticas", () => {
+  assert.match(minhasTarefas, /const priorityTone=/);
+  assert.match(minhasTarefas, /urgente:'bg-rose-100 text-rose-800'/);
+  assert.match(minhasTarefas, /priorityBadgeTone\(task\.prioridade\)/);
+});
+
 test("serviço de tarefas exige progresso inteiro", () => {
   const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
   assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);

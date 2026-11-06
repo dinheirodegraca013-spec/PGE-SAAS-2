@@ -14,10 +14,12 @@ const statusTone: Record<TaskStatus,string> = {
   cancelada: 'bg-rose-100 text-rose-800',
 };
 const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
+const priorityTone={baixa:'bg-slate-100 text-slate-700',normal:'bg-cyan-100 text-cyan-800',alta:'bg-amber-100 text-amber-800',urgente:'bg-rose-100 text-rose-800'};
 const workforceRefreshEvent='gestio:refresh-workforce';
 const formatTaskStatus=(value:string)=>taskStatusLabels[value as TaskStatus]??'Situação indisponível';
 const taskTone=(value:string)=>statusTone[value as TaskStatus]??'bg-slate-100 text-slate-700';
 const formatPriority=(value:string)=>priorityLabels[value as keyof typeof priorityLabels]??'Não informada';
+const priorityBadgeTone=(value:string)=>priorityTone[value as keyof typeof priorityTone]??'bg-slate-100 text-slate-700';
 const formatTaskSector=(value:string)=>isSetor(value)?setores[value]:(value||'Setor não informado');
 function formatTaskDeadline(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Prazo não informado':date.toLocaleString('pt-BR');}
 function safeTaskDateTime(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();}
@@ -43,7 +45,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4" aria-label={`Tarefa ${task.titulo} · ${formatTaskStatus(displayedStatus)} · ${formatTaskSector(task.setor)} · Prioridade ${formatPriority(task.prioridade)} · ${task.prazo?`Prazo ${formatTaskDeadline(task.prazo)}`:'Sem prazo'}`}>
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${taskTone(displayedStatus)}`}>{formatTaskStatus(displayedStatus)}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
-    <p className="text-xs text-slate-500">{formatTaskSector(task.setor)} · Prioridade {formatPriority(task.prioridade)}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
+    <p className="flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>{formatTaskSector(task.setor)}</span><span className={`rounded-full px-2 py-1 font-semibold ${priorityBadgeTone(task.prioridade)}`}>Prioridade {formatPriority(task.prioridade)}</span>{task.obrigatoria&&<span>Obrigatória para concluir a etapa</span>}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?<>{overdue?'Atrasada · ':''}Prazo: <time dateTime={safeTaskDateTime(task.prazo)}>{formatTaskDeadline(task.prazo)}</time></>:'Sem prazo definido'}</p>
     <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`} aria-valuetext={`${safeDisplayedProgress}% concluído`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
