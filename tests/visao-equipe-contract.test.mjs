@@ -696,7 +696,7 @@ test("mensagens de erro operacionais quebram texto e preservam os botões", () =
   assert.match(ocorrenciasFuncionario, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   for (const source of [resumoFuncionario, minhasTarefas, notificacoesFuncionario, fichasFuncionario, historicoFuncionario, anexos, detalheTarefa]) {
     assert.match(source, /className="min-w-0 break-words">\{error\}<\/span>/);
-    assert.match(source, /className="shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
+    assert.match(source, /className="(?:w-full )?shrink-0 (?:whitespace-nowrap )?rounded-lg border border-rose-200/);
   }
 });
 
@@ -1437,9 +1437,9 @@ test("notificações preservam ações e paginação no mobile", () => {
   assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy\} aria-label=\{item\.tarefa_id\?/);
   assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: .*?`\} onClick=\{async/);
   assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy\} aria-label=\{`Marcar como lida/);
-  assert.match(notificacoesFuncionario, /<span className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(notificacoesFuncionario, /<span className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
   assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy\}/);
-  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Fechar detalhe da notificação"/);
+  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar detalhe da notificação"/);
 });
 
 test("ocorrências preservam comunicação, resolução e paginação no mobile", () => {
