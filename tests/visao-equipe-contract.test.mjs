@@ -178,9 +178,9 @@ test("ações administrativas da equipe têm nomes acessíveis", () => {
   assert.match(equipeView, /className="btn-secondary inline-flex w-full items-center justify-center gap-2 sm:w-auto"/);
   assert.match(equipeView, /className="flex flex-col gap-2 sm:flex-row"/);
   assert.match(equipeView, /className="btn-primary w-full sm:w-auto sm:self-end"/);
-  assert.match(equipeView, /aria-label=\{carregando \|\| salvando \? 'Aguarde a operação em andamento' : 'Atualizar equipe'\}/);
-  assert.match(equipeView, /aria-label=\{salvando \? 'Encaminhando projeto para o setor selecionado' : 'Encaminhar projeto para o setor selecionado'\}/);
-  assert.match(equipeView, /aria-busy=\{salvando\}/);
+  assert.match(equipeView, /aria-label=\{carregando \|\| salvando \|\| encaminhando \? 'Aguarde a operação em andamento' : 'Atualizar equipe'\}/);
+  assert.match(equipeView, /aria-label=\{encaminhando \? 'Encaminhando projeto para o setor selecionado' : salvando \? 'Aguarde a operação em andamento' : 'Encaminhar projeto para o setor selecionado'\}/);
+  assert.match(equipeView, /aria-busy=\{encaminhando\}/);
   assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
 });
 
@@ -202,7 +202,7 @@ test("busca de colaboradores limpa com Escape", () => {
 
 test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
-  assert.match(equipeView, /title=\{salvando \? 'Aguarde a operação em andamento' : !limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
+  assert.match(equipeView, /title=\{salvando \|\| encaminhando \? 'Aguarde a operação em andamento' : !limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
 });
 
 test("busca da equipe aponta para sua lista de resultados", () => {

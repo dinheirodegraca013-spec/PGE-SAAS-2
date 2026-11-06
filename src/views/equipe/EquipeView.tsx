@@ -68,11 +68,12 @@ export default function EquipeView() {
   const [deviceUser, setDeviceUser] = useState<string | undefined>();
   const [audit, setAudit] = useState<{id: number;action: string;subject_id: string | null;created_at: string}[]>([]);
   const [accessUser,setAccessUser]=useState<string|null>(null);
+  const [encaminhando,setEncaminhando]=useState(false);
   const lastReturnRefresh = useRef(0);
   const loadGeneration = useRef(0);
   const cadastrar = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (salvando) return;
+    if (salvando || encaminhando) return;
     setSalvando(true); setErro(null); setSucesso('');
     try {
       if (editingId) {
@@ -97,14 +98,14 @@ export default function EquipeView() {
   };
   const encaminhar = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (salvando) return;
-    setSalvando(true); setErro(null); setSucesso('');
+    if (salvando || encaminhando) return;
+    setSalvando(true); setEncaminhando(true); setErro(null); setSucesso('');
     try {
       const { error } = await supabase.rpc('encaminhar_projeto_setor', { p_projeto_id: projetoId, p_setor: setorProjeto });
       if (error) throw error;
       setSucesso('Projeto encaminhado para o painel do setor.'); setProjetoId('');
     } catch { setErro('Não foi possível encaminhar o projeto. Verifique o projeto e a sua permissão.'); }
-    finally { setSalvando(false); }
+    finally { setEncaminhando(false); setSalvando(false); }
   };
   const [perfis, setPerfis] = useState<Perfil[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -216,12 +217,12 @@ export default function EquipeView() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={salvando ? 'Aguarde a operação em andamento' : !limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={salvando || !limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
+        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={salvando || encaminhando ? 'Aguarde a operação em andamento' : !limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={salvando || encaminhando || !limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
-          aria-label={carregando || salvando ? 'Aguarde a operação em andamento' : 'Atualizar equipe'}
+          aria-label={carregando || salvando || encaminhando ? 'Aguarde a operação em andamento' : 'Atualizar equipe'}
           onClick={() => void carregar()}
-          disabled={carregando || salvando}
+          disabled={carregando || salvando || encaminhando}
           className="btn-secondary inline-flex w-full items-center justify-center gap-2 sm:w-auto"
         >
           <RefreshCw
@@ -252,10 +253,10 @@ export default function EquipeView() {
         </div>{editingId && <label className="flex items-center gap-2 text-sm" htmlFor={`${employeeFormId}-active`}><input id={`${employeeFormId}-active`} type="checkbox" checked={editActive} onChange={e => setEditActive(e.target.checked)} disabled={salvando} /> Acesso ativo</label>}
         <div className="flex flex-col gap-2 sm:flex-row"><button type="submit" className="btn-primary w-full sm:w-auto" aria-label={salvando ? 'Salvando funcionário' : editingId ? 'Salvar acesso do funcionário' : 'Cadastrar funcionário e enviar acesso'} disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary w-full sm:w-auto" aria-label="Cancelar cadastro ou edição do funcionário" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
       </form>}
-      {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5" aria-busy={salvando}><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
+      {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5" aria-busy={encaminhando}><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
         <div className="grid gap-3 sm:grid-cols-3"><label className="text-sm">Projeto<select required className="input-field mt-1" value={projetoId} onChange={e => setProjetoId(e.target.value)} disabled={projetosCarregando || !!projetosErro}><option value="">{projetosCarregando ? 'Carregando projetos…' : projetosErro ? 'Projetos indisponíveis' : 'Selecione um projeto'}</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}</select></label>
         <label className="text-sm">Setor<select className="input-field mt-1" value={setorProjeto} onChange={e => setSetorProjeto(e.target.value)}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-        <button type="submit" aria-label={salvando ? 'Encaminhando projeto para o setor selecionado' : 'Encaminhar projeto para o setor selecionado'} disabled={salvando || projetosCarregando || !!projetosErro || !projetoId} className="btn-primary w-full sm:w-auto sm:self-end">{salvando ? 'Encaminhando…' : 'Encaminhar'}</button></div>{projetosErro ? <p role="alert" className="flex flex-col gap-2 text-sm text-rose-700 sm:flex-row sm:items-center sm:justify-between"><span>{projetosErro}</span><button type="button" className="btn-secondary w-full sm:w-auto" aria-label="Tentar carregar projetos novamente" onClick={recarregarProjetos} disabled={projetosCarregando}>Tentar novamente</button></p> : !projetosCarregando && !projetos.length && <p className="text-sm text-slate-500">Nenhum projeto disponível para encaminhamento.</p>}</form>}
+        <button type="submit" aria-label={encaminhando ? 'Encaminhando projeto para o setor selecionado' : salvando ? 'Aguarde a operação em andamento' : 'Encaminhar projeto para o setor selecionado'} disabled={salvando || encaminhando || projetosCarregando || !!projetosErro || !projetoId} className="btn-primary w-full sm:w-auto sm:self-end">{encaminhando ? 'Encaminhando…' : 'Encaminhar'}</button></div>{projetosErro ? <p role="alert" className="flex flex-col gap-2 text-sm text-rose-700 sm:flex-row sm:items-center sm:justify-between"><span>{projetosErro}</span><button type="button" className="btn-secondary w-full sm:w-auto" aria-label="Tentar carregar projetos novamente" onClick={recarregarProjetos} disabled={projetosCarregando}>Tentar novamente</button></p> : !projetosCarregando && !projetos.length && <p className="text-sm text-slate-500">Nenhum projeto disponível para encaminhamento.</p>}</form>}
       <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-900">
         A presença diária ainda não está registrada no banco. Por isso, esta
         tela mostra apenas o status cadastral real e não inventa presença.
