@@ -25,13 +25,15 @@ export default function DeviceManager({ userId }: { userId?: string }) {
   useEffect(() => { setDevices([]); setLimit(null); void load(); }, [load]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void load(); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [load]);
   async function revoke(id: string) {
+    const request = generation.current;
     setBusy(true); setError('');
     try {
       const { error } = await supabase.rpc('revogar_dispositivo', { p_dispositivo_id: id });
       if (error) throw error;
+      if (request !== generation.current) return;
       await load();
-    } catch (e) { setError((e as {message?: string})?.message || 'Não foi possível revogar.'); }
-    finally { setBusy(false); }
+    } catch (e) { if (request === generation.current) setError((e as {message?: string})?.message || 'Não foi possível revogar.'); }
+    finally { if (request === generation.current) setBusy(false); }
   }
   const active = devices.filter(d => !d.revoked_at && !d.suspended).length;
   return <section className="card space-y-3 p-5" aria-busy={busy}>
