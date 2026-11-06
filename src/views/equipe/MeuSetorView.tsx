@@ -13,6 +13,13 @@ import MyActivityHistory from '@/modules/workforce/components/MyActivityHistory'
 import AgendaPanel from '@/modules/workforce/components/AgendaPanel';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
+function normalizeProjects(value: unknown): ProjetoSetor[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter(item => item && typeof item === 'object').map(item => {
+    const row = item as Record<string, unknown>;
+    return { id: String(row.id ?? ''), titulo: String(row.titulo ?? 'Projeto sem título'), prazo: row.prazo == null ? null : String(row.prazo) };
+  }).filter(item => item.id);
+}
 
 function formatPrazo(value: string | null) {
   if (!value) return 'Sem prazo informado';
@@ -43,7 +50,7 @@ export default function MeuSetorView() {
         const { data, error } = await supabase.rpc('meu_setor_projetos');
         if (error) throw error;
         if (mounted) {
-          setProjetos(data || []);
+          setProjetos(normalizeProjects(data));
           setAtualizadoEm(new Date());
         }
       } catch {
@@ -55,7 +62,7 @@ export default function MeuSetorView() {
     void carregar();
     return () => { mounted = false; };
   }, [setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao]);
-  const nome = context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador';
+  const nome = (context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador').trim() || 'colaborador';
   const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
   const quickActions = [
     hasPermission(context, 'tarefas') && { href: '#tarefas', label: 'Minhas tarefas', detail: 'Atualize andamento e impedimentos' },
