@@ -367,6 +367,13 @@ test("resumo encaminha prazos para a lista quando a tarefa não está carregada"
   assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
 });
 
+test("resumo destaca urgência dos próximos prazos", () => {
+  assert.match(resumoFuncionario, /function deadlineStatus\(value:string\)/);
+  assert.match(resumoFuncionario, /Vence hoje/);
+  assert.match(resumoFuncionario, /Vence amanhã/);
+  assert.match(resumoFuncionario, /status==='Atrasado'/);
+});
+
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
