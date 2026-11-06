@@ -17,10 +17,10 @@ export default function WorkNotifications(){
   const [refresh,setRefresh]=useState(0);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
-  const [message,setMessage]=useState('');
   const [busy,setBusy]=useState<string|null>(null);
   const [selected,setSelected]=useState<WorkNotification|null>(null);
   const [updatedAt,setUpdatedAt]=useState<Date|null>(null);
+  const [message,setMessage]=useState('');
   const generation=useRef(0);
   const reading=useRef(false);
   const lastReturnRefresh=useRef(0);
