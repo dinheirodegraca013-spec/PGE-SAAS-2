@@ -1160,7 +1160,7 @@ test("operações de produção e secagem sinalizam o formulário em andamento",
 test("ações de execução da ficha informam salvamento", () => {
   assert.match(fichaOperacional, /saving\?'Salvando…'/);
   assert.match(fichaTecnica, /saving && <p role="status" aria-live="polite">Salvando alterações da ficha técnica…<\/p>/);
-  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="text-sm font-medium">Situação:/);
+  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situação:/);
 });
 
 test("ficha técnica limpa erros ao editar um campo", () => {
@@ -1317,4 +1317,9 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
 test("registros de produção quebram observações sem deslocar o horário", () => {
   assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
   assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
+});
+
+test("ficha técnica quebra a situação sem perder as ações", () => {
+  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situação:/);
+  assert.match(fichaTecnica, /<div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">/);
 });
