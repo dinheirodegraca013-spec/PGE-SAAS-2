@@ -467,7 +467,7 @@ test("resumo não consulta dados sem vínculo de funcionário validado", () => {
 
 test("resumo nomeia cada indicador para acessibilidade", () => {
   assert.match(resumoFuncionario, /role="group"/);
-  assert.match(resumoFuncionario, /card border p-4/);
+  assert.match(resumoFuncionario, /card min-w-0 border p-4/);
   assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
 });
 
@@ -1341,4 +1341,12 @@ test("agenda acomoda título e atualização em telas estreitas", () => {
   assert.match(agendaFuncionario, /<div className="min-w-0"><h2 id="work-agenda-title" className="break-words text-lg font-bold">/);
   assert.match(agendaFuncionario, /<p className="break-words text-sm text-slate-500">Prazos das tarefas atribuídas a você/);
   assert.match(agendaFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>void load\(\)\}/);
+});
+
+test("resumo operacional protege indicadores longos no mobile", () => {
+  assert.match(resumoFuncionario, /<div className="min-w-0"><h2 id="personal-work-summary-title" className="break-words text-lg font-bold">/);
+  assert.match(resumoFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
+  assert.match(resumoFuncionario, /className=\{`card min-w-0 border p-4/);
+  assert.match(resumoFuncionario, /<p className="break-words text-sm text-slate-600">\{label\}<\/p>/);
+  assert.match(resumoFuncionario, /className="mt-2 whitespace-nowrap text-2xl font-bold text-slate-900"/);
 });
