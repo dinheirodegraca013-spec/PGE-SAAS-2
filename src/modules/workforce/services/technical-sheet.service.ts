@@ -120,7 +120,7 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
     Array.isArray(privacy) && privacy.every(item => typeof item === 'string') &&
     modelRecord !== null && typeof modelRecord.titulo === 'string' &&
     fields !== null && fields.every(isTechnicalField) && hasUniqueKeys(fields) &&
-    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && (item as Record<string, unknown>).key && typeof (item as Record<string, unknown>).label === 'string' && (item as Record<string, unknown>).label && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems);
+    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && (item as Record<string, unknown>).key && typeof (item as Record<string, unknown>).label === 'string' && (item as Record<string, unknown>).label && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) && hasUniqueKeys(checklistItems) &&
     !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') && Object.keys(row.checklist as Record<string, unknown>).every(key => checklistKeys.includes(key)) &&
     !!row.dados && typeof row.dados === 'object' && !Array.isArray(row.dados);
 }
