@@ -1399,6 +1399,7 @@ test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
 });
 
 test("inbox de materiais preserva erro e retry em telas estreitas", () => {
+  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!actionBusy\} onClick=\{\(\)=>void load\(\)\}/);
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(inboxMateriais, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
