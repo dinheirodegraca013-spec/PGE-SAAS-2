@@ -10,15 +10,17 @@ export default function DeviceManager({ userId }: { userId?: string }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const lastReturnRefresh = useRef(0);
+  const generation = useRef(0);
   const load = useCallback(async () => {
+    const request = ++generation.current;
     setBusy(true); setError('');
     try {
       const { data, error } = await supabase.rpc('listar_dispositivos', { p_usuario_id: userId || null });
       if (error) throw error;
       if (!data || typeof data!=='object' || Array.isArray(data) || !Array.isArray(data.devices) || !data.devices.every(isDevice) || !Number.isSafeInteger(data.limit) || data.limit<0) throw new Error('Resposta de dispositivos inválida. Atualize a página.');
-      setDevices(data.devices); setLimit(data.limit);
-    } catch (e) { setError(e instanceof Error ? e.message : (e as {message?: string})?.message || 'Não foi possível consultar os dispositivos.'); }
-    finally { setBusy(false); }
+      if (request === generation.current) { setDevices(data.devices); setLimit(data.limit); }
+    } catch (e) { if (request === generation.current) setError(e instanceof Error ? e.message : (e as {message?: string})?.message || 'Não foi possível consultar os dispositivos.'); }
+    finally { if (request === generation.current) setBusy(false); }
   }, [userId]);
   useEffect(() => { setDevices([]); setLimit(null); void load(); }, [load]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void load(); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [load]);
