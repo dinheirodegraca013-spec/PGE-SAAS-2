@@ -26,6 +26,7 @@ test('listas exibem campos rotulados e campos calculados ficam desabilitados', (
   assert.ok(html.includes('Remover item 1'));
   assert.ok(html.includes('Adicionar item'));
   assert.ok(html.includes('value="P1"'));
+  assert.match(html, /Código da peça \*<\/label><input[^>]*required=""/);
 });
 test('campo técnico seleciona somente anexos listados e conserva referência fora da página',()=>{
   const fields=[{key:'plano',label:'Plano de corte',type:'file'}];
