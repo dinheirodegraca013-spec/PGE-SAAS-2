@@ -28,6 +28,14 @@ function formatPrazo(value: string | null) {
   const date = new Date(`${value}T12:00:00`);
   return Number.isNaN(date.getTime()) ? 'Prazo não informado' : `Entrega: ${date.toLocaleDateString('pt-BR')}`;
 }
+function formatAccessDate(value: string | null) {
+  if (!value) return 'Ainda não acessou';
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 'Data não informada' : date.toLocaleString('pt-BR');
+}
+const employeeStatusLabels: Record<string, string> = {
+  ativo: 'Ativo', inativo: 'Inativo', suspenso: 'Suspenso', suspenso_plano: 'Suspenso pelo plano',
+};
 
 export default function MeuSetorView() {
   const { usuario } = useAuthStore();
@@ -76,6 +84,7 @@ export default function MeuSetorView() {
     hasPermission(context, 'agenda') && { href: '#agenda', label: 'Agenda', detail: 'Veja os próximos prazos' },
     hasPermission(context, 'notificacoes') && { href: '#notificacoes', label: 'Notificações', detail: 'Confira avisos recentes' },
     hasPermission(context, 'atividades') && { href: '#atividades', label: 'Histórico', detail: 'Consulte suas últimas ações' },
+    hasPermission(context, 'perfil') && { href: '#perfil', label: 'Meu perfil', detail: 'Confira seus dados de acesso' },
   ].filter(Boolean) as { href: string; label: string; detail: string }[];
   return <div className="space-y-6">
     <header className="overflow-hidden rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 p-6 text-white shadow-sm sm:p-8">
@@ -115,6 +124,18 @@ export default function MeuSetorView() {
     {hasPermission(context,'notificacoes') && <div id="notificacoes" className="scroll-mt-6"><WorkNotifications /></div>}
     {hasPermission(context,'ordens') && <div id="ordens" className="scroll-mt-6"><MyServiceSheets /></div>}
     {hasPermission(context,'atividades') && <div id="atividades" className="scroll-mt-6"><MyActivityHistory /></div>}
+    {context && hasPermission(context,'perfil') && <section id="perfil" className="card scroll-mt-6 p-5" aria-labelledby="employee-profile-title">
+      <h2 id="employee-profile-title" className="text-lg font-bold">Meu perfil</h2>
+      <p className="mt-1 text-sm text-slate-500">Dados do seu acesso na empresa. Para alterar informações, fale com o administrador.</p>
+      <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Nome completo</dt><dd className="mt-1 font-semibold text-slate-900">{context.funcionario.nome || 'Não informado'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">E-mail</dt><dd className="mt-1 break-all text-slate-900">{context.funcionario.email || 'Não informado'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Cargo ou função</dt><dd className="mt-1 text-slate-900">{context.funcionario.cargo || 'Não informado'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Status do acesso</dt><dd className="mt-1 font-semibold text-slate-900">{employeeStatusLabels[context.funcionario.status] || 'Indisponível'}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Último acesso</dt><dd className="mt-1 text-slate-900">{formatAccessDate(context.funcionario.ultimo_acesso)}</dd></div>
+        <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Identificador interno</dt><dd className="mt-1 text-slate-900">{context.funcionario.identificador_interno || 'Não informado'}</dd></div>
+      </dl>
+    </section>}
     {context && <section className="card p-5" aria-labelledby="sector-projects-title"><div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="sector-projects-title" className="text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{carregando ? '…' : erro ? 'Indisponível' : `${projetos.length} ${projetos.length === 1 ? 'projeto' : 'projetos'}`}</span></div>
       {carregando ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro ?
