@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { setores } from '@/lib/setores';
 import { workforceAccess } from '../services/access.service';
 import { moduleLabels, permissionLabels } from '../lib/access';
@@ -15,6 +15,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
   const [name,setName] = useState(''); const [job,setJob] = useState(''); const [internalId,setInternalId] = useState(''); const [sector,setSector] = useState('corte');
   const [additional,setAdditional] = useState<string[]>([]); const [status,setStatus] = useState('ativo');
   const [grants,setGrants] = useState<AccessGrant[]>([]); const [busy,setBusy] = useState(false); const [error,setError] = useState(''); const [retry,setRetry] = useState(0);
+  const fieldId=useId();
   const clearError=()=>setError('');
   useEffect(() => {
     let mounted=true; setEmployee(null);setError('');
@@ -31,17 +32,17 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     try{await workforceAccess.save({id:employee.id,nome:name,cargo:job,identificador_interno:internalId,setor:sector,setores_adicionais:additional,status,permissoes:grants,versao:employee.versao});onSaved();}
     catch(e){setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível salvar.');}finally{setBusy(false);}
   }
-  return <section className="card space-y-4 p-5" aria-busy={busy || (!employee && !error)}>
-    <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
-    {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
+  return <section className="card space-y-4 p-5" aria-labelledby="employee-access-title" aria-busy={busy || (!employee && !error)}>
+    <div className="flex items-center justify-between gap-3"><h2 id="employee-access-title" className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
+    {error&&<div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar o acesso novamente" onClick={()=>setRetry(value=>value+1)}>Tentar novamente</button></div>}
     {!employee&&!error&&<p role="status" aria-live="polite">Carregando acesso…</p>}
     {employee&&<form className="space-y-5" onSubmit={save}>
       <fieldset disabled={busy} className="space-y-5">
-        <div className="grid gap-3 sm:grid-cols-2"><label className="text-sm">Nome completo<input className="input-field mt-1" required minLength={2} maxLength={120} value={name} onChange={e=>{setName(e.target.value);clearError();}}/></label>
-          <label className="text-sm">Cargo ou função<input className="input-field mt-1" maxLength={120} value={job} onChange={e=>{setJob(e.target.value);clearError();}}/></label>
-          <label className="text-sm">Identificador interno<input className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" value={internalId} onChange={e=>{setInternalId(e.target.value);clearError();}} placeholder="Ex.: FUNC-001"/><span className="mt-1 block text-xs text-slate-500">Opcional; único dentro da empresa.</span></label>
-          <label className="text-sm">Setor principal<select className="input-field mt-1" value={sector} onChange={e=>{setSector(e.target.value);setAdditional(current=>current.filter(s=>s!==e.target.value));clearError();}}>{Object.entries(setores).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
-          <label className="text-sm">Situação do acesso<select className="input-field mt-1" value={status} disabled={status==='suspenso_plano'} onChange={e=>{setStatus(e.target.value);clearError();}}><option value="ativo">Ativo</option><option value="inativo">Inativo</option><option value="suspenso">Suspenso</option><option value="suspenso_plano">Suspenso pelo plano</option></select></label>
+        <div className="grid gap-3 sm:grid-cols-2"><label className="text-sm" htmlFor={`${fieldId}-name`}>Nome completo<input id={`${fieldId}-name`} className="input-field mt-1" required minLength={2} maxLength={120} value={name} onChange={e=>{setName(e.target.value);clearError();}}/></label>
+          <label className="text-sm" htmlFor={`${fieldId}-job`}>Cargo ou função<input id={`${fieldId}-job`} className="input-field mt-1" maxLength={120} value={job} onChange={e=>{setJob(e.target.value);clearError();}}/></label>
+          <label className="text-sm" htmlFor={`${fieldId}-internal-id`}>Identificador interno<input id={`${fieldId}-internal-id`} className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" value={internalId} onChange={e=>{setInternalId(e.target.value);clearError();}} placeholder="Ex.: FUNC-001"/><span className="mt-1 block text-xs text-slate-500">Opcional; único dentro da empresa.</span></label>
+          <label className="text-sm" htmlFor={`${fieldId}-sector`}>Setor principal<select id={`${fieldId}-sector`} className="input-field mt-1" value={sector} onChange={e=>{setSector(e.target.value);setAdditional(current=>current.filter(s=>s!==e.target.value));clearError();}}>{Object.entries(setores).map(([id,label])=><option key={id} value={id}>{label}</option>)}</select></label>
+          <label className="text-sm" htmlFor={`${fieldId}-status`}>Situação do acesso<select id={`${fieldId}-status`} className="input-field mt-1" value={status} disabled={status==='suspenso_plano'} onChange={e=>{setStatus(e.target.value);clearError();}}><option value="ativo">Ativo</option><option value="inativo">Inativo</option><option value="suspenso">Suspenso</option><option value="suspenso_plano">Suspenso pelo plano</option></select></label>
         </div>
         {employee.status==='suspenso_plano'&&<p className="text-sm text-amber-700">Este acesso também está sujeito ao limite do plano. Alterar permissões não amplia a quantidade contratada.</p>}
         <fieldset className="rounded-xl border border-slate-200 p-4"><legend className="px-1 text-sm font-semibold">Setores adicionais autorizados</legend><div className="flex flex-wrap gap-4">{Object.entries(setores).filter(([id])=>id!==sector).map(([id,label])=><label key={id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={additional.includes(id)} onChange={e=>{setAdditional(current=>e.target.checked?[...current,id]:current.filter(s=>s!==id));clearError();}}/>{label}</label>)}</div></fieldset>
