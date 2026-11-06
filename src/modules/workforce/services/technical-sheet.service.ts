@@ -62,6 +62,18 @@ export type MaterialRequest = {
   atendido_em: string | null;
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
+const materialStatuses=['pendente','aprovada','recusada','atendida','cancelada'];
+function isMaterialOption(value: unknown): value is MaterialOption {
+  if (!value || typeof value !== 'object') return false;
+  const row=value as Record<string,unknown>;
+  return typeof row.id==='string'&&typeof row.nome==='string'&&typeof row.unidade==='string'&&typeof row.saldo==='number'&&Number.isFinite(row.saldo)&&row.saldo>=0;
+}
+function isMaterialRequest(value: unknown, stock=false): value is MaterialRequest|MaterialStockRequest {
+  if (!value || typeof value !== 'object') return false;
+  const row=value as Record<string,unknown>;
+  return typeof row.id==='string'&&typeof row.servico_id==='string'&&typeof row.setor_solicitante==='string'&&typeof row.item_id==='string'&&typeof row.item_nome==='string'&&typeof row.quantidade==='number'&&Number.isFinite(row.quantidade)&&row.quantidade>0&&typeof row.unidade==='string'&&typeof row.motivo==='string'&&materialStatuses.includes(String(row.status))&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&typeof row.criado_em==='string'&&(row.decidido_em===null||typeof row.decidido_em==='string')&&(row.atendido_em===null||typeof row.atendido_em==='string')&&(!stock||(typeof row.servico_nome==='string'&&typeof row.solicitante_nome==='string'));
+}
+const isMaterialMutation=(value:unknown,status?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&typeof (value as Record<string,unknown>).status==='string'&&(!status||(value as Record<string,unknown>).status===status)&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
 
 function normalizeServiceList(value: unknown): { itens: { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[]; tem_mais: boolean; pagina: number } | null {
   if (!value || typeof value !== 'object') return null;
@@ -217,26 +229,31 @@ export const technicalSheets = {
   async materialOptions(service: string, sector: string): Promise<MaterialOption[]> {
     const { data, error } = await supabase.rpc('material_solicitacao_materiais', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar os materiais disponíveis.');
+    if (!Array.isArray(data) || !data.every(isMaterialOption)) throw new Error('Os materiais retornaram dados inválidos. Recarregue a ficha.');
     return data;
   },
   async materialRequests(service: string, sector: string): Promise<MaterialRequest[]> {
     const { data, error } = await supabase.rpc('material_solicitacao_listar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações de material.');
+    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item))) throw new Error('As solicitações retornaram dados inválidos. Recarregue a ficha.');
     return data;
   },
   async materialStockRequests(status: string|null = null): Promise<MaterialStockRequest[]> {
     const { data, error } = await supabase.rpc('material_solicitacao_painel_estoque', { p_status: status });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações do estoque.');
-    return data;
+    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item, true))) throw new Error('A fila de estoque retornou dados inválidos. Recarregue a tela.');
+    return data as MaterialStockRequest[];
   },
   async materialRequestCreate(service: string, sector: string, input: { request: string; item: string; quantity: number; unit: string; reason: string }): Promise<{ id: string; status: string; versao: number; repetida?: boolean }> {
     const { data, error } = await supabase.rpc('material_solicitacao_criar', { p_requisicao: input.request, p_servico: service, p_setor: sector, p_item_id: input.item, p_quantidade: input.quantity, p_unidade: input.unit, p_motivo: input.reason });
     if (error || !data) throw new Error(error?.code === '23505' ? 'Esta solicitação já foi enviada com outros dados.' : error?.message || 'Não foi possível solicitar o material.');
+    if (!isMaterialMutation(data)) throw new Error('A solicitação retornou dados inválidos. Tente novamente.');
     return data;
   },
   async materialRequestUpdate(id: string, action: 'cancelar'|'aprovar'|'recusar'|'atender', version: number, reason?: string): Promise<{ id: string; status: string; versao: number }> {
     const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: reason ?? null });
     if (error || !data) throw new Error(error?.code === '40001' ? 'A solicitação foi alterada. Atualize a lista.' : error?.message || 'Não foi possível atualizar a solicitação.');
+    if (!isMaterialMutation(data)) throw new Error('A atualização da solicitação retornou dados inválidos. Recarregue a lista.');
     return data;
   },
   async save(service: string, sector: string, values: Record<string, unknown>, version: number): Promise<number> {
