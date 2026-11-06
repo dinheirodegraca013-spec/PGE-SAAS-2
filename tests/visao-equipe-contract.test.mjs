@@ -213,7 +213,7 @@ test("solicitação de material relaciona bloqueio à mensagem de estoque vazio"
 
 test("histórico de materiais quebra textos longos sem deslocar ações", () => {
   assert.match(solicitacaoMaterial, /<span className="min-w-0 break-words"><strong>\{requestItem\.item_nome\}/);
-  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 items-center gap-2">/);
+  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
 });
 
 test("ficha técnica acomoda título longo junto do recarregamento", () => {
@@ -1312,6 +1312,15 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(inboxMateriais, /className="btn-secondary shrink-0" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
+});
+
+test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
+  assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
+  assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
+  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" onClick=\{refreshRequests\}/);
+  assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
+  assert.match(solicitacaoMaterial, /className="shrink-0 rounded-full bg-white px-2 py-1 text-xs"/);
+  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0" aria-label=\{`Cancelar solicitação/);
 });
 
 test("registros de produção quebram observações sem deslocar o horário", () => {
