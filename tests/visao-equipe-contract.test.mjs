@@ -443,6 +443,7 @@ test("agenda limpa o erro ao corrigir o período", () => {
 test("detalhes abertos oferecem fechamento explícito", () => {
   assert.match(notificacoesFuncionario, /onClick=\{\(\)=>setSelected\(null\)\}>Fechar detalhe/);
   assert.match(fichasFuncionario, /onClick=\{\(\) => setSelected\(null\)\}>Fechar ficha/);
+  assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"/);
 });
 
 test("produção e secagem usam estado explícito para mensagens acessíveis", () => {
