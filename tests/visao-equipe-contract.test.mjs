@@ -1343,6 +1343,14 @@ test("notificações preservam ações e paginação no mobile", () => {
   assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy\}/);
 });
 
+test("ocorrências preservam comunicação, resolução e paginação no mobile", () => {
+  assert.match(ocorrencias, /<button type="submit" className="btn-primary shrink-0" aria-label=\{busy\?'Registrando ocorrência':'Comunicar ocorrência'\}/);
+  assert.match(ocorrencias, /<button type="submit" className="btn-secondary shrink-0" aria-label=\{busy\?'Salvando resolução da ocorrência'/);
+  assert.match(ocorrencias, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a página anterior de ocorrências"/);
+  assert.match(ocorrencias, /<span className="self-center shrink-0 text-sm" aria-current="page"/);
+  assert.match(ocorrencias, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
+});
+
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
