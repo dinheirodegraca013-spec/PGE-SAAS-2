@@ -184,7 +184,7 @@ export default function MeuSetorView() {
       {carregando && !projetos.length ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro && !projetos.length ?
         <p className="py-6 text-sm text-slate-500">Os projetos não puderam ser exibidos agora. Use “Tentar novamente” para atualizar.</p> : !projetos.length ?
         <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-4 text-sm text-slate-500">Nenhum projeto encaminhado para este setor. O administrador poderá encaminhar novos projetos quando necessário.</p> :
-        <><p role="status" aria-live="polite" className={`mt-3 text-xs text-slate-500 ${carregando ? '' : 'sr-only'}`}>{carregando ? 'Atualizando projetos…' : ''}</p><ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4"><b className="block text-slate-900">{p.titulo}</b><time className="mt-2 block text-sm text-slate-500" dateTime={p.prazo || undefined}>{formatPrazo(p.prazo)}</time></li>)}</ul></>}
+        <><p role="status" aria-live="polite" className={`mt-3 text-xs text-slate-500 ${carregando ? '' : 'sr-only'}`}>{carregando ? 'Atualizando projetos…' : ''}</p><ul className="mt-4 grid gap-3 sm:grid-cols-2">{projetos.map(p => <li key={p.id} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4" aria-label={`${p.titulo} · ${formatPrazo(p.prazo)}`}><b className="block text-slate-900">{p.titulo}</b><time className="mt-2 block text-sm text-slate-500" dateTime={p.prazo || undefined}>{formatPrazo(p.prazo)}</time></li>)}</ul></>}
     </section>}
   </div>;
 }
