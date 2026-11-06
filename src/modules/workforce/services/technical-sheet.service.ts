@@ -131,8 +131,7 @@ function isExecutionResult(value: unknown): value is Pick<ServiceSheet, 'status'
   return ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
     Number.isSafeInteger(row.versao) && Number(row.versao) >= 0 && typeof row.inicio_liberado === 'boolean' &&
     (row.bloqueio_fluxo === null || row.bloqueio_fluxo === 'fora_fluxo' || row.bloqueio_fluxo === 'etapa_anterior') &&
-    (row.iniciada_em === null || typeof row.iniciada_em === 'string') &&
-    (row.concluida_em === null || typeof row.concluida_em === 'string');
+    isDateOrNull(row.iniciada_em) && isDateOrNull(row.concluida_em);
 }
 
 function isCandidate(value: unknown): value is {id:string;nome:string;cargo:string|null} {
@@ -160,7 +159,7 @@ function isProductionState(value: unknown): value is ProductionState {
       const record = item as Record<string, unknown>;
       return typeof record.id === 'string' && ['produzido', 'defeito', 'desperdicio'].includes(String(record.tipo)) &&
         typeof record.quantidade === 'number' && Number.isFinite(record.quantidade) && record.quantidade >= 0 &&
-        typeof record.unidade === 'string' && typeof record.descricao === 'string' && typeof record.criado_em === 'string';
+        typeof record.unidade === 'string' && typeof record.descricao === 'string' && typeof record.criado_em === 'string' && Number.isFinite(new Date(record.criado_em).getTime());
     });
 }
 
