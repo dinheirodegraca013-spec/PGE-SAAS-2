@@ -149,7 +149,7 @@ export default function EquipeView() {
     const termo = busca.trim().toLowerCase();
     if (!termo) return perfis;
     return perfis.filter((perfil) =>
-      [perfil.nome_completo, perfil.email, perfil.papel, perfil.identificador_interno]
+      [perfil.nome_completo, perfil.email, perfil.papel, perfil.cargo, perfil.identificador_interno, isSetor(perfil.setor) ? setores[perfil.setor] : perfil.setor]
         .filter(Boolean)
         .some((valor) => String(valor).toLowerCase().includes(termo)),
     );
