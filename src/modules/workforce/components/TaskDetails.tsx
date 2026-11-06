@@ -5,7 +5,7 @@ import {TaskCard} from './MyTasks';
 export default function TaskDetails({taskId}:{taskId:string}){
   const {context}=useWorkforceAccess();const [task,setTask]=useState<WorkTask|null>(null);const [error,setError]=useState('');const [loading,setLoading]=useState(true);const [refresh,setRefresh]=useState(0);
   useEffect(()=>{setTask(null);setError('');},[taskId,context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{let active=true;setLoading(true);setError('');
+  useEffect(()=>{let active=true;setLoading(true);setError('');setTask(null);
     workTasks.load(taskId).then(result=>{if(active)setTask(result);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar a tarefa.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[taskId,refresh,context?.funcionario.id,context?.funcionario.versao]);
