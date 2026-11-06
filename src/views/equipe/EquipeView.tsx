@@ -216,12 +216,12 @@ export default function EquipeView() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={!limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={!limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
+        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={salvando ? 'Aguarde a operação em andamento' : !limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={salvando || !limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
-          aria-label={carregando ? 'Atualizando equipe' : 'Atualizar equipe'}
+          aria-label={carregando || salvando ? 'Aguarde a operação em andamento' : 'Atualizar equipe'}
           onClick={() => void carregar()}
-          disabled={carregando}
+          disabled={carregando || salvando}
           className="btn-secondary inline-flex w-full items-center justify-center gap-2 sm:w-auto"
         >
           <RefreshCw
