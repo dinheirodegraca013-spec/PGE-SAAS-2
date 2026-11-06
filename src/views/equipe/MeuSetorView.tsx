@@ -11,7 +11,7 @@ import MyTasks from '@/modules/workforce/components/MyTasks';
 import PersonalWorkSummary from '@/modules/workforce/components/PersonalWorkSummary';
 import MyActivityHistory from '@/modules/workforce/components/MyActivityHistory';
 import AgendaPanel from '@/modules/workforce/components/AgendaPanel';
-import { requestWorkforceRefresh } from '@/modules/workforce/lib/events';
+import { requestWorkforceRefresh, workforceRefreshEvent } from '@/modules/workforce/lib/events';
 
 type ProjetoSetor = { id: string; titulo: string; prazo: string | null };
 function normalizeProjects(value: unknown): ProjetoSetor[] {
@@ -72,6 +72,7 @@ export default function MeuSetorView() {
     return () => { window.removeEventListener('online', updateConnection); window.removeEventListener('offline', updateConnection); };
   }, []);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setAtualizacao(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
+  useEffect(() => { const refreshPanel = () => setAtualizacao(value => value + 1); window.addEventListener(workforceRefreshEvent, refreshPanel); return () => window.removeEventListener(workforceRefreshEvent, refreshPanel); }, []);
   useEffect(() => {
     let mounted = true;
     setCarregando(true);
@@ -131,7 +132,7 @@ export default function MeuSetorView() {
           <p className="mt-2 max-w-2xl text-sm text-slate-300">Seu espaço de trabalho para acompanhar prioridades, prazos e atividades autorizadas.</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando || !online} aria-label={carregando ? 'Atualizando painel' : !online ? 'Sem conexão para atualizar painel' : 'Atualizar painel'} onClick={() => { setAtualizacao(value => value + 1); requestWorkforceRefresh(); }}>
+          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando || !online} aria-label={carregando ? 'Atualizando painel' : !online ? 'Sem conexão para atualizar painel' : 'Atualizar painel'} onClick={() => requestWorkforceRefresh()}>
             {carregando ? 'Atualizando…' : 'Atualizar painel'}
           </button>
           <span className="text-xs text-slate-400" aria-live="polite">{atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Aguardando primeira atualização'}</span>

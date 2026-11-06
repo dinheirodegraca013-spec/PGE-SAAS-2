@@ -135,6 +135,12 @@ test("painel não consulta projetos quando a validação de acesso falha", () =>
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
 });
 
+test("painel de projetos participa da atualização global", () => {
+  assert.match(meuSetor, /workforceRefreshEvent/);
+  assert.match(meuSetor, /addEventListener\(workforceRefreshEvent, refreshPanel\)/);
+  assert.match(meuSetor, /onClick=\{\(\) => requestWorkforceRefresh\(\)\}/);
+});
+
 test("painel remove projetos antigos quando a autorização é revogada", () => {
   assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
 });
