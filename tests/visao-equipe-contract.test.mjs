@@ -819,7 +819,7 @@ test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
 });
 
 test("editor de acesso preserva controles no mobile", () => {
-  assert.match(editorAcesso, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy\} onClick=\{onCancel\}/);
+  assert.match(editorAcesso, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=\{onCancel\}/);
   assert.match(editorAcesso, /className="min-w-0 max-w-full text-xs text-slate-500"/);
   assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
   assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
@@ -1142,7 +1142,7 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /employee\?'Atualizando acesso…':'Carregando acesso…'/);
   assert.match(editorFuncionario, /disabled=\{busy\}/);
   assert.match(editorFuncionario, /dateTime=\{safeEmployeeDateTime\(employee\.created_at\)\}/);
-  assert.match(editorFuncionario, /type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
+  assert.match(editorFuncionario, /type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=\{onCancel\} aria-label="Fechar edição do funcionário"/);
   assert.match(editorFuncionario, /const clearError=\(\)=>setError\(''\)/);
   assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
   assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
