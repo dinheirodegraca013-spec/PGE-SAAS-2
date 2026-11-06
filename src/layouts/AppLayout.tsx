@@ -185,6 +185,7 @@ export default function AppLayout() {
         <div className="border-t border-white/10 p-4">
           <NavLink
             to={employeeProfilePath}
+            onClick={() => setMobileMenuOpen(false)}
             className="group mb-2 flex items-center gap-3 rounded-xl p-2 transition hover:bg-white/[.06]"
           >
             {auth.usuario?.avatarUrl ? (
