@@ -1387,9 +1387,9 @@ test("notificações preservam ações e paginação no mobile", () => {
 });
 
 test("ocorrências preservam comunicação, resolução e paginação no mobile", () => {
-  assert.match(ocorrencias, /<button type="submit" className="btn-primary shrink-0" aria-label=\{busy\?'Registrando ocorrência':'Comunicar ocorrência'\}/);
-  assert.match(ocorrencias, /<button type="submit" className="btn-secondary shrink-0" aria-label=\{busy\?'Salvando resolução da ocorrência'/);
-  assert.match(ocorrencias, /<button type="button" className="btn-secondary shrink-0" aria-label="Ir para a página anterior de ocorrências"/);
+  assert.match(ocorrencias, /<button type="submit" className="btn-primary shrink-0 whitespace-nowrap" aria-label=\{busy\?'Registrando ocorrência':'Comunicar ocorrência'\}/);
+  assert.match(ocorrencias, /<button type="submit" className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{busy\?'Salvando resolução da ocorrência'/);
+  assert.match(ocorrencias, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior de ocorrências"/);
   assert.match(ocorrencias, /<span className="self-center shrink-0 text-sm" aria-current="page"/);
   assert.match(ocorrencias, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
 });
