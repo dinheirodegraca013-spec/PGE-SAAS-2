@@ -640,7 +640,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /aria-current="page"/);
   assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
   assert.match(historicoFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior do histórico"/);
-  assert.match(historicoFuncionario, /className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(historicoFuncionario, /className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
 });
 
 test("histórico informa atualização no botão", () => {
@@ -671,7 +671,7 @@ test("histórico e fichas ocultam paginação quando vazios", () => {
 
 test("paginação do funcionário quebra em telas estreitas", () => {
   assert.match(minhasTarefas, /aria-label="Paginação de tarefas"[^>]*className="flex flex-wrap items-center gap-3"/);
-  assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"[^>]*className="flex flex-wrap items-center gap-3"/);
+  assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"[^>]*className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"/);
   assert.match(fichasFuncionario, /aria-label="Paginação de fichas de serviço"[^>]*className="flex flex-wrap items-center gap-3"/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"[^>]*className="flex flex-wrap items-center gap-3"/);
 });
