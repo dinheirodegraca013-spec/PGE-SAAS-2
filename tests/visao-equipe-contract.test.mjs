@@ -668,6 +668,13 @@ test("formulários operacionais quebram mensagens de validação longas", () => 
   }
 });
 
+test("erros inline de tarefa, ocorrência e responsável quebram no mobile", () => {
+  assert.match(minhasTarefas, /className="break-words text-sm text-red-700 sm:col-span-2"/);
+  assert.match(ocorrenciasFuncionario, /className="break-words text-sm text-red-700">\{error\}<\/p>/);
+  const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
+  assert.match(assignment, /<p className="break-words">\{error\}<\/p>/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
