@@ -874,6 +874,7 @@ test("cartão de tarefa sinaliza atualização concorrente", () => {
 
 test("cartão de tarefa informa o estado do salvamento", () => {
   assert.match(minhasTarefas, /aria-label=\{busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem alterações'\}/);
+  assert.match(minhasTarefas, /\{busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700 sm:col-span-2">Salvando tarefa…<\/p>\}/);
 });
 
 test("cartão de tarefa limpa erro ao editar", () => {
