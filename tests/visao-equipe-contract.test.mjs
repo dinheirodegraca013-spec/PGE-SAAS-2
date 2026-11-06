@@ -1355,3 +1355,9 @@ test("ações de anexos não comprimem o nome do arquivo no mobile", () => {
   assert.match(anexos, /<div className="flex min-w-0 flex-wrap gap-2"><button type="button" className="btn-secondary shrink-0"/);
   assert.match(anexos, /<a className="btn-secondary shrink-0" aria-label=\{`Abrir/);
 });
+
+test("detalhe da tarefa organiza título, atualização e recarga no mobile", () => {
+  assert.match(detalheTarefa, /<div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 id="task-details-title" className="break-words font-semibold">/);
+  assert.match(detalheTarefa, /className="btn-secondary shrink-0" disabled=\{loading\}/);
+  assert.match(detalheTarefa, /<span className="text-xs text-slate-500" aria-live="polite">/);
+});
