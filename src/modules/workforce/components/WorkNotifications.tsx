@@ -58,7 +58,7 @@ export default function WorkNotifications(){
         if(reading.current)return;reading.current=true;setBusy(item.id);setError('');setMessage('');const request=generation.current;
         try{const result=await workNotifications.read(item.id);if(request===generation.current){setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);setMessage('Notificação marcada como lida.');}}
         catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível registrar a leitura.');}
-        finally{if(request===generation.current){reading.current=false;setBusy(null);}}
+        finally{reading.current=false;setBusy(current=>current===item.id?null:current);}
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>
     </li>)}</ul>}
     {data && (data.itens.length || page>0 || data.tem_mais) && <nav aria-label="Paginação de notificações" className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a página anterior" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="shrink-0 text-center text-sm sm:text-left" aria-current="page" aria-live="polite">Página {page+1}</span><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a próxima página" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></nav>}

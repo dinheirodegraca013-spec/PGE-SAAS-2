@@ -604,6 +604,10 @@ test("notificações atualizam ao retornar à aba", () => {
   assert.match(notificacoesFuncionario, />1000/);
 });
 
+test("leitura de notificação sempre libera o bloqueio após uma resposta tardia", () => {
+  assert.match(notificacoesFuncionario, /finally\{reading\.current=false;setBusy\(current=>current===item\.id\?null:current\);\}/);
+});
+
 test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
   assert.match(agendaFuncionario, /aria-busy=\{loading\}/);
   assert.match(agendaFuncionario, /aria-live="polite"/);
