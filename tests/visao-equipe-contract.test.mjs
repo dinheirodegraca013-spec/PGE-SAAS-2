@@ -634,6 +634,7 @@ test("secagem e produção informam atualização nos botões", () => {
 
 test("secagem limpa feedback ao editar o prazo", () => {
   assert.match(controleSecagem, /setMinutes\(event\.target\.value\); setMessage\(''\)/);
+  assert.match(controleSecagem, /type="number" required min=\{1\} max=\{10080\}/);
 });
 
 test("cartão de solicitação informa atualização no botão", () => {
