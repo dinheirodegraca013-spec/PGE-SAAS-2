@@ -28,9 +28,9 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   useEffect(()=>{setTitle('');setDescription('');setType('outro');setSeverity('atencao');setMessage('');receipt.current=null;},[serviceId,sector]);
   useEffect(()=>{generation.current++;},[serviceId,sector]);
   useEffect(()=>{setPage(0);},[serviceId,sector,context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{setItems([]);},[serviceId,sector,page,context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setItems([]);setMore(false);},[serviceId,sector,page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
-  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');setItems([]);setMore(false);
+  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[serviceId,sector,page,refresh,canView,context?.funcionario.id,context?.funcionario.versao]);
@@ -53,10 +53,9 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
       <button type="submit" className="btn-primary" aria-label={busy?'Registrando ocorrência':'Comunicar ocorrência'} disabled={busy}>{busy?'Registrando…':'Comunicar ocorrência'}</button>
     </form>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" disabled={loading || busy} onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}{message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
-    {canView && <>{loading?<p role="status" aria-live="polite">Carregando ocorrências…</p>:!error&&!items.length?<p className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página.</p>:null}
+    {canView && <>{loading?<p role="status" aria-live="polite">{items.length?'Atualizando ocorrências…':'Carregando ocorrências…'}</p>:!error&&!items.length?<p className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página.</p>:null}
       <ul className="space-y-3">{items.map(item=><li key={`${item.id}:${item.versao}`} className="space-y-2 rounded-lg border p-3"><p className="font-medium">{item.titulo}</p><p className="text-xs text-slate-500">{formatIncidentType(item.tipo)} · {formatIncidentSeverity(item.gravidade)} · {item.status==='aberta'?'Aberta':'Resolvida'}</p><p className="whitespace-pre-wrap text-sm">{item.descricao}</p>{item.resolucao && <p className="whitespace-pre-wrap text-sm text-emerald-800">Resolução: {item.resolucao}</p>}{item.status==='aberta' && item.pode_resolver && <Resolution incident={item} onSaved={()=>setRefresh(n=>n+1)}/>}</li>)}</ul>
       <nav aria-label="Paginação de ocorrências" className="flex flex-wrap gap-3"><button type="button" className="btn-secondary" aria-label="Ir para a página anterior de ocorrências" disabled={loading || busy || page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="self-center text-sm" aria-current="page" aria-live="polite">Página {page+1}</span><button type="button" className="btn-secondary" aria-label="Ir para a próxima página de ocorrências" disabled={loading || busy || !more} onClick={()=>setPage(n=>n+1)}>Próxima</button><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || busy?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'}>{loading || busy?'Aguarde…':'Atualizar ocorrências'}</button></nav>
     </>}
   </section>;
 }
-

@@ -500,6 +500,13 @@ test("ocorrências limpam feedback ao editar", () => {
   assert.match(ocorrenciasFuncionario, /setDescription\(event\.target\.value\);clearFeedback\(\)/);
 });
 
+test("anexos e ocorrências diferenciam carga inicial de sincronização", () => {
+  assert.match(anexos, /items\.length \? 'Atualizando anexos…' : 'Carregando anexos…'/);
+  assert.match(ocorrenciasFuncionario, /items\.length\?'Atualizando ocorrências…':'Carregando ocorrências…'/);
+  assert.match(anexos, /setItems\(\[\]\);setLinks\(\{\}\);onListed\?\.\(\[\]\)/);
+  assert.match(ocorrenciasFuncionario, /setItems\(\[\]\);setMore\(false\)/);
+});
+
 test("ocorrências resetam o formulário ao trocar de contexto", () => {
   assert.match(ocorrenciasFuncionario, /useEffect\(\(\)=>\{setTitle\(''\);setDescription\(''\);setType\('outro'\);setSeverity\('atencao'\);setMessage\(''\);receipt\.current=null;\},\[serviceId,sector\]\)/);
 });
