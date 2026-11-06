@@ -33,6 +33,7 @@ export const attachments={
     if(error || data?.status!=='validado')throw new Error(await mensagemErroFuncao(error,'Não foi possível validar o arquivo. Tente novamente.'));
   },
   async link(path:string):Promise<string>{
+    if(typeof path!=='string'||!path.trim())throw new Error('O caminho do anexo é inválido.');
     const {data,error}=await supabase.storage.from('workforce-private').createSignedUrl(path,60);
     if(error || !data?.signedUrl)throw new Error('Não foi possível gerar o link. Sua autorização pode ter mudado.');return data.signedUrl;
   },
