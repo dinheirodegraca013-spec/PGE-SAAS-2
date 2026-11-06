@@ -35,9 +35,9 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
     </select>
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando funcionários autorizados…</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-slate-500">Nenhum funcionário autorizado para este setor.</p>}
-    {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
+    {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" aria-label="Tentar carregar os responsáveis novamente" disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
-    <button type="submit" className="btn-secondary" disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
+    <button type="submit" className="btn-secondary" aria-label={busy?'Salvando responsável':'Salvar responsável da ficha'} disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
   </form>;
 }
 
