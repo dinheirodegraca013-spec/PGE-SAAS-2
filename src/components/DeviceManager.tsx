@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type Device = { id: string; name: string; created_at: string; last_seen_at: string; revoked_at: string | null; suspended: boolean; current: boolean };
+const formatDeviceDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
 export default function DeviceManager({ userId }: { userId?: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
   const [limit, setLimit] = useState<number | null>(null);
@@ -29,8 +30,8 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     finally { setBusy(false); }
   }
   const active = devices.filter(d => !d.revoked_at && !d.suspended).length;
-  return <section className="card space-y-3 p-5">
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Dispositivos autorizados</h2><button type="button" className="btn-secondary" disabled={busy} onClick={() => void load()}>Atualizar</button></div>
+  return <section className="card space-y-3 p-5" aria-busy={busy}>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Dispositivos autorizados</h2><button type="button" className="btn-secondary" disabled={busy} aria-label={busy?'Atualizando dispositivos':'Atualizar dispositivos'} onClick={() => void load()}>{busy?'Atualizando…':'Atualizar'}</button></div>
     {limit !== null && <p className="text-sm text-slate-500">{active} de {limit} utilizados · {Math.max(0, limit - active)} disponíveis por login.</p>}
     <p className="text-sm text-slate-500">Revogar bloqueia as sessões vinculadas a este dispositivo.</p>
     <p className="text-xs text-slate-500">Cada navegador ou perfil conta como um dispositivo. Limpar os dados do navegador cria uma nova identificação.</p>
@@ -38,7 +39,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     {!busy && !error && !devices.length && <p className="text-sm text-slate-500">Nenhum dispositivo cadastrado.</p>}
     <ul className="divide-y divide-slate-100">{devices.map(d => <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div>
       <b className="text-sm">{d.name}{d.current ? ' · Este dispositivo' : ''}</b>
-      <p className="text-xs text-slate-500">{d.revoked_at ? 'Revogado' : d.suspended ? 'Suspenso pelo plano' : 'Autorizado'} · Último acesso: {new Date(d.last_seen_at).toLocaleString('pt-BR')}</p>
+      <p className="text-xs text-slate-500">{d.revoked_at ? 'Revogado' : d.suspended ? 'Suspenso pelo plano' : 'Autorizado'} · Último acesso: {formatDeviceDate(d.last_seen_at)}</p>
     </div>{!d.revoked_at && <button type="button" className="btn-secondary text-rose-700" aria-label={`Revogar dispositivo ${d.name}`} disabled={busy} onClick={() => { if (window.confirm(`Revogar o dispositivo "${d.name}"? As sessões vinculadas serão encerradas.`)) void revoke(d.id); }}>Revogar</button>}</li>)}</ul>
   </section>;
 }
