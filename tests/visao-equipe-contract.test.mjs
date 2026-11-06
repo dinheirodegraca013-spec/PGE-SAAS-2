@@ -624,6 +624,7 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(ocorrencias, /Tentar novamente/);
   assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy\}/);
   assert.match(anexos, /aria-label="Paginação de anexos"/);
+  assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} · \$\{attachmentSize\}`\}/);
   assert.match(anexos, /Tentar novamente/);
 });
 
