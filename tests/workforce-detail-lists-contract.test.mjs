@@ -13,3 +13,6 @@ test('ocorrências rejeitam paginação inválida antes da RPC',()=>{
   assert.match(incidents,/if\(!Number\.isSafeInteger\(page\)\|\|page<0\)throw new Error\('A página de ocorrências é inválida\.'\)/);
 });
 
+test('ocorrências rejeitam IDs duplicados na mesma página',()=>{
+  assert.match(incidents,/new Set\(row\.itens\.map\(item=>item\.id\)\)\.size!==row\.itens\.length/);
+});
