@@ -267,7 +267,8 @@ export const technicalSheets = {
   async materialRequestUpdate(id: string, action: 'cancelar'|'aprovar'|'recusar'|'atender', version: number, reason?: string): Promise<{ id: string; status: string; versao: number }> {
     const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: reason ?? null });
     if (error || !data) throw new Error(error?.code === '40001' ? 'A solicitação foi alterada. Atualize a lista.' : error?.message || 'Não foi possível atualizar a solicitação.');
-    if (!isMaterialMutation(data)) throw new Error('A atualização da solicitação retornou dados inválidos. Recarregue a lista.');
+    const expectedStatus={cancelar:'cancelada',aprovar:'aprovada',recusar:'recusada',atender:'atendida'}[action];
+    if (!isMaterialMutation(data,expectedStatus)) throw new Error('A atualização da solicitação retornou dados inválidos. Recarregue a lista.');
     return data;
   },
   async save(service: string, sector: string, values: Record<string, unknown>, version: number): Promise<number> {
