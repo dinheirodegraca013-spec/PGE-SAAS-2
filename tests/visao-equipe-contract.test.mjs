@@ -673,6 +673,7 @@ test("produção e estoque sinalizam operações e mensagens ao funcionário", (
   assert.match(solicitacaoMaterial, /aria-busy=\{busy\}/);
   assert.match(solicitacaoMaterial, /aria-live="polite"/);
   assert.match(registroProducao, /aria-busy=\{busy\}/);
+  assert.match(registroProducao, /dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
   assert.match(registroProducao, /aria-live="polite"/);
 });
 
