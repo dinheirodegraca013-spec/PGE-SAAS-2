@@ -762,8 +762,10 @@ test("inbox de estoque ignora respostas de filtros antigos", () => {
   assert.match(inboxMateriais, /return\(\)=>\{generation\.current\+\+;\}/);
 });
 
-test("inbox de estoque limpa dados anteriores durante nova consulta", () => {
-  assert.match(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
+test("inbox de estoque preserva dados durante nova consulta", () => {
+  assert.doesNotMatch(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
+  assert.match(inboxMateriais, /items\.length\?'Atualizando solicitações…':'Carregando solicitações…'/);
+  assert.match(inboxMateriais, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[status,allowed/);
 });
 
 test("inbox preserva feedback após ação concluída", () => {
