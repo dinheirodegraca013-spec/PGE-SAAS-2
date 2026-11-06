@@ -145,6 +145,7 @@ test("revalidação do funcionário preserva contexto válido durante o carregam
 
 test("atualização do painel sincroniza os blocos de trabalho", () => {
   assert.match(workforceEvents, /workforceRefreshEvent/);
+  assert.match(workforceEvents, /typeof window === 'undefined'/);
   assert.match(meuSetor, /requestWorkforceRefresh\(\)/);
   assert.match(minhasTarefas, /workforceRefreshEvent/);
   assert.match(notificacoesFuncionario, /workforceRefreshEvent/);
