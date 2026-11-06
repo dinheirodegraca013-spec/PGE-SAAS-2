@@ -1313,3 +1313,8 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /className="btn-secondary shrink-0" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
 });
+
+test("registros de produção quebram observações sem deslocar o horário", () => {
+  assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
+  assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
+});
