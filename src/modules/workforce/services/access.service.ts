@@ -7,12 +7,12 @@ const isCatalogItem=(value:unknown)=>Boolean(value&&typeof value==='object'&&typ
 const isEmployee=(value:unknown):value is EmployeeConfiguration=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return typeof row.id==='string'&&typeof row.nome==='string'&&typeof row.email==='string'&&(row.cargo===null||typeof row.cargo==='string')&&(row.identificador_interno===null||typeof row.identificador_interno==='string')&&(row.setor===null||sectors.includes(String(row.setor)))&&['ativo','inativo','suspenso','suspenso_plano'].includes(String(row.status))&&typeof row.created_at==='string'&&(row.ultimo_acesso===null||typeof row.ultimo_acesso==='string')&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&Array.isArray(row.setores_adicionais)&&row.setores_adicionais.every(item=>sectors.includes(String(item)))&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant);
+  return typeof row.id==='string'&&row.id.length>0&&typeof row.nome==='string'&&row.nome.trim().length>0&&typeof row.email==='string'&&row.email.trim().length>0&&(row.cargo===null||typeof row.cargo==='string')&&(row.identificador_interno===null||typeof row.identificador_interno==='string')&&(row.setor===null||sectors.includes(String(row.setor)))&&['ativo','inativo','suspenso','suspenso_plano'].includes(String(row.status))&&typeof row.created_at==='string'&&(row.ultimo_acesso===null||typeof row.ultimo_acesso==='string')&&Number.isSafeInteger(row.versao)&&Number(row.versao)>=1&&Array.isArray(row.setores_adicionais)&&row.setores_adicionais.every(item=>sectors.includes(String(item)))&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant);
 };
 const isContext=(value:unknown):value is WorkforceContext=>{
   if(!value||typeof value!=='object'||Array.isArray(value))return false;
   const row=value as Record<string,unknown>;
-  return typeof row.empresa_id==='string'&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(isCatalogItem));
+  return typeof row.empresa_id==='string'&&row.empresa_id.length>0&&typeof row.proprietario==='boolean'&&isEmployee(row.funcionario)&&Array.isArray(row.permissoes)&&row.permissoes.every(isGrant)&&(row.catalogo_permissoes===null||Array.isArray(row.catalogo_permissoes)&&row.catalogo_permissoes.every(isCatalogItem));
 };
 
 export const workforceAccess = {
