@@ -145,6 +145,12 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
 });
 
+test("serviço de tarefas exige progresso inteiro", () => {
+  const tarefasService = readOptional("../src/modules/workforce/services/tasks.service.ts");
+  assert.match(tarefasService, /Number\.isInteger\(row\.progresso\)/);
+  assert.match(tarefasService, /Number\.isInteger\(\(value as Record<string,unknown>\)\.progresso\)/);
+});
+
 test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
   assert.match(minhasTarefas, /Última atualização às/);
