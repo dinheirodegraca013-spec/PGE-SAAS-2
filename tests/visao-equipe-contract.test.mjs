@@ -1314,6 +1314,12 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
 });
 
+test("fichas de serviço preservam busca e ação de abertura no mobile", () => {
+  assert.match(fichasFuncionario, /<button className="btn-secondary shrink-0" type="submit" disabled=\{loading\}/);
+  assert.match(fichasFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\) => \{ setSearch/);
+  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{event =>/);
+});
+
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
