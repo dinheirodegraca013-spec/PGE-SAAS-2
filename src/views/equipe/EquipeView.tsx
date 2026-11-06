@@ -136,9 +136,7 @@ export default function EquipeView() {
       setErro(
         "A equipe não pôde ser carregada. Verifique a permissão do administrador da empresa.",
       );
-      setPerfis([]);
     } else if (!Array.isArray(result.data) || !result.data.every(isPerfil)) {
-      setPerfis([]);
       setErro('A equipe retornou dados inválidos. Atualize a página.');
     } else setPerfis(result.data);
     if (administrador) {
@@ -329,7 +327,8 @@ export default function EquipeView() {
           </label>
         </div>
         {!carregando && <p className="mb-3 text-xs text-slate-500" role="status" aria-live="polite">{busca ? `${filtrados.length} ${filtrados.length === 1 ? 'colaborador corresponde' : 'colaboradores correspondem'} à busca.` : `${perfis.length} ${perfis.length === 1 ? 'colaborador disponível' : 'colaboradores disponíveis'}.`}</p>}
-        {carregando ? (
+        {carregando && perfis.length > 0 && <p role="status" aria-live="polite" className="mb-3 text-sm text-cyan-700">Atualizando equipe…</p>}
+        {carregando && !perfis.length ? (
           <p role="status" aria-live="polite" className="py-8 text-sm text-slate-500">Carregando equipe...</p>
         ) : !perfis.length ? (
           <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">

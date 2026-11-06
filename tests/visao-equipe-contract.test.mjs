@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 25613)
-Total output lines: 1584
+Warning: truncated output (original token count: 25690)
+Total output lines: 1591
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -559,6 +559,13 @@ test("equipe oferece retry contextual e anuncia o carregamento da lista", () => 
   assert.match(equipe, /role="status" aria-live="polite" className="rounded-xl/);
 });
 
+test("equipe preserva a lista durante a atualização", () => {
+  assert.doesNotMatch(equipe, /setPerfis\(\[\]\);\s*\} else if/);
+  assert.match(equipe, /carregando && perfis\.length > 0/);
+  assert.match(equipe, /carregando && !perfis\.length/);
+  assert.match(equipe, /Atualizando equipe…/);
+});
+
 test("fichas de serviço expõem carregamento e paginação acessíveis", () => {
   assert.match(fichasFuncionario, /aria-busy=\{loading\}/);
   assert.match(fichasFuncionario, /aria-live="polite"/);
@@ -677,15 +684,7 @@ test("histórico informa atualização no botão", () => {
 
 test("erro do histórico bloqueia retry durante sincronização", () => {
   assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Tentar novamente'\}/);
-});
-
-test("histórico diferencia carga inicial de sincronização", () => {
-  assert.match(historicoFuncionario, /data \? 'Atualizando histórico…' : 'Carregando histórico…'/);
-});
-
-test("hist…5613 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
+  assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico nov…5690 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
