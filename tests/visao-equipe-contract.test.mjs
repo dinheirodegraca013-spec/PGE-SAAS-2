@@ -215,6 +215,11 @@ test("tarefas limpam o horário anterior durante nova sincronização", () => {
   assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
 });
 
+test("tarefas preservam a lista durante nova sincronização", () => {
+  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);\s*workTasks\.list/);
+  assert.match(minhasTarefas, /data \? 'Atualizando tarefas…' : 'Carregando tarefas…'/);
+});
+
 test("tarefas bloqueiam o filtro durante sincronização", () => {
   assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
 });
