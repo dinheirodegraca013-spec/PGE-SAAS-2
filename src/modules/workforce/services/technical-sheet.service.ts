@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { isSetor } from '@/lib/setores';
 import type { TechnicalField } from '../lib/technical-sheet';
 
 export type ServiceSheet = {
@@ -62,6 +63,26 @@ export type MaterialRequest = {
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 
+function normalizeServiceList(value: unknown): { itens: { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[]; tem_mais: boolean; pagina: number } | null {
+  if (!value || typeof value !== 'object') return null;
+  const source = value as Record<string, unknown>;
+  const itens = Array.isArray(source.itens) ? source.itens.map(item => {
+    if (!item || typeof item !== 'object') return null;
+    const row = item as Record<string, unknown>;
+    const servicoId = String(row.servico_id ?? '');
+    const setor = String(row.setor ?? '');
+    if (!servicoId || !isSetor(setor)) return null;
+    return {
+      servico_id: servicoId,
+      titulo: String(row.titulo ?? 'Serviço sem título'),
+      setor,
+      versao: Number.isFinite(Number(row.versao)) ? Number(row.versao) : 0,
+      atualizado_em: String(row.atualizado_em ?? ''),
+    };
+  }).filter((item): item is NonNullable<typeof item> => item !== null) : [];
+  return { itens, tem_mais: source.tem_mais === true, pagina: Number.isFinite(Number(source.pagina)) ? Number(source.pagina) : 0 };
+}
+
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
     const {data,error}=await supabase.rpc('ficha_execucao_atualizar',{p_servico:service,p_setor:sector,p_acao:action,p_versao:version});
@@ -86,7 +107,9 @@ export const technicalSheets = {
   async list(page: number, search: string): Promise<{itens: {servico_id:string;titulo:string;setor:string;versao:number;atualizado_em:string}[];tem_mais:boolean;pagina:number}> {
     const { data, error } = await supabase.rpc('minhas_fichas_servicos', { p_pagina: page, p_busca: search });
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar suas fichas.');
-    return data;
+    const normalized = normalizeServiceList(data);
+    if (!normalized) throw new Error('As fichas retornaram dados inválidos.');
+    return normalized;
   },
   async load(service: string, sector: string): Promise<ServiceSheet> {
     const { data, error } = await supabase.rpc('ficha_execucao_consultar', { p_servico: service, p_setor: sector });
@@ -147,3 +170,4 @@ export const technicalSheets = {
     return data.versao;
   },
 };
+
