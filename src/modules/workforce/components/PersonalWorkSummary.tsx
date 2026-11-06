@@ -3,14 +3,16 @@ import {supabase} from '@/lib/supabase';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
 type Summary={tarefas:{total:number;pendentes:number;em_andamento:number;concluidas:number;atrasadas:number;aguardando_material:number;aguardando_aprovacao:number};ordens_em_execucao:number;proximos_prazos:{id:string;titulo:string;setor:string;prazo:string}[]};
-const finiteOrZero=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)?value:0;
+const isCount=(value:unknown):value is number=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 function normalizeSummary(value:unknown):Summary|null{
   if(!value||typeof value!=='object')return null;
   const source=value as Record<string,unknown>;const rawTasks=source.tarefas;
   if(!rawTasks||typeof rawTasks!=='object')return null;
-  const tasks=rawTasks as Record<string,unknown>;const rawDeadlines=Array.isArray(source.proximos_prazos)?source.proximos_prazos:[];
-  const proximos_prazos=rawDeadlines.filter(item=>item&&typeof item==='object').map(item=>{const row=item as Record<string,unknown>;return{id:String(row.id??''),titulo:String(row.titulo??'Tarefa sem título'),setor:String(row.setor??''),prazo:String(row.prazo??'')};}).filter(item=>item.id);
-  return{tarefas:{total:finiteOrZero(tasks.total),pendentes:finiteOrZero(tasks.pendentes),em_andamento:finiteOrZero(tasks.em_andamento),concluidas:finiteOrZero(tasks.concluidas),atrasadas:finiteOrZero(tasks.atrasadas),aguardando_material:finiteOrZero(tasks.aguardando_material),aguardando_aprovacao:finiteOrZero(tasks.aguardando_aprovacao)},ordens_em_execucao:finiteOrZero(source.ordens_em_execucao),proximos_prazos};
+  const tasks=rawTasks as Record<string,unknown>;const taskKeys=['total','pendentes','em_andamento','concluidas','atrasadas','aguardando_material','aguardando_aprovacao'];
+  if(!taskKeys.every(key=>isCount(tasks[key]))||!isCount(source.ordens_em_execucao)||!Array.isArray(source.proximos_prazos))return null;
+  const proximos_prazos=source.proximos_prazos.map(item=>{if(!item||typeof item!=='object'||Array.isArray(item))return null;const row=item as Record<string,unknown>;if(typeof row.id!=='string'||!row.id||typeof row.titulo!=='string'||!row.titulo||typeof row.setor!=='string'||!row.setor||typeof row.prazo!=='string'||!row.prazo)return null;return{id:row.id,titulo:row.titulo,setor:row.setor,prazo:row.prazo};});
+  if(proximos_prazos.some(item=>item===null))return null;
+  return{tarefas:{total:tasks.total as number,pendentes:tasks.pendentes as number,em_andamento:tasks.em_andamento as number,concluidas:tasks.concluidas as number,atrasadas:tasks.atrasadas as number,aguardando_material:tasks.aguardando_material as number,aguardando_aprovacao:tasks.aguardando_aprovacao as number},ordens_em_execucao:source.ordens_em_execucao as number,proximos_prazos:proximos_prazos as Summary['proximos_prazos']};
 }
 function cardTone(label:string){
   if(label==='Atrasadas')return 'border-rose-200 bg-rose-50';
