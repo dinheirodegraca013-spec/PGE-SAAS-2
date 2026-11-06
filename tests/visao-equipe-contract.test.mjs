@@ -1103,7 +1103,8 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
   assert.match(criacaoTarefa, /O horário será salvo conforme o fuso local deste dispositivo/);
   assert.match(criacaoTarefa, /className="btn-primary shrink-0 whitespace-nowrap" disabled=\{busy \|\| loading \|\| !candidates\.length\}/);
-  assert.match(criacaoTarefa, /className="btn-secondary shrink-0 whitespace-nowrap" onClick=/);
+  assert.match(criacaoTarefa, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{busy\} onClick=/);
+  assert.match(criacaoTarefa, /aria-label=\{busy\?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'\}/);
 });
 
 test("criação de tarefa limpa feedback ao trocar o contexto", () => {
