@@ -1336,6 +1336,13 @@ test("tarefas preservam controles de filtro e paginação no mobile", () => {
   assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
 });
 
+test("notificações preservam ações e paginação no mobile", () => {
+  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary shrink-0" disabled=\{!!busy\} aria-label=\{item\.tarefa_id\?/);
+  assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: .*?`\} onClick=\{async/);
+  assert.match(notificacoesFuncionario, /<span className="shrink-0 text-sm" aria-current="page"/);
+  assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy\}/);
+});
+
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
   assert.match(solicitacaoMaterial, /<div className="min-w-0"><h4 id=\{`\$\{fieldPrefix\}-title`\} className="break-words font-semibold">/);
   assert.match(solicitacaoMaterial, /<p className="break-words text-sm text-slate-500">Peça materiais para esta ordem/);
