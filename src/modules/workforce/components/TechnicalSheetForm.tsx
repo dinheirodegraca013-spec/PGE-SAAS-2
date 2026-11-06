@@ -42,7 +42,7 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
           <button type="button" disabled={locked} onClick={() => update(rows.filter((_, i) => i !== index))} className="mt-3 rounded-lg border px-3 py-2 text-sm">Remover item {index + 1}</button>
         </fieldset>)}</div>
         <button type="button" disabled={locked || rows.length >= 1000} onClick={() => update([...rows, {}])} className="mt-3 rounded-lg border px-3 py-2 text-sm">Adicionar item</button>
-        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+        {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
       </fieldset>;
     }
     // Only server-listed private attachments may be selected; never typed URLs or IDs.
@@ -53,14 +53,14 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
         {typeof current==='string' && current && !attachmentOptions.some(item=>item.id===current) && <option value={current}>Anexo atual (fora da página de anexos)</option>}
         {attachmentOptions.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}
       </select><p className="mt-1 text-xs text-slate-500">Opções da página atual em Anexos privados. Envie arquivos ou mude a página nessa seção e salve a ficha após selecionar.</p></>:<p role={current ? undefined : 'status'} aria-live={current ? undefined : 'polite'} className="text-slate-500">{current ? 'Anexo vinculado à ordem.' : 'Nenhum anexo vinculado.'}</p>}
-      {error && <p id={`${controlId}-error`} role="alert" className="text-sm text-red-700">{error}</p>}
+      {error && <p id={`${controlId}-error`} role="alert" className="break-words text-sm text-red-700">{error}</p>}
     </div>;
     return <div key={path} className="min-w-0">
       <label htmlFor={controlId} className="mb-1 block text-sm font-medium">{field.label}{field.required ? ' *' : ''}</label>
       {field.type === 'textarea'
         ? <textarea {...common} rows={3} maxLength={10000} value={typeof current === 'string' ? current : ''} onChange={e => update(e.target.value)} />
         : <input {...common} type={['number', 'integer'].includes(field.type) ? 'number' : field.type === 'url' ? 'url' : field.type === 'date' ? 'date' : 'text'} inputMode={field.type === 'integer' ? 'numeric' : field.type === 'number' ? 'decimal' : undefined} min={field.type === 'number' || field.type === 'integer' ? 0 : undefined} step={field.type === 'integer' ? 1 : 'any'} maxLength={2000} value={typeof current === 'string' || typeof current === 'number' ? current : ''} onChange={e => update(field.type === 'number' || field.type === 'integer' ? e.target.value === '' ? null : Number(e.target.value) : e.target.value)} />}
-      {error && <p id={`${controlId}-error`} role="alert" className="mt-1 text-sm text-red-700">{error}</p>}
+        {error && <p id={`${controlId}-error`} role="alert" className="mt-1 break-words text-sm text-red-700">{error}</p>}
     </div>;
   }
   return <form noValidate aria-label="Formulário da ficha técnica" onSubmit={async event => {

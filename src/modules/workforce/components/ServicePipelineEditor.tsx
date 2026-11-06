@@ -32,7 +32,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     <h3 id={`${id}-title`} className="font-semibold">Fluxo de produção</h3>
     <p className="text-sm text-slate-500">Selecione as etapas necessárias e ordene a execução. Estoque permanece como apoio.</p>
     {loading && <p role="status" aria-live="polite">{flow ? 'Atualizando fluxo…' : 'Carregando fluxo…'}</p>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {flow && <form className="space-y-4" onSubmit={async event=>{
       event.preventDefault();if(disabled || lock.current)return;

@@ -48,7 +48,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
       <label htmlFor={`${id}-mandatory`} className="flex items-center gap-2 text-sm"><input id={`${id}-mandatory`} type="checkbox" checked={mandatory} onChange={event=>{setMandatory(event.target.checked);clearFeedback();}}/>Obrigatória para concluir a etapa</label>
     </fieldset>
     {loading && <p role="status" aria-live="polite" className="text-sm">{candidates.length ? 'Atualizando responsáveis…' : 'Carregando responsáveis…'}</p>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-amber-700">Nenhum funcionário autorizado está disponível para receber esta tarefa.</p>}
     {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary" onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label="Tentar carregar responsáveis novamente">Atualizar responsáveis</button>}

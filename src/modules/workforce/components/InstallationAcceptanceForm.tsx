@@ -1,23 +1,29 @@
-€^öõbûh•Íﬂ¢π≠Ö‚'äÿöñ,ﬁÁ⁄∫[CÆ+ﬁ≤ä^≠´b¢z'∂ÖäWí À^ööËæ'^≠ˆ¢ïÁZ[\‹ùôXX››\ŸRY\ŸTôYã\ŸT›]_Húõ€H	‹ôXX›	Œ√Bö[\‹ù\H–XÿŸ\[òŸR[ú]Húõ€H	Àãã‹Ÿ\ùöXŸ\À⁄[ú›[][€ãúŸ\ùöXŸIŒ√Bò€€ú›õ‹õX]]X⁄Y[ùò[YOJò[YNú›ö[ô OOùò[Y_	–[ô^»Ÿ[Hõ€YIŒ√Bô^‹ùYò][ù[ò›[€à[ú›[][€êXÿŸ\[òŸQõ‹õJÿ]X⁄Y[ùÀ\ÿXõY€îôY⁄\›\üNûÿ]X⁄Y[ùŒû⁄Yú›ö[ôŒ€õ€YNú›ö[ôﬂV◊NŸ\ÿXõYòõ€€X[é€€îôY⁄\›\éä[ú]êXÿŸ\[òŸR[ú]
-OOîõ€Z\ŸOõ⁄YüJ^√Bà€€ú›Y]\ŸRY
-
-Nÿ€€ú›€ò[YKŸ]ò[YWO]\ŸT›]J	… Nÿ€€ú›‹õ€ŸãŸ]õ€ŸóO]\ŸT›]J	… Nÿ€€ú›€õ›\ÀŸ]õ›\◊O]\ŸT›]J	… Nÿ€€ú›ÿ€€ôö\õYYŸ]€€ôö\õYYO]\ŸT›]Jò[ŸJNÿ€€ú›ÿù\ﬁKŸ]ù\ﬁWO]\ŸT›]Jò[ŸJNÿ€€ú›Ÿ\úõ‹ãŸ]\úõ‹óO]\ŸT›]J	… Nÿ€€ú›€Y\‹ÿYŸKŸ]Y\‹ÿYŸWO]\ŸT›]J	… N√Bà€€ú›€X\ë\úõ‹èJ
-OOúŸ]\úõ‹ä	… N√Bà€€ú›ÿ⁄œ]\ŸTôYäò[ŸJNÿ€€ú›ôXŸZ\]\ŸTôYè‹^[ÿYú›ö[ôŒ⁄Yú›ö[ôﬂ_ù[äù[
-N√Bàô]\õàõ‹õH€\‹”ò[YOHú‹XŸK^KL»õ›[ôY^õ‹ô\àõ‹ô\ã\€]KLåMà\öXKXù\ﬁO^ÿù\ﬁ_H€î›XõZ]^ÿ\ﬁ[ò»]ô[ùOû√Bà]ô[ùúô]ô[ùYò][
-
-N⁄Yä\ÿXõYÿ⁄Àò›\úô[ù
-\ô]\õé√BàYäò[YKùö[J
-Kõ[ô›àX€€ôö\õYYX]X⁄Y[ùÀú€€YJ][OOö][KöYOO\õ€ŸäJ^‹Ÿ]\úõ‹ä	“[ôõ‹õYH»€Y[ùK\ÿ€€H[H€€\õ›ò[ùHò[YY»H€€ôö\õYH»XŸZ]HôXŸXöYÀâ N‹ô]\õéﬂCBà€€ú›]O^ÿ€Y[ùò[YNõò[YKùö[J
-Kõ€Ÿã€€ôö\õYYõ›\ﬂNÿ€€ú›^[ÿYRî””ãú›ö[ô⁄YûJ]JN√BàYäôXŸZ\ò›\úô[ùÀú^[ÿYOO\^[ÿY
-\ôXŸZ\ò›\úô[ù^‹^[ÿYYò‹û\Àúò[ô€UURQ
-
-_N√Bàÿ⁄Àò›\úô[ù]ùYN‹Ÿ]ù\ﬁJùYJN‹Ÿ]\úõ‹ä	… N‹Ÿ]Y\‹ÿYŸJ	… N√Bàû^ÿ]ÿZ]€îôY⁄\›\äÀããô]Kô\]Y\›úôXŸZ\ò›\úô[ùöYJN‹ôXŸZ\ò›\úô[ù[ù[‹Ÿ]ò[YJ	… N‹Ÿ]õ€Ÿä	… N‹Ÿ]õ›\ 	… N‹Ÿ]€€ôö\õYY
-ò[ŸJN‹Ÿ]Y\‹ÿYŸJ	–XŸZ]HôY⁄\›òY»€€H›XŸ\‹€Àâ NﬂCBàÿ]⁄
-ÿ]\ŸJ^‹Ÿ]\úõ‹äÿ]\ŸH[ú›[òŸ[Ÿà\úõ‹èÿÿ]\ŸKõY\‹ÿYŸNâ”∞Ë€»õ⁄H‹‹Î]ô[ôY⁄\›ò\à»XŸZ]Kâ NﬂCBàö[ò[^€ÿ⁄Àò›\úô[ùYò[ŸN‹Ÿ]ù\ﬁJò[ŸJNﬂCBà_OÉBà€\‹”ò[YOHôõ€ù\Ÿ[ZXõ€èîôY⁄\›ò\àXŸZ]HH[ú›[pÈË€œ⁄ÉBàöY[Ÿ]€\‹”ò[YOHú‹XŸK^KL»à\ÿXõY^Ÿ\ÿXõYù\ﬁ_OèYŸ[ô€\‹”ò[YOHú‹ã[€õHèëY‹»»XŸZ]HH[ú›[pÈË€œ€YŸ[ôÉBàXô[[õ‹è^ÿ	⁄YK[ò[YXH€\‹”ò[YOHòõÿ⁄»^\€Hèìõ€YH»€Y[ùH]YH€€ôö\õ[›HH[ùôYÿO[ú]Y^ÿ	⁄YK[ò[YXH€\‹”ò[YOHö[ú]YöY[]LHàô\]Z\ôYZ[ì[ô›^ÃüHX^[ô›^ÃLåH]]–€€\]OHõò[YHàò[YO^€ò[Y_H€ê⁄[ôŸO^Ÿ]ô[ùOû‹Ÿ]ò[YJ]ô[ùù\ôŸ]ùò[YJNÿ€X\ë\úõ‹ä
-Nﬂ_Kœè€Xô[ÉBàXô[[õ‹è^ÿ	⁄YK\õ€ŸòH€\‹”ò[YOHòõÿ⁄»^\€Hèê€€\õ›ò[ùH»XŸZ]OŸ[X›Y^ÿ	⁄YK\õ€ŸòH€\‹”ò[YOHö[ú]YöY[]LHà\öXKY\ÿ‹öXôYûO^ÿ	⁄YK\õ€ŸãZ[Hô\]Z\ôYò[YO^‹õ€ŸüH€ê⁄[ôŸO^Ÿ]ô[ùOû‹Ÿ]õ€Ÿä]ô[ùù\ôŸ]ùò[YJNÿ€X\ë\úõ‹ä
-Nﬂ_Oè‹[€àò[YOHàèîŸ[X⁄[€ôH[H[ô^»ò[YYœ€‹[€èûÿ]X⁄Y[ùÀõX\
-][OOè‹[€àŸ^O^⁄][KöYHò[YO^⁄][KöYOûŸõ‹õX]]X⁄Y[ùò[YJ][Kõõ€YJ_O€‹[€èä_O‹Ÿ[X›è€Xô[ÉBàY^ÿ	⁄YK\õ€ŸãZ[H€\‹”ò[YOHù^^»^\€]KMLèë[ùöYH»€€\õ›ò[ùH[H[ô^‹»ö]òY‹Àà\»‹0ÈÌY\»ŸY›Y[HH0ËY⁄[òHH[ô^‹»^XöYKè‹û»X]X⁄Y[ùÀõ[ô›	âèõ€OHú›]\»à\öXK[]ôOHú€]Hà€\‹”ò[YOHù^^»^X[Xô\ãMÃèìô[ö[H€€\õ›ò[ùHò[YY»\‹€∞Î]ô[à[ô^HHò[YH[H€€\õ›ò[ùH[ù\»HôY⁄\›ò\à»XŸZ]Kè‹üCBàXô[[õ‹è^ÿ	⁄YK[õ›\ÿH€\‹”ò[YOHòõÿ⁄»^\€HèìÿúŸ\ùòpÈÌY\œ^\ôXHY^ÿ	⁄YK[õ›\ÿH€\‹”ò[YOHö[ú]YöY[]LHàõ›‹œ^ÃﬂHX^[ô›^ÃåHò[YO^€õ›\ﬂH€ê⁄[ôŸO^Ÿ]ô[ùOû‹Ÿ]õ›\ ]ô[ùù\ôŸ]ùò[YJNÿ€X\ë\úõ‹ä
-Nﬂ_Kœè€Xô[ÉBàXô[[õ‹è^ÿ	⁄YKX€€ôö\õYYH€\‹”ò[YOHôõ^][\À\›\ùÿ\Là^\€Hèè[ú]Y^ÿ	⁄YKX€€ôö\õYYH€\‹”ò[YOHõ]LHà\OHò⁄X⁄ÿõﬁàô\]Z\ôY⁄X⁄ŸY^ÿ€€ôö\õYYH€ê⁄[ôŸO^Ÿ]ô[ùOû‹Ÿ]€€ôö\õYY
-]ô[ùù\ôŸ]ò⁄X⁄ŸY
-Nÿ€X\ë\úõ‹ä
-Nﬂ_Kœè‹[èê€€ôö\õ[»]YH»€Y[ùH[ôõ‹õ[›H»XŸZ]HH[ùôYÿHH]YH»€€\õ›ò[ùHŸ[X⁄[€òY»€‹úô\‹€ôHH\›H[ú›[pÈË€Àè‹‹[èè€Xô[ÉBàù]€à\OHú›XõZ]à€\‹”ò[YOHòùã\ö[X\ûHà\öXK[Xô[^ÿù\ﬁO…‘ôY⁄\›ò[ô»XŸZ]HH[ú›[pÈË€…Œâ‘ôY⁄\›ò\àXŸZ]HH[ú›[pÈË€…ﬂH\ÿXõY^»X]X⁄Y[ùÀõ[ô›\ÿXõYù\ﬁ_Oûÿù\ﬁO…‘ôY⁄\›ò[ô¯†)âŒâ‘ôY⁄\›ò\àXŸZ]HôXŸXöY…ﬂOÿù]€èÉBàŸöY[Ÿ]ÉBàŸ\úõ‹à	âàõ€OHò[\ùà€\‹”ò[YOHù^\€H^\ôYMÃèûŸ\úõ‹üO‹ü^€Y\‹ÿYŸH	âàõ€OHú›]\»à\öXK[]ôOHú€]Hà€\‹”ò[YOHù^\€H^Y[Y\ò[MÃèû€Y\‹ÿYŸ_O‹üCBàŸõ‹õOé√BüCB
+import React,{useId,useRef,useState} from 'react';
+import type {AcceptanceInput} from '../services/installation.service';
+const formatAttachmentName=(value:string)=>value||'Anexo sem nome';
+export default function InstallationAcceptanceForm({attachments,disabled,onRegister}:{attachments:{id:string;nome:string}[];disabled:boolean;onRegister:(input:AcceptanceInput)=>Promise<void>}){
+  const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
+  const clearError=()=>setError('');
+  const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy} onSubmit={async event=>{
+    event.preventDefault();if(disabled || lock.current)return;
+    if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
+    const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
+    if(receipt.current?.payload!==payload)receipt.current={payload,id:crypto.randomUUID()};
+    lock.current=true;setBusy(true);setError('');setMessage('');
+    try{await onRegister({...data,request:receipt.current.id});receipt.current=null;setName('');setProof('');setNotes('');setConfirmed(false);setMessage('Aceite registrado com sucesso.');}
+    catch(cause){setError(cause instanceof Error?cause.message:'N√£o foi poss√≠vel registrar o aceite.');}
+    finally{lock.current=false;setBusy(false);}
+  }}>
+    <h4 className="font-semibold">Registrar aceite da instala√ß√£o</h4>
+    <fieldset className="space-y-3" disabled={disabled || busy}><legend className="sr-only">Dados do aceite da instala√ß√£o</legend>
+      <label htmlFor={`${id}-name`} className="block text-sm">Nome do cliente que confirmou a entrega<input id={`${id}-name`} className="input-field mt-1" required minLength={2} maxLength={120} autoComplete="name" value={name} onChange={event=>{setName(event.target.value);clearError();}}/></label>
+      <label htmlFor={`${id}-proof`} className="block text-sm">Comprovante do aceite<select id={`${id}-proof`} className="input-field mt-1" aria-describedby={`${id}-proof-help`} required value={proof} onChange={event=>{setProof(event.target.value);clearError();}}><option value="">Selecione um anexo validado</option>{attachments.map(item=><option key={item.id} value={item.id}>{formatAttachmentName(item.nome)}</option>)}</select></label>
+      <p id={`${id}-proof-help`} className="text-xs text-slate-500">Envie o comprovante em Anexos privados. As op√ß√µes seguem a p√°gina de anexos exibida.</p>{!attachments.length&&<p role="status" aria-live="polite" className="text-xs text-amber-700">Nenhum comprovante validado dispon√≠vel. Anexe e valide um comprovante antes de registrar o aceite.</p>}
+      <label htmlFor={`${id}-notes`} className="block text-sm">Observa√ß√µes<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={2000} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/></label>
+      <label htmlFor={`${id}-confirmed`} className="flex items-start gap-2 text-sm"><input id={`${id}-confirmed`} className="mt-1" type="checkbox" required checked={confirmed} onChange={event=>{setConfirmed(event.target.checked);clearError();}}/><span>Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instala√ß√£o.</span></label>
+      <button type="submit" className="btn-primary" aria-label={busy?'Registrando aceite da instala√ß√£o':'Registrar aceite da instala√ß√£o'} disabled={!attachments.length || disabled || busy}>{busy?'Registrando‚Ä¶':'Registrar aceite recebido'}</button>
+    </fieldset>
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}{message && <p role="status" aria-live="polite" className="break-words text-sm text-emerald-700">{message}</p>}
+  </form>;
+}

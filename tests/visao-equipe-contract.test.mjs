@@ -662,6 +662,12 @@ test("mensagens de erro operacionais quebram texto e preservam os botões", () =
   }
 });
 
+test("formulários operacionais quebram mensagens de validação longas", () => {
+  for (const source of [aceiteInstalacao, controleSecagem, solicitacaoMaterial, fichaTecnica, criacaoTarefa, registroProducao, fluxoProducao, formularioFichaTecnica]) {
+    assert.match(source, /className="(?:[^" ]+ )*break-words[^\"]*text-sm text-red-700"/);
+  }
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);

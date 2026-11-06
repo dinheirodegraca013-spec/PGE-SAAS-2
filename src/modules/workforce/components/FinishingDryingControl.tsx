@@ -68,7 +68,7 @@ export default function FinishingDryingControl({
       </label>
       <button type="submit" className="btn-primary" aria-label={busy ? 'Registrando secagem' : state?.em_secagem ? 'Estender prazo de secagem' : 'Iniciar secagem'} disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
     <button type="button" className="btn-secondary" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
   </section>;
