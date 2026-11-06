@@ -41,7 +41,7 @@ export default function FinishingDryingControl({
         <h4 id={`${id}-title`} className="font-semibold">Controle de secagem</h4>
         <p className="text-sm text-slate-500">Os horários exibidos são registrados pelo servidor.</p>
       </div>
-      <span className={`rounded-full px-2 py-1 text-xs font-medium ${state?.em_secagem ? 'bg-amber-100 text-amber-900' : state ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}`}>
+      <span aria-live="polite" className={`rounded-full px-2 py-1 text-xs font-medium ${state?.em_secagem ? 'bg-amber-100 text-amber-900' : state ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}`}>
         {state ? (state.em_secagem ? 'Em secagem' : 'Secagem liberada') : 'Horário indisponível'}
       </span>
     </div>
