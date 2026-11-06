@@ -1485,7 +1485,7 @@ test("controle de secagem protege status e atualização no mobile", () => {
   assert.match(controleSecagem, /className="min-w-0 text-sm"/);
   assert.match(controleSecagem, /className="input-field mt-1 w-full max-w-full sm:w-44"/);
   assert.match(controleSecagem, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto"/);
-  assert.match(controleSecagem, /className="btn-secondary shrink-0 whitespace-nowrap" onClick=\{refreshDrying\}/);
+  assert.match(controleSecagem, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{refreshDrying\}/);
 });
 
 test("agenda acomoda título e atualização em telas estreitas", () => {

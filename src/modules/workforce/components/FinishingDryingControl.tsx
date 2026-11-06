@@ -70,6 +70,6 @@ export default function FinishingDryingControl({
     </form>}
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
-    <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
+    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
   </section>;
 }
