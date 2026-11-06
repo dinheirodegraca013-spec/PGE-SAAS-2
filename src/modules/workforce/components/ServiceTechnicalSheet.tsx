@@ -1,6 +1,186 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíß4İ:-jZ.¶›­–)Ş³v–×÷'B&V7BÂ²W6TVffV7BÂW6U&VbÂW6U7FFRÒg&öÒw&V7Bs°Ğ¦–×÷'B²W6Uv÷&¶f÷&6T66W72Òg&öÒrââö6öçFW‡Bõv÷&¶f÷&6T66W746öçFW‡Bs°Ğ¦–×÷'B²†5W&Ö—76–öâÒg&öÒrââöÆ–"ö66W72s°Ğ¦–×÷'B²FV6†æ–6Å6†VWG2ÂG—Rf–æ—6†–ætG'––æu7FFRÂG—RÖFW&–Ä÷F–öâÂG—RÖFW&–Å&WVW7BÂG—R&öGV7F–öå7FFRÂG—R6W'f–6U6†VWBÒg&öÒrââ÷6W'f–6W2÷FV6†æ–6Â×6†VWBç6W'f–6Rs°Ğ¦–×÷'BFV6†æ–6Å6†VWDf÷&Òg&öÒrâõFV6†æ–6Å6†VWDf÷&Òs°Ğ¦–×÷'B6†VWD76–væÖVçDVF—F÷"g&öÒrâõ6†VWD76–væÖVçDVF—F÷"s°Ğ¦–×÷'BF6´7&VF–öäf÷&Òg&öÒrâõF6´7&VF–öäf÷&Òs°Ğ¦–×÷'B6†VWDGF6†ÖVçG2g&öÒrâõ6†VWDGF6†ÖVçG2s°Ğ¦–×÷'B6†VWD–æ6–FVçG2g&öÒrâõ6†VWD–æ6–FVçG2s°Ğ¦–×÷'B–ç7FÆÆF–öä66WFæ6Tf÷&Òg&öÒrâô–ç7FÆÆF–öä66WFæ6Tf÷&Òs°Ğ¦–×÷'B¶–ç7FÆÆF–öçÒg&öÒrââ÷6W'f–6W2ö–ç7FÆÆF–öâç6W'f–6Rs°Ğ¦–×÷'Bf–æ—6†–ætG'––æt6öçG&öÂg&öÒrâôf–æ—6†–ætG'––æt6öçG&öÂs°Ğ¦–×÷'B&öGV7F–öäÆörg&öÒrâõ&öGV7F–öäÆörs°Ğ¦–×÷'BÖFW&–Å&WVW7EæVÂg&öÒrâôÖFW&–Å&WVW7EæVÂs°Ğ Ğ¦W‡÷'BFVfVÇBgVæ7F–öâ6W'f–6UFV6†æ–6Å6†VWB‡²6W'f–6T–BÂ6V7F÷"Ó¢²6W'f–6T–C¢7G&–æs²6V7F÷#¢7G&–ærÒ’°Ğ¢6öç7B²6öçFW‡BÒÒW6Uv÷&¶f÷&6T66W72‚“°Ğ¢6öç7B·6†VWBÂ6WE6†VWEÒÒW6U7FFSÅ6W'f–6U6†VWBÂçVÆÃâ†çVÆÂ“°Ğ¢6öç7B·fÇVW2Â6WEfÇVW5ÒÒW6U7FFSÅ&V6÷&CÇ7G&–ærÂVæ¶æ÷vããâ‡·Ò“°Ğ¢6öç7B¶ÆöF–ærÂ6WDÆöF–æuÒÒW6U7FFR‡G'VR“°Ğ¢6öç7B¶W'&÷"Â6WDW'&÷%ÒÒW6U7FFR‚rr“°Ğ¢6öç7B·&VÆöBÂ6WE&VÆöEÒÒW6U7FFRƒ“°Ğ¢6öç7B¶6†V6¶Æ—7D'W7’Â6WD6†V6¶Æ—7D'W7•ÒÒW6U7FFR†fÇ6R“°Ğ¢6öç7B·6f–ærÂ6WE6f–æuÒÒW6U7FFR†fÇ6R“°Ğ¢6öç7B¶GF6†ÖVçD÷F–öç2Ç6WDGF6†ÖVçD÷F–öç5ÒÒW6U7FFSÇ¶–C§7G&–æs¶æöÖS§7G&–æwÕµÓâ…µÒ“°Ğ¢6öç7B¶G'––ærÂ6WDG'––æuÒÒW6U7FFSÄf–æ—6†–ætG'––æu7FFRÂçVÆÃâ†çVÆÂ“°Ğ¢6öç7B¶G'––ætW'&÷"Â6WDG'––ætW'&÷%ÒÒW6U7FFR‚rr“°Ğ¢6öç7B·&öGV7F–öâÂ6WE&öGV7F–öåÒÒW6U7FFSÅ&öGV7F–öå7FFRÂçVÆÃâ†çVÆÂ“°Ğ¢6öç7B·&öGV7F–öäW'&÷"Â6WE&öGV7F–öäW'&÷%ÒÒW6U7FFR‚rr“°Ğ¢6öç7B¶ÖFW&–Ä÷F–öç2Â6WDÖFW&–Ä÷F–öç5ÒÒW6U7FFSÄÖFW&–Ä÷F–öåµÓâ…µÒ“°Ğ¢6öç7B¶ÖFW&–Å&WVW7G2Â6WDÖFW&–Å&WVW7G5ÒÒW6U7FFSÄÖFW&–Å&WVW7EµÓâ…µÒ“°Ğ¢6öç7B¶ÖFW&–ÄW'&÷"Â6WDÖFW&–ÄW'&÷%ÒÒW6U7FFR‚rr“°Ğ¢6öç7B×WFF–öâÒW6U&Vb†fÇ6R“°Ğ¢6öç7BvVæW&F–öâÒW6U&Vbƒ“°Ğ¢W6TVffV7B‚‚’Óâ°Ğ¢6WE6†VWB†çVÆÂ“²6WEfÇVW2‡·Ò“²6WDG'––ær†çVÆÂ“²6WDG'––ætW'&÷"‚rr“²6WE&öGV7F–öâ†çVÆÂ“²6WE&öGV7F–öäW'&÷"‚rr“²6WDÖFW&–Ä÷F–öç2…µÒ“²6WDÖFW&–Å&WVW7G2…µÒ“²6WDÖFW&–ÄW'&÷"‚rr“²6WDW'&÷"‚rr“°Ğ¢ÒÂ·6W'f–6T–BÂ6V7F÷"Â6öçFW‡CòægVæ6–öæ&–òçfW'6õÒ“°Ğ¢W6TVffV7B‚‚’Óâ°Ğ¢6öç7B&WVW7BÒ²¶vVæW&F–öâæ7W'&VçC°Ğ¢6WDW'&÷"‚rr“²6WDÆöF–ær‡G'VR“°Ğ¢†7–æ2‚’Óâ°Ğ¢G'’°Ğ¢6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2æÆöB‡6W'f–6T–BÂ6V7F÷"“°Ğ¢–b‡&WVW7BÓÒvVæW&F–öâæ7W'&VçB’&WGW&ã°Ğ¢6WE6†VWB‡&W7VÇB“²6WEfÇVW2‡&W7VÇBæFF÷2“°Ğ¢–b‡6V7F÷"ÓÓÒv6&ÖVçFòr’°Ğ¢G'’²6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2æG'––ætÆöB‡6W'f–6T–B“²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDG'––ær‡&W7VÇB“²ĞĞ¢6F6‚†6W6R’²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDG'––ætW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6öç7VÇF"6V6vVÒâr“²ĞĞ¢ĞĞ¢–b‡6V7F÷"ÓÓÒv6÷'FRrÇÂ6V7F÷"ÓÓÒvÖöçFvVÒr’°Ğ¢G'’²6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2ç&öGV7F–öäÆöB‡6W'f–6T–BÂ6V7F÷"“²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE&öGV7F–öâ‡&W7VÇB“²ĞĞ¢6F6‚†6W6R’²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE&öGV7F–öäW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6öç7VÇF"&öG\:|:6òâr“²ĞĞ¢ĞĞ¢–b…²v6÷'FRrÂvÖöçFvVÒrÂv6&ÖVçFòrÂv–ç7FÆ6òuÒæ–æ6ÇVFW2‡6V7F÷"’bb†5W&Ö—76–öâ†6öçFW‡BÂvW7F÷VRrÂv7&–"r’’°Ğ¢G'’²6öç7B¶÷F–öç2Â&WVW7G5ÒÒv—B&öÖ—6RæÆÂ…·FV6†æ–6Å6†VWG2æÖFW&–Ä÷F–öç2‡6W'f–6T–BÂ6V7F÷"’ÂFV6†æ–6Å6†VWG2æÖFW&–Å&WVW7G2‡6W'f–6T–BÂ6V7F÷"•Ò“²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’²6WDÖFW&–Ä÷F–öç2†÷F–öç2“²6WDÖFW&–Å&WVW7G2‡&WVW7G2“²ÒĞĞ¢6F6‚†6W6R’²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDÖFW&–ÄW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6öç7VÇF"26öÆ–6—F:|;VW2FRÖFW&–Ââr“²ĞĞ¢ĞĞ¢Ò6F6‚†6W6R’°Ğ¢–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6'&Vv"f–6†âr“°Ğ¢Òf–æÆÇ’²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDÆöF–ær†fÇ6R“²ĞĞ¢Ò’‚“°Ğ¢&WGW&â‚’Óâ²vVæW&F–öâæ7W'&VçB²³²Ó°Ğ¢ÒÂ·6W'f–6T–BÂ6V7F÷"Â&VÆöBÂ6öçFW‡CòægVæ6–öæ&–òçfW'6õÒ“°Ğ¢–b†ÆöF–ærbb6†VWB’&WGW&âÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#ä6'&VvæFòf–6†L:–6æ–6(
-cÂ÷ã°Ğ¢–b‚6†VWB’&WGW&âÆF—b6Æ74æÖSÒ'76R×’Ó2#àĞ¢¶W'&÷"bbÇ&öÆSÒ&ÆW'B"6Æ74æÖSÒ&'&V²×v÷&G2FW‡B×6ÒFW‡B×&VBÓs#ç¶W'&÷'ÓÂ÷çĞĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"&–ÖÆ&VÃÒ%FVçF"6'&Vv"f–6†L:–6æ–6æ÷fÖVçFR"öä6Æ–6³×²‚’Óâ6WE&VÆöB†âÓââ²—ÓåFVçF"æ÷fÖVçFSÂö'WGFöãàĞ¢¶6öçFW‡Còç&÷&–WF&–òbbÆ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×&–Ö'’6‡&–æ²Óv†—FW76RÖæ÷w&"F—6&ÆVC×¶ÆöF–æwÒöä6Æ–6³×¶7–æ2‚’Óâ°Ğ¢–b†×WFF–öâæ7W'&VçB’&WGW&ã°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WDÆöF–ær‡G'VR“²6WDW'&÷"‚rr“°Ğ¢G'’²v—BFV6†æ–6Å6†VWG2ç6fR‡6W'f–6T–BÂ6V7F÷"Â·ÒÂ“²6WE&VÆöB†âÓââ²“²ĞĞ¢6F6‚†6W6R’²6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂÆ–&W&"f–6†âr“²6WDÆöF–ær†fÇ6R“²ĞĞ¢f–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²ĞĞ¢×Óç¶ÆöF–æròtÆ–&W&æFş(
-br¢tÆ–&W&"f–6†FW7FR6WF÷"wÓÂö'WGFöãçĞĞ¢ÂöF—cã°Ğ¢&WGW&âÇ6V7F–öâ6Æ74æÖSÒ'76R×’ÓB"&–ÖÆ&VÃÒ$f–6†L:–6æ–6Fò6W'fœ:vò"&–Ö'W7“×·6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂÆöF–æwÓàĞ¢¶ÆöF–ærbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#äGVÆ—¦æFòf–6†L:–6æ–6(
-cÂ÷çĞĞ¢·6f–ærbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR#å6ÇfæFòÇFW&:|;VW2Ff–6†L:–6æ–6(
-cÂ÷çĞĞ¢ÆF—b6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2Ö6VçFW"vÓ2&÷VæFVB×†Â&r×6ÆFRÓSÓ2#àĞ¢Ç7â&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ&Ö–â×rÓ'&V²×v÷&G2FW‡B×6ÒföçBÖÖVF—VÒ#å6—GV:|:6ó¢²‡·VæFVçFS¢uVæFVçFRrÆVÕöæFÖVçFó¢tVÒæFÖVçFòrÇW6F¢uW6FrÆ6öæ6ÇV–F¢t6öæ6Ç\:ÖFwÒ•·6†VWBç7FGW5ÒÇÂu6—GV:|:6ò–æF—7öì:×fVÂwÓÂ÷7ãàĞ¢²…²v–æ–6–"rÂwW6"rÂv6öæ6ÇV—"uÒ26öç7B’æf–ÇFW"†7F–öãÓç6†VWBæ6öW5öW†V7V6óòæ–æ6ÇVFW2†7F–öâ’bb†5W&Ö—76–öâ†6öçFW‡BÂv÷&FVç2rÆ7F–öâ’b`Ğ¢†7F–öãÓÓÒv–æ–6–"sõ²wVæFVçFRrÂwW6FuÒæ–æ6ÇVFW2‡6†VWBç7FGW2“§6†VWBç7FGW3ÓÓÒvVÕöæFÖVçFòr’’æÖ†7F–öãÓãÆ'WGFöâ¶W“×¶7F–öçÒG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Óv†—FW76RÖæ÷w&"F—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ7F–öãÓÓÒv–æ–6–"rbb6†VWBæ–æ–6–õöÆ–&W&F÷Òöä6Æ–6³×¶7–æ2‚“Óç°Ğ¢–b†×WFF–öâæ7W'&VçB—&WGW&ã°Ğ¢–b†7F–öãÓÓÒv–æ–6–"rbb6†VWBæ–æ–6–õöÆ–&W&Fò—&WGW&ã°Ğ¢–b„¥4ôâç7G&–æv–g’‡fÇVW2’ÓÔ¥4ôâç7G&–æv–g’‡6†VWBæFF÷2’—°Ğ¢6WDW'&÷"‚u6ÇfR÷RFW66'FR2ÇFW&:|;VW2Ff–6†çFW2FRGVÆ—¦"W†V7\:|:6òâr“·&WGW&ã°Ğ¢ĞĞ¢–b†7F–öãÓÓÒv6öæ6ÇV—"rbbv–æF÷ræ6öæf—&Ò‚t6öæ6ÇV—"W7Ff–6†ò÷2FF÷2Rò6†V6¶Æ—7Bf–6,:6ò&Æ÷VVF÷2&VFœ:|:6òâr’—&WGW&ã°Ğ¢×WFF–öâæ7W'&VçC×G'VS·6WE6f–ær‡G'VR“·6WDW'&÷"‚rr“¶6öç7B&WVW7CÖvVæW&F–öâæ7W'&VçC°Ğ¢G'—¶6öç7B&W7VÇCÖv—BFV6†æ–6Å6†VWG2æW†V7WFR‡6W'f–6T–BÇ6V7F÷"Æ7F–öâÇ6†VWBçfW'6ò“¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE6†VWB†7W'&VçCÓæ7W'&VçC÷²ââæ7W'&VçBÂââç&W7VÇGÓ¦7W'&VçB“·ĞĞ¢6F6‚†6W6R—¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷#ö6W6RæÖW76vS¢tì:6òfö’÷7<:×fVÂGVÆ—¦"W†V7\:|:6òâr“·ĞĞ¢f–æÆÇ—¶×WFF–öâæ7W'&VçCÖfÇ6S¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE6f–ær†fÇ6R“·ĞĞ¢×Ò&–ÖÆ&VÃ×·6f–æsòu6ÇfæFòW†V7\:|:6òs¦7F–öãÓÓÒv–æ–6–"sò‡6†VWBç7FGW3ÓÓÒwW6Fsòu&WFöÖ"W†V7\:|:6òs¢t–æ–6–"W†V7\:|:6òr“¦7F–öãÓÓÒwW6"sòuW6"W†V7\:|:6òs¢t6öæ6ÇV—"W†V7\:|:6òwÓç·6f–æsòu6ÇfæFş(
-bs¦7F–öãÓÓÒv–æ–6–"sò‡6†VWBç7FGW3ÓÓÒwW6Fsòu&WFöÖ"s¢t–æ–6–"r“¦7F–öãÓÓÒwW6"sòuW6"s¢t6öæ6ÇV—"wÓÂö'WGFöãâ—ĞĞ¢ÂöF—càĞ¢·6†VWBæ&Æ÷VV–õöfÇW†òbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'&÷VæFVBÖÆr&rÖÖ&W"ÓSÓ2FW‡B×6ÒFW‡BÖÖ&W"Ó“#ç·6†VWBæ&Æ÷VV–õöfÇW†óÓÓÒvWFöçFW&–÷"sòtwV&FæFò6öæ6ÇW<:6òF2WF2çFW&–÷&W2â&V6'&VwVRf–6†;72Æ–&W&:|:6òâs¢tW7FR6WF÷"ì:6ò'F–6—FòfÇW†ò6öæf–wW&Fò&ò6W'fœ:vòâwÓÂ÷çĞĞ¢ÆF—b6Æ74æÖSÒ&fÆW‚fÆW‚×w&—FV×2Ö6VçFW"§W7F–g’Ö&WGvVVâvÓ2#àĞ¢Æƒ26Æ74æÖSÒ&Ö–â×rÓ'&V²×v÷&G2föçB×6VÖ–&öÆB#ç·6†VWBæÖöFVÆòçF—GVÆ÷ÓÂöƒ3àĞ¢Æ'WGFöâG—SÒ&'WGFöâ"6Æ74æÖSÒ&'Fâ×6V6öæF'’6‡&–æ²Ó"&–ÖÆ&VÃÒ%&V6'&Vv"f–6†L:–6æ–6"F—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7—Òöä6Æ–6³×²‚’Óâ°Ğ¢–b„¥4ôâç7G&–æv–g’‡fÇVW2’ÓÒ¥4ôâç7G&–æv–g’‡6†VWBæFF÷2’bbv–æF÷ræ6öæf—&Ò‚tFW66'F"ÇFW&:|;VW2ì:6ò6Çf2R&V6'&Vv"f–6†òr’’&WGW&ã°Ğ¢6WE&VÆöB†âÓââ²“°Ğ¢×Óå&V6'&Vv"f–6†Âö'WGFöãàĞ¢ÂöF—càĞ¢¶6öçFW‡Còç&÷&–WF&–òbbÅ6†VWD76–væÖVçDVF—F÷"6W'f–6T–C×·6W'f–6T–GÒ6V7F÷#×·6V7F÷'Ò7W'&VçC×·6†VWBç&W7öç6fVÅö–GÒF—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7—Òöä76–vã×¶7–æ2V×Æ÷–VSÓç°Ğ¢–b†×WFF–öâæ7W'&VçB—F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçC×G'VS·6WE6f–ær‡G'VR“°Ğ¢6öç7B&WVW7CÖvVæW&F–öâæ7W'&VçC°Ğ¢G'—°Ğ¢6öç7B&W7VÇCÖv—BFV6†æ–6Å6†VWG2æ76–vâ‡6W'f–6T–BÇ6V7F÷"ÆV×Æ÷–VRÇ6†VWBçfW'6ò“°Ğ¢–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE6†VWB†7W'&VçCÓæ7W'&VçC÷²ââæ7W'&VçBÂââç&W7VÇGÓ¦7W'&VçB“°Ğ¢Öf–æÆÇ—¶×WFF–öâæ7W'&VçCÖfÇ6S¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE6f–ær†fÇ6R“·ĞĞ¢×ÒóçĞĞ¢ÅFV6†æ–6Å6†VWDf÷&Ò¶W“×¶G·6W'f–6T–GÓ¢G·6V7F÷'Ó¢G·&VÆöGÖÒf–VÆG3×·6†VWBæÖöFVÆòæ6×÷7ÒfÇVS×·fÇVW7ÒÆÆ÷vVE&—f7“×·6†VWBç&—f6–FFUöWF÷&—¦FÒGF6†ÖVçD÷F–öç3×¶GF6†ÖVçD÷F–öç7Ò6äÆ–æ´GF6†ÖVçG3×·6†VWBçöFUöæW†'ĞĞ¢F—6&ÆVC×¶ÆöF–ærÇÂ6†VWBçöFUöVF—F"ÇÂ6†VWBç7FGW3ÓÓÒv6öæ6ÇV–FrÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ†5W&Ö—76–öâ†6öçFW‡BÂv÷&FVç2rÂvVF—F"r—Òöä6†ævS×·6WEfÇVW7Òöå6fS×¶7–æ2FFÓâ°Ğ¢–b†×WFF–öâæ7W'&VçB’F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WE6f–ær‡G'VR“°Ğ¢6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢G'’°Ğ¢6öç7BfW'6–öâÒv—BFV6†æ–6Å6†VWG2ç6fR‡6W'f–6T–BÂ6V7F÷"ÂFFÂ6†VWBçfW'6ò“°Ğ¢–b‡&WVW7BÓÒvVæW&F–öâæ7W'&VçB’&WGW&ã°Ğ¢6WE6†VWB†7W'&VçBÓâ7W'&VçBò²ââæ7W'&VçBÂFF÷3¢²ââæ7W'&VçBæFF÷2ÂââæFFÒÂfW'6ó¢fW'6–öâÒ¢7W'&VçB“°Ğ¢Òf–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6f–ær†fÇ6R“²ĞĞ¢×ÒóàĞ¢·6V7F÷"ÓÓÒv6&ÖVçFòrbbÄf–æ—6†–ætG'––æt6öçG&öÂ7FFS×¶G'––æwÒW'&÷#×¶G'––ætW'&÷'Ò6å&Vv—7FW#×¶G'––ærÓÒçVÆÂbb6†VWBçöFUöVF—F"bb6†VWBç7FGW2ÓÓÒvVÕöæFÖVçFòrbb†5W&Ö—76–öâ†6öçFW‡BÂv÷&FVç2rÂvVF—F"r—ÒF—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ6†VWBç7FGW2ÓÓÒv6öæ6ÇV–FwÒöå&Vg&W6ƒ×²‚’Óâ6WE&VÆöB†âÓââ²—Òöå&Vv—7FW#×¶7–æ2Ö–çWFW2Óâ°Ğ¢–b†×WFF–öâæ7W'&VçB’F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WE6f–ær‡G'VR“²6WDG'––ætW'&÷"‚rr“°Ğ¢6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢G'’°Ğ¢6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2æG'––æu&Vv—7FW"‡6W'f–6T–BÂÖ–çWFW2Â6†VWBçfW'6ò“°Ğ¢–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’°Ğ¢6WDG'––ær†7W'&VçBÓâ7W'&VçBò²ââæ7W'&VçBÂââç&W7VÇBÒ¢7W'&VçB“°Ğ¢6WE6†VWB†7W'&VçBÓâ7W'&VçBò²ââæ7W'&VçBÂfW'6ó¢&W7VÇBçfW'6òÒ¢7W'&VçB“°Ğ¢ĞĞ¢Òf–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6f–ær†fÇ6R“²ĞĞ¢×ÒóçĞĞ¢²‡6V7F÷"ÓÓÒv6÷'FRrÇÂ6V7F÷"ÓÓÒvÖöçFvVÒr’bbÅ&öGV7F–öäÆör7FFS×·&öGV7F–öçÒW'&÷#×·&öGV7F–öäW'&÷'Ò6å&Vv—7FW#×·&öGV7F–öâÓÒçVÆÂbb6†VWBçöFUöVF—F"bb6†VWBç7FGW2ÓÒv6öæ6ÇV–Frbb†5W&Ö—76–öâ†6öçFW‡BÂv÷&FVç2rÂvVF—F"r—ÒF—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ6†VWBç7FGW2ÓÓÒv6öæ6ÇV–FwÒöå&Vg&W6ƒ×²‚’Óâ6WE&VÆöB†âÓââ²—Òöå&Vv—7FW#×¶7–æ2–çWBÓâ°Ğ¢–b†×WFF–öâæ7W'&VçB’F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WE6f–ær‡G'VR“²6WE&öGV7F–öäW'&÷"‚rr“°Ğ¢6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢G'’°Ğ¢6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2ç&öGV7F–öå&Vv—7FW"‡6W'f–6T–BÂ6V7F÷"Â–çWBÂ6†VWBçfW'6ò“°Ğ¢–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’²6WE&öGV7F–öâ‡&W7VÇB“²6WE6†VWB†7W'&VçBÓâ7W'&VçBò²ââæ7W'&VçBÂfW'6ó¢&W7VÇBçfW'6òÒ¢7W'&VçB“²ĞĞ¢Òf–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6f–ær†fÇ6R“²ĞĞ¢×ÒóçĞĞ¢µ²v6÷'FRrÂvÖöçFvVÒrÂv6&ÖVçFòrÂv–ç7FÆ6òuÒæ–æ6ÇVFW2‡6V7F÷"’bb†5W&Ö—76–öâ†6öçFW‡BÂvW7F÷VRrÂv7&–"r’bbÄÖFW&–Å&WVW7EæVÂ÷F–öç3×¶ÖFW&–Ä÷F–öç7Ò&WVW7G3×¶ÖFW&–Å&WVW7G7ÒW'&÷#×¶ÖFW&–ÄW'&÷'Ò6å&WVW7C×¶ÖFW&–Ä÷F–öç2æÆVæwF‚âbb6†VWBç7FGW2ÓÒv6öæ6ÇV–FwÒF—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ6†VWBç7FGW2ÓÓÒv6öæ6ÇV–FwÒöå&Vg&W6ƒ×²‚’Óâ6WE&VÆöB†âÓââ²—Òöä7&VFS×¶7–æ2–çWBÓâ°Ğ¢–b†×WFF–öâæ7W'&VçB’F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WE6f–ær‡G'VR“²6WDÖFW&–ÄW'&÷"‚rr“²6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢G'’²v—BFV6†æ–6Å6†VWG2æÖFW&–Å&WVW7D7&VFR‡6W'f–6T–BÂ6V7F÷"Â–çWB“²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE&VÆöB†âÓââ²“²ĞĞ¢f–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6f–ær†fÇ6R“²ĞĞ¢×Òöä6æ6VÃ×¶7–æ2&WVW7D—FVÒÓâ°Ğ¢–b†×WFF–öâæ7W'&VçB’F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçBÒG'VS²6WE6f–ær‡G'VR“²6WDÖFW&–ÄW'&÷"‚rr“²6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢G'’²6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2æÖFW&–Å&WVW7EWFFR‡&WVW7D—FVÒæ–BÂv6æ6VÆ"rÂ&WVW7D—FVÒçfW'6ò“²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDÖFW&–Å&WVW7G2†7W'&VçBÓâ7W'&VçBæÖ†—FVÒÓâ—FVÒæ–BÓÓÒ&WVW7D—FVÒæ–Bò²ââæ—FVÒÂ7FGW3¢&W7VÇBç7FGW22ÖFW&–Å&WVW7E²w7FGW2uÒÂfW'6ó¢&W7VÇBçfW'6òÒ¢—FVÒ’“²ĞĞ¢f–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6f–ær†fÇ6R“²ĞĞ¢×ÒóçĞĞ¢Æf–VÆG6WB6Æ74æÖSÒ'76R×’Ó2&÷VæFVB×†Â&÷&FW"&÷&FW"×6ÆFRÓ#ÓB"F—6&ÆVC×¶ÆöF–ærÇÂ6†VWBçöFUöVF—F"ÇÂ6†VWBç7FGW3ÓÓÒv6öæ6ÇV–FrÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ†5W&Ö—76–öâ†6öçFW‡BÂv÷&FVç2rÂvVF—F"r—ÓàĞ¢ÆÆVvVæB6Æ74æÖSÒ'‚ÓföçB×6VÖ–&öÆB#ä6†V6¶Æ—7B÷W&6–öæÃÂöÆVvVæCàĞ¢Ç6Æ74æÖSÒ'FW‡B×6ÒFW‡B×6ÆFRÓS#ä6FÖ&6:|:6ò:’6Çf–æF—f–GVÆÖVçFRãÂ÷àĞ¢·6†VWBæÖöFVÆòæ6†V6¶Æ—7BæÖ†—FVÒÓâÆÆ&VÂ¶W“×¶—FVÒæ¶W—Ò6Æ74æÖSÒ&fÆW‚—FV×2×7F'BvÓ2FW‡B×6Ò"‡FÖÄf÷#×¶FV6†æ–6ÂÖ6†V6¶Æ—7BÒG¶—FVÒæ¶W—ÖÓàĞ¢Æ–çWB–C×¶FV6†æ–6ÂÖ6†V6¶Æ—7BÒG¶—FVÒæ¶W—ÖÒG—SÒ&6†V6¶&÷‚"6Æ74æÖSÒ&×BÓ‚ÓBrÓB"6†V6¶VC×·6†VWBæ6†V6¶Æ—7E¶—FVÒæ¶W•ÒÓÓÒG'VWÒF—6&ÆVC×¶—FVÒæWFöÖF–7Òöä6†ævS×¶7–æ2WfVçBÓâ°Ğ¢–b†×WFF–öâæ7W'&VçB’&WGW&ã°Ğ¢×WFF–öâæ7W'&VçBÒG'VS°Ğ¢6öç7B6†V6¶VBÒWfVçBçF&vWBæ6†V6¶VC°Ğ¢6öç7B&WVW7BÒvVæW&F–öâæ7W'&VçC°Ğ¢6WD6†V6¶Æ—7D'W7’‡G'VR“²6WDW'&÷"‚rr“°Ğ¢G'’°Ğ¢6öç7B&W7VÇBÒv—BFV6†æ–6Å6†VWG2æ6†V6¶Æ—7B‡6W'f–6T–BÂ6V7F÷"Âµ¶—FVÒæ¶W•Ó¦6†V6¶VGÒÂ6†VWBçfW'6ò“°Ğ¢–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WE6†VWB†7W'&VçBÓâ7W'&VçBò²ââæ7W'&VçBÂââç&W7VÇGÒ¢7W'&VçB“°Ğ¢Ò6F6‚†6W6R’²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WDW'&÷"†6W6R–ç7Fæ6VöbW'&÷"ò6W6RæÖW76vR¢tì:6òfö’÷7<:×fVÂ6Çf"ò6†V6¶Æ—7Bâr“²ĞĞ¢f–æÆÇ’²×WFF–öâæ7W'&VçBÒfÇ6S²–b‡&WVW7BÓÓÒvVæW&F–öâæ7W'&VçB’6WD6†V6¶Æ—7D'W7’†fÇ6R“²ĞĞ¢×ÒóàĞ¢Ç7ãç¶—FVÒæÆ&VÇ×¶—FVÒæWFöÖF–2bbÇ7â6Æ74æÖSÒ&&Æö6²FW‡B×‡2FW‡B×6ÆFRÓS#äGVÆ—¦Fò;72&Vv—7G&òFWf–L:¦æ6–ãÂ÷7ãçÓÂ÷7ãàĞ¢ÂöÆ&VÃâ—ĞĞ¢Âöf–VÆG6WCàĞ¢Å6†VWDGF6†ÖVçG26W'f–6T–C×·6W'f–6T–GÒ6V7F÷#×·6V7F÷'Ò6åWÆöC×·6†VWBçöFUöæW†"bb6†VWBç7FGW2ÓÒv6öæ6ÇV–FwÒöäÆ—7FVC×·6WDGF6†ÖVçD÷F–öç7ÒóàĞ¢·6V7F÷#ÓÓÒv–ç7FÆ6òrbb6†VWBæ6†V6¶Æ—7Bæ6V—FUö6Æ–VçFRbbÇ&öÆSÒ'7FGW2"&–ÖÆ—fSÒ'öÆ—FR"6Æ74æÖSÒ'FW‡B×6ÒFW‡BÖVÖW&ÆBÓƒ#ä6V—FRF–ç7FÆ:|:6ò&Vv—7G&Fò6öÒ6ö×&÷fçFRãÂ÷çĞĞ¢·6V7F÷#ÓÓÒv–ç7FÆ6òrbb6†VWBæ6†V6¶Æ—7Bæ6V—FUö6Æ–VçFRbb6†VWBç7FGW3ÓÓÒvVÕöæFÖVçFòrbb6†VWBæ6öW5öW†V7V6òæ–æ6ÇVFW2‚v6öæ6ÇV—"r’bbÄ–ç7FÆÆF–öä66WFæ6Tf÷&ÒGF6†ÖVçG3×¶GF6†ÖVçD÷F–öç7ÒF—6&ÆVC×¶ÆöF–ærÇÂ6f–ærÇÂ6†V6¶Æ—7D'W7’ÇÂ¥4ôâç7G&–æv–g’‡fÇVW2’ÓÔ¥4ôâç7G&–æv–g’‡6†VWBæFF÷2—Òöå&Vv—7FW#×¶7–æ2–çWCÓç°Ğ¢–b†×WFF–öâæ7W'&VçB—F‡&÷ræWrW'&÷"‚twV&FRò6ÇfÖVçFòVÒæFÖVçFòâr“°Ğ¢×WFF–öâæ7W'&VçC×G'VS·6WE6f–ær‡G'VR“¶6öç7B&WVW7CÖvVæW&F–öâæ7W'&VçC°Ğ¢G'—¶v—B–ç7FÆÆF–öâæ66WB‡6W'f–6T–BÇ6†VWBçfW'6òÆ–çWB“¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE&VÆöB†ãÓæâ³“·ĞĞ¢f–æÆÇ—¶×WFF–öâæ7W'&VçCÖfÇ6S¶–b‡&WVW7CÓÓÖvVæW&F–öâæ7W'&VçB—6WE6f–ær†fÇ6R“·ĞĞ¢×ÒóçĞĞ¢Å6†VWD–æ6–FVçG26W'f–6T–C×·6W'f–6T–GÒ6V7F÷#×·6V7F÷'Ò6ä7&VFS×·6†VWBçöFUö6ö×Væ–6'ÒóàĞ¢·6†VWBç7FGW2ÓÒv6öæ6ÇV–FrbbÅF6´7&VF–öäf÷&Ò6W'f–6T–C×·6W'f–6T–GÒ6V7F÷#×·6V7F÷'ÒóçĞĞ¢¶W'&÷"bbÇ&öÆSÒ&ÆW'B"6Æ74æÖSÒ&'&V²×v÷&G2FW‡B×6ÒFW‡B×&VBÓs#ç¶W'&÷'ÓÂ÷çĞĞ¢Â÷6V7F–öãã°Ğ§ĞĞ
+import React, { useEffect, useRef, useState } from 'react';
+import { useWorkforceAccess } from '../context/WorkforceAccessContext';
+import { hasPermission } from '../lib/access';
+import { technicalSheets, type FinishingDryingState, type MaterialOption, type MaterialRequest, type ProductionState, type ServiceSheet } from '../services/technical-sheet.service';
+import TechnicalSheetForm from './TechnicalSheetForm';
+import SheetAssignmentEditor from './SheetAssignmentEditor';
+import TaskCreationForm from './TaskCreationForm';
+import SheetAttachments from './SheetAttachments';
+import SheetIncidents from './SheetIncidents';
+import InstallationAcceptanceForm from './InstallationAcceptanceForm';
+import {installation} from '../services/installation.service';
+import FinishingDryingControl from './FinishingDryingControl';
+import ProductionLog from './ProductionLog';
+import MaterialRequestPanel from './MaterialRequestPanel';
+
+export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId: string; sector: string }) {
+  const { context } = useWorkforceAccess();
+  const [sheet, setSheet] = useState<ServiceSheet | null>(null);
+  const [values, setValues] = useState<Record<string, unknown>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [reload, setReload] = useState(0);
+  const [checklistBusy, setChecklistBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [attachmentOptions,setAttachmentOptions] = useState<{id:string;nome:string}[]>([]);
+  const [drying, setDrying] = useState<FinishingDryingState | null>(null);
+  const [dryingError, setDryingError] = useState('');
+  const [production, setProduction] = useState<ProductionState | null>(null);
+  const [productionError, setProductionError] = useState('');
+  const [materialOptions, setMaterialOptions] = useState<MaterialOption[]>([]);
+  const [materialRequests, setMaterialRequests] = useState<MaterialRequest[]>([]);
+  const [materialError, setMaterialError] = useState('');
+  const mutation = useRef(false);
+  const generation = useRef(0);
+  useEffect(() => {
+    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError('');
+  }, [serviceId, sector, context?.funcionario.versao]);
+  useEffect(() => {
+    const request = ++generation.current;
+    setError(''); setLoading(true);
+    (async () => {
+      try {
+        const result = await technicalSheets.load(serviceId, sector);
+        if (request !== generation.current) return;
+        setSheet(result); setValues(result.dados);
+        if (sector === 'acabamento') {
+          try { const result = await technicalSheets.dryingLoad(serviceId); if (request === generation.current) setDrying(result); }
+          catch (cause) { if (request === generation.current) setDryingError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel consultar a secagem.'); }
+        }
+        if (sector === 'corte' || sector === 'montagem') {
+          try { const result = await technicalSheets.productionLoad(serviceId, sector); if (request === generation.current) setProduction(result); }
+          catch (cause) { if (request === generation.current) setProductionError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel consultar a produÃ§Ã£o.'); }
+        }
+        if (['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar')) {
+          try { const [options, requests] = await Promise.all([technicalSheets.materialOptions(serviceId, sector), technicalSheets.materialRequests(serviceId, sector)]); if (request === generation.current) { setMaterialOptions(options); setMaterialRequests(requests); } }
+          catch (cause) { if (request === generation.current) setMaterialError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel consultar as solicitaÃ§Ãµes de material.'); }
+        }
+      } catch (cause) {
+        if (request === generation.current) setError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel carregar a ficha.');
+      } finally { if (request === generation.current) setLoading(false); }
+    })();
+    return () => { generation.current++; };
+  }, [serviceId, sector, reload, context?.funcionario.versao]);
+  if (loading && !sheet) return <p role="status" aria-live="polite">Carregando ficha tÃ©cnicaâ€¦</p>;
+  if (!sheet) return <div className="space-y-3">
+    {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
+    <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Tentar carregar a ficha tÃ©cnica novamente" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
+    {context?.proprietario && <button type="button" className="btn-primary shrink-0 whitespace-nowrap" disabled={loading} onClick={async () => {
+      if (mutation.current) return;
+      mutation.current = true; setLoading(true); setError('');
+      try { await technicalSheets.save(serviceId, sector, {}, 0); setReload(n => n + 1); }
+      catch (cause) { setError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel liberar a ficha.'); setLoading(false); }
+      finally { mutation.current = false; }
+    }}>{loading ? 'Liberandoâ€¦' : 'Liberar ficha deste setor'}</button>}
+  </div>;
+  return <section className="space-y-4" aria-label="Ficha tÃ©cnica do serviÃ§o" aria-busy={saving || checklistBusy || loading}>
+    {loading && <p role="status" aria-live="polite">Atualizando ficha tÃ©cnicaâ€¦</p>}
+    {saving && <p role="status" aria-live="polite">Salvando alteraÃ§Ãµes da ficha tÃ©cnicaâ€¦</p>}
+    <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
+      <span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">SituaÃ§Ã£o: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'ConcluÃ­da'})[sheet.status] || 'SituaÃ§Ã£o indisponÃ­vel'}</span>
+      {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
+        (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={loading || saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
+          if(mutation.current)return;
+          if(action==='iniciar' && !sheet.inicio_liberado)return;
+          if(JSON.stringify(values)!==JSON.stringify(sheet.dados)){
+            setError('Salve ou descarte as alteraÃ§Ãµes da ficha antes de atualizar a execuÃ§Ã£o.');return;
+          }
+          if(action==='concluir' && !window.confirm('Concluir esta ficha? Os dados e o checklist ficarÃ£o bloqueados para ediÃ§Ã£o.'))return;
+          mutation.current=true;setSaving(true);setError('');const request=generation.current;
+          try{const result=await technicalSheets.execute(serviceId,sector,action,sheet.versao);if(request===generation.current)setSheet(current=>current?{...current,...result}:current);}
+          catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'NÃ£o foi possÃ­vel atualizar a execuÃ§Ã£o.');}
+          finally{mutation.current=false;if(request===generation.current)setSaving(false);}
+        }} aria-label={saving?'Salvando execuÃ§Ã£o':action==='iniciar'?(sheet.status==='pausada'?'Retomar execuÃ§Ã£o':'Iniciar execuÃ§Ã£o'):action==='pausar'?'Pausar execuÃ§Ã£o':'Concluir execuÃ§Ã£o'}>{saving?'Salvandoâ€¦':action==='iniciar'?(sheet.status==='pausada'?'Retomar':'Iniciar'):action==='pausar'?'Pausar':'Concluir'}</button>)}
+    </div>
+    {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusÃ£o das etapas anteriores. Recarregue a ficha apÃ³s a liberaÃ§Ã£o.':'Este setor nÃ£o participa do fluxo configurado para o serviÃ§o.'}</p>}
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <h3 className="min-w-0 break-words font-semibold">{sheet.modelo.titulo}</h3>
+      <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Recarregar ficha tÃ©cnica" disabled={loading || saving || checklistBusy} onClick={() => {
+        if (JSON.stringify(values) !== JSON.stringify(sheet.dados) && !window.confirm('Descartar alteraÃ§Ãµes nÃ£o salvas e recarregar a ficha?')) return;
+        setReload(n => n + 1);
+      }}>Recarregar ficha</button>
+    </div>
+    {context?.proprietario && <SheetAssignmentEditor serviceId={serviceId} sector={sector} current={sheet.responsavel_id} disabled={loading || saving || checklistBusy} onAssign={async employee=>{
+      if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current=true;setSaving(true);
+      const request=generation.current;
+      try{
+        const result=await technicalSheets.assign(serviceId,sector,employee,sheet.versao);
+        if(request===generation.current)setSheet(current=>current?{...current,...result}:current);
+      }finally{mutation.current=false;if(request===generation.current)setSaving(false);}
+    }} />}
+    <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada} attachmentOptions={attachmentOptions} canLinkAttachments={sheet.pode_anexar}
+      disabled={loading || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
+        if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+        mutation.current = true; setSaving(true);
+        const request = generation.current;
+        try {
+          const version = await technicalSheets.save(serviceId, sector, data, sheet.versao);
+          if (request !== generation.current) return;
+          setSheet(current => current ? { ...current, dados: { ...current.dados, ...data }, versao: version } : current);
+        } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
+      }} />
+    {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setDryingError('');
+      const request = generation.current;
+      try {
+        const result = await technicalSheets.dryingRegister(serviceId, minutes, sheet.versao);
+        if (request === generation.current) {
+          setDrying(current => current ? { ...current, ...result } : current);
+          setSheet(current => current ? { ...current, versao: result.versao } : current);
+        }
+      } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
+    }} />}
+    {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setProductionError('');
+      const request = generation.current;
+      try {
+        const result = await technicalSheets.productionRegister(serviceId, sector, input, sheet.versao);
+        if (request === generation.current) { setProduction(result); setSheet(current => current ? { ...current, versao: result.versao } : current); }
+      } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
+    }} />}
+    {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
+      try { await technicalSheets.materialRequestCreate(serviceId, sector, input); if (request === generation.current) setReload(n => n + 1); }
+      finally { mutation.current = false; if (request === generation.current) setSaving(false); }
+    }} onCancel={async requestItem => {
+      if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
+      try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); if (request === generation.current) setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
+      finally { mutation.current = false; if (request === generation.current) setSaving(false); }
+    }} />}
+    <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={loading || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
+      <legend className="px-1 font-semibold">Checklist operacional</legend>
+      <p className="text-sm text-slate-500">Cada marcaÃ§Ã£o Ã© salva individualmente.</p>
+      {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm" htmlFor={`technical-checklist-${item.key}`}>
+        <input id={`technical-checklist-${item.key}`} type="checkbox" className="mt-1 h-4 w-4" checked={sheet.checklist[item.key] === true} disabled={item.automatic} onChange={async event => {
+          if (mutation.current) return;
+          mutation.current = true;
+          const checked = event.target.checked;
+          const request = generation.current;
+          setChecklistBusy(true); setError('');
+          try {
+            const result = await technicalSheets.checklist(serviceId, sector, {[item.key]:checked}, sheet.versao);
+            if (request === generation.current) setSheet(current => current ? {...current,...result} : current);
+          } catch (cause) { if (request === generation.current) setError(cause instanceof Error ? cause.message : 'NÃ£o foi possÃ­vel salvar o checklist.'); }
+          finally { mutation.current = false; if (request === generation.current) setChecklistBusy(false); }
+        }} />
+        <span>{item.label}{item.automatic && <span className="block text-xs text-slate-500">Atualizado apÃ³s registro da evidÃªncia.</span>}</span>
+      </label>)}
+    </fieldset>
+    <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions}/>
+    {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalaÃ§Ã£o registrado com comprovante.</p>}
+    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={loading || saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
+      if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
+      mutation.current=true;setSaving(true);const request=generation.current;
+      try{await installation.accept(serviceId,sheet.versao,input);if(request===generation.current)setReload(n=>n+1);}
+      finally{mutation.current=false;if(request===generation.current)setSaving(false);}
+    }}/>}
+    <SheetIncidents serviceId={serviceId} sector={sector} canCreate={sheet.pode_comunicar}/>
+    {sheet.status!=='concluida' && <TaskCreationForm serviceId={serviceId} sector={sector}/>}
+        {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
+  </section>;
+}
