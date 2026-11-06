@@ -1297,3 +1297,13 @@ test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", 
   assert.match(minhasTarefas, /className="shrink-0 text-xs text-slate-500"/);
   assert.match(fichasFuncionario, /<div className="min-w-0"><h2 id="service-sheets-title" className="break-words text-lg font-bold"/);
 });
+
+test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
+  assert.match(meuSetor, /<div className="min-w-0">\s*<p className="text-xs font-semibold uppercase/);
+  assert.match(meuSetor, /<h1 className="mt-2 break-words text-3xl font-bold/);
+  assert.match(meuSetor, /className="flex shrink-0 flex-col items-end gap-2"/);
+  assert.match(meuSetor, /<dd className="mt-1 break-words font-semibold text-slate-900">\{context\.funcionario\.nome/);
+  assert.match(meuSetor, /<dd className="mt-1 break-words text-slate-900">\{context\.funcionario\.cargo/);
+  assert.match(meuSetor, /<div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold"/);
+  assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100/);
+});
