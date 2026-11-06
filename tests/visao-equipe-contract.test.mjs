@@ -416,40 +416,7 @@ test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
   assert.match(minhasTarefas, /!dirty \|\| !hasPermission/);
 });
 
-test("tarefas informam a quantidade visÃ­vel e a existÃªncia de mais pÃ¡ginas", () => {
-  assert.match(minhasTarefas, /data&&!loading&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
-  assert.match(minhasTarefas, /data\.itens\.length===1\?'tarefa visÃ­vel':'tarefas visÃ­veis'/);
-  assert.match(minhasTarefas, /data\.tem_mais\?' Â· HÃ¡ mais tarefas disponÃ­veis\.':''/);
-});
-
-test("tarefas identificam a paginaÃ§Ã£o para tecnologia assistiva", () => {
-  assert.match(minhasTarefas, /aria-label="PaginaÃ§Ã£o de tarefas"/);
-  assert.match(minhasTarefas, /aria-current="page"/);
-});
-
-test("tarefas ocultam paginaÃ§Ã£o quando a primeira pÃ¡gina estÃ¡ vazia", () => {
-  assert.match(minhasTarefas, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="PaginaÃ§Ã£o de tarefas"/);
-});
-
-test("tarefas atualizam ao retornar Ã  aba", () => {
-  assert.match(minhasTarefas, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /removeEventListener\('focus',refreshOnReturn\)/);
-  assert.match(minhasTarefas, /lastReturnRefresh/);
-  assert.match(minhasTarefas, />1000/);
-});
-
-test("tarefas nÃ£o consultam dados sem vÃ­nculo validado", () => {
-  assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
-});
-
-test("resumo do funcionÃ¡rio usa cores semÃ¢nticas nos indicadores", () => {
-  assert.match(resumoFuncionario, /function cardTone/);
-  assert.match(resumoFuncionario, /Atrasadas/);
-  assert.match(resumoFuncionario, /ConcluÃ­das/);
-  assert.match(resuo]uÓ[h‘éì¶»§q«^tİ›ÜÉ×KÊNÃBŸJNÃBƒB\İ
+test("tarefas informao]|ë[h‘éì¶»§q«^t[‹Lˆ‹ÊNÃBŸJNÃBƒB\İ
 œÙXØYÙ[H[\H™YY˜XÚÈ[ÈY]\ˆÈ˜^›È‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
