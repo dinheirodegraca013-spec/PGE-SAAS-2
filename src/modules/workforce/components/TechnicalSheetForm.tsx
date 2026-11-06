@@ -52,7 +52,7 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
         <option value="">Sem anexo vinculado</option>
         {typeof current==='string' && current && !attachmentOptions.some(item=>item.id===current) && <option value={current}>Anexo atual (fora da página de anexos)</option>}
         {attachmentOptions.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}
-      </select><p className="mt-1 text-xs text-slate-500">Opções da página atual em Anexos privados. Envie arquivos ou mude a página nessa seção e salve a ficha após selecionar.</p></>:<p className="text-slate-500">{current ? 'Anexo vinculado à ordem.' : 'Nenhum anexo vinculado.'}</p>}
+      </select><p className="mt-1 text-xs text-slate-500">Opções da página atual em Anexos privados. Envie arquivos ou mude a página nessa seção e salve a ficha após selecionar.</p></>:<p role={current ? undefined : 'status'} aria-live={current ? undefined : 'polite'} className="text-slate-500">{current ? 'Anexo vinculado à ordem.' : 'Nenhum anexo vinculado.'}</p>}
       {error && <p id={`${controlId}-error`} role="alert" className="text-sm text-red-700">{error}</p>}
     </div>;
     return <div key={path} className="min-w-0">

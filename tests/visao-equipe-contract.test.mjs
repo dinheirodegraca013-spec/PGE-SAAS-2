@@ -35,6 +35,7 @@ const agendaFuncionario = readOptional("../src/modules/workforce/components/Agen
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
 const fichaTecnica = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
+const formularioFichaTecnica = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
 const technicalSheetService = readOptional("../src/modules/workforce/services/technical-sheet.service.ts");
 const ocorrencias = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 const anexos = readOptional("../src/modules/workforce/components/SheetAttachments.tsx");
@@ -604,6 +605,10 @@ test("detalhe de tarefa preserva a ficha durante sincronização", () => {
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
   assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
+});
+
+test("ficha técnica anuncia ausência de anexo vinculado", () => {
+  assert.match(formularioFichaTecnica, /role=\{current \? undefined : 'status'\}/);
 });
 
 test("ficha técnica preserva o conteúdo durante sincronização", () => {
