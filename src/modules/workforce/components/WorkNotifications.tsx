@@ -17,6 +17,7 @@ export default function WorkNotifications(){
   const [refresh,setRefresh]=useState(0);
   const [loading,setLoading]=useState(true);
   const [error,setError]=useState('');
+  const [message,setMessage]=useState('');
   const [busy,setBusy]=useState<string|null>(null);
   const [selected,setSelected]=useState<WorkNotification|null>(null);
   const [updatedAt,setUpdatedAt]=useState<Date|null>(null);
@@ -27,7 +28,7 @@ export default function WorkNotifications(){
   const openerRef=useRef<HTMLButtonElement>(null);
   const returnFocus=useRef(false);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{setData(null);setSelected(null);setUpdatedAt(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setData(null);setSelected(null);setUpdatedAt(null);setMessage('');},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{setSelected(null);setUpdatedAt(null);},[page]);
   useEffect(()=>{reading.current=false;setBusy(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{if(selected)selectedRef.current?.focus();},[selected]);
@@ -43,7 +44,7 @@ export default function WorkNotifications(){
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-labelledby="work-notifications-title" aria-busy={loading || !!busy}>
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 id="work-notifications-title" className="text-lg font-bold">Notificações <span aria-live="polite">{data?`(${data.nao_lidas} não lidas)`:''}</span></h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
-    {loading && <p role="status" aria-live="polite">{data ? 'Atualizando notificações…' : 'Carregando notificações…'}</p>}{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…</p>}
+    {loading && <p role="status" aria-live="polite">{data ? 'Atualizando notificações…' : 'Carregando notificações…'}</p>}{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…</p>}{message && <p role="status" aria-live="polite">{message}</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar as notificações novamente" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-4 text-sm text-slate-500">Nenhuma notificação disponível. Quando houver uma nova tarefa ou etapa liberada, ela aparecerá aqui.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3" aria-label={`${item.lida_em?'Notificação lida':'Notificação não lida'}: ${notificationLabels[item.evento]||'Atualização da operação'}`}>
@@ -54,8 +55,8 @@ export default function WorkNotifications(){
         setError('');openerRef.current=event.currentTarget;setSelected(item);
       }}>{item.tarefa_id?'Abrir tarefa relacionada':'Abrir ficha relacionada'}</button>}{!item.tarefa_id&&!item.servico_id&&<span className="self-center text-xs text-slate-500">Sem registro relacionado</span>}
       {!item.lida_em && <button type="button" className="btn-secondary" disabled={!!busy} aria-label={`Marcar como lida: ${notificationLabels[item.evento]||'Atualização da operação'}`} onClick={async()=>{
-        if(reading.current)return;reading.current=true;setBusy(item.id);setError('');const request=generation.current;
-        try{const result=await workNotifications.read(item.id);if(request===generation.current)setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);}
+        if(reading.current)return;reading.current=true;setBusy(item.id);setError('');setMessage('');const request=generation.current;
+        try{const result=await workNotifications.read(item.id);if(request===generation.current){setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);setMessage('Notificação marcada como lida.');}}
         catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível registrar a leitura.');}
         finally{if(request===generation.current){reading.current=false;setBusy(null);}}
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>

@@ -887,6 +887,7 @@ test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => 
   assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
   assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…<\/p>\}/);
+  assert.match(notificacoesFuncionario, /setMessage\('Notificação marcada como lida\.'\)/);
 });
 
 test("notificações expõem o estado de leitura semanticamente", () => {
