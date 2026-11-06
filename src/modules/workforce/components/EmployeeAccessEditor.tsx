@@ -19,14 +19,14 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
       if(!mounted)return;
       if(!ctx.proprietario)throw new Error('Somente o proprietário pode editar estas permissões.');
       setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome);setJob(p.cargo||'');setInternalId(p.identificador_interno||'');setSector(p.setor||'corte');setAdditional(p.setores_adicionais);setStatus(p.status==='suspenso_plano'?'ativo':p.status);setGrants(p.permissoes);
-    }).catch(e=>{if(mounted)setError(e.message||'Não foi possível carregar o funcionário.');});
+    }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');});
     return()=>{mounted=false;};
   },[userId,retry]);
   const toggle=(module:string,operation:string,enabled:boolean)=>{clearError();setGrants(current=>enabled?[...current,{modulo:module,operacao:operation,escopo:module==='estoque'?'setor':'atribuidos'}]:current.filter(g=>g.modulo!==module||g.operacao!==operation));};
   async function save(event:React.FormEvent){
     event.preventDefault();if(!employee||busy)return;setBusy(true);setError('');
     try{await workforceAccess.save({id:employee.id,nome:name,cargo:job,identificador_interno:internalId,setor:sector,setores_adicionais:additional,status,permissoes:grants,versao:employee.versao});onSaved();}
-    catch(e){setError((e as Error).message||'Não foi possível salvar.');}finally{setBusy(false);}
+    catch(e){setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível salvar.');}finally{setBusy(false);}
   }
   return <section className="card space-y-4 p-5" aria-busy={busy || (!employee && !error)}>
     <div className="flex items-center justify-between gap-3"><h2 className="text-lg font-bold">Acesso do funcionário</h2><button type="button" className="btn-secondary" disabled={busy} onClick={onCancel} aria-label="Fechar edição do funcionário">Fechar</button></div>
