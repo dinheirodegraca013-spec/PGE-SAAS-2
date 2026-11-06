@@ -10,6 +10,13 @@ test('anexos validam serviço e setor antes da consulta',()=>{
   assert.match(attachments,/typeof service!==\'string\'\|\|!service\.trim\(\)\|\|typeof sector!==\'string\'\|\|!isSetor\(sector\)/);
 });
 
+test('anexos rejeitam metadados vazios e IDs duplicados',()=>{
+  assert.match(attachments,/row\.id==='string'&&row\.id\.trim\(\)\.length>0/);
+  assert.match(attachments,/row\.caminho==='string'&&row\.caminho\.trim\(\)\.length>0/);
+  assert.match(attachments,/new Set\(row\.itens\.map\(item => item\.id\)\)\.size!==row\.itens\.length/);
+  assert.match(attachments,/String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0/);
+});
+
 test('ocorrências validam serviço e setor antes da consulta',()=>{
   assert.match(incidents,/typeof service!==\'string\'\|\|!service\.trim\(\)\|\|typeof sector!==\'string\'\|\|!isSetor\(sector\)/);
 });
