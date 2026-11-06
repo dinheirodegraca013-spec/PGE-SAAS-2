@@ -1,7 +1,7 @@
 import React,{useId,useRef,useState} from 'react';
 import type {AcceptanceInput} from '../services/installation.service';
 export default function InstallationAcceptanceForm({attachments,disabled,onRegister}:{attachments:{id:string;nome:string}[];disabled:boolean;onRegister:(input:AcceptanceInput)=>Promise<void>}){
-  const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
+  const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
   const clearError=()=>setError('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
   return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy} onSubmit={async event=>{
@@ -9,8 +9,8 @@ export default function InstallationAcceptanceForm({attachments,disabled,onRegis
     if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
     const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
     if(receipt.current?.payload!==payload)receipt.current={payload,id:crypto.randomUUID()};
-    lock.current=true;setBusy(true);setError('');
-    try{await onRegister({...data,request:receipt.current.id});receipt.current=null;}
+    lock.current=true;setBusy(true);setError('');setMessage('');
+    try{await onRegister({...data,request:receipt.current.id});receipt.current=null;setName('');setProof('');setNotes('');setConfirmed(false);setMessage('Aceite registrado com sucesso.');}
     catch(cause){setError(cause instanceof Error?cause.message:'Não foi possível registrar o aceite.');}
     finally{lock.current=false;setBusy(false);}
   }}>
@@ -23,7 +23,7 @@ export default function InstallationAcceptanceForm({attachments,disabled,onRegis
       <label className="flex items-start gap-2 text-sm"><input className="mt-1" type="checkbox" checked={confirmed} onChange={event=>{setConfirmed(event.target.checked);clearError();}}/><span>Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instalação.</span></label>
       <button type="submit" className="btn-primary" disabled={!attachments.length || disabled || busy}>{busy?'Registrando…':'Registrar aceite recebido'}</button>
     </fieldset>
-    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+    {error && <p role="alert" className="text-sm text-red-700">{error}</p>}{message && <p role="status" aria-live="polite" className="text-sm text-emerald-700">{message}</p>}
   </form>;
 }
 
