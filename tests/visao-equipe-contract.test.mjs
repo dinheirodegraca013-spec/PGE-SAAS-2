@@ -576,12 +576,15 @@ test("pesquisa de fichas informa o estado do botão", () => {
 test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-live="polite"/);
   assert.match(notificacoesFuncionario, /Tentar novamente/);
+  assert.match(notificacoesFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy\} aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
 });
 
 test("notificações ocultam paginação quando vazias", () => {
   assert.match(notificacoesFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Paginação de notificações"/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Ir para a página anterior"/);
 });
 
 test("notificações atualizam ao retornar à aba", () => {
@@ -1340,7 +1343,7 @@ test("tarefas exibem um único bloco de carregamento e erro", () => {
 
 test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", () => {
   assert.match(notificacoesFuncionario, /<div className="min-w-0"><h2 id="work-notifications-title" className="break-words text-lg font-bold"/);
-  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0"/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap"/);
   assert.match(historicoFuncionario, /<div className="min-w-0"><h2 id="activity-history-title" className="break-words text-lg font-bold"/);
   assert.match(minhasTarefas, /<h2 id="my-tasks-title" className="min-w-0 break-words text-lg font-bold"/);
   assert.match(minhasTarefas, /className="shrink-0 text-xs text-slate-500"/);
