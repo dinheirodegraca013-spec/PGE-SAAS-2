@@ -709,6 +709,7 @@ test("criação de tarefa limpa validação ao corrigir campos", () => {
 });
 
 test("criação de tarefa valida descrição antes do envio", () => {
+  assert.match(criacaoTarefa, /id=\{`\$\{id\}-title`\}[^>]*required minLength=\{2\} maxLength=\{200\}/);
   assert.match(criacaoTarefa, /description\.trim\(\)\.length<2/);
   assert.match(criacaoTarefa, /Informe uma descrição com pelo menos 2 caracteres/);
   assert.match(criacaoTarefa, /minLength=\{2\} maxLength=\{10000\} required/);
