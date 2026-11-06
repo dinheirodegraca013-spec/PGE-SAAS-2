@@ -576,6 +576,11 @@ test("cartão de solicitação informa atualização no botão", () => {
   assert.match(solicitacaoMaterial, /\{busy\?'Atualizando…':'Atualizar'\}/);
 });
 
+test("cartão de solicitação preserva o horário durante sincronização", () => {
+  assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
+  assert.match(solicitacaoMaterial, /busy\?'Atualizando solicitações…':updatedAt/);
+});
+
 test("cancelamento de material confirma sucesso", () => {
   assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('Solicitação cancelada\.'\)/);
   assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);

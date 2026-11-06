@@ -37,7 +37,7 @@ export default function MaterialRequestPanel({
   const selected = options.find(option => option.id === item);
   const refreshRequests = async () => {
     if (disabled || busy) return;
-    setBusy(true); setMessage(''); setUpdatedAt(null);
+    setBusy(true); setMessage('');
     try { await onRefresh(); setUpdatedAt(new Date()); setMessageKind('status'); setMessage('Solicitações atualizadas.'); }
     catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível atualizar as solicitações.'); }
     finally { setBusy(false); }
@@ -60,4 +60,3 @@ export default function MaterialRequestPanel({
     {!!requests.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Solicitações desta ordem</h5><ul className="space-y-2">{requests.map(requestItem => <li key={requestItem.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 p-2 text-sm"><span><strong>{requestItem.item_nome}</strong> · {formatQuantity(requestItem.quantidade)} {requestItem.unidade}<span className="block text-xs text-slate-500">{requestItem.motivo}</span></span><span className="flex items-center gap-2"><span className="rounded-full bg-white px-2 py-1 text-xs">{formatStatus(requestItem.status)}</span>{canRequest && ['pendente','aprovada'].includes(requestItem.status) && <button type="button" className="btn-secondary" aria-label={`Cancelar solicitação de ${requestItem.item_nome}`} disabled={disabled || busy} onClick={async () => { if (!window.confirm('Cancelar esta solicitação de material?')) return; setBusy(true); try { await onCancel(requestItem); setMessageKind('status'); setMessage('Solicitação cancelada.'); } catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível cancelar a solicitação.'); } finally { setBusy(false); } }}>Cancelar</button>}</span></li>)}</ul></div>}
   </section>;
 }
-
