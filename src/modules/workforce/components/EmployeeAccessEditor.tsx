@@ -4,6 +4,8 @@ import { workforceAccess } from '../services/access.service';
 import { moduleLabels, permissionLabels } from '../lib/access';
 import type { AccessGrant, EmployeeConfiguration, RecordScope } from '../types/access';
 
+const formatEmployeeDate=(value:string,withTime=false)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR',withTime?undefined:{dateStyle:'short'});};
+
 export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userId:string;onSaved:()=>void;onCancel:()=>void}) {
   const [employee,setEmployee] = useState<EmployeeConfiguration|null>(null);
   const [catalog,setCatalog] = useState<{modulo:string;operacao:string}[]>([]);
@@ -44,7 +46,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
         <div className="space-y-2">{[...new Set(catalog.map(c=>c.modulo))].map(module=><details key={module} className="rounded-xl border border-slate-200 p-3"><summary className="cursor-pointer font-semibold">{moduleLabels[module]||module} <span className="text-xs font-normal text-slate-500">({grants.filter(g=>g.modulo===module).length} ações)</span></summary>
           <div className="mt-3 space-y-3">{catalog.filter(c=>c.modulo===module).map(c=>{const grant=grants.find(g=>g.modulo===c.modulo&&g.operacao===c.operacao);return <div key={c.operacao} className="flex flex-wrap items-center justify-between gap-2"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(grant)} onChange={e=>toggle(module,c.operacao,e.target.checked)}/>{permissionLabels[c.operacao]||c.operacao}</label>{grant&&<label className="text-xs text-slate-500"><span className="sr-only">Escopo de {permissionLabels[c.operacao]||c.operacao} em {moduleLabels[module]||module}</span><select className="input-field py-1 text-xs" value={grant.escopo} onChange={e=>{setGrants(current=>current.map(g=>g===grant?{...g,escopo:e.target.value as RecordScope}:g));clearError();}}><option value="atribuidos">Atribuídos ao funcionário</option><option value="setor">Setores autorizados</option><option value="empresa">Registros autorizados da empresa</option></select></label>}</div>;})}</div>
         </details>)}</div>
-        <p className="text-xs text-slate-500">ID da conta: {employee.id} · Cadastro: {new Date(employee.created_at).toLocaleDateString('pt-BR')} · Último acesso: {employee.ultimo_acesso?new Date(employee.ultimo_acesso).toLocaleString('pt-BR'):'Ainda não registrado'}</p>
+        <p className="text-xs text-slate-500">ID da conta: {employee.id} · Cadastro: {formatEmployeeDate(employee.created_at)} · Último acesso: {employee.ultimo_acesso?formatEmployeeDate(employee.ultimo_acesso,true):'Ainda não registrado'}</p>
         <button type="submit" className="btn-primary" disabled={busy}>{busy?'Salvando…':'Salvar setores e permissões'}</button>
       </fieldset>
     </form>}
