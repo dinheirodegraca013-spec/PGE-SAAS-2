@@ -6,6 +6,7 @@ import ServiceTechnicalSheet from './ServiceTechnicalSheet';
 import TaskDetails from './TaskDetails';
 
 function formatNotificationDate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');}
+const notificationLabels:Record<string,string>={tarefa_atribuida:'Nova tarefa atribuída',etapa_liberada:'Etapa liberada para execução'};
 
 export default function WorkNotifications(){
   const {context}=useWorkforceAccess();
@@ -36,7 +37,7 @@ export default function WorkNotifications(){
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
     {data && <ul className="divide-y divide-slate-100">{data.itens.map(item=><li key={item.id} className="space-y-2 py-3">
-      <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{item.evento==='tarefa_atribuida'?'Nova tarefa atribuída':item.evento==='etapa_liberada'?'Etapa liberada para execução':'Nova ficha atribuída'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
+      <p className={item.lida_em?'text-sm text-slate-600':'text-sm font-semibold'}>{notificationLabels[item.evento]||'Atualização da operação'} · {isSetor(item.setor)?setores[item.setor]:item.setor}</p>
       <time className="block text-xs text-slate-500" dateTime={item.criada_em}>{formatNotificationDate(item.criada_em)}</time>
       <div className="flex flex-wrap gap-2"><button type="button" className="btn-secondary" disabled={!!busy} onClick={()=>{
         if(selected && !window.confirm('Abrir esta ficha? Alterações não salvas da ficha atual serão descartadas.'))return;
