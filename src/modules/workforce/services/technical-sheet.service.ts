@@ -178,6 +178,7 @@ export const technicalSheets = {
     return data;
   },
   async assign(service: string, sector: string, employee: string | null, version: number): Promise<{responsavel_id:string|null;versao:number}> {
+    if(!isServiceSector(service,sector)||(employee!==null&&(typeof employee!=='string'||!employee.trim()))||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados da atribuição são inválidos.');
     const { data, error } = await supabase.rpc('ficha_responsavel_definir', {p_servico:service,p_setor:sector,p_responsavel:employee,p_versao:version});
     if (error || !data) throw new Error(error?.code === '40001' ? 'A ficha foi alterada. Recarregue antes de atribuir o responsável.' : error?.message || 'Não foi possível atualizar o responsável.');
     const result = data as Record<string, unknown>;

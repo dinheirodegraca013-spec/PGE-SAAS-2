@@ -28,3 +28,10 @@ test('falha de atribuição informa erro, libera tentativa e não anuncia sucess
   assert.ok(s.changes.some(([key,value])=>key===3&&value===false));
   assert.ok(!s.changes.some(([key,value])=>key===5&&value==='Responsável atualizado.'));
 });
+
+test('serviço de atribuição protege contexto e versão antes da operação',async()=>{
+  const source=await readFile(new URL('../src/modules/workforce/services/technical-sheet.service.ts',import.meta.url),'utf8');
+  assert.match(source,/Os dados da atribuição são inválidos/);
+  assert.match(source,/employee!==null/);
+});
+
