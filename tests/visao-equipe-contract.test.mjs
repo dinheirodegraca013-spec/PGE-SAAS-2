@@ -289,6 +289,15 @@ test("ações rápidas possuem foco visível no teclado", () => {
   assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
 });
 
+test("painel do funcionário evita estouro de textos dinâmicos no celular", () => {
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-300"/);
+  assert.match(meuSetor, /className="min-w-0 break-words text-slate-400"/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{erro\}<\/span>/);
+  assert.match(meuSetor, /className="min-w-0 break-words">\{accessError\}<\/span>/);
+  assert.match(meuSetor, /className="card group min-w-0 p-4/);
+  assert.match(meuSetor, /className="mt-1 block break-words text-xs text-slate-500"/);
+});
+
 test("painel oferece atalho de teclado para as ações rápidas", () => {
   assert.match(meuSetor, /quickActions\.length > 0 && <a href="#quick-actions"/);
   assert.match(meuSetor, /href="#quick-actions"/);
