@@ -491,6 +491,12 @@ test("ficha técnica preserva o conteúdo durante sincronização", () => {
   assert.match(fichaTecnica, /setSheet\(null\); setValues\(\{\}\)/);
 });
 
+test("ficha técnica bloqueia edição e ações durante sincronização", () => {
+  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| !sheet\.pode_editar/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy \|\| sheet\.status\s*===\s*'concluida'\}/);
+});
+
 test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
   assert.match(ocorrencias, /aria-label="Paginação de ocorrências"/);

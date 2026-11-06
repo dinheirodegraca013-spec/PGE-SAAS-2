@@ -78,7 +78,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Situação indisponível'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
-        (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary" disabled={saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
+        (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary" disabled={loading || saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
           if(mutation.current)return;
           if(action==='iniciar' && !sheet.inicio_liberado)return;
           if(JSON.stringify(values)!==JSON.stringify(sheet.dados)){
@@ -94,12 +94,12 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="font-semibold">{sheet.modelo.titulo}</h3>
-      <button type="button" className="btn-secondary" aria-label="Recarregar ficha técnica" disabled={saving || checklistBusy} onClick={() => {
+      <button type="button" className="btn-secondary" aria-label="Recarregar ficha técnica" disabled={loading || saving || checklistBusy} onClick={() => {
         if (JSON.stringify(values) !== JSON.stringify(sheet.dados) && !window.confirm('Descartar alterações não salvas e recarregar a ficha?')) return;
         setReload(n => n + 1);
       }}>Recarregar ficha</button>
     </div>
-    {context?.proprietario && <SheetAssignmentEditor serviceId={serviceId} sector={sector} current={sheet.responsavel_id} disabled={saving || checklistBusy} onAssign={async employee=>{
+    {context?.proprietario && <SheetAssignmentEditor serviceId={serviceId} sector={sector} current={sheet.responsavel_id} disabled={loading || saving || checklistBusy} onAssign={async employee=>{
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);
       const request=generation.current;
@@ -109,7 +109,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       }finally{mutation.current=false;if(request===generation.current)setSaving(false);}
     }} />}
     <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada} attachmentOptions={attachmentOptions} canLinkAttachments={sheet.pode_anexar}
-      disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
+      disabled={loading || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
         if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
         mutation.current = true; setSaving(true);
         const request = generation.current;
@@ -119,7 +119,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
           setSheet(current => current ? { ...current, dados: { ...current.dados, ...data }, versao: version } : current);
         } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
       }} />
-    {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
+    {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setDryingError('');
       const request = generation.current;
@@ -131,7 +131,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         }
       } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
-    {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
+    {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setProductionError('');
       const request = generation.current;
@@ -140,7 +140,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         if (request === generation.current) { setProduction(result); setSheet(current => current ? { ...current, versao: result.versao } : current); }
       } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
-    {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
+    {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
       try { await technicalSheets.materialRequestCreate(serviceId, sector, input); if (request === generation.current) setReload(n => n + 1); }
@@ -151,7 +151,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); if (request === generation.current) setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
       finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
-    <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
+    <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={loading || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
       <legend className="px-1 font-semibold">Checklist operacional</legend>
       <p className="text-sm text-slate-500">Cada marcação é salva individualmente.</p>
       {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm" htmlFor={`technical-checklist-${item.key}`}>
@@ -172,7 +172,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     </fieldset>
     <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions}/>
     {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
-    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
+    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={loading || saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);const request=generation.current;
       try{await installation.accept(serviceId,sheet.versao,input);if(request===generation.current)setReload(n=>n+1);}
