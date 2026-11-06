@@ -3,6 +3,7 @@ import type { ProductionEntry, ProductionState } from '../services/technical-she
 
 const labels: Record<ProductionEntry['tipo'], string> = { produzido: 'Produzido', defeito: 'Defeito', desperdicio: 'Desperdício' };
 const numberFormat = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 });
+const formatEntryDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(date);};
 
 export default function ProductionLog({
   state,
@@ -58,7 +59,7 @@ export default function ProductionLog({
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
-    {!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm"><span><strong>{labels[item.tipo]}</strong> · {numberFormat.format(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="text-xs text-slate-500">{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(item.criado_em))}</time></div>)}</div>}
+    {!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm"><span><strong>{labels[item.tipo]}</strong> · {numberFormat.format(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="text-xs text-slate-500">{formatEntryDate(item.criado_em)}</time></div>)}</div>}
   </section>;
 }
 
