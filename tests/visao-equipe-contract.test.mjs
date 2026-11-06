@@ -185,6 +185,11 @@ test("busca de colaboradores anuncia a quantidade de resultados", () => {
   assert.match(equipeView, /\$\{perfis\.length\} \$\{perfis\.length === 1 \? 'colaborador disponível' : 'colaboradores disponíveis'\}/);
 });
 
+test("busca de colaboradores usa campo de pesquisa controlado", () => {
+  const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
+  assert.match(equipeView, /<input\s+type="search"\s+aria-label="Buscar colaborador"\s+maxLength=\{120\}\s+autoComplete="off"/);
+});
+
 test("painel não consulta projetos quando a validação de acesso falha", () => {
   assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);

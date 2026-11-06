@@ -314,7 +314,10 @@ export default function EquipeView() {
           <label className="w-full text-xs font-semibold text-slate-500 sm:w-64">
             Buscar colaborador
             <input
+              type="search"
               aria-label="Buscar colaborador"
+              maxLength={120}
+              autoComplete="off"
               value={busca}
               onChange={(event) => setBusca(event.target.value)}
               placeholder="Nome, e-mail ou perfil"
