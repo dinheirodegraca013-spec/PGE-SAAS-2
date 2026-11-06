@@ -80,6 +80,10 @@ test("cabeçalho acompanha o estado real da conexão", () => {
   assert.match(appLayout, /\{online \? 'Sistema online' : 'Sem conexão'\}/);
 });
 
+test("sino não inventa contador de notificações", () => {
+  assert.doesNotMatch(appLayout, /bg-rose-500/);
+});
+
 test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
   assert.doesNotMatch(visao, /R\$\s*10\.550|MDF 18mm \(chapa\).*6 de 10/);
   assert.match(visao, /estoque_itens|projetosService/);
