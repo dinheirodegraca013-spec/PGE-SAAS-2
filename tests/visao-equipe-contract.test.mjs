@@ -1451,7 +1451,7 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
   assert.match(solicitacaoMaterial, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{refreshRequests\}/);
   assert.match(solicitacaoMaterial, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2">/);
   assert.match(solicitacaoMaterial, /className="shrink-0 rounded-full bg-white px-2 py-1 text-xs"/);
-  assert.match(solicitacaoMaterial, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label=\{`Cancelar solicitação/);
+  assert.match(solicitacaoMaterial, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{`Cancelar solicitação/);
   assert.match(solicitacaoMaterial, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto"/);
 });
 
