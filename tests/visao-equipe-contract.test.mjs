@@ -367,6 +367,7 @@ test("resumo encaminha prazos para a lista quando a tarefa não está carregada"
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
+  assert.match(editorAcesso, /aria-label="Recarregar o acesso do funcionário"/);
   assert.match(editorAcesso, /Tentar novamente/);
 });
 
