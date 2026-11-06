@@ -61,7 +61,7 @@ export default function FinishingDryingControl({
       <label htmlFor={`${id}-minutes`} className="text-sm">Adicionar prazo (minutos)
         <input id={`${id}-minutes`} className="input-field mt-1 w-44" type="number" min={1} max={10080} step={1} value={minutes} onChange={event => { setMinutes(event.target.value); setMessage(''); }} disabled={disabled || busy} />
       </label>
-      <button type="submit" className="btn-primary" disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
+      <button type="submit" className="btn-primary" aria-label={busy ? 'Registrando secagem' : state?.em_secagem ? 'Estender prazo de secagem' : 'Iniciar secagem'} disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
