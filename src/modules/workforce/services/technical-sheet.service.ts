@@ -78,21 +78,15 @@ const isMaterialMutation=(value:unknown,status?:string)=>Boolean(value&&typeof v
 function normalizeServiceList(value: unknown): { itens: { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[]; tem_mais: boolean; pagina: number } | null {
   if (!value || typeof value !== 'object') return null;
   const source = value as Record<string, unknown>;
-  const itens = Array.isArray(source.itens) ? source.itens.map(item => {
-    if (!item || typeof item !== 'object') return null;
+  if (!Array.isArray(source.itens) || typeof source.tem_mais !== 'boolean' || !Number.isSafeInteger(source.pagina) || Number(source.pagina)<0) return null;
+  const itens = source.itens.map(item => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
     const row = item as Record<string, unknown>;
-    const servicoId = String(row.servico_id ?? '');
-    const setor = String(row.setor ?? '');
-    if (!servicoId || !isSetor(setor)) return null;
-    return {
-      servico_id: servicoId,
-      titulo: String(row.titulo ?? 'Serviço sem título'),
-      setor,
-      versao: Number.isFinite(Number(row.versao)) ? Number(row.versao) : 0,
-      atualizado_em: String(row.atualizado_em ?? ''),
-    };
-  }).filter((item): item is NonNullable<typeof item> => item !== null) : [];
-  return { itens, tem_mais: source.tem_mais === true, pagina: Number.isFinite(Number(source.pagina)) ? Number(source.pagina) : 0 };
+    if (typeof row.servico_id !== 'string' || !row.servico_id || typeof row.titulo !== 'string' || !row.titulo || typeof row.setor !== 'string' || !isSetor(row.setor) || !Number.isSafeInteger(row.versao) || Number(row.versao)<0 || typeof row.atualizado_em !== 'string') return null;
+    return {servico_id:row.servico_id,titulo:row.titulo,setor:row.setor,versao:Number(row.versao),atualizado_em:row.atualizado_em};
+  });
+  if (itens.some(item=>item===null)) return null;
+  return {itens:itens as { servico_id: string; titulo: string; setor: string; versao: number; atualizado_em: string }[],tem_mais:source.tem_mais,pagina:Number(source.pagina)};
 }
 
 function isTechnicalField(value: unknown): value is TechnicalField {
