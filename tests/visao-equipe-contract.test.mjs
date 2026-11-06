@@ -574,6 +574,7 @@ test("ocorrências resetam o formulário ao trocar de contexto", () => {
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
   assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
+  assert.match(aceiteInstalacao, /type="checkbox" required checked=\{confirmed\}/);
 });
 
 test("aceite libera o identificador após confirmação", () => {
