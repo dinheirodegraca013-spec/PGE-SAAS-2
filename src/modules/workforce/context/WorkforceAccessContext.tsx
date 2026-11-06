@@ -16,6 +16,7 @@ export function WorkforceAccessProvider({children}:{children:React.ReactNode}) {
     const request=++generation.current;
     const current=()=>request===generation.current&&identity.current.userId===userId&&identity.current.tenantId===tenantId;
     if(!userId||!tenantId){setContext(null);setError('');setLoading(false);return;}
+    setContext(null);setError('');
     setLoading(true);
     try{
       const next=await workforceAccess.context();
