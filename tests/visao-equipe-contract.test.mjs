@@ -606,6 +606,10 @@ test("notificações preservam a lista e o detalhe durante nova sincronização"
   assert.match(notificacoesFuncionario, /data \? 'Atualizando notificações…' : 'Carregando notificações…'/);
 });
 
+test("notificação anuncia leitura em andamento no item correto", () => {
+  assert.match(notificacoesFuncionario, /<li key=\{item\.id\} className="space-y-2 py-3" aria-busy=\{busy===item\.id\}/);
+});
+
 test("agenda usa datas locais para não deslocar o período no fuso horário", () => {
   assert.match(agendaFuncionario, /const isoDate=\(date:Date\)=>/);
   assert.doesNotMatch(agendaFuncionario, /Date\.now\(\)\+30\*86400000/);
