@@ -36,3 +36,9 @@ test('responsáveis exigem identificação e são ordenados por nome',()=>{
   assert.match(sheets,/new Set\(data\.map\(item => item\.id\)\)\.size!==data\.length/);
   assert.match(sheets,/sort\(\(left,right\)=>left\.nome\.localeCompare\(right\.nome,'pt-BR'\)\)/);
 });
+
+test('solicitações exigem textos não vazios',()=>{
+  assert.match(sheets,/row\.id\.trim\(\)\.length>0&&typeof row\.servico_id==='string'&&row\.servico_id\.trim\(\)\.length>0/);
+  assert.match(sheets,/typeof row\.item_nome==='string'&&row\.item_nome\.trim\(\)\.length>0/);
+  assert.match(sheets,/typeof row\.motivo==='string'&&row\.motivo\.trim\(\)\.length>0/);
+});
