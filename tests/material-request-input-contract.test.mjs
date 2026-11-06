@@ -28,3 +28,8 @@ test('salvamento da ficha valida contexto e payload antes da RPC',()=>{
   assert.match(source,/Array\.isArray\(values\)/);
 });
 
+test('execução da ficha valida ação e versão antes da RPC',()=>{
+  assert.match(source,/Os dados da execução são inválidos/);
+  assert.match(source,/\['iniciar','pausar','concluir'\]\.includes\(action\)/);
+});
+

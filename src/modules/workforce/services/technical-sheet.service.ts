@@ -166,6 +166,7 @@ function isProductionState(value: unknown): value is ProductionState {
 
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
+    if(!isServiceSector(service,sector)||!['iniciar','pausar','concluir'].includes(action)||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados da execução são inválidos.');
     const {data,error}=await supabase.rpc('ficha_execucao_atualizar',{p_servico:service,p_setor:sector,p_acao:action,p_versao:version});
     if(error || !data)throw new Error(error?.code==='40001'?'A ficha foi alterada. Recarregue antes de continuar.':error?.message||'Não foi possível atualizar a execução.');
     if (!isExecutionResult(data)) throw new Error('A atualização retornou dados inválidos. Recarregue a ficha.');
