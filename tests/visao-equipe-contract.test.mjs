@@ -122,6 +122,7 @@ test("painel exibe perfil somente quando a permissão foi concedida", () => {
   assert.match(meuSetor, /id="perfil"/);
   assert.match(meuSetor, /employee-profile-title/);
   assert.match(meuSetor, /context\.funcionario\.ultimo_acesso/);
+  assert.match(meuSetor, /Setores autorizados/);
 });
 
 test("ações rápidas possuem foco visível no teclado", () => {
