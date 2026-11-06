@@ -23,7 +23,7 @@ export const attachments={
     if(error || !data)throw new Error(error?.message||'Não foi possível preparar o envio.');if(!isUploadReceipt(data))throw new Error('A preparação do anexo retornou dados inválidos. Tente novamente.');return data;
   },
   async upload(file:File,receipt:UploadReceipt):Promise<void>{
-    if(receipt.bucket!=='workforce-private')throw new Error('Armazenamento de anexo inválido.');
+    if(!isUploadReceipt(receipt)||!file||typeof file.name!=='string'||!file.name.trim()||typeof file.type!=='string'||!Number.isSafeInteger(file.size)||file.size<=0)throw new Error('O arquivo ou recibo do anexo é inválido.');
     if(!receipt.uploaded){
       const {error}=await supabase.storage.from(receipt.bucket).upload(receipt.caminho,file,{contentType:file.type,upsert:false});
       if(!error)receipt.uploaded=true;
@@ -39,4 +39,3 @@ export const attachments={
     if(error || !data?.signedUrl)throw new Error('Não foi possível gerar o link. Sua autorização pode ter mudado.');return data.signedUrl;
   },
 };
-
