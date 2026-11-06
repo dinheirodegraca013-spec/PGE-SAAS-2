@@ -13,11 +13,13 @@ const isSavedFlow=(value:unknown):value is {setores:string[];versao:number}=>{
 };
 export const servicePipeline = {
   async load(service:string):Promise<ServiceFlow>{
+    if(typeof service!=='string'||!service.trim())throw new Error('O serviço do fluxo é inválido.');
     const {data,error}=await supabase.rpc('fluxo_servico_consultar',{p_servico:service});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar o fluxo.');
     if(!isFlow(data))throw new Error('O fluxo retornou dados inválidos. Recarregue o serviço.');return data;
   },
   async save(service:string,sectors:string[],version:number):Promise<{setores:string[];versao:number}>{
+    if(typeof service!=='string'||!service.trim()||!Number.isSafeInteger(version)||version<0)throw new Error('O serviço ou versão do fluxo é inválido.');
     const {data,error}=await supabase.rpc('fluxo_servico_configurar',{p_servico:service,p_setores:sectors,p_versao:version});
     if(error || !data)throw new Error(error?.code==='40001'?'O fluxo foi alterado. Recarregue antes de salvar.':error?.message||'Não foi possível salvar o fluxo.');
     if(!isSavedFlow(data))throw new Error('O salvamento do fluxo retornou dados inválidos. Recarregue o serviço.');return data;
