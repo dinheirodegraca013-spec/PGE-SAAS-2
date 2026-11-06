@@ -9,6 +9,7 @@ test('aceite de instalação valida serviço e versão antes da RPC',()=>{
   assert.match(installation,/typeof service!==\'string\'\|\|!service\.trim\(\)\|\|!Number\.isSafeInteger\(version\)\|\|version<1/);
   assert.match(installation,/input\.confirmed!==true/);
   assert.match(installation,/Os dados do aceite de instalação são inválidos/);
+  assert.match(installation,/O aceite retornou dados inválidos/);
 });
 
 test('fluxo valida serviço e versões antes das RPCs',()=>{
