@@ -32,5 +32,7 @@ test('falha de leitura mantém contador e informa o erro sem simular sucesso',as
   const s=setup({failure:true});const first=s.click();s.release();await first;
   assert.ok(s.changes.some(([key,value])=>key===4&&value==='Acesso revogado'));
   assert.ok(!s.changes.some(([key])=>key===0));
-  assert.ok(s.changes.some(([key,value])=>key===5&&value===null));
+  const busyReset=s.changes.find(([key,value])=>key===5&&(value===null||typeof value==='function'))?.[1];
+  assert.ok(busyReset===null||busyReset?.('notification-a')===null);
 });
+

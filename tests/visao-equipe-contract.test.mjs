@@ -1079,6 +1079,11 @@ test("inbox limpa confirmação antes de nova ação", () => {
   assert.match(inboxMateriais, /setActionBusy\(item\.id\);setError\(''\);setMessage\(''\)/);
 });
 
+test("inbox não libera uma ação nova por resposta tardia", () => {
+  assert.match(inboxMateriais, /const releaseAction=\(\)=>setActionBusy\(current=>current===item\.id\?'':current\)/);
+  assert.match(inboxMateriais, /finally\{releaseAction\(\);\}/);
+});
+
 test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
   assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
   assert.match(criacaoTarefa, /aria-live="polite"/);
