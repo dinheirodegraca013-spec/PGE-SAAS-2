@@ -350,6 +350,7 @@ test("fichas diferenciam carga inicial de sincronização", () => {
 test("pesquisa de fichas informa o estado do botão", () => {
   assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
   assert.match(fichasFuncionario, /\{loading\?'Pesquisando…':'Pesquisar'\}/);
+  assert.match(fichasFuncionario, /<input type="search" className="input-field"/);
 });
 
 test("notificações permitem retry e paginação acessível", () => {
