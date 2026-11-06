@@ -69,7 +69,8 @@ test("funcionário não recebe links administrativos de configurações", () => 
 test("sino do funcionário abre a central de notificações do painel", () => {
   assert.match(appLayout, /to="\/meu-setor#notificacoes"/);
   assert.match(appLayout, /aria-label="Abrir notificações do funcionário"/);
-  assert.match(appLayout, /work\.context && !work\.context\.proprietario \? <NavLink/);
+  assert.match(appLayout, /work\.context && !work\.context\.proprietario && hasPermission\(work\.context, 'notificacoes'\) \? <NavLink/);
+  assert.match(appLayout, /work\.context\?\.proprietario \? <button/);
 });
 
 test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
