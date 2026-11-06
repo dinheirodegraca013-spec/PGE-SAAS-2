@@ -612,6 +612,7 @@ test("produção valida observação antes do envio", () => {
   assert.match(registroProducao, /minLength=\{3\} maxLength=\{1000\} required/);
   assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*required min=/);
   assert.match(registroProducao, /id=\{`\$\{id\}-unit`\}[^>]*required maxLength=\{40\}/);
+  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*inputMode="decimal"/);
 });
 
 test("solicitação de material limpa feedback ao editar", () => {
@@ -619,6 +620,7 @@ test("solicitação de material limpa feedback ao editar", () => {
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
+  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*inputMode="decimal"/);
 });
 
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
@@ -639,7 +641,8 @@ test("secagem e produção informam atualização nos botões", () => {
 
 test("secagem limpa feedback ao editar o prazo", () => {
   assert.match(controleSecagem, /setMinutes\(event\.target\.value\); setMessage\(''\)/);
-  assert.match(controleSecagem, /type="number" required min=\{1\} max=\{10080\}/);
+  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\} max=\{10080\}/);
+  assert.match(controleSecagem, /type="number" inputMode="numeric" required min=\{1\}/);
 });
 
 test("cartão de solicitação informa atualização no botão", () => {
