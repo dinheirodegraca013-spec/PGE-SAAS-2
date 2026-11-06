@@ -111,10 +111,21 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
     !!row.checklist && typeof row.checklist === 'object' && !!row.dados && typeof row.dados === 'object';
 }
 
+function isExecutionResult(value: unknown): value is Pick<ServiceSheet, 'status' | 'versao' | 'iniciada_em' | 'concluida_em' | 'inicio_liberado' | 'bloqueio_fluxo'> {
+  if (!value || typeof value !== 'object') return false;
+  const row = value as Record<string, unknown>;
+  return ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
+    Number.isSafeInteger(row.versao) && Number(row.versao) >= 0 && typeof row.inicio_liberado === 'boolean' &&
+    (row.bloqueio_fluxo === null || row.bloqueio_fluxo === 'fora_fluxo' || row.bloqueio_fluxo === 'etapa_anterior') &&
+    (row.iniciada_em === null || typeof row.iniciada_em === 'string') &&
+    (row.concluida_em === null || typeof row.concluida_em === 'string');
+}
+
 export const technicalSheets = {
   async execute(service:string,sector:string,action:'iniciar'|'pausar'|'concluir',version:number):Promise<Pick<ServiceSheet,'status'|'versao'|'iniciada_em'|'concluida_em'|'inicio_liberado'|'bloqueio_fluxo'>> {
     const {data,error}=await supabase.rpc('ficha_execucao_atualizar',{p_servico:service,p_setor:sector,p_acao:action,p_versao:version});
     if(error || !data)throw new Error(error?.code==='40001'?'A ficha foi alterada. Recarregue antes de continuar.':error?.message||'Não foi possível atualizar a execução.');
+    if (!isExecutionResult(data)) throw new Error('A atualização retornou dados inválidos. Recarregue a ficha.');
     return data;
   },
   async candidates(service: string, sector: string): Promise<{id:string;nome:string;cargo:string|null}[]> {
