@@ -1463,7 +1463,7 @@ test("registros de produção quebram observações sem deslocar o horário", ()
 test("ficha técnica quebra a situação sem perder as ações", () => {
   assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situação:/);
   assert.match(fichaTecnica, /<div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">/);
-  assert.match(fichaTecnica, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading \|\| saving \|\| checklistBusy/);
+  assert.match(fichaTecnica, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| saving \|\| checklistBusy/);
 });
 
 test("erro de responsáveis organiza retry no mobile", () => {

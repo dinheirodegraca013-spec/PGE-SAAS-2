@@ -79,7 +79,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Situação indisponível'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
-        (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={loading || saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
+        (action==='iniciar'?['pendente','pausada'].includes(sheet.status):sheet.status==='em_andamento')).map(action=><button key={action} type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading || saving || checklistBusy || action==='iniciar' && !sheet.inicio_liberado} onClick={async()=>{
           if(mutation.current)return;
           if(action==='iniciar' && !sheet.inicio_liberado)return;
           if(JSON.stringify(values)!==JSON.stringify(sheet.dados)){
