@@ -13,7 +13,10 @@ function normalizeSummary(value:unknown):Summary|null{
   if(!taskKeys.every(key=>isCount(tasks[key]))||!isCount(source.ordens_em_execucao)||!Array.isArray(source.proximos_prazos))return null;
   const proximos_prazos=source.proximos_prazos.map(item=>{if(!item||typeof item!=='object'||Array.isArray(item))return null;const row=item as Record<string,unknown>;if(typeof row.id!=='string'||!row.id||typeof row.titulo!=='string'||!row.titulo||typeof row.setor!=='string'||!isSetor(row.setor)||typeof row.prazo!=='string'||!row.prazo||!Number.isFinite(new Date(row.prazo).getTime()))return null;return{id:row.id,titulo:row.titulo,setor:row.setor,prazo:row.prazo};});
   if(proximos_prazos.some(item=>item===null))return null;
-  return{tarefas:{total:tasks.total as number,pendentes:tasks.pendentes as number,em_andamento:tasks.em_andamento as number,concluidas:tasks.concluidas as number,atrasadas:tasks.atrasadas as number,aguardando_material:tasks.aguardando_material as number,aguardando_aprovacao:tasks.aguardando_aprovacao as number},ordens_em_execucao:source.ordens_em_execucao as number,proximos_prazos:proximos_prazos as Summary['proximos_prazos']};
+  const validPrazos=proximos_prazos as Summary['proximos_prazos'];
+  if(new Set(validPrazos.map(item=>item.id)).size!==validPrazos.length)return null;
+  validPrazos.sort((left,right)=>new Date(left.prazo).getTime()-new Date(right.prazo).getTime());
+  return{tarefas:{total:tasks.total as number,pendentes:tasks.pendentes as number,em_andamento:tasks.em_andamento as number,concluidas:tasks.concluidas as number,atrasadas:tasks.atrasadas as number,aguardando_material:tasks.aguardando_material as number,aguardando_aprovacao:tasks.aguardando_aprovacao as number},ordens_em_execucao:source.ordens_em_execucao as number,proximos_prazos:validPrazos};
 }
 function cardTone(label:string){
   if(label==='Atrasadas')return 'border-rose-200 bg-rose-50';
