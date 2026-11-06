@@ -8,6 +8,7 @@ import TaskDetails from './TaskDetails';
 function formatNotificationDate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');}
 function safeNotificationDateTime(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();}
 const notificationLabels:Record<string,string>={tarefa_atribuida:'Nova tarefa atribuída',etapa_liberada:'Etapa liberada para execução'};
+const workforceRefreshEvent='gestio:refresh-workforce';
 
 export default function WorkNotifications(){
   const {context}=useWorkforceAccess();
@@ -27,6 +28,7 @@ export default function WorkNotifications(){
   useEffect(()=>{setSelected(null);setUpdatedAt(null);},[page]);
   useEffect(()=>{reading.current=false;setBusy(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
+  useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');setData(null);setUpdatedAt(null);setSelected(null);
     workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setUpdatedAt(new Date());setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
@@ -57,4 +59,3 @@ export default function WorkNotifications(){
     {selected && <div className="space-y-3"><div className="flex justify-end"><button type="button" className="btn-secondary" onClick={()=>setSelected(null)}>Fechar detalhe</button></div>{selected.tarefa_id?<TaskDetails key={selected.tarefa_id} taskId={selected.tarefa_id}/>:selected.servico_id?<ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor}/>:null}</div>}
   </section>;
 }
-

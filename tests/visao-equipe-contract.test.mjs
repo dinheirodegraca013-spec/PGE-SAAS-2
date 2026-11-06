@@ -26,6 +26,7 @@ const fichasFuncionario = readOptional("../src/modules/workforce/components/MySe
 const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
 const gerenciadorDispositivos = readOptional("../src/components/DeviceManager.tsx");
 const acessoWorkforce = readOptional("../src/modules/workforce/context/WorkforceAccessContext.tsx");
+const workforceEvents = readOptional("../src/modules/workforce/lib/events.ts");
 const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
@@ -117,7 +118,7 @@ test("painel não transforma carregamento ou erro de projetos em zero", () => {
 });
 
 test("painel nomeia a atualização dos projetos", () => {
-  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : !online \? 'Sem conexão para atualizar projetos' : 'Atualizar projetos'\}/);
+  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
 });
 
 test("painel informa conexão offline e retoma sincronização ao voltar", () => {
@@ -135,6 +136,17 @@ test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
 
 test("revalidação do funcionário preserva contexto válido durante o carregamento", () => {
   assert.match(acessoWorkforce, /setContext\(current => current && current\.empresa_id===tenantId && current\.funcionario\.id===userId \? current : null\)/);
+});
+
+test("atualização do painel sincroniza os blocos de trabalho", () => {
+  assert.match(workforceEvents, /workforceRefreshEvent/);
+  assert.match(meuSetor, /requestWorkforceRefresh\(\)/);
+  assert.match(minhasTarefas, /workforceRefreshEvent/);
+  assert.match(notificacoesFuncionario, /workforceRefreshEvent/);
+  assert.match(agendaFuncionario, /workforceRefreshEvent/);
+  assert.match(historicoFuncionario, /workforceRefreshEvent/);
+  assert.match(fichasFuncionario, /workforceRefreshEvent/);
+  assert.match(resumoFuncionario, /workforceRefreshEvent/);
 });
 
 test("painel exibe perfil somente quando a permissão foi concedida", () => {

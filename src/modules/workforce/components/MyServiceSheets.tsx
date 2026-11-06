@@ -3,6 +3,7 @@ import { isSetor, setores } from '@/lib/setores';
 import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 import { technicalSheets } from '../services/technical-sheet.service';
 import ServiceTechnicalSheet from './ServiceTechnicalSheet';
+const workforceRefreshEvent = 'gestio:refresh-workforce';
 
 type List = Awaited<ReturnType<typeof technicalSheets.list>>;
 function formatSheetUpdate(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Atualização não informada':`Atualizada em ${date.toLocaleString('pt-BR')}`;}
@@ -21,6 +22,7 @@ export default function MyServiceSheets() {
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
   useEffect(() => { setList(null); setSelected(null); setUpdatedAt(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
+  useEffect(() => { const refreshPanel = () => setRefresh(value => value + 1); window.addEventListener(workforceRefreshEvent, refreshPanel); return () => window.removeEventListener(workforceRefreshEvent, refreshPanel); }, []);
   useEffect(() => {
     let active = true;
     setLoading(true); setError('');
@@ -49,4 +51,3 @@ export default function MyServiceSheets() {
     {selected && <div className="space-y-3"><div className="flex justify-end"><button type="button" className="btn-secondary" onClick={() => setSelected(null)}>Fechar ficha</button></div><ServiceTechnicalSheet key={`${selected.servico_id}:${selected.setor}`} serviceId={selected.servico_id} sector={selected.setor} /></div>}
   </section>;
 }
-
