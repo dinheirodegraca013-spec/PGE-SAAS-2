@@ -221,8 +221,8 @@ export const technicalSheets = {
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de registrar a secagem.' : error?.message || 'Não foi possível registrar a secagem.');
     const result = data as Record<string, unknown>;
     if (typeof data !== 'object' || data === null || Array.isArray(data) ||
-      (result.prevista_ate !== null && typeof result.prevista_ate !== 'string') || typeof result.em_secagem !== 'boolean' ||
-      (result.servidor_agora !== null && typeof result.servidor_agora !== 'string') || !Number.isSafeInteger(result.versao) || Number(result.versao) < 0) {
+      !isDateOrNull(result.prevista_ate) || typeof result.em_secagem !== 'boolean' ||
+      !isDateOrNull(result.servidor_agora) || !Number.isSafeInteger(result.versao) || Number(result.versao) < 0) {
       throw new Error('A secagem retornou dados inválidos. Recarregue a ficha.');
     }
     return data;
