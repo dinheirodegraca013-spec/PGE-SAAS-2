@@ -11,5 +11,10 @@ export async function authorizeDevice(renew = false): Promise<void> {
   const os = /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac/.test(ua) ? 'Mac' : 'Computador';
   const browser = /Edg\//.test(ua) ? 'Edge' : /Chrome|CriOS/.test(ua) ? 'Chrome' : /Firefox|FxiOS/.test(ua) ? 'Firefox' : /Safari/.test(ua) ? 'Safari' : 'Navegador';
   const { data, error } = await supabase.rpc('autorizar_dispositivo', { p_chave: deviceKey(renew), p_nome: `${browser} · ${os}` });
-  if (error || !data?.authorized) throw new Error(error?.message || 'Não foi possível autorizar este dispositivo.');
+  const payload = data && typeof data === 'object' && !Array.isArray(data) ? data as Record<string, unknown> : null;
+  const limit = payload?.limit;
+  const deviceId = payload?.device_id;
+  const optionalFieldsValid = Boolean(payload) && (limit === undefined || (typeof limit === 'number' && Number.isSafeInteger(limit) && limit >= 0)) && (deviceId === undefined || typeof deviceId === 'string');
+  if (error || !payload || payload.authorized !== true || !optionalFieldsValid) throw new Error(error?.message || 'Não foi possível autorizar este dispositivo.');
 }
+
