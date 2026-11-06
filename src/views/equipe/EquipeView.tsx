@@ -42,6 +42,7 @@ const actionLabels: Record<string,string> = {account_created:'Conta criada',acco
 const isAudit=(value:unknown):value is {id:number;action:string;subject_id:string|null;created_at:string}=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&Number.isSafeInteger((value as Record<string,unknown>).id)&&typeof (value as Record<string,unknown>).action==='string'&&String((value as Record<string,unknown>).action).length>0&&((value as Record<string,unknown>).subject_id===null||typeof (value as Record<string,unknown>).subject_id==='string')&&typeof (value as Record<string,unknown>).created_at==='string');
 const formatAuditDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
 const normalizeSearch=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const isProjeto=(value:unknown):value is {id:string;titulo:string}=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&String((value as Record<string,unknown>).id).length>0&&typeof (value as Record<string,unknown>).titulo==='string'&&String((value as Record<string,unknown>).titulo).trim().length>0);
 
 export default function EquipeView() {
   const { usuario } = useAuthStore();
@@ -55,6 +56,8 @@ export default function EquipeView() {
   const [sucesso, setSucesso] = useState('');
   const [projetoId, setProjetoId] = useState('');
   const [projetos, setProjetos] = useState<{id: string; titulo: string}[]>([]);
+  const [projetosCarregando, setProjetosCarregando] = useState(false);
+  const [projetosErro, setProjetosErro] = useState('');
   const [setorProjeto, setSetorProjeto] = useState('corte');
   const administrador = podeCadastrarFuncionario(usuario?.papel);
   const [limits, setLimits] = useState<Limits | null>(null);
@@ -153,10 +156,26 @@ export default function EquipeView() {
   useEffect(() => {
     if (!administrador || !usuario?.tenantId) return;
     let mounted = true;
-    supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo')
-      .then(({ data, error }) => { if (mounted) setProjetos(error ? [] : data || []); });
+    setProjetosCarregando(true); setProjetosErro(''); setProjetos([]); setProjetoId('');
+    Promise.resolve(supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo'))
+      .then(({ data, error }) => {
+        if (!mounted) return;
+        if (error) { setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); return; }
+        if (!Array.isArray(data) || !data.every(isProjeto)) { setProjetosErro('A lista de projetos retornou dados inválidos.'); return; }
+        setProjetos(data);
+      }).catch(() => { if (mounted) setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'); })
+      .finally(() => { if (mounted) setProjetosCarregando(false); });
     return () => { mounted = false; };
   }, [administrador, usuario?.tenantId]);
+
+  const recarregarProjetos = () => {
+    if (!administrador || !usuario?.tenantId) return;
+    setProjetosCarregando(true); setProjetosErro('');
+    Promise.resolve(supabase.from('projetos_marcenaria').select('id,titulo').eq('tenant_id', usuario.tenantId).order('titulo'))
+      .then(({ data, error }) => { if (error) throw error; if (!Array.isArray(data) || !data.every(isProjeto)) throw new Error('A lista de projetos retornou dados inválidos.'); setProjetos(data); setProjetoId(''); })
+      .catch(() => setProjetosErro('Não foi possível carregar os projetos. Tente novamente.'))
+      .finally(() => setProjetosCarregando(false));
+  };
 
   const ativos = perfis.filter((perfil) => perfil.ativo && !perfil.suspenso && !limits?.suspended_ids.includes(perfil.id)).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
@@ -222,9 +241,9 @@ export default function EquipeView() {
         <div className="flex gap-2"><button type="submit" className="btn-primary" disabled={salvando}>{salvando ? 'Salvando…' : editingId ? 'Salvar acesso' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
       </form>}
       {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5"><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
-        <div className="grid gap-3 sm:grid-cols-3"><label className="text-sm">Projeto<select required className="input-field mt-1" value={projetoId} onChange={e => setProjetoId(e.target.value)}><option value="">Selecione um projeto</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}</select></label>
+        <div className="grid gap-3 sm:grid-cols-3"><label className="text-sm">Projeto<select required className="input-field mt-1" value={projetoId} onChange={e => setProjetoId(e.target.value)} disabled={projetosCarregando || !!projetosErro}><option value="">{projetosCarregando ? 'Carregando projetos…' : projetosErro ? 'Projetos indisponíveis' : 'Selecione um projeto'}</option>{projetos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}</select></label>
         <label className="text-sm">Setor<select className="input-field mt-1" value={setorProjeto} onChange={e => setSetorProjeto(e.target.value)}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-        <button type="submit" disabled={salvando || !projetoId} className="btn-primary self-end">Encaminhar</button></div></form>}
+        <button type="submit" disabled={salvando || projetosCarregando || !!projetosErro || !projetoId} className="btn-primary self-end">Encaminhar</button></div>{projetosErro ? <p role="alert" className="flex items-center justify-between gap-2 text-sm text-rose-700"><span>{projetosErro}</span><button type="button" className="btn-secondary" onClick={recarregarProjetos} disabled={projetosCarregando}>Tentar novamente</button></p> : !projetosCarregando && !projetos.length && <p className="text-sm text-slate-500">Nenhum projeto disponível para encaminhamento.</p>}</form>}
       <div className="rounded-xl border border-cyan-100 bg-cyan-50 p-4 text-sm text-cyan-900">
         A presença diária ainda não está registrada no banco. Por isso, esta
         tela mostra apenas o status cadastral real e não inventa presença.
