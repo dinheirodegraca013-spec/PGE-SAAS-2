@@ -1459,7 +1459,7 @@ test("agenda acomoda título e atualização em telas estreitas", () => {
 
 test("resumo operacional protege indicadores longos no mobile", () => {
   assert.match(resumoFuncionario, /<div className="min-w-0"><h2 id="personal-work-summary-title" className="break-words text-lg font-bold">/);
-  assert.match(resumoFuncionario, /className="btn-secondary shrink-0" disabled=\{loading\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
+  assert.match(resumoFuncionario, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
   assert.match(resumoFuncionario, /className=\{`card min-w-0 border p-4/);
   assert.match(resumoFuncionario, /<p className="break-words text-sm text-slate-600">\{label\}<\/p>/);
   assert.match(resumoFuncionario, /className="mt-2 whitespace-nowrap text-2xl font-bold text-slate-900"/);
