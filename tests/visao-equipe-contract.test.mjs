@@ -611,6 +611,9 @@ test("produção valida observação antes do envio", () => {
 
 test("solicitação de material limpa feedback ao editar", () => {
   assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
+  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
+  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
+  assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
 });
 
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
