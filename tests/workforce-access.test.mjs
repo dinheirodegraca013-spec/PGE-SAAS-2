@@ -18,9 +18,16 @@ test('remover setor ou permissão bloqueia a rota, e leitura não libera criaç�
   assert.equal(hasPermission(base,'estoque','criar'),false);
   assert.equal(workforcePathAllowed(null,'/estoque'),false);
 });
+test('qualquer módulo de trabalho autorizado libera o painel do funcionário',()=>{
+  const tasksOnly={...base,permissoes:[{modulo:'tarefas',operacao:'visualizar',escopo:'atribuidos'}]};
+  assert.equal(workforcePathAllowed(tasksOnly,'/meu-setor'),true);
+  assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'perfil',operacao:'visualizar',escopo:'atribuidos'}]},'/meu-setor'),true);
+  assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'clientes',operacao:'visualizar',escopo:'empresa'}]},'/meu-setor'),false);
+});
 test('cargo administrativo não concede financeiro nem funções de proprietário',()=>{
   const office={...base,funcionario:{setor:'financeiro',setores_adicionais:[],cargo:'Gerente administrativo'},permissoes:[{modulo:'clientes',operacao:'visualizar',escopo:'empresa'}]};
   assert.equal(workforcePathAllowed(office,'/meu-financeiro'),false);
   assert.equal(hasPermission(office,'financeiro','registrar_pagamento'),false);
   assert.equal(workforcePathAllowed({...office,permissoes:[{modulo:'financeiro',operacao:'visualizar',escopo:'atribuidos'}]},'/meu-financeiro'),true);
 });
+
