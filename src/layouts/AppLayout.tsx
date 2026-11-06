@@ -43,6 +43,7 @@ export default function AppLayout() {
   const location = useLocation();
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
+  const employeeProfilePath = work.context && !work.context.proprietario ? '/meu-setor#perfil' : '/configuracoes';
   const gruposVisiveis = !work.context
     ? []
     : !work.context.proprietario
@@ -165,18 +166,18 @@ export default function AppLayout() {
                 </p>
               </div>
             </div>
-            <NavLink
+            {work.context?.proprietario && <NavLink
               to="/configuracoes"
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-violet-600 px-3 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-950/30 transition hover:brightness-110"
             >
               Ver recursos <ArrowRight className="h-4 w-4" />
-            </NavLink>
+            </NavLink>}
           </div>
         </div>
 
         <div className="border-t border-white/10 p-4">
           <NavLink
-            to="/configuracoes"
+            to={employeeProfilePath}
             className="group mb-2 flex items-center gap-3 rounded-xl p-2 transition hover:bg-white/[.06]"
           >
             {auth.usuario?.avatarUrl ? (
@@ -282,4 +283,3 @@ export default function AppLayout() {
     </div>
   );
 }
-

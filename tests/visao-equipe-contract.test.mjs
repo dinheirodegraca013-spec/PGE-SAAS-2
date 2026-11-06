@@ -7,6 +7,10 @@ const nav = fs.readFileSync(
   new URL("../src/layouts/navigation.ts", import.meta.url),
   "utf8",
 );
+const appLayout = fs.readFileSync(
+  new URL("../src/layouts/AppLayout.tsx", import.meta.url),
+  "utf8",
+);
 const dashboard = fs.readFileSync(
   new URL("../src/views/dashboard/DashboardView.tsx", import.meta.url),
   "utf8",
@@ -54,6 +58,12 @@ test("rotas autenticadas incluem Visão 3D e Equipe", () => {
 test("menu lateral aponta para Visão 3D e Equipe", () => {
   assert.match(nav, /path: '\/visao-3d'/);
   assert.match(nav, /path: '\/equipe'/);
+});
+
+test("funcionário não recebe links administrativos de configurações", () => {
+  assert.match(appLayout, /const employeeProfilePath = work\.context && !work\.context\.proprietario \? '\/meu-setor#perfil' : '\/configuracoes'/);
+  assert.match(appLayout, /work\.context\?\.proprietario && <NavLink/);
+  assert.match(appLayout, /to=\{employeeProfilePath\}/);
 });
 
 test("visão operacional não incorpora os números demonstrativos do protótipo", () => {
