@@ -1511,7 +1511,7 @@ test("aceite da instalação quebra confirmação longa no mobile", () => {
   assert.match(aceiteInstalacao, /<h4 className="break-words font-semibold">Registrar aceite da instalação<\/h4>/);
   assert.match(aceiteInstalacao, /className="mt-1 shrink-0" type="checkbox"/);
   assert.match(aceiteInstalacao, /<span className="min-w-0 break-words">Confirmo que o cliente/);
-  assert.match(aceiteInstalacao, /className="btn-primary inline-flex shrink-0 whitespace-nowrap" aria-label=/);
+  assert.match(aceiteInstalacao, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=/);
 });
 
 test("cartão de tarefa mantém badges e prazo legíveis no mobile", () => {
