@@ -81,7 +81,6 @@ export default function MeuSetorView() {
       lastContextKey.current = contextKey;
       setProjetos([]);
     }
-    setAtualizadoEm(null);
     if (accessLoading || !context) {
       setCarregando(accessLoading);
       return () => { mounted = false; };

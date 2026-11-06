@@ -167,9 +167,9 @@ test("ações rápidas possuem foco visível no teclado", () => {
   assert.match(meuSetor, /focus:ring-2 focus:ring-cyan-500/);
 });
 
-test("painel limpa o horário anterior ao atualizar projetos", () => {
+test("painel preserva a última atualização durante nova consulta", () => {
   assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
-  assert.match(meuSetor, /setAtualizadoEm\(null\);/);
+  assert.doesNotMatch(meuSetor, /setAtualizadoEm\(null\)/);
 });
 
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {
