@@ -11,7 +11,11 @@ test('validação de acesso rejeita permissões vazias e duplicadas',()=>{
   assert.match(source,/row\.catalogo_permissoes\.every\(isCatalogItem\)&&hasUniquePermissions\(row\.catalogo_permissoes\)/);
 });
 
+test('contexto rejeita IDs de funcionário ou empresa vazios',()=>{
+  assert.match(source,/typeof row\.id==='string'&&row\.id\.trim\(\)\.length>0/);
+  assert.match(source,/typeof row\.empresa_id==='string'&&row\.empresa_id\.trim\(\)\.length>0/);
+});
+
 test('setor principal não pode ser repetido nos setores adicionais',()=>{
   assert.match(source,/row\.setor===null\|\|row\.setores_adicionais\.every\(item=>item!==row\.setor\)/);
 });
-
