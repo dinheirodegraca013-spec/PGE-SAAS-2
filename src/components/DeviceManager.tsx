@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 
 type Device = { id: string; name: string; created_at: string; last_seen_at: string; revoked_at: string | null; suspended: boolean; current: boolean };
+const isDevice=(value:unknown):value is Device=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&typeof (value as Record<string,unknown>).name==='string'&&typeof (value as Record<string,unknown>).created_at==='string'&&typeof (value as Record<string,unknown>).last_seen_at==='string'&&((value as Record<string,unknown>).revoked_at===null||typeof (value as Record<string,unknown>).revoked_at==='string')&&typeof (value as Record<string,unknown>).suspended==='boolean'&&typeof (value as Record<string,unknown>).current==='boolean');
 const formatDeviceDate=(value:string)=>{const date=new Date(value);return Number.isNaN(date.getTime())?'Data não informada':date.toLocaleString('pt-BR');};
 export default function DeviceManager({ userId }: { userId?: string }) {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -14,7 +15,8 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     try {
       const { data, error } = await supabase.rpc('listar_dispositivos', { p_usuario_id: userId || null });
       if (error) throw error;
-      setDevices(Array.isArray(data?.devices) ? data.devices : []); setLimit(typeof data?.limit === 'number' ? data.limit : null);
+      if (!data || typeof data!=='object' || Array.isArray(data) || !Array.isArray(data.devices) || !data.devices.every(isDevice) || !Number.isSafeInteger(data.limit) || data.limit<0) throw new Error('Resposta de dispositivos inválida. Atualize a página.');
+      setDevices(data.devices); setLimit(data.limit);
     } catch (e) { setError(e instanceof Error ? e.message : (e as {message?: string})?.message || 'Não foi possível consultar os dispositivos.'); }
     finally { setBusy(false); }
   }, [userId]);
