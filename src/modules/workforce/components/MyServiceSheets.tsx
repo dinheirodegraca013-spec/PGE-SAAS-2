@@ -14,21 +14,22 @@ export default function MyServiceSheets() {
   const [refresh, setRefresh] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [selected, setSelected] = useState<List['itens'][number] | null>(null);
   const lastReturnRefresh = useRef(0);
   useEffect(() => { setPage(0); setSearch(''); setQuery(''); }, [context?.funcionario.id, context?.funcionario.versao]);
-  useEffect(() => { setList(null); setSelected(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao]);
+  useEffect(() => { setList(null); setSelected(null); setUpdatedAt(null); }, [page, query, context?.funcionario.id, context?.funcionario.versao]);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setRefresh(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
     let active = true;
     setLoading(true); setError('');
-    technicalSheets.list(page, query).then(result => { if (active) { setList(result); setSelected(current => current && result.itens.some(item => item.servico_id === current.servico_id && item.setor === current.setor) ? current : null); } })
+    technicalSheets.list(page, query).then(result => { if (active) { setList(result); setUpdatedAt(new Date()); setSelected(current => current && result.itens.some(item => item.servico_id === current.servico_id && item.setor === current.setor) ? current : null); } })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar as fichas.'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [page, query, refresh, context?.funcionario.id, context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-busy={loading}>
-    <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-bold">Minhas fichas de serviço</h2><span className="text-xs text-slate-500" aria-live="polite">{loading?'Atualizando fichas…':'Fichas sincronizadas'}</span></div><button type="button" className="btn-secondary" disabled={loading} onClick={() => setRefresh(value => value + 1)} aria-label={loading?'Atualizando fichas':'Atualizar fichas'}>{loading?'Atualizando…':'Atualizar fichas'}</button></div>
+    <div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-lg font-bold">Minhas fichas de serviço</h2><span className="text-xs text-slate-500" aria-live="polite">{loading?'Atualizando fichas…':updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" disabled={loading} onClick={() => setRefresh(value => value + 1)} aria-label={loading?'Atualizando fichas':'Atualizar fichas'}>{loading?'Atualizando…':'Atualizar fichas'}</button></div>
     <form className="flex flex-wrap gap-2" aria-busy={loading} onSubmit={event => { event.preventDefault(); if (loading) return; setPage(0); setQuery(search.trim()); setRefresh(n => n + 1); }}>
       <label className="min-w-0 flex-1"><span className="sr-only">Pesquisar serviço</span><input className="input-field" maxLength={120} disabled={loading} value={search} onChange={event => { setSearch(event.target.value); setError(''); }} placeholder="Pesquisar serviço" /></label>
       <button className="btn-secondary" type="submit" disabled={loading} aria-label={loading?'Pesquisando fichas':'Pesquisar fichas'}>{loading?'Pesquisando…':'Pesquisar'}</button>
