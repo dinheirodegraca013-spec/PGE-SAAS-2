@@ -1361,3 +1361,10 @@ test("detalhe da tarefa organiza título, atualização e recarga no mobile", ()
   assert.match(detalheTarefa, /className="btn-secondary shrink-0" disabled=\{loading\}/);
   assert.match(detalheTarefa, /<span className="text-xs text-slate-500" aria-live="polite">/);
 });
+
+test("aceite da instalação quebra confirmação longa no mobile", () => {
+  assert.match(aceiteInstalacao, /<h4 className="break-words font-semibold">Registrar aceite da instalação<\/h4>/);
+  assert.match(aceiteInstalacao, /className="mt-1 shrink-0" type="checkbox"/);
+  assert.match(aceiteInstalacao, /<span className="min-w-0 break-words">Confirmo que o cliente/);
+  assert.match(aceiteInstalacao, /className="btn-primary shrink-0" aria-label=/);
+});
