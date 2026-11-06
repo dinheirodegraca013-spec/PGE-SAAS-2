@@ -1288,3 +1288,12 @@ test("tarefas exibem um único bloco de carregamento e erro", () => {
   assert.equal((minhasTarefas.match(/Carregando tarefas…/g) || []).length, 1);
   assert.equal((minhasTarefas.match(/role=\"alert\" className=\"flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50/g) || []).length, 1);
 });
+
+test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", () => {
+  assert.match(notificacoesFuncionario, /<div className="min-w-0"><h2 id="work-notifications-title" className="break-words text-lg font-bold"/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary shrink-0"/);
+  assert.match(historicoFuncionario, /<div className="min-w-0"><h2 id="activity-history-title" className="break-words text-lg font-bold"/);
+  assert.match(minhasTarefas, /<h2 id="my-tasks-title" className="min-w-0 break-words text-lg font-bold"/);
+  assert.match(minhasTarefas, /className="shrink-0 text-xs text-slate-500"/);
+  assert.match(fichasFuncionario, /<div className="min-w-0"><h2 id="service-sheets-title" className="break-words text-lg font-bold"/);
+});
