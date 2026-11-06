@@ -736,6 +736,7 @@ test("cartão de solicitação preserva o horário durante sincronização", () 
 });
 
 test("cancelamento de material confirma sucesso", () => {
+  assert.match(solicitacaoMaterial, /aria-label=\{`Solicitação de \$\{requestItem\.item_nome\} · \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} · \$\{formatStatus\(requestItem\.status\)\}`\}/);
   assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('Solicitação cancelada\.'\)/);
   assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);
   assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('Solicitação cancelada\.'\)/);
