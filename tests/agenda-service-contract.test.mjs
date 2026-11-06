@@ -9,3 +9,7 @@ test('agenda valida datas de calendário antes da RPC',()=>{
   assert.match(source,/if\(!isCalendarDate\(start\)\|\|!isCalendarDate\(end\)\|\|end<start\)/);
 });
 
+test('agenda rejeita IDs duplicados e ordena os eventos',()=>{
+  assert.match(source,/new Set\(row\.itens\.map\(item=>item\.id\)\)\.size!==row\.itens\.length/);
+  assert.match(source,/itens\.sort\(\(left,right\)=>new Date\(left\.inicio\)\.getTime\(\)-new Date\(right\.inicio\)\.getTime\(\)\)/);
+});
