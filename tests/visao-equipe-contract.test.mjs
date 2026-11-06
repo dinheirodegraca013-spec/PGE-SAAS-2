@@ -682,6 +682,14 @@ test("ações de cabeçalho e formulários se reorganizam no mobile", () => {
   assert.match(equipe, /<div className="flex flex-wrap gap-2"><button type="submit"/);
 });
 
+test("lista administrativa quebra identificadores e histórico longos", () => {
+  assert.match(equipe, /<b className="break-words">\{perfil\.nome_completo/);
+  assert.match(equipe, /className="break-all text-xs text-slate-500">\{perfil\.email/);
+  assert.match(equipe, /className="mt-1 block break-words text-xs font-semibold/);
+  assert.match(equipe, /<span className="break-words">\{perfil\.cargo/);
+  assert.match(equipe, /<li key=\{a\.id\} className="break-words">/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);

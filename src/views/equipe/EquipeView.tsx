@@ -356,13 +356,13 @@ export default function EquipeView() {
                 {filtrados.map((perfil) => (
                   <tr key={perfil.id} className="border-t border-slate-100">
                     <td className="p-3">
-                      <b>{perfil.nome_completo || "Nome não informado"}</b>
+                      <b className="break-words">{perfil.nome_completo || "Nome não informado"}</b>
                       <br />
-                      <span className="text-xs text-slate-500">{perfil.email || "E-mail não informado"}</span>
-                      {perfil.identificador_interno && <span className="mt-1 block text-xs font-semibold text-cyan-700">ID interno: {perfil.identificador_interno}</span>}
+                      <span className="break-all text-xs text-slate-500">{perfil.email || "E-mail não informado"}</span>
+                      {perfil.identificador_interno && <span className="mt-1 block break-words text-xs font-semibold text-cyan-700">ID interno: {perfil.identificador_interno}</span>}
                     </td>
                     <td className="p-3">
-                      {perfil.cargo || perfil.papel || "Perfil não informado"}
+                      <span className="break-words">{perfil.cargo || perfil.papel || "Perfil não informado"}</span>
                     </td>
                     <td className="p-3 text-xs text-slate-500">
                       {isSetor(perfil.setor) ? setores[perfil.setor] : 'Não informado no cadastro'}
@@ -390,7 +390,7 @@ export default function EquipeView() {
         )}
       </section>
       {administrador && <><h2 className="text-lg font-bold">{deviceUser ? `Dispositivos de ${perfis.find(p => p.id === deviceUser)?.nome_completo || 'colaborador'}` : 'Meus dispositivos'}</h2><DeviceManager key={deviceUser || 'self'} userId={deviceUser} />
-      <section className="card p-5" aria-labelledby="access-history-title"><h2 id="access-history-title" className="text-lg font-bold">Histórico de acessos</h2><ul className="mt-3 space-y-2 text-sm">{audit.slice(0,10).map(a => <li key={a.id}>{formatAuditDate(a.created_at)} · {actionLabels[a.action] || a.action}{a.subject_id ? ` · ${perfis.find(p => p.id === a.subject_id)?.nome_completo || 'Colaborador'}` : ''}</li>)}</ul>{!audit.length && <p className="mt-2 text-sm text-slate-500">Nenhuma alteração registrada.</p>}</section></>}
+      <section className="card p-5" aria-labelledby="access-history-title"><h2 id="access-history-title" className="text-lg font-bold">Histórico de acessos</h2><ul className="mt-3 space-y-2 text-sm">{audit.slice(0,10).map(a => <li key={a.id} className="break-words">{formatAuditDate(a.created_at)} · {actionLabels[a.action] || a.action}{a.subject_id ? ` · ${perfis.find(p => p.id === a.subject_id)?.nome_completo || 'Colaborador'}` : ''}</li>)}</ul>{!audit.length && <p className="mt-2 text-sm text-slate-500">Nenhuma alteração registrada.</p>}</section></>}
     </div>
   );
 }
