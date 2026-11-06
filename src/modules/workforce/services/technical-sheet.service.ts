@@ -196,7 +196,10 @@ export const technicalSheets = {
   async save(service: string, sector: string, values: Record<string, unknown>, version: number): Promise<number> {
     const { data, error } = await supabase.rpc('ficha_servico_salvar', { p_servico: service, p_setor: sector, p_dados: values, p_versao: version });
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de salvar novamente.' : error?.message || 'Não foi possível salvar a ficha técnica.');
-    return data.versao;
+    const nextVersion = data && typeof data === 'object' && Number.isSafeInteger((data as Record<string, unknown>).versao)
+      ? Number((data as Record<string, unknown>).versao) : null;
+    if (nextVersion === null || nextVersion < 0) throw new Error('O salvamento retornou uma versão inválida. Recarregue a ficha.');
+    return nextVersion;
   },
 };
 
