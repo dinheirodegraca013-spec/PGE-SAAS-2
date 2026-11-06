@@ -263,12 +263,14 @@ export const technicalSheets = {
     return data as MaterialStockRequest[];
   },
   async materialRequestCreate(service: string, sector: string, input: { request: string; item: string; quantity: number; unit: string; reason: string }): Promise<{ id: string; status: string; versao: number; repetida?: boolean }> {
+    if(typeof service!=='string'||!service.trim()||typeof sector!=='string'||!isSetor(sector)||typeof input.request!=='string'||!input.request.trim()||typeof input.item!=='string'||!input.item.trim()||!Number.isFinite(input.quantity)||input.quantity<=0||typeof input.unit!=='string'||!input.unit.trim()||typeof input.reason!=='string'||input.reason.trim().length<3)throw new Error('Os dados da solicitação de material são inválidos.');
     const { data, error } = await supabase.rpc('material_solicitacao_criar', { p_requisicao: input.request, p_servico: service, p_setor: sector, p_item_id: input.item, p_quantidade: input.quantity, p_unidade: input.unit, p_motivo: input.reason });
     if (error || !data) throw new Error(error?.code === '23505' ? 'Esta solicitação já foi enviada com outros dados.' : error?.message || 'Não foi possível solicitar o material.');
     if (!isMaterialMutation(data)) throw new Error('A solicitação retornou dados inválidos. Tente novamente.');
     return data;
   },
   async materialRequestUpdate(id: string, action: 'cancelar'|'aprovar'|'recusar'|'atender', version: number, reason?: string): Promise<{ id: string; status: string; versao: number }> {
+    if(typeof id!=='string'||!id.trim()||!Number.isSafeInteger(version)||version<1)throw new Error('A solicitação ou versão é inválida.');
     const { data, error } = await supabase.rpc('material_solicitacao_atualizar', { p_id: id, p_acao: action, p_versao: version, p_motivo: reason ?? null });
     if (error || !data) throw new Error(error?.code === '40001' ? 'A solicitação foi alterada. Atualize a lista.' : error?.message || 'Não foi possível atualizar a solicitação.');
     const expectedStatus={cancelar:'cancelada',aprovar:'aprovada',recusar:'recusada',atender:'atendida'}[action];
