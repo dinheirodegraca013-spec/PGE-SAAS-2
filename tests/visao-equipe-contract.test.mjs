@@ -447,7 +447,7 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
   assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
   assert.match(agendaFuncionario, /min=\{start\|\|undefined\}/);
   assert.match(agendaFuncionario, /aria-invalid=\{invalidRange\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem título'\} · \$\{formatAgendaDate\(item\.inicio\)\}`\}/);
+  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem título'\} · \$\{formatAgendaDate\(item\.inicio\)\} · \$\{formatAgendaStatus\(item\.status\)\} · Prioridade \$\{formatAgendaPriority\(item\.prioridade\)\}`\}/);
 });
 
 test("agenda informa atualização no botão", () => {
