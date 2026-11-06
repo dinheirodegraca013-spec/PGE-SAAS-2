@@ -18,7 +18,7 @@ export default function EmployeeAccessEditor({ userId,onSaved,onCancel }: {userI
     Promise.all([workforceAccess.employee(userId),workforceAccess.context()]).then(([p,ctx])=>{
       if(!mounted)return;
       if(!ctx.proprietario)throw new Error('Somente o proprietário pode editar estas permissões.');
-      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome);setJob(p.cargo||'');setInternalId(p.identificador_interno||'');setSector(p.setor||'corte');setAdditional(p.setores_adicionais);setStatus(p.status==='suspenso_plano'?'ativo':p.status);setGrants(p.permissoes);
+      setEmployee(p);setCatalog(ctx.catalogo_permissoes||[]);setName(p.nome||'');setJob(p.cargo||'');setInternalId(p.identificador_interno||'');setSector(p.setor||'corte');setAdditional(Array.isArray(p.setores_adicionais)?p.setores_adicionais:[]);setStatus(p.status==='suspenso_plano'?'ativo':p.status||'ativo');setGrants(Array.isArray(p.permissoes)?p.permissoes:[]);
     }).catch(e=>{if(mounted)setError(e instanceof Error&&e.message?e.message:typeof e==='string'?e:'Não foi possível carregar o funcionário.');});
     return()=>{mounted=false;};
   },[userId,retry]);
