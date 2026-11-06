@@ -1329,3 +1329,10 @@ test("erro de responsáveis organiza retry no mobile", () => {
   assert.match(assignment, /<div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">\{error\}<\/p>/);
   assert.match(assignment, /className="btn-secondary shrink-0" aria-label="Tentar carregar os responsáveis novamente"/);
 });
+
+test("controle de secagem protege status e atualização no mobile", () => {
+  assert.match(controleSecagem, /<div className="min-w-0">\s*<h4 id=\{`\$\{id\}-title`\}/);
+  assert.match(controleSecagem, /className="break-words text-sm text-slate-500"/);
+  assert.match(controleSecagem, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-medium/);
+  assert.match(controleSecagem, /className="btn-secondary shrink-0" onClick=\{refreshDrying\}/);
+});
