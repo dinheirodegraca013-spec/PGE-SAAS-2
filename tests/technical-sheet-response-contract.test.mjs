@@ -21,3 +21,7 @@ test('produção e mutações de material rejeitam IDs e textos vazios',()=>{
 test('produção valida registros antes de acessar seus IDs',()=>{
   assert.match(source,/records\.every\(item => item && typeof item === 'object' && !Array\.isArray\(item\)\)/);
 });
+
+test('mutações de material aceitam somente status catalogado',()=>{
+  assert.match(source,/materialStatuses\.includes\(String\(\(value as Record<string,unknown>\)\.status\)\)/);
+});
