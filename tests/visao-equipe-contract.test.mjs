@@ -25,6 +25,7 @@ const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeA
 const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
 const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
 const gerenciadorDispositivos = readOptional("../src/components/DeviceManager.tsx");
+const acessoWorkforce = readOptional("../src/modules/workforce/context/WorkforceAccessContext.tsx");
 const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
@@ -130,6 +131,10 @@ test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
   assert.match(gerenciadorDispositivos, /isDateString/);
   assert.match(gerenciadorDispositivos, /new Set\(devices\.map\(\(device: Device\) => device\.id\)\)/);
   assert.match(gerenciadorDispositivos, /length > data\.limit/);
+});
+
+test("revalidação do funcionário preserva contexto válido durante o carregamento", () => {
+  assert.match(acessoWorkforce, /setContext\(current => current && current\.empresa_id===tenantId && current\.funcionario\.id===userId \? current : null\)/);
 });
 
 test("painel exibe perfil somente quando a permissão foi concedida", () => {

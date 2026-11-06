@@ -16,7 +16,7 @@ export function WorkforceAccessProvider({children}:{children:React.ReactNode}) {
     const request=++generation.current;
     const current=()=>request===generation.current&&identity.current.userId===userId&&identity.current.tenantId===tenantId;
     if(!userId||!tenantId){setContext(null);setError('');setLoading(false);return;}
-    setContext(null);setError('');
+    setContext(current => current && current.empresa_id===tenantId && current.funcionario.id===userId ? current : null);setError('');
     setLoading(true);
     try{
       const next=await workforceAccess.context();
@@ -43,4 +43,3 @@ export function useWorkforceAccess():AccessState {
   if(!value)throw new Error('WorkforceAccessProvider não encontrado.');
   return value;
 }
-
