@@ -105,6 +105,7 @@ export default function MeuSetorView() {
       {sectorList.includes('estoque')&&hasPermission(context,'estoque')&&<Link className="btn-primary inline-flex" to="/estoque">Abrir painel de estoque <span aria-hidden="true">→</span></Link>}
       {sectorList.includes('financeiro')&&hasPermission(context,'financeiro')&&<Link className="btn-primary inline-flex" to="/meu-financeiro">Abrir painel financeiro <span aria-hidden="true">→</span></Link>}
     </div>}
+    {context && !accessLoading && !accessError && !quickActions.length && <p className="rounded-xl border border-dashed border-slate-200 p-4 text-sm text-slate-600">Seu acesso está ativo, mas ainda não há módulos operacionais liberados. Fale com o administrador da empresa.</p>}
     {quickActions.length > 0 && <nav aria-label="Ações rápidas" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {quickActions.map(action => <a key={action.href} href={action.href} className="card group p-4 transition hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-sm"><span className="text-sm font-semibold text-slate-900 group-hover:text-cyan-700">{action.label} <span aria-hidden="true">↗</span></span><span className="mt-1 block text-xs text-slate-500">{action.detail}</span></a>)}
     </nav>}
