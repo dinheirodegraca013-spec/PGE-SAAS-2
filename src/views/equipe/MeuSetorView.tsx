@@ -55,9 +55,16 @@ export default function MeuSetorView() {
   const [carregando, setCarregando] = useState(true);
   const [atualizacao, setAtualizacao] = useState(0);
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
+  const [online, setOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
   const lastReturnRefresh = useRef(0);
   const setor = context?.funcionario.setor;
   const sectorList=authorizedSectors(context);
+  useEffect(() => {
+    const updateConnection = () => setOnline(navigator.onLine);
+    window.addEventListener('online', updateConnection);
+    window.addEventListener('offline', updateConnection);
+    return () => { window.removeEventListener('online', updateConnection); window.removeEventListener('offline', updateConnection); };
+  }, []);
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; setAtualizacao(value => value + 1); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [context?.funcionario.id]);
   useEffect(() => {
     let mounted = true;
@@ -67,6 +74,11 @@ export default function MeuSetorView() {
     setAtualizadoEm(null);
     if (accessLoading || !context) {
       setCarregando(accessLoading);
+      return () => { mounted = false; };
+    }
+    if (!online) {
+      setErro('Sem conexão com a internet. O painel será sincronizado quando a conexão voltar.');
+      setCarregando(false);
       return () => { mounted = false; };
     }
     async function carregar() {
@@ -85,7 +97,7 @@ export default function MeuSetorView() {
     }
     void carregar();
     return () => { mounted = false; };
-  }, [accessLoading, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao]);
+  }, [accessLoading, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao, online]);
   const nome = (context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador').trim() || 'colaborador';
   const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
   const quickActions = [
@@ -105,7 +117,7 @@ export default function MeuSetorView() {
           <p className="mt-2 max-w-2xl text-sm text-slate-300">Seu espaço de trabalho para acompanhar prioridades, prazos e atividades autorizadas.</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando} aria-label={carregando ? 'Atualizando projetos' : 'Atualizar projetos'} onClick={() => setAtualizacao(value => value + 1)}>
+          <button type="button" className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20 disabled:opacity-60" disabled={carregando || !online} aria-label={carregando ? 'Atualizando projetos' : !online ? 'Sem conexão para atualizar projetos' : 'Atualizar projetos'} onClick={() => setAtualizacao(value => value + 1)}>
             {carregando ? 'Atualizando…' : 'Atualizar projetos'}
           </button>
           <span className="text-xs text-slate-400" aria-live="polite">{atualizadoEm ? `Atualizado às ${atualizadoEm.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : 'Aguardando primeira atualização'}</span>
@@ -117,6 +129,7 @@ export default function MeuSetorView() {
         {additionalSectors.length > 0 && <span className="text-slate-400">Acesso adicional: {additionalSectors.map(s => setores[s]).join(', ')}</span>}
       </div>
     </header>
+    {!online && <p role="status" aria-live="assertive" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">Você está offline. As informações exibidas podem estar desatualizadas; a sincronização será retomada quando a conexão voltar.</p>}
     {accessLoading && <p role="status" aria-live="polite" className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">Validando seu acesso de funcionário…</p>}
     {erro && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{erro}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" aria-label="Tentar carregar os projetos novamente" onClick={() => setAtualizacao(value => value + 1)}>Tentar novamente</button></div>}
     {accessError && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-rose-50 p-4 text-rose-800"><span>{accessError}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100" onClick={() => void reloadAccess()}>Validar acesso novamente</button></div>}

@@ -115,7 +115,14 @@ test("painel não transforma carregamento ou erro de projetos em zero", () => {
 });
 
 test("painel nomeia a atualização dos projetos", () => {
-  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : 'Atualizar projetos'\}/);
+  assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando projetos' : !online \? 'Sem conexão para atualizar projetos' : 'Atualizar projetos'\}/);
+});
+
+test("painel informa conexão offline e retoma sincronização ao voltar", () => {
+  assert.match(meuSetor, /window\.addEventListener\('online'/);
+  assert.match(meuSetor, /window\.addEventListener\('offline'/);
+  assert.match(meuSetor, /Sem conexão com a internet/);
+  assert.match(meuSetor, /!online/);
 });
 
 test("painel exibe perfil somente quando a permissão foi concedida", () => {
