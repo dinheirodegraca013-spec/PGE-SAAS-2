@@ -608,6 +608,8 @@ test("produção valida observação antes do envio", () => {
   assert.match(registroProducao, /description\.trim\(\)\.length < 3/);
   assert.match(registroProducao, /Informe uma observação com pelo menos 3 caracteres/);
   assert.match(registroProducao, /minLength=\{3\} maxLength=\{1000\} required/);
+  assert.match(registroProducao, /id=\{`\$\{id\}-quantity`\}[^>]*required min=/);
+  assert.match(registroProducao, /id=\{`\$\{id\}-unit`\}[^>]*required maxLength=\{40\}/);
 });
 
 test("solicitação de material limpa feedback ao editar", () => {
