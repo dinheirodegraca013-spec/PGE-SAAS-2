@@ -1350,6 +1350,12 @@ test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
   assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100/);
 });
 
+test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
+  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(meuSetor, /disabled=\{accessLoading\} aria-label=\{accessLoading \? 'Validando acesso do funcionário' : 'Validar acesso novamente'\}/);
+  assert.match(meuSetor, /\{accessLoading \? 'Validando…' : 'Validar acesso novamente'\}/);
+});
+
 test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(inboxMateriais, /className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
