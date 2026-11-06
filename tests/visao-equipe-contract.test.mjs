@@ -504,12 +504,20 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
   assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
   assert.match(agendaFuncionario, /min=\{start\|\|undefined\}/);
   assert.match(agendaFuncionario, /aria-invalid=\{invalidRange\|\|undefined\}/);
-  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem título'\} · \$\{formatAgendaDate\(item\.inicio\)\} · \$\{formatAgendaStatus\(item\.status\)\} · Prioridade \$\{formatAgendaPriority\(item\.prioridade\)\}`\}/);
+  assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem título'\} · \$\{formatAgendaDate\(item\.inicio\)\} · \$\{formatAgendaStatus\(item\.status\)\}/);
 });
 
 test("agenda informa atualização no botão", () => {
   assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
   assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
+});
+
+test("agenda destaca urgência das atividades", () => {
+  assert.match(agendaFuncionario, /const agendaTiming=\(value:string,status:string\)=>/);
+  assert.match(agendaFuncionario, /'Atrasada'/);
+  assert.match(agendaFuncionario, /'Hoje'/);
+  assert.match(agendaFuncionario, /'Amanhã'/);
+  assert.match(agendaFuncionario, /`Em \$\{days\} dias`/);
 });
 
 test("histórico do funcionário oferece retry e paginação acessível", () => {
