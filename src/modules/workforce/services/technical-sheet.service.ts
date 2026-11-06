@@ -212,6 +212,7 @@ export const technicalSheets = {
     return normalized;
   },
   async load(service: string, sector: string): Promise<ServiceSheet> {
+    if(!isServiceSector(service,sector))throw new Error('O serviço ou setor da ficha é inválido.');
     const { data, error } = await supabase.rpc('ficha_execucao_consultar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar a ficha técnica.');
     if (!isServiceSheet(data)) throw new Error('A ficha retornou dados incompletos.');
@@ -251,6 +252,7 @@ export const technicalSheets = {
     return data;
   },
   async materialOptions(service: string, sector: string): Promise<MaterialOption[]> {
+    if(!isServiceSector(service,sector))throw new Error('O serviço ou setor dos materiais é inválido.');
     const { data, error } = await supabase.rpc('material_solicitacao_materiais', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar os materiais disponíveis.');
     if (!Array.isArray(data) || !data.every(isMaterialOption)) throw new Error('Os materiais retornaram dados inválidos. Recarregue a ficha.');
@@ -295,4 +297,3 @@ export const technicalSheets = {
     return nextVersion;
   },
 };
-

@@ -38,3 +38,7 @@ test('checklist valida itens e versão antes da RPC',()=>{
   assert.match(source,/Object\.values\(items\)\.every\(item=>typeof item===\'boolean\'\)/);
 });
 
+test('consultas da ficha e de materiais validam o contexto antes da RPC',()=>{
+  assert.match(source,/O serviço ou setor da ficha é inválido/);
+  assert.match(source,/O serviço ou setor dos materiais é inválido/);
+});
