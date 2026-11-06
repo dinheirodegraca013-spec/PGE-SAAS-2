@@ -602,6 +602,12 @@ test("produção limpa o feedback ao editar novo evento", () => {
   assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
 });
 
+test("produção valida observação antes do envio", () => {
+  assert.match(registroProducao, /description\.trim\(\)\.length < 3/);
+  assert.match(registroProducao, /Informe uma observação com pelo menos 3 caracteres/);
+  assert.match(registroProducao, /minLength=\{3\} maxLength=\{1000\} required/);
+});
+
 test("solicitação de material limpa feedback ao editar", () => {
   assert.match(solicitacaoMaterial, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
 });

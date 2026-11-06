@@ -45,6 +45,7 @@ export default function ProductionLog({
       const value = Number(quantity);
       const normalizedUnit = unit.trim();
       if (!Number.isFinite(value) || value <= 0 || value >= 100000000 || !normalizedUnit || normalizedUnit.length > 40) { setMessageKind('error'); setMessage('Informe uma quantidade e unidade válidas.'); return; }
+      if (description.trim().length < 3) { setMessageKind('error'); setMessage('Informe uma observação com pelo menos 3 caracteres.'); return; }
       const data = { type, quantity: value, unit: normalizedUnit, description: description.trim() };
       const payload = JSON.stringify(data);
       if (request.current?.payload !== payload) request.current = { payload, id: crypto.randomUUID() };
@@ -56,7 +57,7 @@ export default function ProductionLog({
       <label htmlFor={`${id}-type`} className="block text-sm">Tipo<select id={`${id}-type`} className="input-field mt-1" value={type} onChange={event => { setType(event.target.value as ProductionEntry['tipo']); setMessage(''); }} disabled={disabled || busy}>{(Object.keys(labels) as ProductionEntry['tipo'][]).map(item => <option key={item} value={item}>{labels[item]}</option>)}</select></label>
       <label htmlFor={`${id}-quantity`} className="block text-sm">Quantidade<input id={`${id}-quantity`} className="input-field mt-1" type="number" min="0.001" max="99999999" step="any" value={quantity} onChange={event => { setQuantity(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <label htmlFor={`${id}-unit`} className="block text-sm">Unidade<input id={`${id}-unit`} className="input-field mt-1" maxLength={40} value={unit} onChange={event => { setUnit(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
-      <label htmlFor={`${id}-description`} className="block text-sm sm:col-span-2">Observação<textarea id={`${id}-description`} className="input-field mt-1" rows={2} maxLength={1000} value={description} onChange={event => { setDescription(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
+      <label htmlFor={`${id}-description`} className="block text-sm sm:col-span-2">Observação<textarea id={`${id}-description`} className="input-field mt-1" rows={2} minLength={3} maxLength={1000} required value={description} onChange={event => { setDescription(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <button type="submit" className="btn-primary sm:col-span-2" aria-label={busy ? 'Salvando evento de produção' : 'Registrar evento de produção'} disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
@@ -64,4 +65,3 @@ export default function ProductionLog({
     {state && !state.registros.length && <p className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500">Nenhum evento de produção registrado nesta ficha.</p>}{!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm"><span><strong>{formatType(item.tipo)}</strong> · {formatQuantity(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="text-xs text-slate-500">{formatEntryDate(item.criado_em)}</time></div>)}</div>}
   </section>;
 }
-

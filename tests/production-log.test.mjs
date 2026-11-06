@@ -6,7 +6,7 @@ import React from 'react';
 const {code}=await transform(await readFile(new URL('../src/modules/workforce/components/ProductionLog.tsx',import.meta.url),'utf8'),{loader:'tsx',format:'cjs'});
 
 function setup({quantity='1',failure=false}={}){
-  const states=['produzido',quantity,'un','',false,''];let index=0;let attempts=0;const calls=[];const changes=[];
+  const states=['produzido',quantity,'un','abc',false,''];let index=0;let attempts=0;const calls=[];const changes=[];
   const react={...React,useId:()=> 'production',useRef:initial=>({current:initial}),useState(initial){const key=index++;return [key<states.length?states[key]:initial,value=>changes.push([key,value])];}};
   const module={exports:{}};
   new Function('require','module','exports',code)(name=>{if(name==='react')return {__esModule:true,default:react,...react};throw new Error(name);},module,module.exports);
