@@ -1472,6 +1472,9 @@ test("controle de secagem protege status e atualização no mobile", () => {
   assert.match(controleSecagem, /<div className="min-w-0">\s*<h4 id=\{`\$\{id\}-title`\}/);
   assert.match(controleSecagem, /className="break-words text-sm text-slate-500"/);
   assert.match(controleSecagem, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-medium/);
+  assert.match(controleSecagem, /className="min-w-0 text-sm"/);
+  assert.match(controleSecagem, /className="input-field mt-1 w-full max-w-full sm:w-44"/);
+  assert.match(controleSecagem, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto"/);
   assert.match(controleSecagem, /className="btn-secondary shrink-0 whitespace-nowrap" onClick=\{refreshDrying\}/);
 });
 
