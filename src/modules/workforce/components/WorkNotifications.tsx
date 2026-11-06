@@ -24,6 +24,7 @@ export default function WorkNotifications(){
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{setData(null);setSelected(null);},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{setSelected(null);},[page]);
+  useEffect(()=>{reading.current=false;setBusy(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');
@@ -48,7 +49,7 @@ export default function WorkNotifications(){
         if(reading.current)return;reading.current=true;setBusy(item.id);setError('');const request=generation.current;
         try{const result=await workNotifications.read(item.id);if(request===generation.current)setData(current=>current?{...current,nao_lidas:Math.max(0,current.nao_lidas-1),itens:current.itens.map(n=>n.id===item.id?{...n,lida_em:result.lida_em}:n)}:current);}
         catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível registrar a leitura.');}
-        finally{reading.current=false;setBusy(null);}
+        finally{if(request===generation.current){reading.current=false;setBusy(null);}}
       }}>{busy===item.id?'Salvando…':'Marcar como lida'}</button>}</div>
     </li>)}</ul>}
     {data && <nav aria-label="Paginação de notificações" className="flex items-center gap-3"><button type="button" className="btn-secondary" disabled={page===0 || !!busy} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm" aria-current="page">Página {page+1}</span><button type="button" className="btn-secondary" disabled={!data.tem_mais || !!busy} onClick={()=>setPage(n=>n+1)}>Próxima</button></nav>}
