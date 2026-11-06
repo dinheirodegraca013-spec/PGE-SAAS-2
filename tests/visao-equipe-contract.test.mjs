@@ -1371,8 +1371,8 @@ test("cabeçalho do painel mantém a atualização legível no mobile", () => {
 });
 
 test("atalhos administrativos do funcionário preservam seus rótulos no mobile", () => {
-  assert.match(meuSetor, /className="btn-primary inline-flex shrink-0 whitespace-nowrap" to="\/estoque"/);
-  assert.match(meuSetor, /className="btn-primary inline-flex shrink-0 whitespace-nowrap" to="\/meu-financeiro"/);
+  assert.match(meuSetor, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:w-auto" to="\/estoque"/);
+  assert.match(meuSetor, /className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:w-auto" to="\/meu-financeiro"/);
 });
 
 test("erro de projetos preserva o botão de recuperação no mobile", () => {
