@@ -24,6 +24,7 @@ const priorityBadgeTone=(value:string)=>priorityTone[value as keyof typeof prior
 const formatTaskSector=(value:string)=>isSetor(value)?setores[value]:(value||'Setor não informado');
 function formatTaskDeadline(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?'Prazo não informado':date.toLocaleString('pt-BR');}
 function safeTaskDateTime(value:string){const date=new Date(value);return Number.isNaN(date.getTime())?undefined:date.toISOString();}
+function deadlineHint(value:string){const date=new Date(value);if(Number.isNaN(date.getTime()))return null;const today=new Date();today.setHours(0,0,0,0);date.setHours(0,0,0,0);const days=Math.round((date.getTime()-today.getTime())/86400000);return days<0?'Atrasada':days===0?'Vence hoje':days===1?'Vence amanhã':days<=7?`Vence em ${days} dias`:null;}
 
 export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const {context}=useWorkforceAccess();const id=useId();
@@ -40,6 +41,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     (target!=='cancelada' || !task.obrigatoria || hasPermission(context,'tarefas','aprovar')));
   const displayedStatus=final?task.status:status;
   const overdue=task.prazo && !['concluida','cancelada'].includes(displayedStatus) && new Date(task.prazo).getTime()<Date.now();
+  const dueHint=task.prazo && !['concluida','cancelada'].includes(displayedStatus)?deadlineHint(task.prazo):null;
   const displayedProgress=displayedStatus==='concluida'?100:progress;
   const safeDisplayedProgress=Number.isFinite(displayedProgress)?Math.min(100,Math.max(0,displayedProgress)):0;
   const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
@@ -47,7 +49,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${taskTone(displayedStatus)}`}>{formatTaskStatus(displayedStatus)}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="flex flex-wrap items-center gap-2 text-xs text-slate-500"><span>{formatTaskSector(task.setor)}</span><span className={`rounded-full px-2 py-1 font-semibold ${priorityBadgeTone(task.prioridade)}`}>Prioridade {formatPriority(task.prioridade)}</span>{task.obrigatoria&&<span>Obrigatória para concluir a etapa</span>}</p>
-    <p className={overdue?'flex flex-wrap items-center gap-2 text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?<>{overdue&&<span className="rounded-full bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800">Atrasada</span>}<span>Prazo: <time dateTime={safeTaskDateTime(task.prazo)}>{formatTaskDeadline(task.prazo)}</time></span></>:'Sem prazo definido'}</p>
+    <p className={overdue?'flex flex-wrap items-center gap-2 text-sm text-red-700':dueHint?'flex flex-wrap items-center gap-2 text-sm text-amber-700':'text-sm text-slate-500'}>{task.prazo?<>{dueHint&&<span className={`rounded-full px-2 py-1 text-xs font-semibold ${overdue?'bg-rose-100 text-rose-800':'bg-amber-100 text-amber-800'}`}>{dueHint}</span>}<span>Prazo: <time dateTime={safeTaskDateTime(task.prazo)}>{formatTaskDeadline(task.prazo)}</time></span></>:'Sem prazo definido'}</p>
     <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`} aria-valuetext={`${safeDisplayedProgress}% concluído`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
@@ -91,3 +93,4 @@ export default function MyTasks(){
     {data && <nav aria-label="Paginação de tarefas" className="flex items-center gap-3"><button type="button" className="btn-secondary" aria-label="Ir para a página anterior de tarefas" disabled={loading || page===0} onClick={()=>setPage(n=>n-1)}>Anterior</button><span className="text-sm" aria-current="page" aria-live="polite">Página {page+1}</span><button type="button" className="btn-secondary" aria-label="Ir para a próxima página de tarefas" disabled={loading || !data.tem_mais} onClick={()=>setPage(n=>n+1)}>Próxima</button></nav>}
   </section>;
 }
+

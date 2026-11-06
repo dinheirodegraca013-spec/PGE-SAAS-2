@@ -289,7 +289,14 @@ test("tarefas destacam a prioridade com cores semânticas", () => {
 test("tarefas vencidas recebem destaque visual e acessível", () => {
   assert.match(minhasTarefas, /overdue\?'border-rose-200 bg-rose-50\/40':'border-slate-200'/);
   assert.match(minhasTarefas, /overdue\?' · Atrasada':''/);
-  assert.match(minhasTarefas, /bg-rose-100 px-2 py-1 text-xs font-semibold text-rose-800/);
+  assert.match(minhasTarefas, /bg-rose-100 text-rose-800/);
+});
+
+test("tarefas próximas do prazo recebem aviso relativo", () => {
+  assert.match(minhasTarefas, /function deadlineHint\(value:string\)/);
+  assert.match(minhasTarefas, /Vence hoje/);
+  assert.match(minhasTarefas, /Vence amanhã/);
+  assert.match(minhasTarefas, /Vence em \$\{days\} dias/);
 });
 
 test("serviço de tarefas exige progresso inteiro", () => {
