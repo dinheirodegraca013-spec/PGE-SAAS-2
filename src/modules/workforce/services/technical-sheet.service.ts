@@ -173,6 +173,7 @@ export const technicalSheets = {
     return data;
   },
   async candidates(service: string, sector: string): Promise<{id:string;nome:string;cargo:string|null}[]> {
+    if(!isServiceSector(service,sector))throw new Error('O serviço ou setor dos responsáveis é inválido.');
     const { data, error } = await supabase.rpc('ficha_responsaveis_disponiveis', {p_servico:service,p_setor:sector});
     if (error || !data) throw new Error(error?.message || 'Não foi possível carregar os responsáveis.');
     if (!Array.isArray(data) || !data.every(isCandidate)) throw new Error('Os responsáveis retornaram dados inválidos. Recarregue a ficha.');

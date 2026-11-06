@@ -35,3 +35,8 @@ test('serviço de atribuição protege contexto e versão antes da operação',a
   assert.match(source,/employee!==null/);
 });
 
+test('consulta de responsáveis valida o contexto antes da RPC',async()=>{
+  const source=await readFile(new URL('../src/modules/workforce/services/technical-sheet.service.ts',import.meta.url),'utf8');
+  assert.match(source,/O serviço ou setor dos responsáveis é inválido/);
+});
+
