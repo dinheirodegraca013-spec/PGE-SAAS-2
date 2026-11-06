@@ -122,6 +122,10 @@ test("painel mantém projetos visíveis durante nova consulta", () => {
   assert.match(meuSetor, /Atualizando projetos…/);
 });
 
+test("painel limpa o alerta após atualizar projetos com sucesso", () => {
+  assert.match(meuSetor, /setErro\(''\);\s*setProjetos\(normalizeProjects\(data\)\)/);
+});
+
 test("painel nomeia a atualização dos projetos", () => {
   assert.match(meuSetor, /aria-label=\{carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
 });

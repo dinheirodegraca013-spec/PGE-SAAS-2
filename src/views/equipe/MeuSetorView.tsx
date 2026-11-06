@@ -95,6 +95,7 @@ export default function MeuSetorView() {
         const { data, error } = await supabase.rpc('meu_setor_projetos');
         if (error) throw error;
         if (mounted) {
+          setErro('');
           setProjetos(normalizeProjects(data));
           setAtualizadoEm(new Date());
         }
