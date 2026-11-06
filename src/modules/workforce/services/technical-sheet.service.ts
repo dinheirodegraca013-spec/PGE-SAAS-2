@@ -174,6 +174,12 @@ export const technicalSheets = {
   async dryingRegister(service: string, minutes: number, version: number): Promise<Pick<FinishingDryingState, 'prevista_ate' | 'em_secagem' | 'servidor_agora' | 'versao'>> {
     const { data, error } = await supabase.rpc('acabamento_secagem_registrar', { p_servico: service, p_minutos: minutes, p_versao: version });
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de registrar a secagem.' : error?.message || 'Não foi possível registrar a secagem.');
+    const result = data as Record<string, unknown>;
+    if (typeof data !== 'object' || data === null || Array.isArray(data) ||
+      (result.prevista_ate !== null && typeof result.prevista_ate !== 'string') || typeof result.em_secagem !== 'boolean' ||
+      (result.servidor_agora !== null && typeof result.servidor_agora !== 'string') || !Number.isSafeInteger(result.versao) || Number(result.versao) < 0) {
+      throw new Error('A secagem retornou dados inválidos. Recarregue a ficha.');
+    }
     return data;
   },
   async productionLoad(service: string, sector: string): Promise<ProductionState> {
