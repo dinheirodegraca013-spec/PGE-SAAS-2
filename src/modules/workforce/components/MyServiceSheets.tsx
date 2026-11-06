@@ -36,7 +36,7 @@ export default function MyServiceSheets() {
     </form>
     {loading && <p role="status" aria-live="polite">Carregando fichas…</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={() => setRefresh(n => n + 1)}>Tentar novamente</button></div>}
-    {list && !list.itens.length && <p className="text-sm text-slate-500">Nenhuma ficha liberada para você com estes filtros.</p>}
+    {list && !list.itens.length && <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-slate-200 p-4"><p className="text-sm text-slate-500">{query ? `Nenhuma ficha encontrada para “${query}”.` : 'Nenhuma ficha liberada para você no momento.'}</p>{query && <button type="button" className="btn-secondary" disabled={loading} onClick={() => { setSearch(''); setQuery(''); setPage(0); }}>Limpar pesquisa</button>}</div>}
     {list && <ul className="divide-y divide-slate-100">{list.itens.map(item => <li key={`${item.servico_id}:${item.setor}`} className="flex flex-wrap items-center justify-between gap-3 py-3">
       <div><p className="font-medium">{item.titulo}</p><p className="text-sm text-slate-500">{isSetor(item.setor) ? setores[item.setor] : item.setor}</p></div>
       <button type="button" className="btn-secondary" disabled={loading} onClick={() => {
