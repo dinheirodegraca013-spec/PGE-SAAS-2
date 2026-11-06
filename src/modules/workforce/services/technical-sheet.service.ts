@@ -113,14 +113,19 @@ function isServiceSheet(value: unknown): value is ServiceSheet {
   const fields = modelRecord && Array.isArray(modelRecord.campos) ? modelRecord.campos : null;
   const actions = row.acoes_execucao;
   const privacy = row.privacidade_autorizada;
-  return typeof row.servico_id === 'string' && isSetor(row.setor) &&
+  return typeof row.servico_id === 'string' && isSetor(row.setor) && Number.isSafeInteger(row.versao) && Number(row.versao)>=0 &&
+    (row.responsavel_id===null||typeof row.responsavel_id==='string') &&
     ['pendente', 'em_andamento', 'pausada', 'concluida'].includes(String(row.status)) &&
+    (row.iniciada_em===null||typeof row.iniciada_em==='string') && (row.concluida_em===null||typeof row.concluida_em==='string') &&
+    typeof row.inicio_liberado==='boolean' && (row.bloqueio_fluxo===null||row.bloqueio_fluxo==='fora_fluxo'||row.bloqueio_fluxo==='etapa_anterior') &&
+    typeof row.pode_editar==='boolean' && typeof row.pode_anexar==='boolean' && typeof row.pode_comunicar==='boolean' &&
     Array.isArray(actions) && actions.every(item => typeof item === 'string') &&
     Array.isArray(privacy) && privacy.every(item => typeof item === 'string') &&
     modelRecord !== null && typeof modelRecord.titulo === 'string' &&
     fields !== null && fields.every(isTechnicalField) &&
-    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && typeof (item as Record<string, unknown>).label === 'string') &&
-    !!row.checklist && typeof row.checklist === 'object' && !!row.dados && typeof row.dados === 'object';
+    checklistItems !== null && checklistItems.every(item => item && typeof item === 'object' && typeof (item as Record<string, unknown>).key === 'string' && typeof (item as Record<string, unknown>).label === 'string' && ((item as Record<string, unknown>).automatic===undefined||typeof (item as Record<string, unknown>).automatic==='boolean')) &&
+    !!row.checklist && typeof row.checklist === 'object' && !Array.isArray(row.checklist) && Object.values(row.checklist as Record<string, unknown>).every(item => typeof item === 'boolean') &&
+    !!row.dados && typeof row.dados === 'object' && !Array.isArray(row.dados);
 }
 
 function isExecutionResult(value: unknown): value is Pick<ServiceSheet, 'status' | 'versao' | 'iniciada_em' | 'concluida_em' | 'inicio_liberado' | 'bloqueio_fluxo'> {
