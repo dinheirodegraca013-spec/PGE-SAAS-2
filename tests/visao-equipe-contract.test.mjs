@@ -512,8 +512,9 @@ test("resumo destaca urgência dos próximos prazos", () => {
 test("editor de acesso permite repetir o carregamento", () => {
   assert.match(editorAcesso, /const \[retry,setRetry\]/);
   assert.match(editorAcesso, /\},\[userId,retry\]\)/);
-  assert.match(editorAcesso, /aria-label="Recarregar o acesso do funcionário"/);
+  assert.match(editorAcesso, /aria-label=\{loading \|\| busy\?'Aguarde o carregamento do acesso':'Recarregar o acesso do funcionário'\}/);
   assert.match(editorAcesso, /Tentar novamente/);
+  assert.match(editorAcesso, /disabled=\{loading \|\| busy\} aria-label=\{loading \|\| busy\?'Aguarde o carregamento do acesso':'Recarregar o acesso do funcionário'\}/);
 });
 
 test("editor de acesso informa catálogo de permissões vazio", () => {
@@ -869,6 +870,8 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
   assert.match(detalheTarefa, /Tentar novamente/);
   assert.match(detalheTarefa, /Recarregar tarefa/);
   assert.match(detalheTarefa, /className="btn-secondary shrink-0 whitespace-nowrap" disabled=\{loading\}/);
+  assert.match(detalheTarefa, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(detalheTarefa, /disabled=\{loading\} aria-label=\{loading\?'Atualizando tarefa':'Tentar carregar a tarefa novamente'\}/);
 });
 
 test("detalhe de tarefa informa recarregamento no botão", () => {
@@ -927,6 +930,8 @@ test("ocorrências e anexos ocultam paginação quando vazios", () => {
 test("ocorrências informam atualização no botão", () => {
   assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
+  assert.match(ocorrenciasFuncionario, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy\} aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
 });
 
 test("ocorrências limpam feedback ao editar", () => {
