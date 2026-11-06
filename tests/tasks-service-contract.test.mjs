@@ -12,3 +12,8 @@ test('lista de tarefas valida página e filtro antes da RPC',()=>{
 test('lista de tarefas rejeita IDs duplicados na mesma página',()=>{
   assert.match(source,/new Set\(row\.itens\.map\(item=>item\.id\)\)\.size===row\.itens\.length/);
 });
+
+test('lista de tarefas rejeita identificadores e títulos vazios',()=>{
+  assert.match(source,/typeof row\.id==='string'&&row\.id\.trim\(\)\.length>0/);
+  assert.match(source,/typeof row\.titulo==='string'&&row\.titulo\.trim\(\)\.length>0/);
+});
