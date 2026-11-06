@@ -43,7 +43,9 @@ export default function AppLayout() {
   const location = useLocation();
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
-  const gruposVisiveis = work.context && !work.context.proprietario
+  const gruposVisiveis = !work.context
+    ? []
+    : !work.context.proprietario
     ? [{ title: 'Meu trabalho', items: [
       ...(workforcePathAllowed(work.context,'/meu-setor') ? [{ label: 'Meu setor', path: '/meu-setor', icon: Shield }] : []),
       ...navGroups.flatMap(group => group.items).filter(item => workforcePathAllowed(work.context, item.path)),
@@ -280,3 +282,4 @@ export default function AppLayout() {
     </div>
   );
 }
+
