@@ -977,6 +977,11 @@ test("anexos bloqueiam envio enquanto o link temporário é gerado", () => {
   assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| !file\}/);
 });
 
+test("anexos orientam formatos e tamanho do arquivo", () => {
+  assert.match(anexos, /aria-describedby=\{`\$\{id\}-help`\}/);
+  assert.match(anexos, /Formatos aceitos: JPEG, PNG, WebP ou PDF\. Tamanho máximo: 10 MB\./);
+});
+
 test("inbox de estoque ignora respostas de filtros antigos", () => {
   assert.match(inboxMateriais, /const generation=useRef\(0\)/);
   assert.match(inboxMateriais, /if\(request===generation\.current\)setItems/);
