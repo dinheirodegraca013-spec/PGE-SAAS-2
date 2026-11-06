@@ -34,7 +34,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
       {candidates.map(item=><option key={item.id} value={item.id}>{item.nome || 'Funcionário sem nome'}{item.cargo?` — ${item.cargo}`:''}</option>)}
     </select>
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando funcionários autorizados…</p>}
-    {!loading && !error && !candidates.length && <p className="text-sm text-slate-500">Nenhum funcionário autorizado para este setor.</p>}
+    {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-slate-500">Nenhum funcionário autorizado para este setor.</p>}
     {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     <button type="submit" className="btn-secondary" disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
