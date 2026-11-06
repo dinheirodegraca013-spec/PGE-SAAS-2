@@ -189,12 +189,12 @@ export const technicalSheets = {
     if(!isServiceSector(service,sector)||(employee!==null&&(typeof employee!=='string'||!employee.trim()))||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados da atribuição são inválidos.');
     const { data, error } = await supabase.rpc('ficha_responsavel_definir', {p_servico:service,p_setor:sector,p_responsavel:employee,p_versao:version});
     if (error || !data) throw new Error(error?.code === '40001' ? 'A ficha foi alterada. Recarregue antes de atribuir o responsável.' : error?.message || 'Não foi possível atualizar o responsável.');
-    const result = data as Record<string, unknown>;
-    if (typeof data !== 'object' || data === null || Array.isArray(data) ||
-      (result.responsavel_id !== null && typeof result.responsavel_id !== 'string') ||
-      !Number.isSafeInteger(result.versao) || Number(result.versao) < 0) {
+    if (typeof data !== 'object' || data === null || Array.isArray(data)) {
       throw new Error('A atribuição retornou dados inválidos. Recarregue a ficha.');
     }
+    const result = data as Record<string, unknown>;
+    if ((result.responsavel_id !== null && typeof result.responsavel_id !== 'string') ||
+      !Number.isSafeInteger(result.versao) || Number(result.versao) < 0) throw new Error('A atribuição retornou dados inválidos. Recarregue a ficha.');
     return data;
   },
   async checklist(service: string, sector: string, items: Record<string, boolean>, version: number): Promise<{versao:number;checklist:Record<string,boolean>}> {

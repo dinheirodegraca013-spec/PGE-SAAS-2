@@ -25,3 +25,8 @@ test('produção valida registros antes de acessar seus IDs',()=>{
 test('mutações de material aceitam somente status catalogado',()=>{
   assert.match(source,/materialStatuses\.includes\(String\(\(value as Record<string,unknown>\)\.status\)\)/);
 });
+
+test('atribuição valida o objeto antes de ler seus campos',()=>{
+  assert.match(source,/if \(typeof data !== 'object' \|\| data === null \|\| Array\.isArray\(data\)\) \{/);
+  assert.match(source,/const result = data as Record<string, unknown>/);
+});
