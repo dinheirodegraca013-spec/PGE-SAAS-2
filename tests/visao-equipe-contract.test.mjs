@@ -249,6 +249,11 @@ test("resumo informa atualização no botão durante carregamento", () => {
   assert.match(resumoFuncionario, /\{loading\?'Atualizando…':'Atualizar indicadores'\}/);
 });
 
+test("resumo preserva indicadores durante nova sincronização", () => {
+  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);\s*Promise\.resolve/);
+  assert.match(resumoFuncionario, /summary \? 'Atualizando indicadores…' : 'Carregando indicadores…'/);
+});
+
 test("resumo nomeia cada indicador para acessibilidade", () => {
   assert.match(resumoFuncionario, /role="group"/);
   assert.match(resumoFuncionario, /card border p-4/);
