@@ -150,8 +150,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
       <legend className="px-1 font-semibold">Checklist operacional</legend>
       <p className="text-sm text-slate-500">Cada marcação é salva individualmente.</p>
-      {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm">
-        <input type="checkbox" className="mt-1 h-4 w-4" checked={sheet.checklist[item.key] === true} disabled={item.automatic} onChange={async event => {
+      {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm" htmlFor={`technical-checklist-${item.key}`}>
+        <input id={`technical-checklist-${item.key}`} type="checkbox" className="mt-1 h-4 w-4" checked={sheet.checklist[item.key] === true} disabled={item.automatic} onChange={async event => {
           if (mutation.current) return;
           mutation.current = true;
           const checked = event.target.checked;
