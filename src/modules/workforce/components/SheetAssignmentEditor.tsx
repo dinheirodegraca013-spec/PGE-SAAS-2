@@ -31,7 +31,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
     <select id={id} className="input-field" disabled={disabled || busy || loading || !!error && !candidates.length} value={selected} onChange={event=>{setSelected(event.target.value);setMessage('');setError('');}}>
       <option value="">Sem responsável</option>
       {current && !candidates.some(item=>item.id===current) && <option value={current} disabled>Responsável anterior indisponível</option>}
-      {candidates.map(item=><option key={item.id} value={item.id}>{item.nome}{item.cargo?` — ${item.cargo}`:''}</option>)}
+      {candidates.map(item=><option key={item.id} value={item.id}>{item.nome || 'Funcionário sem nome'}{item.cargo?` — ${item.cargo}`:''}</option>)}
     </select>
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando funcionários autorizados…</p>}
     {error && <div role="alert" className="text-sm text-red-700"><p>{error}</p><button type="button" className="btn-secondary" disabled={loading || busy} onClick={()=>setRetry(n=>n+1)}>Atualizar lista</button></div>}
