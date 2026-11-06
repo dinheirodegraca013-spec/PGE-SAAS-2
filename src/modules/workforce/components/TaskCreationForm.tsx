@@ -15,9 +15,10 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
   const canCreate=hasPermission(context,'tarefas','criar');
   const clearFeedback=()=>{setError('');setMessage('');};
+  useEffect(()=>{setCandidates([]);setEmployee('');setTitle('');setDescription('');setDeadline('');setPriority('normal');setMandatory(false);receipt.current=null;},[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{
     if(!canCreate || !context)return;
-    let active=true;setLoading(true);setError('');setMessage('');setCandidates([]);setEmployee('');setTitle('');setDescription('');setDeadline('');setPriority('normal');setMandatory(false);receipt.current=null;
+    let active=true;setLoading(true);setError('');setMessage('');
     const load=context.proprietario?technicalSheets.candidates(serviceId,sector):Promise.resolve([{id:context.funcionario.id,nome:context.funcionario.nome}]);
     load.then(items=>{if(active)setCandidates(items);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
@@ -45,11 +46,10 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
       <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>{setPriority(event.target.value as WorkTask['prioridade']);clearFeedback();}}>{(Object.keys(priorityLabels) as WorkTask['prioridade'][]).map(value=><option key={value} value={value}>{priorityLabels[value]}</option>)}</select></label>
       <label htmlFor={`${id}-mandatory`} className="flex items-center gap-2 text-sm"><input id={`${id}-mandatory`} type="checkbox" checked={mandatory} onChange={event=>{setMandatory(event.target.checked);clearFeedback();}}/>Obrigatória para concluir a etapa</label>
     </fieldset>
-    {loading && <p role="status" aria-live="polite" className="text-sm">Carregando responsáveis…</p>}
+    {loading && <p role="status" aria-live="polite" className="text-sm">{candidates.length ? 'Atualizando responsáveis…' : 'Carregando responsáveis…'}</p>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary" onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label="Tentar carregar responsáveis novamente">Atualizar responsáveis</button>}
     <button type="submit" className="btn-primary" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
-

@@ -614,11 +614,12 @@ test("fluxo limpa feedback ao alterar a sequência", () => {
 test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
+  assert.match(criacaoTarefa, /candidates\.length \? 'Atualizando responsáveis…' : 'Carregando responsáveis…'/);
 });
 
 test("criação de tarefa limpa feedback ao trocar o contexto", () => {
-  assert.match(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\);setEmployee\(''\)/);
-  assert.match(criacaoTarefa, /setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
+  assert.match(criacaoTarefa, /setCandidates\(\[\]\);setEmployee\(''\);setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
+  assert.doesNotMatch(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
 });
 
 test("criação de tarefa limpa validação ao corrigir campos", () => {
