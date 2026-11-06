@@ -912,6 +912,7 @@ test("operações de produção e secagem sinalizam o formulário em andamento",
 test("ações de execução da ficha informam salvamento", () => {
   assert.match(fichaOperacional, /saving\?'Salvando…'/);
   assert.match(fichaTecnica, /saving && <p role="status" aria-live="polite">Salvando alterações da ficha técnica…<\/p>/);
+  assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="text-sm font-medium">Situação:/);
 });
 
 test("ficha técnica limpa erros ao editar um campo", () => {
