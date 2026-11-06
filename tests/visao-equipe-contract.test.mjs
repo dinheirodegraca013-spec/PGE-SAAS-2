@@ -1321,6 +1321,7 @@ test("inbox preserva feedback após ação concluída", () => {
 test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
   const formularioTecnico = readOptional("../src/modules/workforce/components/TechnicalSheetForm.tsx");
   assert.match(formularioTecnico, /role=\{message\.startsWith\('Não foi'\) \|\| message\.startsWith\('Revise'\) \? 'alert' : 'status'\}/);
+  assert.match(formularioTecnico, /className="inline-flex shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600/);
 });
 
 test("formulário de ocorrência sinaliza o envio em andamento", () => {
