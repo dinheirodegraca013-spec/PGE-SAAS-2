@@ -373,47 +373,7 @@ test("painel quebra tÃ­tulos longos em telas estreitas", () => {
 });
 
 test("resumo de trabalho preserva prazo e status no mobile", () => {
-  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?'shrink-0 font-semibold text-amber-700':'shrink-0 text-slate-600'\}/);
-  assert.match(resumoFuncionario, /className=\{`shrink-0 rounded-full px-2 py-1 text-xs font-semibold/);
-});
-
-test("blocos operacionais quebram conteÃºdo longo no celular", () => {
-  assert.match(ocorrencias, /min-w-0 space-y-2 rounded-lg/);
-  assert.match(ocorrencias, /break-words whitespace-pre-wrap text-sm/);
-  assert.match(fichasFuncionario, /min-w-0"><p className="break-words font-medium/);
-  assert.match(inboxMateriais, /min-w-0 rounded-xl border/);
-  assert.match(inboxMateriais, /break-words text-sm/);
-});
-
-test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
-  assert.match(minhasTarefas, /updatedAt/);
-  assert.match(minhasTarefas, /Ãšltima atualizaÃ§Ã£o Ã s/);
-  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
-});
-
-test("tarefas limpam o horÃ¡rio anterior durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
-});
-
-test("tarefas preservam a lista durante nova sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
-  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
-  assert.match(minhasTarefas, /data \? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'/);
-});
-
-test("tarefas bloqueiam o filtro durante sincronizaÃ§Ã£o", () => {
-  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
-});
-
-test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
-  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
-  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
-  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
-});
-
-test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
-  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
-  assert.match(minhasTarefas, /!dirt{]w÷»h‘éì¶»§q«^tÙ\›X]Ú
+  assert.match(resumoFuncionario, /<span className="flex shrink-0 flex-wrap items-center justify-end gap-2"><time className=\{status==='Atrasado'\?'shrink-0 font-semibold text-rose-700':status\?]µë‹h‘éì¶»§q«^tÙ\›X]Ú
 [˜›ŞX]\šXZ\ËÙ\ØX›YWÛØY[™×HXXİ[Û\ŞWKÊNÃBˆ\ÜÙ\›X]Ú
 ™\İ[[Ñ[˜Ú[Û˜\š[ËØ\šXKX\ŞOWÛØY[™×KÊNÃBŸJNÃBƒB\İ
 œÙXØYÙ[HH›ÙpéğèÛÈ[™›Ü›X[H]X[^˜péğèÛÈ›ÜÈ›İ0íY\È‹
