@@ -757,7 +757,7 @@ test("listas do funcionário reiniciam filtros e paginação ao trocar de contex
 });
 
 test("notificação limpa erro antigo ao abrir um registro", () => {
-  assert.match(notificacoesFuncionario, /setError\('\'\);openerRef\.current=event\.currentTarget;setSelected\(item\)/);
+  assert.match(notificacoesFuncionario, /setError\('\'\);setMessage\('\'\);openerRef\.current=event\.currentTarget;setSelected\(item\)/);
   assert.match(notificacoesFuncionario, /ficha_atribuida:'Ficha atribuída'/);
 });
 
