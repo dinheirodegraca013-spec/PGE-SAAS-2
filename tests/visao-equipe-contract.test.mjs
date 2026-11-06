@@ -306,6 +306,10 @@ test("fichas exibem a última atualização recebida", () => {
   assert.match(fichasFuncionario, /dateTime=\{item\.atualizado_em\}/);
 });
 
+test("fichas diferenciam carga inicial de sincronização", () => {
+  assert.match(fichasFuncionario, /list \? 'Atualizando fichas…' : 'Carregando fichas…'/);
+});
+
 test("pesquisa de fichas informa o estado do botão", () => {
   assert.match(fichasFuncionario, /aria-label=\{loading\?'Pesquisando fichas':'Pesquisar fichas'\}/);
   assert.match(fichasFuncionario, /\{loading\?'Pesquisando…':'Pesquisar'\}/);
