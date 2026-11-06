@@ -13,3 +13,9 @@ test('ocorrências validam serviço e setor antes da consulta',()=>{
   assert.match(incidents,/typeof service!==\'string\'\|\|!service\.trim\(\)\|\|typeof sector!==\'string\'\|\|!isSetor\(sector\)/);
 });
 
+test('ocorrências validam criação e resolução antes das RPCs',()=>{
+  assert.match(incidents,/Os dados da ocorrência são inválidos/);
+  assert.match(incidents,/incident\.status!==\'aberta\'/);
+  assert.match(incidents,/resolution\.trim\(\)\.length<3/);
+});
+

@@ -18,10 +18,12 @@ export const incidents={
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as ocorrências.');if(typeof data!=='object'||Array.isArray(data))throw new Error('As ocorrências retornaram dados inválidos. Recarregue a lista.');const row=data as Record<string,unknown>;if(!Array.isArray(row.itens)||typeof row.tem_mais!=='boolean'||!row.itens.every(isIncident))throw new Error('As ocorrências retornaram dados inválidos. Recarregue a lista.');return data as {itens:Incident[];tem_mais:boolean};
   },
   async create(input:{request:string;service:string;sector:string;title:string;description:string;type:IncidentType;severity:IncidentSeverity}):Promise<void>{
+    if(!input||typeof input.request!=='string'||!input.request.trim()||typeof input.service!=='string'||!input.service.trim()||typeof input.sector!=='string'||!isSetor(input.sector)||typeof input.title!=='string'||input.title.trim().length<3||typeof input.description!=='string'||input.description.trim().length<3||!['equipamento','material','defeito','outro'].includes(input.type)||!['informativa','atencao','critica'].includes(input.severity))throw new Error('Os dados da ocorrência são inválidos.');
     const {data,error}=await supabase.rpc('ocorrencia_criar',{p_requisicao:input.request,p_servico:input.service,p_setor:input.sector,p_titulo:input.title,p_descricao:input.description,p_tipo:input.type,p_gravidade:input.severity});
     if(error || !data)throw new Error(error?.message||'Não foi possível registrar a ocorrência.');if(!isMutation(data))throw new Error('O registro da ocorrência retornou dados inválidos. Tente novamente.');
   },
   async resolve(incident:Incident,resolution:string):Promise<void>{
+    if(!isIncident(incident)||incident.status!=='aberta'||typeof resolution!=='string'||resolution.trim().length<3)throw new Error('Os dados da resolução são inválidos.');
     const {data,error}=await supabase.rpc('ocorrencia_resolver',{p_ocorrencia:incident.id,p_versao:incident.versao,p_resolucao:resolution});
     if(error || !data)throw new Error(error?.code==='40001'?'A ocorrência foi alterada. Atualize a lista.':error?.message||'Não foi possível registrar a resolução.');if(!isMutation(data,'resolvida',incident.id))throw new Error('A resolução retornou dados inválidos. Recarregue a lista.');
   },
