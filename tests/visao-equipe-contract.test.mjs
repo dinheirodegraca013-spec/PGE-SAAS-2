@@ -179,7 +179,8 @@ test("ações administrativas da equipe têm nomes acessíveis", () => {
   assert.match(equipeView, /className="flex flex-col gap-2 sm:flex-row"/);
   assert.match(equipeView, /className="btn-primary w-full sm:w-auto sm:self-end"/);
   assert.match(equipeView, /aria-label=\{carregando \? 'Atualizando equipe' : 'Atualizar equipe'\}/);
-  assert.match(equipeView, /aria-label="Encaminhar projeto para o setor selecionado"/);
+  assert.match(equipeView, /aria-label=\{salvando \? 'Encaminhando projeto para o setor selecionado' : 'Encaminhar projeto para o setor selecionado'\}/);
+  assert.match(equipeView, /aria-busy=\{salvando\}/);
   assert.match(equipeView, /aria-label="Tentar carregar projetos novamente"/);
 });
 
