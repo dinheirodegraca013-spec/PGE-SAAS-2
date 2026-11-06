@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LogOut,
@@ -37,10 +37,17 @@ function getPapelVisivel(papel?: string | null) {
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [online, setOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
   const auth = useAuthStore();
   const work = useWorkforceAccess();
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    const updateConnection = () => setOnline(navigator.onLine);
+    window.addEventListener('online', updateConnection);
+    window.addEventListener('offline', updateConnection);
+    return () => { window.removeEventListener('online', updateConnection); window.removeEventListener('offline', updateConnection); };
+  }, []);
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
   const employeeProfilePath = work.context && !work.context.proprietario ? '/meu-setor#perfil' : '/configuracoes';
@@ -243,9 +250,9 @@ export default function AppLayout() {
                 Painel administrativo
               </NavLink>
             )}
-            <span className="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 sm:inline-flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Sistema online
+            <span aria-live="polite" className={`hidden items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold sm:inline-flex ${online ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${online ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+              {online ? 'Sistema online' : 'Sem conexão'}
             </span>
             {work.context && !work.context.proprietario && hasPermission(work.context, 'notificacoes') ? <NavLink
               to="/meu-setor#notificacoes"
