@@ -649,6 +649,15 @@ test("agenda relaciona datas inválidas à mensagem de erro", () => {
   assert.match(agendaFuncionario, /<span id="agenda-range-error" className="sr-only">\{invalidRange \? error : ''\}<\/span>/);
 });
 
+test("mensagens de erro operacionais quebram texto e preservam os botões", () => {
+  assert.match(editorAcesso, /className="min-w-0 break-words">\{error\}<\/span>/);
+  assert.match(editorAcesso, /className="shrink-0 rounded-lg border border-rose-200/);
+  assert.match(agendaFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
+  assert.match(agendaFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
+  assert.match(ocorrenciasFuncionario, /className="min-w-0 break-words">\{error\}<\/span>/);
+  assert.match(ocorrenciasFuncionario, /className="shrink-0 rounded-lg border border-rose-200/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
