@@ -470,7 +470,26 @@ test("resumo preserva indicadores durante nova sincronizaÃ§Ã£o", () => {
 });
 
 test("resumo nÃ£o consulta dados sem vÃ­nculo de funcionÃ¡rio validado", () => {
-  assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\+]uë‹h‘éì¶»§q«^v\™YZ[WÌWHX^WÌLKÊNÃBˆ\ÜÙ\›X]Ú
+  assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\);setUpdatedAt\(null\);return/);
+  assert.match(resumoFuncionario, /if\(accessError\|\|!context\)\{setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(resumoFuncionario, /setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(resumoFuncionario, /\[accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
+});
+
+test("resumo nomeia cada indicador para acessibilidade", () => {
+  assert.match(resumoFuncionario, /role="group"/);
+  assert.match(resumoFuncionario, /card min-w-0 border p-4/);
+  assert.match(resumoFuncionario, /aria-label=\{.*label.*value.*\}/);
+});
+
+test("resumo encaminha prazos para a lista quando a tarefa nÃ£o estÃ¡ carregada", () => {
+  assert.match(resumoFuncionario, /function focusTask\(taskId:string\)/);
+  assert.match(resumoFuncionario, /scrollIntoView\(\{behavior:'smooth',block:'start'\}\)/);
+  assert.match(resumoFuncionario, /aria-label=\{`Abrir a tarefa/);
+});
+
+test("indicadores de tarefas oferecem atalho acessÃ­vel para a lista", () => {
+  assert.match(resumoFuncionario, /function foc]<ßkh‘éì¶»§q«^vWÌLKÊNÃBˆ\ÜÙ\›X]Ú
 ÛÛ›ÛTÙXØYÙ[KÝ\OH›[X™\ˆˆ[œ][ÙOH›[Y\šXÈˆ™\]Z\™YZ[WÌWKÊNÃBŸJNÃBƒB\Ý
 ˜Ø\0èÛÈHÛÛXÚ]péðèÛÈ[™›Ü›XH]X[^˜péðèÛÈ›È›Ý0èÛÈ‹
 
@@ -1184,7 +1203,7 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 
 HOˆÃBˆ\ÜÙ\›X]Ú
 ][U\™Y˜KÏ]ˆÛ\ÜÓ˜[YOH™›^›^]Ü˜\][\Ë\Ý\\ÝYžKX™]ÙY[ˆØ\LÈ]ˆÛ\ÜÓ˜[YOH›Z[‹]ËLÈYH\ÚËY]Z[Ë]]HˆÛ\ÜÓ˜[YOH˜œ™XZË]ÛÜ™È›Û\Ù[ZX›Û‹ÊNÃBˆ\ÜÙ\›X]Ú
-][U\™Y˜KØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\žHÚš[šËLˆ\ØX›YWÛØY[™×KÊNÃBˆ\ÜÙ\›X]Ú
+][U\™Y˜KØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\žHÚš[šËLÚ]\ÜXÙK[›ÝÜ˜\ˆ\ØX›YWÛØY[™×KÊNÃBˆ\ÜÙ\›X]Ú
 ][U\™Y˜KÏÜ[ˆÛ\ÜÓ˜[YOH^^È^\Û]KMLˆ\šXK[]™OHœÛ]H‹ÊNÃBŸJNÃBƒB\Ý
 ˜XÙZ]HH[œÝ[péðèÛÈ]YXœ˜HÛÛ™š\›XpéðèÛÈÛ™ØH›È[Øš[H‹
 
