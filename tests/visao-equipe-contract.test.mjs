@@ -270,8 +270,15 @@ test("resumo informa atualização no botão durante carregamento", () => {
 });
 
 test("resumo preserva indicadores durante nova sincronização", () => {
-  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);\s*Promise\.resolve/);
+  assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);/);
+  assert.match(resumoFuncionario, /Promise\.resolve\(\)\.then\(\(\)=>supabase\.rpc\('meu_resumo_operacional'\)/);
   assert.match(resumoFuncionario, /summary \? 'Atualizando indicadores…' : 'Carregando indicadores…'/);
+});
+
+test("resumo não consulta dados sem vínculo de funcionário validado", () => {
+  assert.match(resumoFuncionario, /accessLoading\|\|accessError\|\|!context/);
+  assert.match(resumoFuncionario, /setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(resumoFuncionario, /\[accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
 });
 
 test("resumo nomeia cada indicador para acessibilidade", () => {
