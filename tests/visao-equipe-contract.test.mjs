@@ -672,7 +672,7 @@ test("erros inline de tarefa, ocorrência e responsável quebram no mobile", () 
   assert.match(minhasTarefas, /className="break-words text-sm text-red-700 sm:col-span-2"/);
   assert.match(ocorrenciasFuncionario, /className="break-words text-sm text-red-700">\{error\}<\/p>/);
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
-  assert.match(assignment, /<p className="break-words">\{error\}<\/p>/);
+  assert.match(assignment, /<p className="min-w-0 break-words">\{error\}<\/p>/);
 });
 
 test("ações de cabeçalho e formulários se reorganizam no mobile", () => {
@@ -1322,4 +1322,10 @@ test("registros de produção quebram observações sem deslocar o horário", ()
 test("ficha técnica quebra a situação sem perder as ações", () => {
   assert.match(fichaTecnica, /<span role="status" aria-live="polite" className="min-w-0 break-words text-sm font-medium">Situação:/);
   assert.match(fichaTecnica, /<div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">/);
+});
+
+test("erro de responsáveis organiza retry no mobile", () => {
+  const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
+  assert.match(assignment, /<div role="alert" className="flex flex-wrap items-start justify-between gap-2 text-sm text-red-700"><p className="min-w-0 break-words">\{error\}<\/p>/);
+  assert.match(assignment, /className="btn-secondary shrink-0" aria-label="Tentar carregar os responsáveis novamente"/);
 });
