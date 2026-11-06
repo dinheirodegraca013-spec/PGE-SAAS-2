@@ -3,6 +3,7 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
 import {technicalSheets} from '../services/technical-sheet.service';
 import {workTasks,type WorkTask} from '../services/tasks.service';
+const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
 
 export default function TaskCreationForm({serviceId,sector}:{serviceId:string;sector:string}){
   const {context}=useWorkforceAccess();const id=useId();
@@ -41,7 +42,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} maxLength={10000} value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-employee`}>Responsável<select id={`${id}-employee`} className="input-field mt-1" required value={employee} onChange={event=>{setEmployee(event.target.value);setError('');setMessage('');}}><option value="">Selecione um funcionário</option>{candidates.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
       <label className="text-sm" htmlFor={`${id}-deadline`}>Prazo (horário local)<input id={`${id}-deadline`} className="input-field mt-1" type="datetime-local" value={deadline} onChange={event=>{setDeadline(event.target.value);clearFeedback();}}/></label>
-      <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>{setPriority(event.target.value as WorkTask['prioridade']);clearFeedback();}}>{['baixa','normal','alta','urgente'].map(value=><option key={value} value={value}>{value}</option>)}</select></label>
+      <label className="text-sm" htmlFor={`${id}-priority`}>Prioridade<select id={`${id}-priority`} className="input-field mt-1" value={priority} onChange={event=>{setPriority(event.target.value as WorkTask['prioridade']);clearFeedback();}}>{(Object.keys(priorityLabels) as WorkTask['prioridade'][]).map(value=><option key={value} value={value}>{priorityLabels[value]}</option>)}</select></label>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={mandatory} onChange={event=>{setMandatory(event.target.checked);clearFeedback();}}/>Obrigatória para concluir a etapa</label>
     </fieldset>
     {loading && <p role="status" aria-live="polite" className="text-sm">Carregando responsáveis…</p>}
