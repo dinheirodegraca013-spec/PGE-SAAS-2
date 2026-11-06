@@ -34,8 +34,8 @@ const SettingsView = lazy(() => import('./views/settings/SettingsView'));
 const FinanceiroEmpresaView = lazy(() => import('./views/financeiro/FinanceiroEmpresaView'));
 const EstoqueView = lazy(() => import('./views/estoque/EstoqueView'));
 const Visao3DView = lazy(() => import('./views/visao3d/Visao3DView'));
-import EquipeView from './views/equipe/EquipeView';
-import MeuSetorView from './views/equipe/MeuSetorView';
+const EquipeView = lazy(() => import('./views/equipe/EquipeView'));
+const MeuSetorView = lazy(() => import('./views/equipe/MeuSetorView'));
 import NotFoundView from './views/NotFoundView';
 import PagamentoObrigadoView from './views/pagamento/PagamentoObrigadoView';
 
@@ -270,3 +270,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+
