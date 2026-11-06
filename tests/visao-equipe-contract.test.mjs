@@ -482,7 +482,13 @@ test("detalhe de tarefa preserva a ficha durante sincronização", () => {
 
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
-  assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy\}/);
+  assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
+});
+
+test("ficha técnica preserva o conteúdo durante sincronização", () => {
+  assert.match(fichaTecnica, /if \(loading && !sheet\) return/);
+  assert.match(fichaTecnica, /Atualizando ficha técnica…/);
+  assert.match(fichaTecnica, /setSheet\(null\); setValues\(\{\}\)/);
 });
 
 test("ocorrências e anexos expõem retry e paginação acessível", () => {

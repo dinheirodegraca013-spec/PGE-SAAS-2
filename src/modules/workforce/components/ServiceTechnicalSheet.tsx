@@ -33,8 +33,11 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const mutation = useRef(false);
   const generation = useRef(0);
   useEffect(() => {
+    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError('');
+  }, [serviceId, sector, context?.funcionario.versao]);
+  useEffect(() => {
     const request = ++generation.current;
-    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError(''); setLoading(true);
+    setError(''); setLoading(true);
     (async () => {
       try {
         const result = await technicalSheets.load(serviceId, sector);
@@ -58,7 +61,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     })();
     return () => { generation.current++; };
   }, [serviceId, sector, reload, context?.funcionario.versao]);
-  if (loading) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
+  if (loading && !sheet) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     <p role="alert" className="text-sm text-red-700">{error}</p>
     <button type="button" className="btn-secondary" aria-label="Tentar carregar a ficha técnica novamente" onClick={() => setReload(n => n + 1)}>Tentar novamente</button>
@@ -70,7 +73,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       finally { mutation.current = false; }
     }}>{loading ? 'Liberando…' : 'Liberar ficha deste setor'}</button>}
   </div>;
-  return <section className="space-y-4" aria-label="Ficha técnica do serviço" aria-busy={saving || checklistBusy}>
+  return <section className="space-y-4" aria-label="Ficha técnica do serviço" aria-busy={saving || checklistBusy || loading}>
+    {loading && <p role="status" aria-live="polite">Atualizando ficha técnica…</p>}
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
       <span className="text-sm font-medium">Situação: {({pendente:'Pendente',em_andamento:'Em andamento',pausada:'Pausada',concluida:'Concluída'})[sheet.status] || 'Situação indisponível'}</span>
       {(['iniciar','pausar','concluir'] as const).filter(action=>sheet.acoes_execucao?.includes(action) && hasPermission(context,'ordens',action) &&
@@ -179,4 +183,3 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
   </section>;
 }
-
