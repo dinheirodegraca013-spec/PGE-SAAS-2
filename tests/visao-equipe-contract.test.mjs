@@ -273,6 +273,7 @@ test("tarefas refletem imediatamente status e progresso selecionados", () => {
   assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} · \$\{formatTaskStatus\(displayedStatus\)\} · \$\{formatTaskSector\(task\.setor\)\}`\}/);
   assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
+  assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
   assert.match(minhasTarefas, /displayedStatus=final\?task\.status:status/);
   assert.match(minhasTarefas, /displayedProgress=displayedStatus==='concluida'\?100:progress/);
   assert.match(minhasTarefas, /type="number" inputMode="numeric" required min=\{0\} max=\{100\} step=\{1\}/);
