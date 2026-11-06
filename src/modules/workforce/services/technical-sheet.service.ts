@@ -282,6 +282,7 @@ export const technicalSheets = {
     return data;
   },
   async save(service: string, sector: string, values: Record<string, unknown>, version: number): Promise<number> {
+    if(!isServiceSector(service,sector)||!values||typeof values!=='object'||Array.isArray(values)||!Number.isSafeInteger(version)||version<0)throw new Error('Os dados ou versão da ficha são inválidos.');
     const { data, error } = await supabase.rpc('ficha_servico_salvar', { p_servico: service, p_setor: sector, p_dados: values, p_versao: version });
     if (error || !data) throw new Error(error?.code === '40001' ? 'Outra pessoa atualizou esta ficha. Recarregue antes de salvar novamente.' : error?.message || 'Não foi possível salvar a ficha técnica.');
     const nextVersion = data && typeof data === 'object' && Number.isSafeInteger((data as Record<string, unknown>).versao)

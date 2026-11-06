@@ -23,3 +23,8 @@ test('registro de produção valida dados antes da RPC',()=>{
   assert.match(source,/input\.description\.trim\(\)\.length<3/);
 });
 
+test('salvamento da ficha valida contexto e payload antes da RPC',()=>{
+  assert.match(source,/Os dados ou versão da ficha são inválidos/);
+  assert.match(source,/Array\.isArray\(values\)/);
+});
+
