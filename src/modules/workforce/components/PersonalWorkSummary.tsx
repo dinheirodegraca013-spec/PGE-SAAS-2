@@ -3,6 +3,15 @@ import {supabase} from '@/lib/supabase';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
 type Summary={tarefas:{total:number;pendentes:number;em_andamento:number;concluidas:number;atrasadas:number;aguardando_material:number;aguardando_aprovacao:number};ordens_em_execucao:number;proximos_prazos:{id:string;titulo:string;setor:string;prazo:string}[]};
+const finiteOrZero=(value:unknown)=>typeof value==='number'&&Number.isFinite(value)?value:0;
+function normalizeSummary(value:unknown):Summary|null{
+  if(!value||typeof value!=='object')return null;
+  const source=value as Record<string,unknown>;const rawTasks=source.tarefas;
+  if(!rawTasks||typeof rawTasks!=='object')return null;
+  const tasks=rawTasks as Record<string,unknown>;const rawDeadlines=Array.isArray(source.proximos_prazos)?source.proximos_prazos:[];
+  const proximos_prazos=rawDeadlines.filter(item=>item&&typeof item==='object').map(item=>{const row=item as Record<string,unknown>;return{id:String(row.id??''),titulo:String(row.titulo??'Tarefa sem título'),setor:String(row.setor??''),prazo:String(row.prazo??'')};}).filter(item=>item.id);
+  return{tarefas:{total:finiteOrZero(tasks.total),pendentes:finiteOrZero(tasks.pendentes),em_andamento:finiteOrZero(tasks.em_andamento),concluidas:finiteOrZero(tasks.concluidas),atrasadas:finiteOrZero(tasks.atrasadas),aguardando_material:finiteOrZero(tasks.aguardando_material),aguardando_aprovacao:finiteOrZero(tasks.aguardando_aprovacao)},ordens_em_execucao:finiteOrZero(source.ordens_em_execucao),proximos_prazos};
+}
 function cardTone(label:string){
   if(label==='Atrasadas')return 'border-rose-200 bg-rose-50';
   if(label==='Concluídas')return 'border-emerald-200 bg-emerald-50';
@@ -17,7 +26,7 @@ export default function PersonalWorkSummary(){
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRetry(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{setSummary(null);setError('');},[context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
-    Promise.resolve().then(()=>supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}setSummary(data);})
+    Promise.resolve().then(()=>supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}const normalized=normalizeSummary(data);if(!normalized){setError('Os indicadores retornaram dados inválidos.');return;}setSummary(normalized);})
       .catch(()=>{if(active)setError('Não foi possível carregar os indicadores.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[context?.funcionario.id,context?.funcionario.versao,retry]);
