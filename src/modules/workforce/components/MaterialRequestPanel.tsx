@@ -29,19 +29,20 @@ export default function MaterialRequestPanel({
   const [quantity, setQuantity] = useState('1');
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [message, setMessage] = useState('');
   const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
   const request = useRef<{ payload: string; id: string } | null>(null);
   const selected = options.find(option => option.id === item);
   const refreshRequests = async () => {
     if (disabled || busy) return;
-    setBusy(true); setMessage('');
-    try { await onRefresh(); setMessageKind('status'); setMessage('Solicitações atualizadas.'); }
+    setBusy(true); setMessage(''); setUpdatedAt(null);
+    try { await onRefresh(); setUpdatedAt(new Date()); setMessageKind('status'); setMessage('Solicitações atualizadas.'); }
     catch (cause) { setMessageKind('error'); setMessage(cause instanceof Error ? cause.message : 'Não foi possível atualizar as solicitações.'); }
     finally { setBusy(false); }
   };
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-busy={busy}>
-    <div className="flex flex-wrap items-start justify-between gap-3"><div><h4 className="font-semibold">Solicitações ao Estoque</h4><p className="text-sm text-slate-500">Peça materiais para esta ordem e acompanhe o atendimento.</p></div><button type="button" className="btn-secondary" onClick={refreshRequests} disabled={disabled || busy} aria-label={busy?'Atualizando solicitações':'Atualizar solicitações'}>{busy?'Atualizando…':'Atualizar'}</button></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h4 className="font-semibold">Solicitações ao Estoque</h4><p className="text-sm text-slate-500">Peça materiais para esta ordem e acompanhe o atendimento.</p><span className="text-xs text-slate-500" aria-live="polite">{busy?'Atualizando solicitações…':updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" onClick={refreshRequests} disabled={disabled || busy} aria-label={busy?'Atualizando solicitações':'Atualizar solicitações'}>{busy?'Atualizando…':'Atualizar'}</button></div>
     {canRequest && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" onSubmit={async event => {
       event.preventDefault(); const value = Number(quantity); const text = reason.trim();
       if (!selected || !Number.isFinite(value) || value <= 0 || value >= 100000000 || text.length < 3) { setMessageKind('error'); setMessage('Selecione o material, informe a quantidade e explique a necessidade.'); return; }
