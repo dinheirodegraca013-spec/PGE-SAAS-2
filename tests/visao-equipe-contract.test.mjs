@@ -727,6 +727,11 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(anexos, /Nenhum anexo validado nesta página/);
 });
 
+test("ocorrências e anexos ocultam paginação quando vazios", () => {
+  assert.match(ocorrencias, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Paginação de ocorrências"/);
+  assert.match(anexos, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Paginação de anexos"/);
+});
+
 test("ocorrências informam atualização no botão", () => {
   assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
