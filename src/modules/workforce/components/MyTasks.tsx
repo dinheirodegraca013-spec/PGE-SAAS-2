@@ -16,6 +16,7 @@ const statusTone: Record<TaskStatus,string> = {
 const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
 const priorityTone={baixa:'bg-slate-100 text-slate-700',normal:'bg-cyan-100 text-cyan-800',alta:'bg-amber-100 text-amber-800',urgente:'bg-rose-100 text-rose-800'};
 const workforceRefreshEvent='gestio:refresh-workforce';
+const taskFilterEvent='gestio:filter-workforce-tasks';
 const formatTaskStatus=(value:string)=>taskStatusLabels[value as TaskStatus]??'Situação indisponível';
 const taskTone=(value:string)=>statusTone[value as TaskStatus]??'bg-slate-100 text-slate-700';
 const formatPriority=(value:string)=>priorityLabels[value as keyof typeof priorityLabels]??'Não informada';
@@ -73,6 +74,7 @@ export default function MyTasks(){
   useEffect(()=>{setData(null);setUpdatedAt(null);},[page,filter,context?.funcionario.id,context?.funcionario.versao,accessError]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
+  useEffect(()=>{const applyFilter=(event:Event)=>{const status=(event as CustomEvent<{status?:unknown}>).detail?.status;if(typeof status!=='string'||!(status in taskStatusLabels))return;setFilter(status as TaskStatus);setPage(0);};window.addEventListener(taskFilterEvent,applyFilter);return()=>window.removeEventListener(taskFilterEvent,applyFilter);},[]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
     if(accessLoading){setData(null);setUpdatedAt(null);return()=>{active=false;};}
     if(accessError||!context){setData(null);setUpdatedAt(null);setLoading(false);return()=>{active=false;};}
