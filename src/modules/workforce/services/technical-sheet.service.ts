@@ -63,6 +63,7 @@ export type MaterialRequest = {
 };
 export type MaterialStockRequest = MaterialRequest & { servico_nome: string; solicitante_nome: string };
 const materialStatuses=['pendente','aprovada','recusada','atendida','cancelada'];
+const sortMaterialRequests=<T extends MaterialRequest>(items:T[]):T[]=>[...items].sort((left,right)=>new Date(right.criado_em).getTime()-new Date(left.criado_em).getTime());
 const isServiceId=(service:unknown):service is string=>typeof service==='string'&&service.trim().length>0;
 const isServiceSector=(service:unknown,sector:unknown):boolean=>typeof service==='string'&&service.trim().length>0&&typeof sector==='string'&&isSetor(sector);
 const isDateOrNull=(value:unknown):value is string|null=>value===null||(typeof value==='string'&&Number.isFinite(new Date(value).getTime()));
@@ -270,15 +271,15 @@ export const technicalSheets = {
     if(!isServiceSector(service,sector))throw new Error('O serviço ou setor da ficha é inválido.');
     const { data, error } = await supabase.rpc('material_solicitacao_listar', { p_servico: service, p_setor: sector });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações de material.');
-    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item))) throw new Error('As solicitações retornaram dados inválidos. Recarregue a ficha.');
-    return data;
+    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item)) || new Set(data.map(item => item.id)).size!==data.length) throw new Error('As solicitações retornaram dados inválidos. Recarregue a ficha.');
+    return sortMaterialRequests(data as MaterialRequest[]);
   },
   async materialStockRequests(status: string|null = null): Promise<MaterialStockRequest[]> {
     if(status!==null&&!materialStatuses.includes(status))throw new Error('O filtro de solicitações é inválido.');
     const { data, error } = await supabase.rpc('material_solicitacao_painel_estoque', { p_status: status });
     if (error || !data) throw new Error(error?.message || 'Não foi possível consultar as solicitações do estoque.');
-    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item, true))) throw new Error('A fila de estoque retornou dados inválidos. Recarregue a tela.');
-    return data as MaterialStockRequest[];
+    if (!Array.isArray(data) || !data.every(item => isMaterialRequest(item, true)) || new Set(data.map(item => item.id)).size!==data.length) throw new Error('A fila de estoque retornou dados inválidos. Recarregue a tela.');
+    return sortMaterialRequests(data as MaterialStockRequest[]);
   },
   async materialRequestCreate(service: string, sector: string, input: { request: string; item: string; quantity: number; unit: string; reason: string }): Promise<{ id: string; status: string; versao: number; repetida?: boolean }> {
     if(typeof service!=='string'||!service.trim()||typeof sector!=='string'||!isSetor(sector)||typeof input.request!=='string'||!input.request.trim()||typeof input.item!=='string'||!input.item.trim()||!Number.isFinite(input.quantity)||input.quantity<=0||typeof input.unit!=='string'||!input.unit.trim()||typeof input.reason!=='string'||input.reason.trim().length<3)throw new Error('Os dados da solicitação de material são inválidos.');

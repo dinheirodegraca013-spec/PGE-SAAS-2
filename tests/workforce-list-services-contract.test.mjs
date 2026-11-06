@@ -24,3 +24,9 @@ test('opções de material exigem textos identificáveis e IDs únicos',()=>{
   assert.match(sheets,/new Set\(options\.map\(item=>item\.id\)\)\.size!==options\.length/);
   assert.match(sheets,/sort\(\(left,right\)=>left\.nome\.localeCompare\(right\.nome,'pt-BR'\)\)/);
 });
+
+test('solicitações de material rejeitam duplicatas e ordenam por criação',()=>{
+  assert.match(sheets,/sortMaterialRequests=<T extends MaterialRequest>\(items:T\[\]\):T\[\]/);
+  assert.match(sheets,/new Set\(data\.map\(item => item\.id\)\)\.size!==data\.length/);
+  assert.match(sheets,/new Date\(right\.criado_em\)\.getTime\(\)-new Date\(left\.criado_em\)\.getTime\(\)/);
+});
