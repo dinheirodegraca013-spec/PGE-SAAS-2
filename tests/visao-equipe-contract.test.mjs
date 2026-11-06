@@ -222,7 +222,7 @@ test("histórico de materiais quebra textos longos sem deslocar ações", () => 
 
 test("ficha técnica acomoda título longo junto do recarregamento", () => {
   assert.match(fichaTecnica, /<h3 className="min-w-0 break-words font-semibold">\{sheet\.modelo\.titulo\}<\/h3>/);
-  assert.match(fichaTecnica, /<button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Recarregar ficha técnica"/);
+  assert.match(fichaTecnica, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Recarregar ficha técnica"/);
 });
 
 test("painel não consulta projetos quando a validação de acesso falha", () => {

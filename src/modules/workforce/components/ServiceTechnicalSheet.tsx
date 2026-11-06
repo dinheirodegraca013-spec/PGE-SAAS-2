@@ -64,8 +64,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   if (loading && !sheet) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
-    <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" disabled={loading} aria-label={loading ? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'} onClick={() => setReload(n => n + 1)}>{loading ? 'Carregando…' : 'Tentar novamente'}</button>
-    {context?.proprietario && <button type="button" className="btn-primary shrink-0 whitespace-nowrap" disabled={loading} onClick={async () => {
+    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} aria-label={loading ? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'} onClick={() => setReload(n => n + 1)}>{loading ? 'Carregando…' : 'Tentar novamente'}</button>
+    {context?.proprietario && <button type="button" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} onClick={async () => {
       if (mutation.current) return;
       mutation.current = true; setLoading(true); setError('');
       try { await technicalSheets.save(serviceId, sector, {}, 0); setReload(n => n + 1); }
@@ -95,7 +95,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     {sheet.bloqueio_fluxo && <p role="status" aria-live="polite" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{sheet.bloqueio_fluxo==='etapa_anterior'?'Aguardando a conclusão das etapas anteriores. Recarregue a ficha após a liberação.':'Este setor não participa do fluxo configurado para o serviço.'}</p>}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <h3 className="min-w-0 break-words font-semibold">{sheet.modelo.titulo}</h3>
-      <button type="button" className="btn-secondary shrink-0 whitespace-nowrap" aria-label="Recarregar ficha técnica" disabled={loading || saving || checklistBusy} onClick={() => {
+      <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Recarregar ficha técnica" disabled={loading || saving || checklistBusy} onClick={() => {
         if (JSON.stringify(values) !== JSON.stringify(sheet.dados) && !window.confirm('Descartar alterações não salvas e recarregar a ficha?')) return;
         setReload(n => n + 1);
       }}>Recarregar ficha</button>
