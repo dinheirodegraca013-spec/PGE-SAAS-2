@@ -57,7 +57,7 @@ export default function ProductionLog({
       <label htmlFor={`${id}-quantity`} className="block text-sm">Quantidade<input id={`${id}-quantity`} className="input-field mt-1" type="number" min="0.001" max="99999999" step="any" value={quantity} onChange={event => { setQuantity(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <label htmlFor={`${id}-unit`} className="block text-sm">Unidade<input id={`${id}-unit`} className="input-field mt-1" maxLength={40} value={unit} onChange={event => { setUnit(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <label htmlFor={`${id}-description`} className="block text-sm sm:col-span-2">Observação<textarea id={`${id}-description`} className="input-field mt-1" rows={2} maxLength={1000} value={description} onChange={event => { setDescription(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
-      <button type="submit" className="btn-primary sm:col-span-2" disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
+      <button type="submit" className="btn-primary sm:col-span-2" aria-label={busy ? 'Salvando evento de produção' : 'Registrar evento de produção'} disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
     </form>}
     {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
