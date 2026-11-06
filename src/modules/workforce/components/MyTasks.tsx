@@ -40,7 +40,7 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const displayedProgress=displayedStatus==='concluida'?100:progress;
   const safeDisplayedProgress=Number.isFinite(displayedProgress)?Math.min(100,Math.max(0,displayedProgress)):0;
   const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
-  return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4" aria-label={`Tarefa ${task.titulo} · ${formatTaskStatus(displayedStatus)} · ${formatTaskSector(task.setor)}`}>
+  return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4" aria-label={`Tarefa ${task.titulo} · ${formatTaskStatus(displayedStatus)} · ${formatTaskSector(task.setor)} · Prioridade ${formatPriority(task.prioridade)} · ${task.prazo?`Prazo ${formatTaskDeadline(task.prazo)}`:'Sem prazo'}`}>
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${taskTone(displayedStatus)}`}>{formatTaskStatus(displayedStatus)}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{formatTaskSector(task.setor)} · Prioridade {formatPriority(task.prioridade)}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>

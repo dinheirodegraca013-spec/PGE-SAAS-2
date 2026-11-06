@@ -270,7 +270,7 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
 });
 
 test("tarefas refletem imediatamente status e progresso selecionados", () => {
-  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} · \$\{formatTaskStatus\(displayedStatus\)\} · \$\{formatTaskSector\(task\.setor\)\}`\}/);
+  assert.match(minhasTarefas, /aria-label=\{`Tarefa \$\{task\.titulo\} · \$\{formatTaskStatus\(displayedStatus\)\} · \$\{formatTaskSector\(task\.setor\)\} · Prioridade \$\{formatPriority\(task\.prioridade\)\} · \$\{task\.prazo\?`Prazo \$\{formatTaskDeadline\(task\.prazo\)\}`:'Sem prazo'\}`\}/);
   assert.match(minhasTarefas, /dateTime=\{safeTaskDateTime\(task\.prazo\)\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-progress-help`\}/);
   assert.match(minhasTarefas, /aria-describedby=\{`\$\{id\}-notes-help`\}/);
