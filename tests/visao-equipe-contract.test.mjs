@@ -623,6 +623,11 @@ test("serviço de fichas rejeita timestamps inválidos", () => {
   assert.match(technicalSheetService, /Number\.isFinite\(new Date\(record\.criado_em\)\.getTime\(\)\)/);
 });
 
+test("registro de secagem valida datas retornadas", () => {
+  assert.match(technicalSheetService, /!isDateOrNull\(result\.prevista_ate\)/);
+  assert.match(technicalSheetService, /!isDateOrNull\(result\.servidor_agora\)/);
+});
+
 test("liberação da ficha bloqueia duplo clique", () => {
   assert.match(fichaOperacional, /disabled=\{loading\}/);
   assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
