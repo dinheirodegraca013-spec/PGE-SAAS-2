@@ -530,6 +530,10 @@ test("editor de acesso informa catálogo de permissões vazio", () => {
   assert.match(editorAcesso, /Nenhuma permissão está disponível para configuração/);
 });
 
+test("grupos de permissões são acessíveis por teclado e toque", () => {
+  assert.match(editorAcesso, /<summary className="flex min-h-11 cursor-pointer items-center rounded-lg px-2 py-2 break-words font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2">/);
+});
+
 test("equipe recarrega após a sessão e o tenant ficarem disponíveis", () => {
   assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId\]\)/);
 });
@@ -1450,7 +1454,7 @@ test("fichas de serviço preservam busca e ação de abertura no mobile", () => 
 test("editor de acesso quebra setores e permissões longas no mobile", () => {
   assert.match(editorFuncionario, /className="flex min-w-0 items-start gap-2 text-sm"><input type="checkbox"/);
   assert.match(editorFuncionario, /<span className="break-words">\{label\}<\/span>/);
-  assert.match(editorFuncionario, /<summary className="cursor-pointer break-words font-semibold">/);
+  assert.match(editorFuncionario, /<summary className="flex min-h-11 cursor-pointer items-center rounded-lg px-2 py-2 break-words font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2">/);
   assert.match(editorFuncionario, /<span className="break-words">\{permissionLabels\[c\.operacao\]\|\|c\.operacao\}<\/span>/);
   assert.match(editorFuncionario, /<p className="break-words text-xs text-slate-500">ID da conta:/);
 });
