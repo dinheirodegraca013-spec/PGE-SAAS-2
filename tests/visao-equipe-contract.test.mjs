@@ -886,6 +886,7 @@ test("cartão de tarefa limpa erro ao editar", () => {
 test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
   assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
+  assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…<\/p>\}/);
 });
 
 test("notificações expõem o estado de leitura semanticamente", () => {
