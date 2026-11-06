@@ -18,23 +18,24 @@ export default function WorkNotifications(){
   const [error,setError]=useState('');
   const [busy,setBusy]=useState<string|null>(null);
   const [selected,setSelected]=useState<WorkNotification|null>(null);
+  const [updatedAt,setUpdatedAt]=useState<Date|null>(null);
   const generation=useRef(0);
   const reading=useRef(false);
   const lastReturnRefresh=useRef(0);
   useEffect(()=>{setPage(0);},[context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{setData(null);setSelected(null);},[context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{setSelected(null);},[page]);
+  useEffect(()=>{setData(null);setSelected(null);setUpdatedAt(null);},[context?.funcionario.id,context?.funcionario.versao]);
+  useEffect(()=>{setSelected(null);setUpdatedAt(null);},[page]);
   useEffect(()=>{reading.current=false;setBusy(null);},[page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');
-    workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
+    workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setUpdatedAt(new Date());setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar as notificações.');})
       .finally(()=>{if(request===generation.current)setLoading(false);});
     return()=>{generation.current++;};
   },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-busy={loading || !!busy}>
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Notificações <span aria-live="polite">{data?`(${data.nao_lidas} não lidas)`:''}</span></h2><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
+    <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-lg font-bold">Notificações <span aria-live="polite">{data?`(${data.nao_lidas} não lidas)`:''}</span></h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary" disabled={loading || !!busy} onClick={()=>setRefresh(n=>n+1)} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
     {loading && <p role="status" aria-live="polite">Carregando notificações…</p>}
     {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg bg-rose-50 p-3 text-sm text-red-700"><span>{error}</span><button type="button" className="rounded-lg border border-rose-200 bg-white px-3 py-2 font-semibold text-rose-700 hover:bg-rose-100" onClick={()=>setRefresh(n=>n+1)}>Tentar novamente</button></div>}
     {data && !data.itens.length && <p className="text-sm text-slate-500">Nenhuma notificação disponível.</p>}
