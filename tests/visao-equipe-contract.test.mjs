@@ -135,6 +135,10 @@ test("painel não consulta projetos quando a validação de acesso falha", () =>
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
 });
 
+test("painel remove projetos antigos quando a autorização é revogada", () => {
+  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
+});
+
 test("painel anuncia sincronização global para tecnologia assistiva", () => {
   assert.match(meuSetor, /className="space-y-6" aria-busy=\{carregando \|\| accessLoading\}/);
 });
@@ -190,7 +194,7 @@ test("ações rápidas possuem foco visível no teclado", () => {
 
 test("painel preserva a última atualização durante nova consulta", () => {
   assert.match(meuSetor, /const contextKey = context \? `\$\{context\.empresa_id\}:\$\{context\.funcionario\.id\}` : '';\s*if \(contextKey !== lastContextKey\.current\)/);
-  assert.doesNotMatch(meuSetor, /setAtualizadoEm\(null\)/);
+  assert.match(meuSetor, /if \(accessError\) \{\s*setProjetos\(\[\]\);\s*setAtualizadoEm\(null\);/);
 });
 
 test("tarefas do funcionário permitem recuperar falhas de carregamento", () => {

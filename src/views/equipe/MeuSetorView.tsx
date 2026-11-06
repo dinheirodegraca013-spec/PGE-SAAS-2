@@ -82,6 +82,10 @@ export default function MeuSetorView() {
       setProjetos([]);
     }
     if (accessLoading || accessError || !context) {
+      if (accessError) {
+        setProjetos([]);
+        setAtualizadoEm(null);
+      }
       setCarregando(accessLoading);
       return () => { mounted = false; };
     }
