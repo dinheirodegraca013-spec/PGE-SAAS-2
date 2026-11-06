@@ -2,6 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {supabase} from '@/lib/supabase';
 import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {hasPermission} from '../lib/access';
+import {isSetor} from '@/lib/setores';
 type Summary={tarefas:{total:number;pendentes:number;em_andamento:number;concluidas:number;atrasadas:number;aguardando_material:number;aguardando_aprovacao:number};ordens_em_execucao:number;proximos_prazos:{id:string;titulo:string;setor:string;prazo:string}[]};
 const isCount=(value:unknown):value is number=>typeof value==='number'&&Number.isSafeInteger(value)&&value>=0;
 function normalizeSummary(value:unknown):Summary|null{
@@ -10,7 +11,7 @@ function normalizeSummary(value:unknown):Summary|null{
   if(!rawTasks||typeof rawTasks!=='object')return null;
   const tasks=rawTasks as Record<string,unknown>;const taskKeys=['total','pendentes','em_andamento','concluidas','atrasadas','aguardando_material','aguardando_aprovacao'];
   if(!taskKeys.every(key=>isCount(tasks[key]))||!isCount(source.ordens_em_execucao)||!Array.isArray(source.proximos_prazos))return null;
-  const proximos_prazos=source.proximos_prazos.map(item=>{if(!item||typeof item!=='object'||Array.isArray(item))return null;const row=item as Record<string,unknown>;if(typeof row.id!=='string'||!row.id||typeof row.titulo!=='string'||!row.titulo||typeof row.setor!=='string'||!row.setor||typeof row.prazo!=='string'||!row.prazo)return null;return{id:row.id,titulo:row.titulo,setor:row.setor,prazo:row.prazo};});
+  const proximos_prazos=source.proximos_prazos.map(item=>{if(!item||typeof item!=='object'||Array.isArray(item))return null;const row=item as Record<string,unknown>;if(typeof row.id!=='string'||!row.id||typeof row.titulo!=='string'||!row.titulo||typeof row.setor!=='string'||!isSetor(row.setor)||typeof row.prazo!=='string'||!row.prazo)return null;return{id:row.id,titulo:row.titulo,setor:row.setor,prazo:row.prazo};});
   if(proximos_prazos.some(item=>item===null))return null;
   return{tarefas:{total:tasks.total as number,pendentes:tasks.pendentes as number,em_andamento:tasks.em_andamento as number,concluidas:tasks.concluidas as number,atrasadas:tasks.atrasadas as number,aguardando_material:tasks.aguardando_material as number,aguardando_aprovacao:tasks.aguardando_aprovacao as number},ordens_em_execucao:source.ordens_em_execucao as number,proximos_prazos:proximos_prazos as Summary['proximos_prazos']};
 }
@@ -48,4 +49,3 @@ export default function PersonalWorkSummary(){
     </>}
   </section>;
 }
-
