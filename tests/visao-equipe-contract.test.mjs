@@ -830,6 +830,7 @@ test("criação de tarefa valida descrição antes do envio", () => {
 
 test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /aria-busy=\{busy \|\| loading\}/);
+  assert.match(editorFuncionario, /busy&&<p role="status" aria-live="polite">Salvando acesso do funcionário…<\/p>/);
   assert.match(editorFuncionario, /role="status" aria-live="polite"/);
   assert.match(editorFuncionario, /employee\?'Atualizando acesso…':'Carregando acesso…'/);
   assert.match(editorFuncionario, /disabled=\{busy\}/);
