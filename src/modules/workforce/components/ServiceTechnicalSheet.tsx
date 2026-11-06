@@ -138,14 +138,14 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     }} />}
     {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
-      mutation.current = true; setSaving(true); setMaterialError('');
-      try { await technicalSheets.materialRequestCreate(serviceId, sector, input); setReload(n => n + 1); }
-      finally { mutation.current = false; setSaving(false); }
+      mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
+      try { await technicalSheets.materialRequestCreate(serviceId, sector, input); if (request === generation.current) setReload(n => n + 1); }
+      finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} onCancel={async requestItem => {
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
-      mutation.current = true; setSaving(true); setMaterialError('');
-      try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
-      finally { mutation.current = false; setSaving(false); }
+      mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
+      try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); if (request === generation.current) setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
+      finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
     <fieldset className="space-y-3 rounded-xl border border-slate-200 p-4" disabled={!sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')}>
       <legend className="px-1 font-semibold">Checklist operacional</legend>
@@ -170,9 +170,9 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
     {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
-      mutation.current=true;setSaving(true);
-      try{await installation.accept(serviceId,sheet.versao,input);setReload(n=>n+1);}
-      finally{mutation.current=false;setSaving(false);}
+      mutation.current=true;setSaving(true);const request=generation.current;
+      try{await installation.accept(serviceId,sheet.versao,input);if(request===generation.current)setReload(n=>n+1);}
+      finally{mutation.current=false;if(request===generation.current)setSaving(false);}
     }}/>}
     <SheetIncidents serviceId={serviceId} sector={sector} canCreate={sheet.pode_comunicar}/>
     {sheet.status!=='concluida' && <TaskCreationForm serviceId={serviceId} sector={sector}/>}
