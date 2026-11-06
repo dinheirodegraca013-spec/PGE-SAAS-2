@@ -11,6 +11,7 @@ const isAttachment=(value:unknown):value is Attachment=>{
 const isUploadReceipt=(value:unknown):value is UploadReceipt=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(value as Record<string,unknown>).id&&typeof (value as Record<string,unknown>).caminho==='string'&&(value as Record<string,unknown>).caminho&&(value as Record<string,unknown>).bucket==='workforce-private');
 export const attachments={
   async list(service:string,sector:string,page:number):Promise<{itens:Attachment[];tem_mais:boolean}>{
+    if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de anexos é inválida.');
     const {data,error}=await supabase.rpc('anexos_ficha_listar',{p_servico:service,p_setor:sector,p_pagina:page});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar os anexos.');if(typeof data!=='object'||Array.isArray(data))throw new Error('Os anexos retornaram dados inválidos. Recarregue a lista.');const row=data as Record<string,unknown>;if(!Array.isArray(row.itens)||typeof row.tem_mais!=='boolean'||!row.itens.every(isAttachment))throw new Error('Os anexos retornaram dados inválidos. Recarregue a lista.');return data as {itens:Attachment[];tem_mais:boolean};
   },

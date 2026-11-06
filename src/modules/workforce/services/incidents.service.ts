@@ -11,6 +11,7 @@ const isIncident=(value:unknown):value is Incident=>{
 const isMutation=(value:unknown,status?:string,expectedId?:string)=>Boolean(value&&typeof value==='object'&&!Array.isArray(value)&&typeof (value as Record<string,unknown>).id==='string'&&(value as Record<string,unknown>).id&&(!expectedId||(value as Record<string,unknown>).id===expectedId)&&(status===undefined||((value as Record<string,unknown>).status===status))&&Number.isSafeInteger((value as Record<string,unknown>).versao)&&Number((value as Record<string,unknown>).versao)>=1);
 export const incidents={
   async list(service:string,sector:string,page:number):Promise<{itens:Incident[];tem_mais:boolean}>{
+    if(!Number.isSafeInteger(page)||page<0)throw new Error('A página de ocorrências é inválida.');
     const {data,error}=await supabase.rpc('ocorrencias_ficha_listar',{p_servico:service,p_setor:sector,p_pagina:page});
     if(error || !data)throw new Error(error?.message||'Não foi possível carregar as ocorrências.');if(typeof data!=='object'||Array.isArray(data))throw new Error('As ocorrências retornaram dados inválidos. Recarregue a lista.');const row=data as Record<string,unknown>;if(!Array.isArray(row.itens)||typeof row.tem_mais!=='boolean'||!row.itens.every(isIncident))throw new Error('As ocorrências retornaram dados inválidos. Recarregue a lista.');return data as {itens:Incident[];tem_mais:boolean};
   },
