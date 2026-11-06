@@ -1369,7 +1369,7 @@ test("cabeçalhos do funcionário acomodam títulos e atualização no mobile", 
 });
 
 test("cabeçalho do painel mantém a atualização legível no mobile", () => {
-  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-xl border border-white\/20/);
+  assert.match(meuSetor, /className="w-full shrink-0 whitespace-nowrap rounded-xl border border-white\/20[^\"]*sm:w-auto/);
   assert.match(meuSetor, /disabled=\{carregando \|\| accessLoading \|\| !online\}/);
   assert.match(meuSetor, /aria-label=\{accessLoading \? 'Validando acesso antes de atualizar painel' : carregando \? 'Atualizando painel' : !online \? 'Sem conexão para atualizar painel' : 'Atualizar painel'\}/);
   assert.match(meuSetor, /\{accessLoading \? 'Validando acesso…' : carregando \? 'Atualizando…' : 'Atualizar painel'\}/);
@@ -1381,7 +1381,7 @@ test("atalhos administrativos do funcionário preservam seus rótulos no mobile"
 });
 
 test("erro de projetos preserva o botão de recuperação no mobile", () => {
-  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-60"/);
+  assert.match(meuSetor, /className="w-full shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-60 sm:w-auto"/);
   assert.match(meuSetor, /disabled=\{carregando\} aria-label=\{carregando \? 'Atualizando projetos' : 'Tentar carregar os projetos novamente'\}/);
   assert.match(meuSetor, /\{carregando \? 'Atualizando…' : 'Tentar novamente'\}/);
 });
@@ -1389,7 +1389,7 @@ test("erro de projetos preserva o botão de recuperação no mobile", () => {
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
   assert.match(meuSetor, /<div className="min-w-0">\s*<p className="text-xs font-semibold uppercase/);
   assert.match(meuSetor, /<h1 className="mt-2 break-words text-3xl font-bold/);
-  assert.match(meuSetor, /className="flex shrink-0 flex-col items-end gap-2"/);
+  assert.match(meuSetor, /className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:items-end"/);
   assert.match(meuSetor, /<dd className="mt-1 break-words font-semibold text-slate-900">\{context\.funcionario\.nome/);
   assert.match(meuSetor, /<dd className="mt-1 break-words text-slate-900">\{context\.funcionario\.cargo/);
   assert.match(meuSetor, /<div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold"/);
@@ -1397,7 +1397,7 @@ test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
 });
 
 test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
-  assert.match(meuSetor, /className="shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
+  assert.match(meuSetor, /className="w-full shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(meuSetor, /disabled=\{accessLoading\} aria-label=\{accessLoading \? 'Validando acesso do funcionário' : 'Validar acesso novamente'\}/);
   assert.match(meuSetor, /\{accessLoading \? 'Validando…' : 'Validar acesso novamente'\}/);
 });
