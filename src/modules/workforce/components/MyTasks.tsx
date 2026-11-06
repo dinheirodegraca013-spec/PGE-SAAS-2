@@ -31,13 +31,14 @@ export function TaskCard({task,onSaved}:{task:WorkTask;onSaved:()=>void}){
   const displayedStatus=final?task.status:status;
   const overdue=task.prazo && !['concluida','cancelada'].includes(displayedStatus) && new Date(task.prazo).getTime()<Date.now();
   const displayedProgress=displayedStatus==='concluida'?100:progress;
+  const safeDisplayedProgress=Number.isFinite(displayedProgress)?Math.min(100,Math.max(0,displayedProgress)):0;
   const dirty=status!==task.status || progress!==task.progresso || notes!==task.observacoes;
   return <li id={`tarefa-${task.id}`} className="scroll-mt-4 space-y-3 rounded-xl border border-slate-200 p-4">
     <div className="flex flex-wrap justify-between gap-2"><h3 className="font-semibold">{task.titulo}</h3><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusTone[displayedStatus]}`}>{taskStatusLabels[displayedStatus]}</span></div>
     <p className="whitespace-pre-wrap text-sm text-slate-600">{task.descricao}</p>
     <p className="text-xs text-slate-500">{isSetor(task.setor)?setores[task.setor]:task.setor} · Prioridade {task.prioridade}{task.obrigatoria?' · Obrigatória para concluir a etapa':''}</p>
     <p className={overdue?'text-sm text-red-700':'text-sm text-slate-500'}>{task.prazo?`${overdue?'Atrasada · ':''}Prazo: ${formatTaskDeadline(task.prazo)}`:'Sem prazo definido'}</p>
-    <progress className="w-full" max={100} value={displayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{displayedProgress}%</span>
+    <progress className="w-full" max={100} value={safeDisplayedProgress} aria-label={`Progresso de ${task.titulo}`}/><span className="text-xs" aria-live="polite">{safeDisplayedProgress}%</span>
     {final?<p className="whitespace-pre-wrap text-sm text-slate-500">{task.observacoes}</p>:<form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !hasPermission(context,'tarefas',operation(status)))return;
       if(!Number.isInteger(progress) || progress<0 || progress>100){setError('Informe um progresso entre 0 e 100.');return;}
