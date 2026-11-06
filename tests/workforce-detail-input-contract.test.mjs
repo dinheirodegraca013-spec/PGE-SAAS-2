@@ -20,8 +20,14 @@ test('ocorrências validam criação e resolução antes das RPCs',()=>{
   assert.match(incidents,/resolution\.trim\(\)\.length<3/);
 });
 
+test('ocorrências rejeitam textos e IDs vazios nas respostas',()=>{
+  assert.match(incidents,/row\.id==='string'&&row\.id\.trim\(\)\.length>0/);
+  assert.match(incidents,/row\.titulo==='string'&&row\.titulo\.trim\(\)\.length>0/);
+  assert.match(incidents,/row\.descricao==='string'&&row\.descricao\.trim\(\)\.length>0/);
+  assert.match(incidents,/String\(\(value as Record<string,unknown>\)\.id\)\.trim\(\)\.length>0/);
+});
+
 test('fluxo valida sequência de setores antes da gravação',()=>{
   assert.match(pipeline,/!Array\.isArray\(sectors\)/);
   assert.match(pipeline,/new Set\(sectors\)\.size!==sectors\.length/);
 });
-
