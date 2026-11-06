@@ -27,7 +27,7 @@ export default function PersonalWorkSummary(){
   const {context}=useWorkforceAccess();const [summary,setSummary]=useState<Summary|null>(null);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [retry,setRetry]=useState(0);const [updatedAt,setUpdatedAt]=useState<Date|null>(null);const lastReturnRefresh=useRef(0);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRetry(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[context?.funcionario.id]);
   useEffect(()=>{setSummary(null);setError('');setUpdatedAt(null);},[context?.funcionario.id,context?.funcionario.versao]);
-  useEffect(()=>{let active=true;setLoading(true);setError('');
+  useEffect(()=>{let active=true;setLoading(true);setError('');setSummary(null);setUpdatedAt(null);
     Promise.resolve().then(()=>supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}const normalized=normalizeSummary(data);if(!normalized){setError('Os indicadores retornaram dados inválidos.');return;}setSummary(normalized);setUpdatedAt(new Date());})
       .catch(()=>{if(active)setError('Não foi possível carregar os indicadores.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
