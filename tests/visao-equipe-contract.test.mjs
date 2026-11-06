@@ -388,13 +388,32 @@ test("blocos operacionais quebram conteÃºdo longo no celular", () => {
 test("tarefas informam a Ãºltima atualizaÃ§Ã£o da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
   assert.match(minhasTarefas, /Ãšltima atualizaÃ§Ã£o Ã s/);
-  assert.match(minhasTarefas, /aria-busy=\{loading\]{Ó‹h‘éì¶»§q«^w›X]Ú
-[˜›ŞX]\šXZ\ËØXİ[Û\ŞKÊNÃBˆ\ÜÙ\›X]Ú
-[˜›ŞX]\šXZ\ËØ\šXK[X™[WØÛÛXÚ]péğèÛÈH	Ú][Wš][WÛ›ÛYWH0­È	Ù›Ü›X]]X[]W
-][Wœ]X[YYW
-WH	Ú][W[šYYWH0­È	Ù›Ü›X]İ]\×
-][Wœİ]\×
-WXKÊNÃBˆ\ÜÙ\›X]Ú
+  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
+});
+
+test("tarefas limpam o horÃ¡rio anterior durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setData\(null\);setUpdatedAt\(null\)/);
+});
+
+test("tarefas preservam a lista durante nova sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /setLoading\(true\);setError\('\'\);/);
+  assert.match(minhasTarefas, /workTasks\.list\(page,filter\|\|null\)/);
+  assert.match(minhasTarefas, /data \? 'Atualizando tarefasâ€¦' : 'Carregando tarefasâ€¦'/);
+});
+
+test("tarefas bloqueiam o filtro durante sincronizaÃ§Ã£o", () => {
+  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
+});
+
+test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
+  assert.match(minhasTarefas, /filter&&<button type=\"button\" className=\"btn-secondary\"/);
+  assert.match(minhasTarefas, /aria-label=\"Limpar filtro de tarefas\"/);
+  assert.match(minhasTarefas, /setFilter\(''\);setPage\(0\)/);
+});
+
+test("tarefas nÃ£o enviam atualizaÃ§Ã£o sem mudanÃ§a", () => {
+  assert.match(minhasTarefas, /const dirty=status!==task\.status/);
+  assert.match(minhasTarefas, /!dirt{]w÷»h‘éì¶»§q«^tÙ\›X]Ú
 [˜›ŞX]\šXZ\ËÙ\ØX›YWÛØY[™×HXXİ[Û\ŞWKÊNÃBˆ\ÜÙ\›X]Ú
 ™\İ[[Ñ[˜Ú[Û˜\š[ËØ\šXKX\ŞOWÛØY[™×KÊNÃBŸJNÃBƒB\İ
 œÙXØYÙ[HH›ÙpéğèÛÈ[™›Ü›X[H]X[^˜péğèÛÈ›ÜÈ›İ0íY\È‹
@@ -529,7 +548,9 @@ HOˆÃBˆ\ÜÙ\›X]Ú
 ÜšXXØ[Õ\™Y˜KÈ[ØY[™È	‰ˆY\œ›Üˆ	‰ˆXØ[™Y]\×›[™İ	‰ˆ›ÛOHœİ]\Èˆ\šXK[]™OHœÛ]H‹ÊNÃBˆ\ÜÙ\›X]Ú
 ÜšXXØ[Õ\™Y˜Kİ\OH™]][YK[ØØ[ˆ]]ĞÛÛ\]OH›Ù™ˆˆ\šXKY\ØÜšX™YOWØ	ÚYKYXY[™KZ[H˜[YOWÙXY[™WKÊNÃBˆ\ÜÙ\›X]Ú
 ÜšXXØ[Õ\™Y˜KØ]]ĞÛÛ\]OH›Ù™ˆˆ\šXKY\ØÜšX™YOWØ	ÚYKYXY[™KZ[KÊNÃBˆ\ÜÙ\›X]Ú
-ÜšXXØ[Õ\™Y˜KÓÈÜ°è\š[ÈÙ\°èHØ[›ÈÛÛ™›Ü›YHÈ\ÛÈØØ[\İH\ÜÜÚ]]›ËÊNÃBŸJNÃBƒB\İ
+ÜšXXØ[Õ\™Y˜KÓÈÜ°è\š[ÈÙ\°èHØ[›ÈÛÛ™›Ü›YHÈ\ÛÈØØ[\İH\ÜÜÚ]]›ËÊNÃBˆ\ÜÙ\›X]Ú
+ÜšXXØ[Õ\™Y˜KØÛ\ÜÓ˜[YOH˜‹\š[X\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆ\ØX›YWØ\ŞHØY[™ÈXØ[™Y]\×›[™İKÊNÃBˆ\ÜÙ\›X]Ú
+ÜšXXØ[Õ\™Y˜KØÛ\ÜÓ˜[YOH˜‹\ÙXÛÛ™\HÚš[šËLÚ]\ÜXÙK[›İÜ˜\ˆÛÛXÚÏKÊNÃBŸJNÃBƒB\İ
 ˜ÜšXpéğèÛÈH\™Y˜H[\H™YY˜XÚÈ[È›ØØ\ˆÈÛÛ^È‹
 
 HOˆÃBˆ\ÜÙ\›X]Ú
