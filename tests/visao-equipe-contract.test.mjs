@@ -24,6 +24,7 @@ const resumoFuncionario = readOptional("../src/modules/workforce/components/Pers
 const editorAcesso = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
 const fichasFuncionario = readOptional("../src/modules/workforce/components/MyServiceSheets.tsx");
 const notificacoesFuncionario = readOptional("../src/modules/workforce/components/WorkNotifications.tsx");
+const gerenciadorDispositivos = readOptional("../src/components/DeviceManager.tsx");
 const agendaFuncionario = readOptional("../src/modules/workforce/components/AgendaPanel.tsx");
 const historicoFuncionario = readOptional("../src/modules/workforce/components/MyActivityHistory.tsx");
 const detalheTarefa = readOptional("../src/modules/workforce/components/TaskDetails.tsx");
@@ -123,6 +124,12 @@ test("painel informa conexão offline e retoma sincronização ao voltar", () =>
   assert.match(meuSetor, /window\.addEventListener\('offline'/);
   assert.match(meuSetor, /Sem conexão com a internet/);
   assert.match(meuSetor, /!online/);
+});
+
+test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
+  assert.match(gerenciadorDispositivos, /isDateString/);
+  assert.match(gerenciadorDispositivos, /new Set\(devices\.map\(\(device: Device\) => device\.id\)\)/);
+  assert.match(gerenciadorDispositivos, /length > data\.limit/);
 });
 
 test("painel exibe perfil somente quando a permissão foi concedida", () => {
