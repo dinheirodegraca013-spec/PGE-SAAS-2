@@ -559,6 +559,14 @@ test("histórico de acessos não anuncia vazio durante carregamento", () => {
   assert.match(equipe, /!carregando&&!audit\.length && <p role="status" aria-live="polite"/);
 });
 
+test("aceite não anuncia ausência de comprovante antes de carregar anexos", () => {
+  assert.match(aceiteInstalacao, /attachmentsLoading/);
+  assert.match(aceiteInstalacao, /!attachmentsLoading&&!attachments\.length/);
+  assert.match(aceiteInstalacao, /disabled=\{attachmentsLoading \|\| !attachments\.length \|\| disabled \|\| busy\}/);
+  assert.match(anexos, /onLoadingChange\?\.\(true\)/);
+  assert.match(anexos, /onLoadingChange\?\.\(false\)/);
+});
+
 test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
   assert.match(equipe, /Tentar novamente/);
   assert.match(equipe, /aria-busy=\{carregando\}/);
@@ -1003,8 +1011,8 @@ test("ocorrências resetam o formulário ao trocar de contexto", () => {
 
 test("aceite da instalação sinaliza salvamento e bloqueia envio concorrente", () => {
   assert.match(aceiteInstalacao, /aria-busy=\{busy\}/);
-  assert.match(aceiteInstalacao, /disabled=\{!attachments\.length \|\| disabled \|\| busy\}/);
-  assert.match(aceiteInstalacao, /!attachments\.length&&<p role="status" aria-live="polite"/);
+  assert.match(aceiteInstalacao, /disabled=\{attachmentsLoading \|\| !attachments\.length \|\| disabled \|\| busy\}/);
+  assert.match(aceiteInstalacao, /!attachmentsLoading&&!attachments\.length&&<p role="status" aria-live="polite"/);
   assert.match(aceiteInstalacao, /type="checkbox" required checked=\{confirmed\}/);
 });
 
