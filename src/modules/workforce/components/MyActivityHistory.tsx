@@ -17,7 +17,7 @@ export default function MyActivityHistory(){
   useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
     if(accessLoading){setData(null);setUpdatedAt(null);return()=>{active=false;};}
-    if(accessError||!context){setData(null);setUpdatedAt(null);setLoading(false);return()=>{active=false;};}
+    if(accessError||!context){setData(null);setUpdatedAt(null);setError(accessError||'Não foi possível validar o acesso ao histórico.');setLoading(false);return()=>{active=false;};}
     Promise.resolve().then(()=>supabase.rpc('minhas_atividades',{p_pagina:page})).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar o histórico.');return;}const normalized=normalizePage(data);if(!normalized){setError('O histórico retornou dados inválidos.');return;}setData(normalized);setUpdatedAt(new Date());})
       .catch(()=>{if(active)setError('Não foi possível carregar o histórico.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
