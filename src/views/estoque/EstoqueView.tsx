@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import StockMap from "./StockMap";
 import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
-import { hasPermission } from '@/modules/workforce/lib/access';
+import { authorizedSectors, hasPermission } from '@/modules/workforce/lib/access';
 import MaterialRequestInbox from '@/modules/workforce/components/MaterialRequestInbox';
 
 export type Item = {
@@ -53,7 +53,8 @@ const statusClass: Record<Status, string> = {
 const fmt = (v: number) => Number(v).toLocaleString("pt-BR");
 
 export default function EstoqueView() {
-  const { context }=useWorkforceAccess();
+  const { context, loading: accessLoading, error: accessError }=useWorkforceAccess();
+  const allowed=Boolean(context && (context.proprietario || (authorizedSectors(context).includes('estoque') && hasPermission(context,'estoque','visualizar'))));
   const canCreate=hasPermission(context,'estoque','criar');
   const canEdit=hasPermission(context,'estoque','editar');
   const canReport=hasPermission(context,'relatorios');
@@ -79,6 +80,9 @@ export default function EstoqueView() {
   async function carregar() {
     setCarregando(true);
     setErro("");
+    if(accessLoading||accessError||!allowed){
+      setItens([]);setProjetos([]);setErro(accessError||'Você não tem permissão para acessar o estoque.');setCarregando(false);return;
+    }
     const tenantId = getCurrentTenantId();
     if (!tenantId) {
       setErro("Sessão sem empresa vinculada. Faça login novamente.");
@@ -110,9 +114,7 @@ export default function EstoqueView() {
     if (!p.error) setProjetos((p.data || []) as Projeto[]);
     setCarregando(false);
   }
-  useEffect(() => {
-    void carregar();
-  }, []);
+  useEffect(() => { void carregar(); }, [accessLoading,accessError,allowed]);
   const resumo = useMemo(
     () => ({
       criticos: itens.filter((i) => statusFor(i) === "critico"),
@@ -210,6 +212,8 @@ export default function EstoqueView() {
     await carregar();
   }
 
+  if(accessLoading)return <main className="space-y-5 pb-8"><p role="status" aria-live="polite" className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">Validando acesso ao estoque…</p></main>;
+  if(accessError||!allowed)return <main className="space-y-5 pb-8"><div role="alert" className="rounded-xl bg-rose-50 p-4 text-sm text-rose-800">{accessError||'Você não tem permissão para acessar o estoque.'}</div></main>;
   return (
     <main className="space-y-5 pb-8">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/80 pb-4">
@@ -630,4 +634,5 @@ export default function EstoqueView() {
     </main>
   );
 }
+
 
