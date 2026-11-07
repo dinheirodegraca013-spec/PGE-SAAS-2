@@ -941,6 +941,11 @@ test("contador de notificações anuncia mudanças", () => {
   assert.match(notificacoesFuncionario, /notificações não lidas/);
 });
 
+test("anexos não consultam dados sem vínculo de funcionário validado", () => {
+  assert.match(anexos, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\)\\{setItems\\(\\[\\]\\);setLinks\\(\\{\\}\\);setLoading\\(accessLoading\\);onLoadingChange\\?\\.\\(accessLoading\\)/);
+  assert.match(anexos, /\\[serviceId,sector,page,refresh,accessLoading,accessError,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao,onListed,onLoadingChange\\]/);
+});
+
 test("anexos atualizam ao retornar à aba", () => {
   assert.match(anexos, /lastReturnRefresh=useRef\(0\)/);
   assert.match(anexos, /addEventListener\('focus',refreshOnReturn\)/);
