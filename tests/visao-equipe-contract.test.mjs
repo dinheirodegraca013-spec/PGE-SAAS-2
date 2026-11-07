@@ -374,7 +374,7 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
 });
 
 test("ações da tarefa permanecem legíveis no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| !dirty/);
+  assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| accessLoading \|\| !!accessError \|\| !dirty/);
   assert.match(minhasTarefas, /className="min-w-0 break-words text-sm text-slate-500"/);
   assert.match(minhasTarefas, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{loading\}/);
 });
@@ -1364,7 +1364,7 @@ test("ficha técnica ignora respostas antigas de secagem e produção", () => {
 });
 
 test("cartão de tarefa sinaliza atualização concorrente", () => {
-  assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
+  assert.match(minhasTarefas, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy \|\| accessLoading\}/);
 });
 
 test("cartão de tarefa informa o estado do salvamento", () => {
@@ -1761,12 +1761,19 @@ test("aceite da instalação quebra confirmação longa no mobile", () => {
 });
 
 test("cartão de tarefa mantém badges e prazo legíveis no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| !dirty/);
+  assert.match(minhasTarefas, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| accessLoading \|\| !!accessError \|\| !dirty/);
   assert.match(minhasTarefas, /className="break-words whitespace-pre-wrap text-sm text-slate-500">\{task\.observacoes\}/);
   assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2\.5 py-1 text-xs font-semibold/);
   assert.match(minhasTarefas, /<span className="break-words">\{formatTaskSector\(task\.setor\)\}<\/span>/);
   assert.match(minhasTarefas, /className=\{`shrink-0 rounded-full px-2 py-1 font-semibold/);
   assert.match(minhasTarefas, /<span className="break-words">Obrigatória para concluir a etapa<\/span>/);
   assert.match(minhasTarefas, /<span className="break-words">Prazo: <time/);
+});
+
+test("cartão de tarefa bloqueia edição durante revalidação de acesso", () => {
+  assert.match(minhasTarefas, /const \{context,loading:accessLoading,error:accessError\}=useWorkforceAccess\(\)/);
+  assert.match(minhasTarefas, /if\(lock\.current \|\| accessLoading \|\| accessError \|\| !hasPermission\(context,'tarefas',operation\(status\)\)\)return/);
+  assert.match(minhasTarefas, /aria-busy=\{busy \|\| accessLoading\}/);
+  assert.match(minhasTarefas, /disabled=\{busy \|\| accessLoading \|\| !!accessError \|\| !dirty \|\| !hasPermission\(context,'tarefas',operation\(status\)\)\}/);
 });
 
