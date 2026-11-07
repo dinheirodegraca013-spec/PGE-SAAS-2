@@ -5,7 +5,7 @@ export default function InstallationAcceptanceForm({attachments,attachmentsLoadi
   const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
   const clearError=()=>setError('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy || attachmentsLoading} onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy || attachmentsLoading || disabled} onSubmit={async event=>{
     event.preventDefault();if(disabled || lock.current)return;
     if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
     const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
@@ -22,7 +22,7 @@ export default function InstallationAcceptanceForm({attachments,attachmentsLoadi
       <p id={`${id}-proof-help`} className="text-xs text-slate-500">Envie o comprovante em Anexos privados. As opções seguem a página de anexos exibida.</p>{!attachmentsLoading&&!attachments.length&&<p role="status" aria-live="polite" className="text-xs text-amber-700">Nenhum comprovante validado disponível. Anexe e valide um comprovante antes de registrar o aceite.</p>}
       <label htmlFor={`${id}-notes`} className="block text-sm">Observações<textarea id={`${id}-notes`} className="input-field mt-1" rows={3} maxLength={2000} value={notes} onChange={event=>{setNotes(event.target.value);clearError();}}/></label>
       <label htmlFor={`${id}-confirmed`} className="flex items-start gap-2 text-sm"><input id={`${id}-confirmed`} className="mt-1 shrink-0" type="checkbox" required checked={confirmed} onChange={event=>{setConfirmed(event.target.checked);clearError();}}/><span className="min-w-0 break-words">Confirmo que o cliente informou o aceite da entrega e que o comprovante selecionado corresponde a esta instalação.</span></label>
-      <button type="submit" className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy?'Registrando aceite da instalação':attachmentsLoading?'Carregando comprovantes':'Registrar aceite da instalação'} disabled={attachmentsLoading || !attachments.length || disabled || busy}>{busy?'Registrando…':attachmentsLoading?'Carregando comprovantes…':'Registrar aceite recebido'}</button>
+      <button type="submit" className="btn-primary inline-flex w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy?'Registrando aceite da instalação':attachmentsLoading?'Carregando comprovantes':disabled?'Aguardando autorização para registrar o aceite':'Registrar aceite da instalação'} disabled={attachmentsLoading || !attachments.length || disabled || busy}>{busy?'Registrando…':attachmentsLoading?'Carregando comprovantes…':disabled?'Aguardando autorização…':'Registrar aceite recebido'}</button>
     </fieldset>
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}{message && <p role="status" aria-live="polite" className="break-words text-sm text-emerald-700">{message}</p>}
   </form>;
