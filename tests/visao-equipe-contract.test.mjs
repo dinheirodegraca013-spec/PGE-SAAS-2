@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 25783)
-Total output lines: 1596
+Warning: truncated output (original token count: 25799)
+Total output lines: 1597
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -445,8 +445,9 @@ test("tarefas não enviam atualização sem mudança", () => {
 });
 
 test("tarefas informam a quantidade visível e a existência de mais páginas", () => {
-  assert.match(minhasTarefas, /data&&!loading&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
+  assert.match(minhasTarefas, /data&&<p className="text-xs text-slate-500" role="status" aria-live="polite">/);
   assert.match(minhasTarefas, /data\.itens\.length===1\?'tarefa visível':'tarefas visíveis'/);
+  assert.match(minhasTarefas, /loading\?' · atualizando':data\.tem_mais/);
   assert.match(minhasTarefas, /data\.tem_mais\?' · Há mais tarefas disponíveis\.':''/);
 });
 
@@ -684,7 +685,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
 test("histórico informa atualização no botão", () => {
   assert.match(historicoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
   assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atu…5783 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
+  a…5799 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
