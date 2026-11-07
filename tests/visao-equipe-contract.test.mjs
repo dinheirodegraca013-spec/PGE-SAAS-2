@@ -1199,6 +1199,13 @@ test("produção e estoque sinalizam operações e mensagens ao funcionário", (
   assert.match(registroProducao, /aria-label=\{`Evento \$\{formatType\(item\.tipo\)\} · \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} · \$\{formatEntryDate\(item\.criado_em\)\}`\}/);
 });
 
+test("solicitação de material oferece retry após erro de atualização", () => {
+  assert.match(solicitacaoMaterial, /error && <div role="alert" className="flex flex-col gap-2 text-sm text-red-700/);
+  assert.match(solicitacaoMaterial, /aria-label="Tentar carregar as solicitações novamente"/);
+  assert.match(solicitacaoMaterial, /onClick=\{refreshRequests\}/);
+  assert.match(solicitacaoMaterial, /disabled=\{disabled \|\| busy\}/);
+});
+
 test("registros operacionais liberam o identificador após sucesso", () => {
   assert.match(registroProducao, /await onRegister\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
   assert.match(solicitacaoMaterial, /await onCreate\(\{\s*\.\.\.data, request: request\.current\.id\s*\}\); request\.current = null/);
