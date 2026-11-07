@@ -11,7 +11,7 @@ const notificationLabels:Record<string,string>={tarefa_atribuida:'Nova tarefa at
 const workforceRefreshEvent='gestio:refresh-workforce';
 
 export default function WorkNotifications(){
-  const {context}=useWorkforceAccess();
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();
   const [data,setData]=useState<NotificationPage|null>(null);
   const [page,setPage]=useState(0);
   const [refresh,setRefresh]=useState(0);
@@ -37,11 +37,12 @@ export default function WorkNotifications(){
   useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');
+    if(accessLoading||accessError||!context){setData(null);setSelected(null);setUpdatedAt(null);setLoading(accessLoading);return()=>{generation.current++;};}
     workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setUpdatedAt(new Date());setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar as notificações.');})
       .finally(()=>{if(request===generation.current)setLoading(false);});
     return()=>{generation.current++;};
-  },[page,refresh,context?.funcionario.id,context?.funcionario.versao]);
+  },[page,refresh,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
   return <section className="card space-y-4 p-5" aria-labelledby="work-notifications-title" aria-busy={loading || !!busy}>
     <div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 id="work-notifications-title" className="break-words text-lg font-bold">Notificações <span aria-live="polite">{data?(data.nao_lidas>0?<span className="ml-2 inline-flex rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-800" aria-label={`${data.nao_lidas} notificações não lidas`}>{data.nao_lidas} não lidas</span>:<span className="ml-2 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">Tudo lido</span>):''}</span></h2><span className="text-xs text-slate-500" aria-live="polite">{updatedAt?`Atualizadas às ${updatedAt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`:'Aguardando atualização'}</span></div><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading || !!busy} onClick={()=>{setMessage('');setRefresh(n=>n+1);}} aria-label={loading || !!busy?'Aguarde a atualização das notificações':'Atualizar notificações'}>{loading || !!busy?'Aguarde…':'Atualizar notificações'}</button></div>
     {loading && <p role="status" aria-live="polite">{data ? 'Atualizando notificações…' : 'Carregando notificações…'}</p>}{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…</p>}{message && <p role="status" aria-live="polite">{message}</p>}
