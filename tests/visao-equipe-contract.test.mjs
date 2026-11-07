@@ -1327,6 +1327,12 @@ test("notificações destacam cada item não lido", () => {
   assert.match(notificacoesFuncionario, />Não lida<\/span>/);
 });
 
+test("editar acesso abre o editor completo de setores e permissões", () => {
+  assert.match(equipe, /setAccessUser\(perfil\.id\)/);
+  assert.match(equipe, /EmployeeAccessEditor userId=\{accessUser\}/);
+  assert.doesNotMatch(equipe, /onClick=\{\(\) => \{ setEditingId\(perfil\.id\)/);
+});
+
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
   assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
