@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 26061)
-Total output lines: 1610
-
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -825,7 +822,85 @@ test("agenda limpa o erro ao corrigir o período", () => {
 
 test("detalhes abertos oferecem fechamento explícito", () => {
   assert.match(notificacoesFuncionario, /onClick=\{\(\)=>\{returnFocus\.current=true;setSelected\(null\);\}\}>Fechar detalhe/);
-  assert.match(notificacoesFuncionario, /aria-label="Fechar detalhe da no…1061 tokens truncated…oricoFuncionario, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(notificacoesFuncionario, /aria-label="Fechar detalhe da notificação"/);
+  assert.match(notificacoesFuncionario, /selectedRef\.current\?\.focus\(\)/);
+  assert.match(notificacoesFuncionario, /openerRef\.current\?\.focus\(\)/);
+  assert.match(fichasFuncionario, /onClick=\{\(\) => \{ returnFocus\.current = true; setSelected\(null\); \}\}>Fechar ficha/);
+  assert.match(fichasFuncionario, /aria-label="Fechar ficha aberta"/);
+  assert.match(fichasFuncionario, /selectedRef\.current\?\.focus\(\)/);
+  assert.match(fichasFuncionario, /tabIndex=\{-1\}[^>]*aria-label=\{`Ficha aberta:/);
+  assert.match(fichasFuncionario, /returnFocus\.current = true; setSelected\(null\)/);
+  assert.match(fichasFuncionario, /openerRef\.current\?\.focus\(\)/);
+});
+
+test("produção e secagem usam estado explícito para mensagens acessíveis", () => {
+  assert.match(registroProducao, /messageKind === 'status' \? 'status' : 'alert'/);
+  assert.match(controleSecagem, /messageKind === 'status' \? 'status' : 'alert'/);
+});
+
+test("resumo do funcionário atualiza ao retornar à aba", () => {
+  assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
+test("projetos do setor atualizam ao retornar à aba", () => {
+  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
+test("projetos do setor rejeitam duplicidades e ordenam prazos válidos", () => {
+  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
+  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
+  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
+});
+
+test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
+  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
+});
+
+test("editor de acesso preserva controles no mobile", () => {
+  assert.match(editorAcesso, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=\{onCancel\}/);
+  assert.match(editorAcesso, /className="min-w-0 max-w-full text-xs text-slate-500"/);
+  assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
+  assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
+});
+
+test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
+  assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
+});
+
+test("pesquisa de fichas limpa erro ao editar o termo", () => {
+  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
+});
+
+test("fichas de serviço atualizam ao retornar à aba", () => {
+  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
+test("contador de notificações anuncia mudanças", () => {
+  assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
+  assert.match(notificacoesFuncionario, /Tudo lido/);
+  assert.match(notificacoesFuncionario, /notificações não lidas/);
+});
+
+test("anexos atualizam ao retornar à aba", () => {
+  assert.match(anexos, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(anexos, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(anexos, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
+test("agenda atualiza ao retornar à aba", () => {
+  assert.match(agendaFuncionario, /lastReturnRefresh=useRef\(0\)/);
+  assert.match(agendaFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
+  assert.match(agendaFuncionario, /void load\(\)/);
+});
+
+test("histórico atualiza ao retornar à aba", () => {
+  assert.match(historicoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(historicoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
 });
 
@@ -1209,6 +1284,10 @@ test("pesquisa de fichas não cria nova carga durante sincronização", () => {
 test("operações de produção e secagem sinalizam o formulário em andamento", () => {
   assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
   assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
+});
+
+test("ficha limpa erros de consultas antes de uma nova sincronização", () => {
+  assert.match(fichaTecnica, /setError\(''\); setDryingError\(''\); setProductionError\(''\); setMaterialError\(''\); setLoading\(true\)/);
 });
 
 test("ações de execução da ficha informam salvamento", () => {

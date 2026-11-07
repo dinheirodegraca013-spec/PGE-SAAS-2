@@ -37,7 +37,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   }, [serviceId, sector, context?.funcionario.versao]);
   useEffect(() => {
     const request = ++generation.current;
-    setError(''); setLoading(true);
+    setError(''); setDryingError(''); setProductionError(''); setMaterialError(''); setLoading(true);
     (async () => {
       try {
         const result = await technicalSheets.load(serviceId, sector);
@@ -184,3 +184,4 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
   </section>;
 }
+
