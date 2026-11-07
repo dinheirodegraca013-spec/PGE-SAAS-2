@@ -846,7 +846,7 @@ test("notificações e histórico quebram rótulos operacionais longos", () => {
 
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
   assert.match(historicoFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
