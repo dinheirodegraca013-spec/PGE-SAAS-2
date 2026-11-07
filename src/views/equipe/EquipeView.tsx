@@ -382,7 +382,7 @@ export default function EquipeView() {
                     </td>
                     {administrador && <td className="p-3"><div className="flex flex-wrap gap-2">
                       {limits && perfil.id !== limits.owner_id && limits.owner_id === usuario?.usuarioId && <button type="button" className="btn-secondary" aria-label={`Editar acesso de ${perfil.nome_completo || 'colaborador'}`} onClick={() => { setNovo(false); setAccessUser(perfil.id); }}>Editar acesso</button>}
-                      <button type="button" className="btn-secondary" aria-label={`Gerenciar dispositivos de ${perfil.nome_completo || 'colaborador'}`} onClick={() => setDeviceUser(perfil.id)}>Dispositivos</button>
+                      {limits && limits.owner_id === usuario?.usuarioId && <button type="button" className="btn-secondary" aria-label={`Gerenciar dispositivos de ${perfil.nome_completo || 'colaborador'}`} onClick={() => setDeviceUser(perfil.id)}>Dispositivos</button>}
                     </div></td>}
                   </tr>
                 ))}
