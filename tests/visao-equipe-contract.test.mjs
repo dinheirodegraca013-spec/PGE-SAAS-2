@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 30076)
-Total output lines: 1818
+Warning: truncated output (original token count: 30198)
+Total output lines: 1825
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -884,6 +884,13 @@ test("liberação de ficha exige proprietário e acesso atual", () => {
   assert.match(fichaTecnica, /if \(mutation\.current \|\| accessLoading \|\| accessError \|\| !context\?\.proprietario\) return/);
 });
 
+test("subações da ficha revalidam autorização antes de mutar", () => {
+  assert.match(fichaTecnica, /const assertCurrentPermission = \(module: string, operation = 'visualizar'\)/);
+  assert.match(fichaTecnica, /assertCurrentPermission\('ordens', 'editar'\);/);
+  assert.match(fichaTecnica, /assertCurrentPermission\('estoque', 'criar'\);/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| saving \|\| checklistBusy\} onAssign/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
@@ -960,14 +967,7 @@ test("projetos do setor atualizam ao retornar à aba", () => {
   assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
 });
 
-test("projetos do setor rejeitam duplicidades e ordenam prazos válidos", () => {
-  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
-  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
-  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
-});
-
-test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
-  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,esco…76 tokens truncated… /className="min-w-0 max-w-full text-xs text-slate-500"/);
+test("projetos do setor re…198 tokens truncated… /className="min-w-0 max-w-full text-xs text-slate-500"/);
   assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
   assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
 });
