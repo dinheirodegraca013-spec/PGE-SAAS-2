@@ -4,7 +4,7 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 const formatAttachmentSize=(value:number)=>Number.isFinite(value)&&value>=0?`${Math.ceil(value/1024)} KB`:'Tamanho indisponível';
 const formatAttachmentName=(value:string)=>value||'Anexo sem nome';
 export default function SheetAttachments({serviceId,sector,canUpload,onListed,onLoadingChange}:{serviceId:string;sector:string;canUpload:boolean;onListed?:(items:Attachment[])=>void;onLoadingChange?:(loading:boolean)=>void}){
-  const {context}=useWorkforceAccess();const id=useId();
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const id=useId();
   const [items,setItems]=useState<Attachment[]>([]);const [more,setMore]=useState(false);const [page,setPage]=useState(0);const [refresh,setRefresh]=useState(0);
   const [file,setFile]=useState<File|null>(null);const [busy,setBusy]=useState(false);const [loading,setLoading]=useState(true);const [error,setError]=useState('');const [message,setMessage]=useState('');const [links,setLinks]=useState<Record<string,string>>({});const [linkBusy,setLinkBusy]=useState<string|null>(null);
   const receipt=useRef<UploadReceipt|null>(null);const lock=useRef(false);const generation=useRef(0);const input=useRef<HTMLInputElement>(null);const lastReturnRefresh=useRef(0);
@@ -12,10 +12,11 @@ export default function SheetAttachments({serviceId,sector,canUpload,onListed,on
   useEffect(()=>{setItems([]);setLinks({});onListed?.([]);},[serviceId,sector,page,context?.funcionario.id,context?.funcionario.versao,onListed]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
   useEffect(()=>{const request=++generation.current;setLoading(true);onLoadingChange?.(true);setError('');
+    if(accessLoading||accessError||!context){setItems([]);setLinks({});setLoading(accessLoading);onLoadingChange?.(accessLoading);return()=>{generation.current++;};}
     attachments.list(serviceId,sector,page).then(result=>{if(request===generation.current){setItems(result.itens);setMore(result.tem_mais);onListed?.(result.itens);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar os anexos.');}).finally(()=>{if(request===generation.current){setLoading(false);onLoadingChange?.(false);}});
     return()=>{generation.current++;};
-  },[serviceId,sector,page,refresh,context?.funcionario.id,context?.funcionario.versao,onListed,onLoadingChange]);
+  },[serviceId,sector,page,refresh,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao,onListed,onLoadingChange]);
   return <section className="space-y-3 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy || !!linkBusy}><h4 id={`${id}-title`} className="font-semibold">Anexos privados da ficha</h4>
     {canUpload && <form className="space-y-3" onSubmit={async event=>{
       event.preventDefault();if(lock.current || !!linkBusy || !file)return;
