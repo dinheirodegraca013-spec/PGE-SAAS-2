@@ -612,6 +612,14 @@ test("gerenciador de dispositivos anuncia carga inicial e atualização", () => 
   assert.match(gerenciadorDispositivos, /devices\.length \? 'Atualizando dispositivos…' : 'Carregando dispositivos…'/);
 });
 
+test("gerenciador de dispositivos oferece retry acessível após falha", () => {
+  assert.match(gerenciadorDispositivos, /aria-labelledby="authorized-devices-title"/);
+  assert.match(gerenciadorDispositivos, /<h2 id="authorized-devices-title"/);
+  assert.match(gerenciadorDispositivos, /error && <div role="alert" className="flex flex-col gap-2/);
+  assert.match(gerenciadorDispositivos, /aria-label="Tentar carregar os dispositivos novamente"/);
+  assert.match(gerenciadorDispositivos, /onClick=\{\(\) => void load\(\)\}/);
+});
+
 test("revogar o dispositivo atual encerra a sessão local", () => {
   assert.match(gerenciadorDispositivos, /const revokedDevice = devices\.find\(device => device\.id === id\)/);
   assert.match(gerenciadorDispositivos, /if \(revokedDevice\?\.current\) \{\s*await supabase\.auth\.signOut\(\);\s*window\.location\.assign\('\/login'\);/);
