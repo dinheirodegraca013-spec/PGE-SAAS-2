@@ -15,7 +15,7 @@ const formatAgendaPriority=(value:string)=>({baixa:'Baixa',normal:'Normal',alta:
 const agendaTiming=(value:string,status:string)=>{if(['concluida','cancelada'].includes(status))return null;const date=new Date(value);if(Number.isNaN(date.getTime()))return null;const today=new Date();today.setHours(0,0,0,0);date.setHours(0,0,0,0);const days=Math.round((date.getTime()-today.getTime())/86400000);return days<0?'Atrasada':days===0?'Hoje':days===1?'Amanhã':days<=7?`Em ${days} dias`:null;};
 
 export default function AgendaPanel(){
-  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const allowed=!accessLoading&&!accessError&&hasPermission(context,'agenda','visualizar');
+  const {context,loading:accessLoading,error:accessError,reload:reloadAccess}=useWorkforceAccess();const allowed=!accessLoading&&!accessError&&hasPermission(context,'agenda','visualizar');
   const [start,setStart]=useState(isoToday());const [end,setEnd]=useState(()=>isoAfterDays(30));const [items,setItems]=useState<AgendaItem[]>([]);const [loading,setLoading]=useState(false);const [error,setError]=useState('');const [updatedAt,setUpdatedAt]=useState<Date|null>(null);
   const generation=useRef(0);const lastReturnRefresh=useRef(0);const invalidRange=Boolean(start&&end&&end<start);
   useEffect(()=>{setItems([]);setUpdatedAt(null);setError(accessError||'');setLoading(accessLoading);},[start,end,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
@@ -26,7 +26,7 @@ export default function AgendaPanel(){
   const presetActive=(days:number)=>start===isoToday()&&end===isoAfterDays(days);
   useEffect(()=>{void load();return()=>{generation.current++;};},[allowed,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao,start,end]);
   if(accessLoading)return <p role="status" aria-live="polite">Validando acesso à agenda…</p>;
-  if(accessError)return <p role="alert" className="break-words text-sm text-red-700">{accessError}</p>;
+  if(accessError)return <div role="alert" className="flex flex-col gap-3 rounded-lg bg-rose-50 p-4 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"><span className="min-w-0 break-words">{accessError}</span><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={accessLoading} aria-label={accessLoading?'Validando acesso':'Revalidar acesso'} onClick={()=>void reloadAccess()}>{accessLoading?'Validando…':'Revalidar acesso'}</button></div>;
   if(!allowed)return null;
   const controlsDisabled=loading||accessLoading||!!accessError;
   return <section className="card space-y-4 p-5" aria-labelledby="work-agenda-title" aria-busy={loading || accessLoading}>
