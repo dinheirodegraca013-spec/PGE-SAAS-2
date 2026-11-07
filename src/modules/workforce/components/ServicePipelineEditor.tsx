@@ -56,7 +56,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
       </li>)}</ol>
       <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={disabled} aria-label={busy?'Salvando fluxo':flow.configurado?'Salvar sequência':'Configurar fluxo'}>{busy?'Salvando…':flow.configurado?'Salvar sequência':'Configurar fluxo'}</button>
     </form>}
-    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading} aria-label={loading?'Carregando fluxo':'Recarregar fluxo'} onClick={()=>{
+    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || accessLoading || !!accessError} aria-label={accessLoading?'Validando acesso':loading?'Carregando fluxo':'Recarregar fluxo'} onClick={()=>{
       if(flow && JSON.stringify(selected)!==JSON.stringify(flow.setores) && !window.confirm('Descartar a sequência não salva e recarregar?'))return;
       setRetry(n=>n+1);
     }}>{loading?'Carregando…':'Recarregar fluxo'}</button>
