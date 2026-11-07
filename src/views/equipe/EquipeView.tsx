@@ -390,7 +390,7 @@ export default function EquipeView() {
         )}
       </section>
       {administrador && <><h2 className="text-lg font-bold">{deviceUser ? `Dispositivos de ${perfis.find(p => p.id === deviceUser)?.nome_completo || 'colaborador'}` : 'Meus dispositivos'}</h2><DeviceManager key={deviceUser || 'self'} userId={deviceUser} />
-      <section className="card p-5" aria-labelledby="access-history-title"><h2 id="access-history-title" className="text-lg font-bold">Histórico de acessos</h2><ul className="mt-3 space-y-2 text-sm">{audit.slice(0,10).map(a => <li key={a.id} className="break-words">{formatAuditDate(a.created_at)} · {actionLabels[a.action] || a.action}{a.subject_id ? ` · ${perfis.find(p => p.id === a.subject_id)?.nome_completo || 'Colaborador'}` : ''}</li>)}</ul>{!audit.length && <p className="mt-2 text-sm text-slate-500">Nenhuma alteração registrada.</p>}</section></>}
+      <section className="card p-5" aria-labelledby="access-history-title"><h2 id="access-history-title" className="text-lg font-bold">Histórico de acessos</h2><ul className="mt-3 space-y-2 text-sm">{audit.slice(0,10).map(a => <li key={a.id} className="break-words">{formatAuditDate(a.created_at)} · {actionLabels[a.action] || a.action}{a.subject_id ? ` · ${perfis.find(p => p.id === a.subject_id)?.nome_completo || 'Colaborador'}` : ''}</li>)}</ul>{!carregando&&!audit.length && <p role="status" aria-live="polite" className="mt-2 text-sm text-slate-500">Nenhuma alteração registrada.</p>}</section></>}
     </div>
   );
 }
