@@ -31,7 +31,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     const moved=isSetor(next[targetIndex])?setores[next[targetIndex]]:next[targetIndex];
     setMessage(`${moved} movida para a posição ${targetIndex+1}.`);return next;
   });};
-  return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy}>
+  return <section className="card space-y-4 p-6" aria-labelledby={`${id}-title`} aria-busy={loading || busy || accessLoading}>
     <h3 id={`${id}-title`} className="font-semibold">Fluxo de produção</h3>
     <p className="text-sm text-slate-500">Selecione as etapas necessárias e ordene a execução. Estoque permanece como apoio.</p>
     {loading && <p role="status" aria-live="polite">{flow ? 'Atualizando fluxo…' : 'Carregando fluxo…'}</p>}
