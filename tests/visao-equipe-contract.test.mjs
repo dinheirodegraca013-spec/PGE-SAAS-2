@@ -285,7 +285,7 @@ test("contagem de projetos é anunciada durante a sincronização", () => {
 });
 
 test("projetos do setor anunciam carregamento na própria seção", () => {
-  assert.match(meuSetor, /<section className="card p-5" aria-labelledby="sector-projects-title" aria-busy=\{carregando\}>/);
+  assert.match(meuSetor, /<section className="card p-5" aria-labelledby="sector-projects-title" aria-busy=\{carregando \|\| accessLoading\}>/);
 });
 
 test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
