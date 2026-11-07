@@ -37,7 +37,7 @@ export default function WorkNotifications(){
   useEffect(()=>{const refreshPanel=()=>setRefresh(value=>value+1);window.addEventListener(workforceRefreshEvent,refreshPanel);return()=>window.removeEventListener(workforceRefreshEvent,refreshPanel);},[]);
   useEffect(()=>{
     const request=++generation.current;setLoading(true);setError('');
-    if(accessLoading||accessError||!context){setData(null);setSelected(null);setUpdatedAt(null);setLoading(accessLoading);return()=>{generation.current++;};}
+    if(accessLoading||accessError||!context){setData(null);setSelected(null);setUpdatedAt(null);setError(accessError||'Não foi possível validar o acesso às notificações.');setLoading(accessLoading);return()=>{generation.current++;};}
     workNotifications.list(page).then(result=>{if(request===generation.current){setData(result);setUpdatedAt(new Date());setSelected(current=>current && result.itens.some(item=>item.id===current.id)?current:null);}})
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar as notificações.');})
       .finally(()=>{if(request===generation.current)setLoading(false);});
