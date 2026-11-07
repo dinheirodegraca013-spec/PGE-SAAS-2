@@ -1118,10 +1118,10 @@ test("ocorrências e anexos ocultam paginação quando vazios", () => {
 });
 
 test("ocorrências informam atualização no botão", () => {
-  assert.match(ocorrenciasFuncionario, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
-  assert.match(ocorrenciasFuncionario, /\{loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
+  assert.match(ocorrenciasFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
+  assert.match(ocorrenciasFuncionario, /\{accessLoading\?'Validando…':loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy\} aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
+  assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
 });
 
 test("ocorrências limpam feedback ao editar", () => {
@@ -1769,7 +1769,7 @@ test("ocorrências preservam comunicação, resolução e paginação no mobile"
   assert.match(ocorrencias, /<button type="submit" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{busy\?'Salvando resolução da ocorrência':'Registrar resolução da ocorrência'\}/);
   assert.match(ocorrencias, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a página anterior de ocorrências"/);
   assert.match(ocorrencias, /<span className="self-center shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
-  assert.match(ocorrencias, /aria-label=\{loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
+  assert.match(ocorrencias, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
 });
 
 test("solicitações de materiais acomodam cabeçalho e ações no mobile", () => {
