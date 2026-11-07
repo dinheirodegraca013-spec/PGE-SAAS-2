@@ -92,6 +92,10 @@ test("perfil fecha o menu móvel ao navegar", () => {
   assert.match(appLayout, /to=\{employeeProfilePath\}\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
 });
 
+test("atalho de perfil do funcionário não aponta para seção não autorizada", () => {
+  assert.match(appLayout, /const employeeProfilePath = work\.context && !work\.context\.proprietario \? hasPermission\(work\.context, 'perfil'\) \? '\/meu-setor#perfil' : '\/meu-setor' : '\/configuracoes'/);
+});
+
 test("atalho de recursos também fecha o menu móvel", () => {
   assert.match(appLayout, /to="\/configuracoes"\s*onClick=\{\(\) => setMobileMenuOpen\(false\)\}/);
 });
@@ -158,14 +162,14 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /Tentar novamente/);
   assert.match(meuSetor, /aria-live="polite"/);
   assert.match(meuSetor, /atualizadoEm/);
-  assert.match(meuSetor, /const canViewSectorProjects = hasPermission\\(context, 'ordens'\\) \\|\\| hasPermission\\(context, 'painel'\\)/);
-  assert.match(meuSetor, /!context \\|\\| !canViewSectorProjects/);
-  assert.match(meuSetor, /context && canViewSectorProjects && <section/);
   assert.match(meuSetor, /Atualizado às/);
+  assert.match(meuSetor, /const canViewSectorProjects = hasPermission\(context, 'ordens'\) \|\| hasPermission\(context, 'painel'\)/);
+  assert.match(meuSetor, /!context \|\| !canViewSectorProjects/);
+  assert.match(meuSetor, /context && canViewSectorProjects && <section/);
 });
 
 test("painel do funcionário informa quantos módulos estão liberados", () => {
-  assert.match(meuSetor, /authorizedModuleCount = context \\? new Set\\(context\\.permissoes\\.map\\(grant => grant\\.modulo\\)\\)\\.size : 0/);
+  assert.match(meuSetor, /authorizedModuleCount = context \? new Set\(context\.permissoes\.map\(grant => grant\.modulo\)\)\.size : 0/);
   assert.match(meuSetor, /Nenhum módulo liberado/);
 });
 
@@ -223,7 +227,7 @@ test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
   assert.match(equipeView, /title=\{salvando \|\| encaminhando \? 'Aguarde a operação em andamento' : !limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
   assert.match(equipeView, /role="progressbar"/);
-  assert.match(equipeView, /role="group" aria-live="polite" aria-label=\\{`Uso de sublogins/);
+  assert.match(equipeView, /role="group" aria-live="polite" aria-label=\{`Uso de sublogins/);
   assert.match(equipeView, /aria-valuetext=\{`\$\{subloginPercentual\}% utilizado`\}/);
 });
 
@@ -671,8 +675,8 @@ test("notificações permitem retry e paginação acessível", () => {
 });
 
 test("notificações não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(notificacoesFuncionario, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\)\\{setData\\(null\\);setSelected\\(null\\);setUpdatedAt\\(null\\);setLoading\\(accessLoading\\)/);
-  assert.match(notificacoesFuncionario, /\\[page,refresh,accessLoading,accessError,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao\\]/);
+  assert.match(notificacoesFuncionario, /if\(accessLoading\|\|accessError\|\|!context\)\{setData\(null\);setSelected\(null\);setUpdatedAt\(null\);setLoading\(accessLoading\)/);
+  assert.match(notificacoesFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
 test("notificações ocultam paginação quando vazias", () => {
@@ -925,6 +929,11 @@ test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
   assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
 });
 
+test("anexos não consultam dados sem vínculo de funcionário validado", () => {
+  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setLoading\(accessLoading\);onLoadingChange\?\.\(accessLoading\)/);
+  assert.match(anexos, /\[serviceId,sector,page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,onListed,onLoadingChange\]/);
+});
+
 test("pesquisa de fichas limpa erro ao editar o termo", () => {
   assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
 });
@@ -939,11 +948,6 @@ test("contador de notificações anuncia mudanças", () => {
   assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
   assert.match(notificacoesFuncionario, /Tudo lido/);
   assert.match(notificacoesFuncionario, /notificações não lidas/);
-});
-
-test("anexos não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(anexos, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\)\\{setItems\\(\\[\\]\\);setLinks\\(\\{\\}\\);setLoading\\(accessLoading\\);onLoadingChange\\?\\.\\(accessLoading\\)/);
-  assert.match(anexos, /\\[serviceId,sector,page,refresh,accessLoading,accessError,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao,onListed,onLoadingChange\\]/);
 });
 
 test("anexos atualizam ao retornar à aba", () => {
@@ -967,6 +971,11 @@ test("ocorrências reiniciam página e atualizam ao retornar à aba", () => {
   assert.match(ocorrencias, /setPage\(0\);\},\[serviceId,sector,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
   assert.match(ocorrencias, /lastReturnRefresh=useRef\(0\)/);
   assert.match(ocorrencias, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
+test("ocorrências aguardam autorização atual antes de consultar registros", () => {
+  assert.match(ocorrenciasFuncionario, /if\(accessLoading\|\|accessError\|\|!context\)\{setLoading\(accessLoading\);setItems\(\[\]\);setMore\(false\)/);
+  assert.match(ocorrenciasFuncionario, /\[serviceId,sector,page,refresh,canView,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
@@ -1030,11 +1039,6 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
 test("ocorrências e anexos ocultam paginação quando vazios", () => {
   assert.match(ocorrencias, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Paginação de ocorrências"/);
   assert.match(anexos, /\(items\.length \|\| page>0 \|\| more\) && <nav aria-label="Paginação de anexos"/);
-});
-
-test("ocorrências aguardam autorização atual antes de consultar registros", () => {
-  assert.match(ocorrenciasFuncionario, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\)\\{setLoading\\(accessLoading\\);setItems\\(\\[\\]\\);setMore\\(false\\)/);
-  assert.match(ocorrenciasFuncionario, /\\[serviceId,sector,page,refresh,canView,accessLoading,accessError,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao\\]/);
 });
 
 test("ocorrências informam atualização no botão", () => {
@@ -1214,8 +1218,8 @@ test("fluxo preserva a configuração durante sincronização", () => {
 });
 
 test("fluxo aguarda autorização atual antes de carregar a sequência", () => {
-  assert.match(fluxoProducao, /if\\(accessLoading\\|\\|accessError\\)\\{setFlow\\(null\\);setSelected\\(\\[\\]\\);setLoading\\(accessLoading\\)/);
-  assert.match(fluxoProducao, /\\[serviceId,context\\?\\.proprietario,accessLoading,accessError,retry\\]/);
+  assert.match(fluxoProducao, /if\(accessLoading\|\|accessError\)\{setFlow\(null\);setSelected\(\[\]\);setLoading\(accessLoading\)/);
+  assert.match(fluxoProducao, /\[serviceId,context\?\.proprietario,accessLoading,accessError,retry\]/);
 });
 
 test("fluxo limpa feedback ao alterar a sequência", () => {
@@ -1241,8 +1245,8 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
 });
 
 test("criação de tarefa aguarda a validação atual do acesso", () => {
-  assert.match(criacaoTarefa, /if\\(accessLoading\\|\\|accessError\\)\\{setCandidates\\(\\[\\]\\);setEmployee\\(''\\);setLoading\\(accessLoading\\)/);
-  assert.match(criacaoTarefa, /\\[serviceId,sector,canCreate,accessLoading,accessError,context\\?\\.proprietario,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao,retry\\]/);
+  assert.match(criacaoTarefa, /if\(accessLoading\|\|accessError\)\{setCandidates\(\[\]\);setEmployee\(''\);setLoading\(accessLoading\)/);
+  assert.match(criacaoTarefa, /\[serviceId,sector,canCreate,accessLoading,accessError,context\?\.proprietario,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
 });
 
 test("criação de tarefa limpa feedback ao trocar o contexto", () => {
@@ -1293,6 +1297,14 @@ test("estoque e financeiro aguardam autorização antes de consultar dados", () 
   assert.match(financeiroView, /Você não tem permissão para acessar o financeiro/);
 });
 
+test("inbox de materiais bloqueia consultas durante validação de acesso", () => {
+  assert.match(inboxMateriais, /loading:accessLoading,error:accessError/);
+  assert.match(inboxMateriais, /allowed=!accessLoading&&!accessError&&hasPermission\(context,'estoque','visualizar'\)/);
+  assert.match(inboxMateriais, /if\(!allowed\|\|accessLoading\|\|accessError\)return/);
+  assert.match(inboxMateriais, /if\(accessLoading\)return <p role="status" aria-live="polite">Validando acesso às solicitações de material/);
+  assert.match(inboxMateriais, /if\(accessError\)return <p role="alert"/);
+});
+
 test("detalhe da tarefa aguarda contexto validado antes de consultar", () => {
   assert.match(detalheTarefa, /const \{context,loading:accessLoading,error:accessError\}=useWorkforceAccess\(\)/);
   assert.match(detalheTarefa, /if\(accessLoading\|\|accessError\|\|!context\)/);
@@ -1314,8 +1326,8 @@ test("responsável limpa feedback ao recarregar candidatos", () => {
 });
 
 test("atribuição de ficha aguarda autorização atual antes de carregar responsáveis", () => {
-  assert.match(atribuicaoFicha, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\?\\.proprietario\\)\\{setCandidates\\(\\[\\]\\);setLoading\\(accessLoading\\)/);
-  assert.match(atribuicaoFicha, /\\[serviceId,sector,retry,accessLoading,accessError,context\\?\\.proprietario\\]/);
+  assert.match(atribuicaoFicha, /if\(accessLoading\|\|accessError\|\|!context\?\.proprietario\)\{setCandidates\(\[\]\);setLoading\(accessLoading\)/);
+  assert.match(atribuicaoFicha, /\[serviceId,sector,retry,accessLoading,accessError,context\?\.proprietario\]/);
 });
 
 test("responsável limpa feedback quando a ficha muda externamente", () => {
@@ -1517,7 +1529,7 @@ test("inbox de estoque ignora respostas de filtros antigos", () => {
 test("inbox de estoque preserva dados durante nova consulta", () => {
   assert.doesNotMatch(inboxMateriais, /setLoading\(true\);setError\(''\);if\(clearMessage\)setMessage\(''\);setItems\(\[\]\)/);
   assert.match(inboxMateriais, /items\.length\?'Atualizando solicitações…':'Carregando solicitações…'/);
-  assert.match(inboxMateriais, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[status,allowed/);
+  assert.match(inboxMateriais, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);setError\(accessError\|\|''\);setLoading\(accessLoading\);\},\[status,allowed,accessLoading,accessError/);
 });
 
 test("inbox preserva feedback após ação concluída", () => {
