@@ -32,11 +32,12 @@ export const workforceAccess = {
     if(!isEmployee(data))throw new Error('O cadastro do funcionário retornou dados inválidos. Recarregue a tela.');return data;
   },
   async save(input: {id:string;nome:string;cargo:string;identificador_interno:string;setor:string;setores_adicionais:string[];status:string;permissoes:AccessGrant[];versao:number}): Promise<EmployeeConfiguration> {
-    if(!input||!isNonEmptyString(input.id)||!isNonEmptyString(input.nome)||typeof input.cargo!=='string'||typeof input.identificador_interno!=='string'||!sectors.includes(input.setor)||!Array.isArray(input.setores_adicionais)||input.setores_adicionais.some(item=>!sectors.includes(item))||new Set(input.setores_adicionais).size!==input.setores_adicionais.length||input.setores_adicionais.includes(input.setor)||!['ativo','inativo','suspenso'].includes(input.status)||!Array.isArray(input.permissoes)||!input.permissoes.every(isGrant)||!hasUniquePermissions(input.permissoes)||!Number.isSafeInteger(input.versao)||input.versao<1)throw new Error('Os dados de acesso do funcionário são inválidos.');
+    if(!input||!isNonEmptyString(input.id)||!isNonEmptyString(input.nome)||typeof input.cargo!=='string'||typeof input.identificador_interno!=='string'||!sectors.includes(input.setor)||!Array.isArray(input.setores_adicionais)||input.setores_adicionais.some(item=>!sectors.includes(item))||new Set(input.setores_adicionais).size!==input.setores_adicionais.length||input.setores_adicionais.includes(input.setor)||!['ativo','inativo','suspenso','suspenso_plano'].includes(input.status)||!Array.isArray(input.permissoes)||!input.permissoes.every(isGrant)||!hasUniquePermissions(input.permissoes)||!Number.isSafeInteger(input.versao)||input.versao<1)throw new Error('Os dados de acesso do funcionário são inválidos.');
     const { data,error } = await supabase.rpc('funcionario_configurar',{
-      p_usuario_id:input.id,p_nome:input.nome.trim(),p_cargo:input.cargo.trim(),p_setor:input.setor,p_setores_adicionais:input.setores_adicionais,p_status:input.status,p_permissoes:input.permissoes,p_versao:input.versao,p_identificador_interno:input.identificador_interno.trim()||null,
+      p_usuario_id:input.id,p_nome:input.nome.trim(),p_cargo:input.cargo.trim(),p_setor:input.setor,p_setores_adicionais:input.setores_adicionais,p_status:input.status==='suspenso_plano'?'ativo':input.status,p_permissoes:input.permissoes,p_versao:input.versao,p_identificador_interno:input.identificador_interno.trim()||null,
     });
     if(error || !data) throw new Error(error?.message || 'Não foi possível atualizar o acesso.');
     if(!isEmployee(data))throw new Error('A atualização do acesso retornou dados inválidos. Recarregue a tela.');return data;
   },
 };
+
