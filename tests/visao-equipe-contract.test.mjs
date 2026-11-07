@@ -559,6 +559,11 @@ test("editor de acesso informa catálogo de permissões vazio", () => {
   assert.match(editorAcesso, /Nenhuma permissão está disponível para configuração/);
 });
 
+test("editor de acesso alerta funcionário ativo sem módulos liberados", () => {
+  assert.match(editorAcesso, /status==='ativo'&&!grants\.length/);
+  assert.match(editorAcesso, /não possui módulos liberados/);
+});
+
 test("grupos de permissões são acessíveis por teclado e toque", () => {
   assert.match(editorAcesso, /<summary className="flex min-h-11 cursor-pointer items-center rounded-lg px-2 py-2 break-words font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2">/);
 });
