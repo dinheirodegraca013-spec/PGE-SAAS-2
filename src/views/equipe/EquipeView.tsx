@@ -232,7 +232,10 @@ export default function EquipeView() {
       </header>
       {administrador && limits && <section className="card space-y-2 p-5" aria-labelledby="plan-access-title">
         <h2 id="plan-access-title" className="text-lg font-bold">Acessos do plano {limits.plan}</h2>
-        <p className="text-sm">{Math.min(limits.sublogins_active, limits.sublogin_limit)} de {limits.sublogin_limit} sublogins utilizados · {limits.sublogins_available} disponíveis · {limits.device_limit} dispositivo(s) por login.</p>
+        <div role="group" aria-label={`Uso de sublogins: ${subloginsUsados} de ${limits.sublogin_limit} utilizados`} className="space-y-1">
+          <div className="flex flex-wrap justify-between gap-2 text-sm"><span>{subloginsUsados} de {limits.sublogin_limit} sublogins utilizados</span><span>{limits.sublogins_available} disponíveis · {limits.device_limit} dispositivo(s) por login</span></div>
+          <div className="h-2 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuemin={0} aria-valuemax={limits.sublogin_limit} aria-valuenow={subloginsUsados} aria-valuetext={`${subloginPercentual}% utilizado`}><div className={`h-full rounded-full ${subloginPercentual >= 100 ? 'bg-rose-500' : subloginPercentual >= 80 ? 'bg-amber-500' : 'bg-cyan-500'}`} style={{ width: `${subloginPercentual}%` }} /></div>
+        </div>
         <p className="text-sm text-slate-500">A conta principal não ocupa uma vaga. No downgrade, os cadastros mais antigos permanecem liberados.</p>
         {limits.sublogins_suspended > 0 && <p role="status" className="text-sm text-amber-700">{limits.sublogins_suspended} funcionário(s) suspenso(s) pelo limite do plano.</p>}
         {limits.sublogins_available === 0 && <p className="text-sm text-amber-700">Limite atingido. Desative um funcionário ou amplie seu plano.</p>}
