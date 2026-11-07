@@ -507,6 +507,7 @@ test("resumo do funcionário usa cores semânticas nos indicadores", () => {
 });
 
 test("resumo informa atualização no botão durante carregamento", () => {
+  assert.match(resumoFuncionario, /aria-busy=\{loading \|\| accessLoading\}/);
   assert.match(resumoFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
   assert.match(resumoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar indicadores'\}/);
 });
@@ -1230,7 +1231,7 @@ test("secagem, inbox de estoque e resumo anunciam estados de operação", () => 
   assert.match(inboxMateriais, /actionBusy/);
   assert.match(inboxMateriais, /aria-label=\{`Solicitação de \$\{item\.item_nome\} · \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} · \$\{formatStatus\(item\.status\)\}`\}/);
   assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\|\|accessLoading\|\|!!accessError\}/);
-  assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
+  assert.match(resumoFuncionario, /aria-busy=\{loading \|\| accessLoading\}/);
 });
 
 test("secagem e produção informam atualização nos botões", () => {
