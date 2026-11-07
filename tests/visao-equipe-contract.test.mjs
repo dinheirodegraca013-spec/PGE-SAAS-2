@@ -1056,7 +1056,8 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
   assert.match(detalheTarefa, /Recarregar tarefa/);
   assert.match(detalheTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\|\|accessLoading\|\|!!accessError\}/);
   assert.match(detalheTarefa, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(detalheTarefa, /disabled=\{loading\|\|accessLoading\|\|!!accessError\}/);
+  assert.match(detalheTarefa, /disabled=\{loading\|\|accessLoading\}/);
+  assert.match(detalheTarefa, /onClick=\{\(\)=>accessError \? void reloadAccess\(\) : setRefresh\(n=>n\+1\)\}/);
 });
 
 test("fichas de serviço bloqueiam pesquisa durante validação de acesso", () => {
