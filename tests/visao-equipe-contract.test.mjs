@@ -845,7 +845,7 @@ test("notificações e histórico quebram rótulos operacionais longos", () => {
 
 test("ocorrências bloqueiam criação durante validação de acesso", () => {
   assert.match(ocorrenciasFuncionario, /canCreateAllowed=canCreate&&!accessLoading&&!accessError&&!!context/);
-  assert.match(ocorrenciasFuncionario, /setError\(accessError\|\|'Não foi possível validar o acesso às ocorrências\.'/);
+  assert.match(ocorrenciasFuncionario, /setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso às ocorrências\.'/);
   assert.match(ocorrenciasFuncionario, /\{canCreateAllowed && <form/);
 });
 
