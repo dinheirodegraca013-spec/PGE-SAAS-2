@@ -1141,7 +1141,7 @@ test("ocorrências informam atualização no botão", () => {
   assert.match(ocorrenciasFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /\{accessLoading\?'Validando…':loading \|\| busy\?'Aguarde…':'Atualizar ocorrências'\}/);
   assert.match(ocorrenciasFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
+  assert.match(ocorrenciasFuncionario, /disabled=\{loading \|\| busy \|\| accessLoading\} aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading \|\| busy\?'Aguarde a atualização das ocorrências':'Tentar carregar as ocorrências novamente'\}/);
 });
 
 test("ocorrências limpam feedback ao editar", () => {
