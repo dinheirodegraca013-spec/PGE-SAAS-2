@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 32894)
-Total output lines: 1937
+Warning: truncated output (original token count: 32922)
+Total output lines: 1938
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -815,7 +815,7 @@ test("histórico diferencia carga inicial de sincronização", () => {
 });
 
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…7894 tokens truncated…zação", () => {
+  assert.match(historicoFuncionario, /data&&<p role="…7922 tokens truncated…zação", () => {
   assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
   assert.match(solicitacaoMaterial, /busy\?'Atualizando solicitações…':updatedAt/);
 });
