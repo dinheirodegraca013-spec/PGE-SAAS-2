@@ -29,11 +29,17 @@ export default function DeviceManager({ userId }: { userId?: string }) {
   useEffect(() => { const refreshOnReturn = () => { const now = Date.now(); if (document.visibilityState === 'visible' && now - lastReturnRefresh.current > 1000) { lastReturnRefresh.current = now; void load(); } }; window.addEventListener('focus', refreshOnReturn); document.addEventListener('visibilitychange', refreshOnReturn); return () => { window.removeEventListener('focus', refreshOnReturn); document.removeEventListener('visibilitychange', refreshOnReturn); }; }, [load]);
   async function revoke(id: string) {
     const request = generation.current;
+    const revokedDevice = devices.find(device => device.id === id);
     setBusy(true); setError('');
     try {
       const { error } = await supabase.rpc('revogar_dispositivo', { p_dispositivo_id: id });
       if (error) throw error;
       if (request !== generation.current) return;
+      if (revokedDevice?.current) {
+        await supabase.auth.signOut();
+        window.location.assign('/login');
+        return;
+      }
       await load();
     } catch (e) { if (request === generation.current) setError((e as {message?: string})?.message || 'Não foi possível revogar.'); }
     finally { if (request === generation.current) setBusy(false); }
