@@ -4,7 +4,7 @@ import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 
 export default function SheetAssignmentEditor({serviceId,sector,current,disabled,onAssign}:{serviceId:string;sector:string;current:string|null;disabled:boolean;onAssign:(employee:string|null)=>Promise<void>}) {
   const id = useId();
-  const { context, loading: accessLoading, error: accessError } = useWorkforceAccess();
+  const { context, loading: accessLoading, error: accessError, reload: reloadAccess } = useWorkforceAccess();
   const [candidates,setCandidates] = useState<Awaited<ReturnType<typeof technicalSheets.candidates>>>([]);
   const [selected,setSelected] = useState(current || '');
   const [loading,setLoading] = useState(true);
@@ -39,9 +39,9 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
     </select>
     {loading && <p role="status" aria-live="polite" className="text-sm">{candidates.length ? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-slate-500">Nenhum funcionário autorizado para este setor.</p>}
-    {error && <div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:flex-row sm:items-start sm:justify-between"><p className="min-w-0 break-words">{error}</p><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={accessLoading?'Validando acesso':loading || busy?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'} disabled={loading || busy || accessLoading} onClick={()=>setRetry(n=>n+1)}>{accessLoading?'Validando…':loading || busy?'Aguarde…':'Atualizar lista'}</button></div>}
+    {error && <div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:flex-row sm:items-start sm:justify-between"><p className="min-w-0 break-words">{error}</p><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={accessLoading?'Validando acesso':accessError?'Revalidar acesso':loading || busy?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'} disabled={loading || busy || accessLoading} onClick={()=>accessError ? void reloadAccess() : setRetry(n=>n+1)}>{accessLoading?'Validando…':accessError?'Revalidar acesso':loading || busy?'Aguarde…':'Atualizar lista'}</button></div>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
-    <button type="submit" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy?'Salvando responsável':'Salvar responsável da ficha'} disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
+    <button type="submit" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={accessLoading?'Validando acesso':busy?'Salvando responsável':'Salvar responsável da ficha'} disabled={disabled || busy || loading || accessLoading || !!accessError || selected===(current || '')}>{accessLoading?'Validando…':busy?'Salvando responsável':'Salvar responsável'}</button>
   </form>;
 }
 
