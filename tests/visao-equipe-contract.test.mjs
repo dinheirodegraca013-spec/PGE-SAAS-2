@@ -1403,7 +1403,7 @@ test("inbox de materiais bloqueia consultas durante validação de acesso", () =
   assert.match(inboxMateriais, /allowed=!accessLoading&&!accessError&&hasPermission\(context,'estoque','visualizar'\)/);
   assert.match(inboxMateriais, /if\(!allowed\|\|accessLoading\|\|accessError\)return/);
   assert.match(inboxMateriais, /if\(accessLoading\)return <p role="status" aria-live="polite">Validando acesso às solicitações de material/);
-  assert.match(inboxMateriais, /if\(accessError\)return <p role="alert"/);
+  assert.match(inboxMateriais, /if\(accessError\)return <div role="alert"/);
 });
 
 test("inbox de materiais revalida autorização antes de decidir", () => {
@@ -1742,6 +1742,13 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
   assert.match(inboxMateriais, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar as solicitações novamente'\} disabled=\{loading \|\| !!actionBusy \|\| accessLoading \|\| !!accessError\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
+});
+
+test("inbox de materiais permite revalidar acesso após falha", () => {
+  assert.match(inboxMateriais, /loading:accessLoading,error:accessError,reload:reloadAccess/);
+  assert.match(inboxMateriais, /if\(accessError\)return <div role="alert"/);
+  assert.match(inboxMateriais, /onClick=\{\(\)=>void reloadAccess\(\)\}/);
+  assert.match(inboxMateriais, /aria-label=\{accessLoading\?'Validando acesso':'Revalidar acesso'\}/);
 });
 
 test("fichas de serviço preservam busca e ação de abertura no mobile", () => {
