@@ -18,7 +18,7 @@ export default function SheetAttachments({serviceId,sector,canUpload,onListed,on
       .catch(cause=>{if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível carregar os anexos.');}).finally(()=>{if(request===generation.current){setLoading(false);onLoadingChange?.(false);}});
     return()=>{generation.current++;};
   },[serviceId,sector,page,refresh,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao,onListed,onLoadingChange]);
-  return <section className="space-y-3 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy || !!linkBusy}><h4 id={`${id}-title`} className="font-semibold">Anexos privados da ficha</h4>
+  return <section className="space-y-3 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy || !!linkBusy || accessLoading}><h4 id={`${id}-title`} className="font-semibold">Anexos privados da ficha</h4>
     {canUploadAllowed && <form className="space-y-3" onSubmit={async event=>{
       event.preventDefault();if(lock.current || !!linkBusy || accessLoading || accessError || !context || !hasPermission(context,'ordens','anexar') || !file)return;
       if(!['image/jpeg','image/png','image/webp','application/pdf'].includes(file.type) || !file.size || file.size>10485760){setError('Envie imagem JPEG, PNG, WebP ou PDF de até 10 MB.');return;}
