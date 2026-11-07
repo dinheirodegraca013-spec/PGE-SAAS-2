@@ -13,7 +13,7 @@ import { projetosService } from "@/modules/furniture/services/projetos.service";
 import type { ProjetoMovelPlanejado } from "@/modules/furniture/types/projeto";
 import FinancialCalendar from "./FinancialCalendar";
 import { useWorkforceAccess } from '@/modules/workforce/context/WorkforceAccessContext';
-import { hasPermission } from '@/modules/workforce/lib/access';
+import { authorizedSectors, hasPermission } from '@/modules/workforce/lib/access';
 
 const moeda = (v: number) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(
@@ -21,7 +21,8 @@ const moeda = (v: number) =>
   );
 
 export default function FinanceiroEmpresaView() {
-  const { context }=useWorkforceAccess();
+  const { context, loading: accessLoading, error: accessError }=useWorkforceAccess();
+  const allowed=Boolean(context && (context.proprietario || (authorizedSectors(context).includes('financeiro') && hasPermission(context,'financeiro','visualizar'))));
   const canCreate=hasPermission(context,'financeiro','criar');
   const canReport=hasPermission(context,'financeiro','relatorios');
   const canExport=hasPermission(context,'financeiro','exportar');
@@ -48,6 +49,9 @@ export default function FinanceiroEmpresaView() {
     setErro(null);
     setErroLancamentos(null);
     setLancamentosDisponiveis(false);
+    if(accessLoading||accessError||!allowed){
+      setProjetos([]);setLancamentos([]);setReceitas(null);setDespesas(null);setErro(accessError||'Você não tem permissão para acessar o financeiro.');setCarregando(false);return;
+    }
     let projetosCarregados = false;
     try {
       const resultado = await projetosService.listar();
@@ -108,9 +112,7 @@ export default function FinanceiroEmpresaView() {
     }
   };
 
-  useEffect(() => {
-    void carregar();
-  }, []);
+  useEffect(() => { void carregar(); }, [accessLoading,accessError,allowed]);
 
   const projetosValidos = useMemo(
     () =>
@@ -139,6 +141,8 @@ export default function FinanceiroEmpresaView() {
   );
   const maiorFluxo = Math.max(fluxo.receitas, fluxo.despesas, 1);
 
+  if(accessLoading)return <main className="space-y-5 pb-8"><p role="status" aria-live="polite" className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">Validando acesso ao financeiro…</p></main>;
+  if(accessError||!allowed)return <main className="space-y-5 pb-8"><div role="alert" className="rounded-xl bg-rose-50 p-4 text-sm text-rose-800">{accessError||'Você não tem permissão para acessar o financeiro.'}</div></main>;
   return (
     <div className="space-y-5 pb-8">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -666,3 +670,4 @@ export default function FinanceiroEmpresaView() {
     </div>
   );
 }
+
