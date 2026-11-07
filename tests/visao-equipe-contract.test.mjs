@@ -51,6 +51,8 @@ const editorFuncionario = readOptional("../src/modules/workforce/components/Empl
 const acessoService = readOptional("../src/modules/workforce/services/access.service.ts");
 const fichaOperacional = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
 const ocorrenciasFuncionario = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
+const estoqueView = readOptional("../src/views/estoque/EstoqueView.tsx");
+const financeiroView = readOptional("../src/views/financeiro/FinanceiroEmpresaView.tsx");
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -1226,6 +1228,15 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
 test("salvamento preserva acesso suspenso automaticamente pelo plano", () => {
   assert.match(acessoService, /\['ativo','inativo','suspenso','suspenso_plano'\]\.includes\(input\.status\)/);
   assert.match(acessoService, /p_status:input\.status==='suspenso_plano'\?'ativo':input\.status/);
+});
+
+test("estoque e financeiro aguardam autorização antes de consultar dados", () => {
+  assert.match(estoqueView, /const \{ context, loading: accessLoading, error: accessError \}=useWorkforceAccess\(\)/);
+  assert.match(estoqueView, /if\(accessLoading\|\|accessError\|\|!allowed\)/);
+  assert.match(estoqueView, /Você não tem permissão para acessar o estoque/);
+  assert.match(financeiroView, /const \{ context, loading: accessLoading, error: accessError \}=useWorkforceAccess\(\)/);
+  assert.match(financeiroView, /if\(accessLoading\|\|accessError\|\|!allowed\)/);
+  assert.match(financeiroView, /Você não tem permissão para acessar o financeiro/);
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
