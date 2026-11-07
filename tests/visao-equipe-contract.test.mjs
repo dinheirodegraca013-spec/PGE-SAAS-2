@@ -218,6 +218,7 @@ test("cadastro informa o motivo quando o limite do plano bloqueia", () => {
   const equipeView = readOptional("../src/views/equipe/EquipeView.tsx");
   assert.match(equipeView, /title=\{salvando \|\| encaminhando \? 'Aguarde a operação em andamento' : !limits \? 'Carregando limite do plano' : limits\.sublogins_available <= 0 \? 'Limite de sublogins atingido' : undefined\}/);
   assert.match(equipeView, /role="progressbar"/);
+  assert.match(equipeView, /role="group" aria-live="polite" aria-label=\\{`Uso de sublogins/);
   assert.match(equipeView, /aria-valuetext=\{`\$\{subloginPercentual\}% utilizado`\}/);
 });
 
