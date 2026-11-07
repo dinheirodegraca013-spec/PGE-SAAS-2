@@ -79,7 +79,7 @@ export default function MyTasks(){
   useEffect(()=>{const applyFilter=(event:Event)=>{const status=(event as CustomEvent<{status?:unknown}>).detail?.status;if(typeof status!=='string'||!(status in taskStatusLabels))return;setFilter(status as TaskStatus);setPage(0);};window.addEventListener(taskFilterEvent,applyFilter);return()=>window.removeEventListener(taskFilterEvent,applyFilter);},[]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
     if(accessLoading){setData(null);setUpdatedAt(null);return()=>{active=false;};}
-    if(accessError||!context){setData(null);setUpdatedAt(null);setLoading(false);return()=>{active=false;};}
+    if(accessError||!context){setData(null);setUpdatedAt(null);setError(accessError||'Não foi possível validar o acesso às tarefas.');setLoading(false);return()=>{active=false;};}
     workTasks.list(page,filter||null).then(result=>{if(active){setData(result);setUpdatedAt(new Date());}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar as tarefas.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
   },[page,filter,refresh,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
