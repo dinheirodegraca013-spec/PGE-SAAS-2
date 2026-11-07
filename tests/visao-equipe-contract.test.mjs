@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 30386)
-Total output lines: 1825
+Warning: truncated output (original token count: 30574)
+Total output lines: 1831
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -958,19 +958,7 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
 test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibili…386 tokens truncated…Page\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
-});
-
-test("anexos não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
-  assert.match(anexos, /\[serviceId,sector,page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,onListed,onLoadingChange\]/);
-});
-
-test("pesquisa de fichas limpa erro ao editar o termo", () => {
-  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
-});
-
-test("fichas de serviço atualizam ao retornar à aba", () => {
+  assert.match(resumoFuncionario, /addEventListener\('visibili…574 tokens truncated… à aba", () => {
   assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
   assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
   assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
@@ -1167,12 +1155,12 @@ test("solicitação de material limpa feedback ao editar", () => {
 test("secagem, inbox de estoque e resumo anunciam estados de operação", () => {
   assert.match(controleSecagem, /aria-busy=\{busy\}/);
   assert.match(controleSecagem, /aria-live="polite"/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
+  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy \|\| accessLoading\}/);
   assert.match(inboxMateriais, /Tentar novamente/);
   assert.match(inboxMateriais, /aria-live="polite"/);
   assert.match(inboxMateriais, /actionBusy/);
   assert.match(inboxMateriais, /aria-label=\{`Solicitação de \$\{item\.item_nome\} · \$\{formatQuantity\(item\.quantidade\)\} \$\{item\.unidade\} · \$\{formatStatus\(item\.status\)\}`\}/);
-  assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\}/);
+  assert.match(inboxMateriais, /disabled=\{loading\|\|!!actionBusy\|\|accessLoading\|\|!!accessError\}/);
   assert.match(resumoFuncionario, /aria-busy=\{loading\}/);
 });
 
@@ -1209,9 +1197,9 @@ test("cancelamento de material confirma sucesso", () => {
 });
 
 test("inbox de estoque informa atualização no botão", () => {
-  assert.match(inboxMateriais, /aria-label=\{loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
-  assert.match(inboxMateriais, /\{loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
-  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy\}/);
+  assert.match(inboxMateriais, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
+  assert.match(inboxMateriais, /\{accessLoading\?'Validando…':loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
+  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy \|\| accessLoading\}/);
 });
 
 test("inbox de estoque participa da atualização global", () => {
@@ -1342,6 +1330,12 @@ test("inbox de materiais bloqueia consultas durante validação de acesso", () =
   assert.match(inboxMateriais, /if\(!allowed\|\|accessLoading\|\|accessError\)return/);
   assert.match(inboxMateriais, /if\(accessLoading\)return <p role="status" aria-live="polite">Validando acesso às solicitações de material/);
   assert.match(inboxMateriais, /if\(accessError\)return <p role="alert"/);
+});
+
+test("inbox de materiais revalida autorização antes de decidir", () => {
+  assert.match(inboxMateriais, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'estoque','aprovar'\)\)return/);
+  assert.match(inboxMateriais, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'estoque','registrar_saida'\)\)return/);
+  assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy \|\| accessLoading\}/);
 });
 
 test("detalhe da tarefa aguarda contexto validado antes de consultar", () => {
@@ -1656,9 +1650,9 @@ test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
 });
 
 test("inbox de materiais preserva erro e retry em telas estreitas", () => {
-  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!actionBusy\} onClick=\{\(\)=>void load\(\)\}/);
+  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!actionBusy \|\| accessLoading \|\| !!accessError\} onClick=\{\(\)=>void load\(\)\}/);
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
-  assert.match(inboxMateriais, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Tentar carregar as solicitações novamente" disabled=\{loading \|\| !!actionBusy\}/);
+  assert.match(inboxMateriais, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar as solicitações novamente'\} disabled=\{loading \|\| !!actionBusy \|\| accessLoading \|\| !!accessError\}/);
   assert.match(inboxMateriais, /className="break-words text-sm text-emerald-700"/);
 });
 
@@ -1717,7 +1711,7 @@ test("solicitações de materiais acomodam cabeçalho e ações no mobile", () =
 
 test("inbox de materiais acomoda retry de erro no mobile", () => {
   assert.match(inboxMateriais, /className="flex flex-col items-stretch gap-2 text-sm text-red-700 sm:flex-row sm:items-center sm:justify-between"/);
-  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Tentar carregar as solicitações novamente"/);
+  assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar as solicitações novamente'\}/);
   assert.match(inboxMateriais, /className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap"/);
   assert.match(inboxMateriais, /className="btn-primary w-full shrink-0 whitespace-nowrap text-sm sm:w-auto"/);
 });
