@@ -1343,7 +1343,7 @@ test("responsável limpa feedback ao recarregar candidatos", () => {
 });
 
 test("atribuição de ficha aguarda autorização atual antes de carregar responsáveis", () => {
-  assert.match(atribuicaoFicha, /if\(accessLoading\|\|accessError\|\|!context\?\.proprietario\)\{setCandidates\(\[\]\);setLoading\(accessLoading\)/);
+  assert.match(atribuicaoFicha, /if\(accessLoading\|\|accessError\|\|!context\?\.proprietario\)\{setCandidates\(\[\]\);setError\(accessError\|\|\(!accessLoading&&!context\?\.proprietario\?'Apenas o proprietário pode atribuir responsáveis\.':''\)\);setLoading\(accessLoading\)/);
   assert.match(atribuicaoFicha, /\[serviceId,sector,retry,accessLoading,accessError,context\?\.proprietario\]/);
 });
 
