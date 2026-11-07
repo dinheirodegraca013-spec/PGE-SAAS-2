@@ -1035,6 +1035,10 @@ test("produção limpa o feedback ao editar novo evento", () => {
   assert.match(registroProducao, /setQuantity\(event\.target\.value\); setMessage\(''\)/);
 });
 
+test("produção limpa o feedback ao atualizar os registros", () => {
+  assert.match(registroProducao, /onClick=\{\(\) => \{ setMessage\(''\); onRefresh\(\); \}\}/);
+});
+
 test("produção valida observação antes do envio", () => {
   assert.match(registroProducao, /description\.trim\(\)\.length < 3/);
   assert.match(registroProducao, /Informe uma observação com pelo menos 3 caracteres/);
@@ -1069,7 +1073,7 @@ test("secagem e produção informam atualização nos botões", () => {
   assert.match(controleSecagem, /aria-label=\{busy\?'Aguarde a atualização da secagem':'Atualizar horário do servidor'\}/);
   assert.match(registroProducao, /aria-label=\{busy\?'Aguarde a atualização dos registros':'Atualizar registros'\}/);
   assert.match(registroProducao, /<div className="min-w-0"><h4 id=\{`\$\{id\}-title`\} className="break-words font-semibold">/);
-  assert.match(registroProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" onClick=\{onRefresh\}/);
+  assert.match(registroProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" onClick=\{\(\) => \{ setMessage\(''\); onRefresh\(\); \}\}/);
   assert.match(registroProducao, /className="btn-primary (?:w-full )?shrink-0 whitespace-nowrap sm:col-span-2(?: sm:w-auto)?"/);
 });
 
@@ -1545,7 +1549,7 @@ test("inbox de materiais acomoda retry de erro no mobile", () => {
 test("registros de produção quebram observações sem deslocar o horário", () => {
   assert.match(registroProducao, /<span className="min-w-0 break-words"><strong>\{formatType\(item\.tipo\)\}/);
   assert.match(registroProducao, /<time className="shrink-0 text-xs text-slate-500" dateTime=\{safeEntryDateTime\(item\.criado_em\)\}/);
-  assert.match(registroProducao, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{onRefresh\}/);
+  assert.match(registroProducao, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick=\{\(\) => \{ setMessage\(''\); onRefresh\(\); \}\}/);
 });
 
 test("ficha técnica quebra a situação sem perder as ações", () => {

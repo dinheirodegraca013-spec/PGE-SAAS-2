@@ -36,7 +36,7 @@ export default function ProductionLog({
   return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0"><h4 id={`${id}-title`} className="break-words font-semibold">Produção e perdas</h4><p className="break-words text-sm text-slate-500">Registre peças produzidas, defeitos e desperdícios por evento.</p></div>
-      <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={onRefresh} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização dos registros':'Atualizar registros'}>{busy?'Aguarde…':'Atualizar registros'}</button>
+      <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={() => { setMessage(''); onRefresh(); }} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização dos registros':'Atualizar registros'}>{busy?'Aguarde…':'Atualizar registros'}</button>
     </div>
     <div className="grid gap-2 sm:grid-cols-3">
       {(['produzido', 'defeito', 'desperdicio'] as const).map(item => <div key={item} className="rounded-lg bg-slate-50 p-3"><span className="block text-xs text-slate-500">{labels[item]}</span><strong>{formatQuantity(state?.totais[item] ?? 0)}</strong></div>)}
@@ -66,3 +66,4 @@ export default function ProductionLog({
     {state && !state.registros.length && <p role="status" aria-live="polite" className="rounded-lg border border-dashed border-slate-200 p-3 text-sm text-slate-500">Nenhum evento de produção registrado nesta ficha.</p>}{!!state?.registros.length && <div className="space-y-2 border-t border-slate-100 pt-3"><h5 className="text-sm font-medium">Últimos registros</h5>{state.registros.slice(0, 5).map(item => <div key={item.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm" aria-label={`Evento ${formatType(item.tipo)} · ${formatQuantity(item.quantidade)} ${item.unidade} · ${formatEntryDate(item.criado_em)}`}><span className="min-w-0 break-words"><strong>{formatType(item.tipo)}</strong> · {formatQuantity(item.quantidade)} {item.unidade}{item.descricao && ` — ${item.descricao}`}</span><time className="shrink-0 text-xs text-slate-500" dateTime={safeEntryDateTime(item.criado_em)}>{formatEntryDate(item.criado_em)}</time></div>)}</div>}
   </section>;
 }
+
