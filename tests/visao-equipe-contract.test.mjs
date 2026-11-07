@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 30076)
+Total output lines: 1818
+
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -876,6 +879,11 @@ test("ficha técnica bloqueia mutações quando a autorização muda", () => {
   assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| !sheet\.pode_editar/);
 });
 
+test("liberação de ficha exige proprietário e acesso atual", () => {
+  assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(fichaTecnica, /if \(mutation\.current \|\| accessLoading \|\| accessError \|\| !context\?\.proprietario\) return/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
@@ -959,12 +967,7 @@ test("projetos do setor rejeitam duplicidades e ordenam prazos válidos", () => 
 });
 
 test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
-  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
-});
-
-test("editor de acesso preserva controles no mobile", () => {
-  assert.match(editorAcesso, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=\{onCancel\}/);
-  assert.match(editorAcesso, /className="min-w-0 max-w-full text-xs text-slate-500"/);
+  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,esco…76 tokens truncated… /className="min-w-0 max-w-full text-xs text-slate-500"/);
   assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
   assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
 });
@@ -1051,7 +1054,7 @@ test("detalhe de tarefa preserva a ficha durante sincronização", () => {
 
 test("ficha técnica anuncia carregamento e operações em andamento", () => {
   assert.match(fichaTecnica, /role="status" aria-live="polite">Carregando ficha técnica/);
-  assert.match(fichaTecnica, /disabled=\{loading\} aria-label=\{loading \? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'\}/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError\} aria-label=\{loading \? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'\}/);
   assert.match(fichaTecnica, /aria-busy=\{saving \|\| checklistBusy \|\| loading\}/);
 });
 
@@ -1508,8 +1511,8 @@ test("registro de secagem valida datas retornadas", () => {
 });
 
 test("liberação da ficha bloqueia duplo clique", () => {
-  assert.match(fichaOperacional, /disabled=\{loading\}/);
-  assert.match(fichaOperacional, /if \(mutation\.current\) return;/);
+  assert.match(fichaOperacional, /disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(fichaOperacional, /if \(mutation\.current \|\| accessLoading \|\| accessError \|\| !context\?\.proprietario\) return;/);
   assert.match(fichaOperacional, /loading \? 'Liberando…' : 'Liberar ficha deste setor'/);
 });
 
