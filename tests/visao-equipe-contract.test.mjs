@@ -790,8 +790,10 @@ test("histórico informa atualização no botão", () => {
 
 test("erro do histórico bloqueia retry durante sincronização", () => {
   assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
-  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Tentar novamente'\}/);
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading\} aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
+  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':accessError\?'Revalidar acesso':loading\?'Atualizando…':'Tentar novamente'\}/);
+  assert.match(historicoFuncionario, /reload:reloadAccess/);
+  assert.match(historicoFuncionario, /onClick=\{\(\)=>accessError \? void reloadAccess\(\) : setRefresh/);
 });
 
 test("histórico diferencia carga inicial de sincronização", () => {
