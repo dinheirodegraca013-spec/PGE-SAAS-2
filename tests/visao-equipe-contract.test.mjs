@@ -673,6 +673,12 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-current="page"/);
 });
 
+test("notificações bloqueiam marcar como lida durante revalidação de acesso", () => {
+  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy \|\| accessLoading\}/);
+  assert.match(notificacoesFuncionario, /if\(reading\.current \|\| accessLoading \|\| accessError \|\| !context\)return/);
+  assert.match(notificacoesFuncionario, /disabled=\{!!busy \|\| accessLoading \|\| !!accessError\}/);
+});
+
 test("notificações não consultam dados sem vínculo de funcionário validado", () => {
   assert.match(notificacoesFuncionario, /if\(accessLoading\|\|accessError\|\|!context\)\{setData\(null\);setSelected\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso às notificações\.'\);setLoading\(accessLoading\)/);
   assert.match(notificacoesFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
@@ -1393,7 +1399,7 @@ test("cartão de tarefa limpa erro ao editar", () => {
 });
 
 test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
-  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy\}/);
+  assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy \|\| accessLoading\}/);
   assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
   assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…<\/p>\}/);
   assert.match(notificacoesFuncionario, /setMessage\('Notificação marcada como lida\.'\)/);
@@ -1683,7 +1689,7 @@ test("tarefas preservam controles de filtro e paginação no mobile", () => {
 test("notificações preservam ações e paginação no mobile", () => {
   assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy\} aria-label=\{item\.tarefa_id\?/);
   assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: .*?`\} onClick=\{async/);
-  assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy\} aria-label=\{`Marcar como lida/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{`Marcar como lida/);
   assert.match(notificacoesFuncionario, /<span className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
   assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy\}/);
   assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar detalhe da notificação"/);
