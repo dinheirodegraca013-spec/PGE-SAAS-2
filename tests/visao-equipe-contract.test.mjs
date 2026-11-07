@@ -861,7 +861,7 @@ test("formulários operacionais quebram mensagens de validação longas", () => 
 });
 
 test("erros inline de tarefa, ocorrência e responsável quebram no mobile", () => {
-  assert.match(minhasTarefas, /className="break-words text-sm text-red-700 sm:col-span-2"/);
+  assert.match(minhasTarefas, /className="flex flex-col gap-2 text-sm text-red-700 sm:col-span-2 sm:flex-row/);
   assert.match(ocorrenciasFuncionario, /className="break-words text-sm text-red-700">\{error\}<\/p>/);
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
   assert.match(assignment, /<p className="min-w-0 break-words">\{error\}<\/p>/);
@@ -1702,6 +1702,13 @@ test("tarefas bloqueiam paginação durante carregamento", () => {
 test("tarefas informam atualização no botão durante carregamento", () => {
   assert.match(minhasTarefas, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
   assert.match(minhasTarefas, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar tarefas'\}/);
+});
+
+test("cartão de tarefa oferece retry do salvamento sem perder a edição", () => {
+  assert.match(minhasTarefas, /error && <div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:col-span-2/);
+  assert.match(minhasTarefas, /aria-label="Tentar salvar a tarefa novamente"/);
+  assert.match(minhasTarefas, /onClick=\{event => event\.currentTarget\.form\?\.requestSubmit\(\)\}/);
+  assert.match(minhasTarefas, /disabled=\{busy \|\| accessLoading \|\| !!accessError \|\| !dirty\}/);
 });
 
 test("tarefas exibem um único bloco de carregamento e erro", () => {
