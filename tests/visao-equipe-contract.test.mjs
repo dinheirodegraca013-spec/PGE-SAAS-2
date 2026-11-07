@@ -1122,7 +1122,7 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(ocorrencias, /role="status" aria-live="polite" className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página/);
   assert.match(ocorrencias, /aria-label=\{`Ocorrência \$\{incidentTitle\} · \$\{formatIncidentSeverity\(item\.gravidade\)\} · \$\{incidentStatus\}`\}/);
   assert.match(ocorrencias, /Tentar novamente/);
-  assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy\}/);
+  assert.match(anexos, /aria-busy=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading\}/);
   assert.match(anexos, /aria-label="Paginação de anexos"/);
   assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} · \$\{attachmentSize\}`\}/);
   assert.match(anexos, /Tentar novamente/);
@@ -1291,7 +1291,7 @@ test("editores operacionais anunciam carregamento e bloqueiam estados concorrent
   assert.match(criacaoTarefa, /aria-live="polite"/);
   assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
   assert.match(atribuicaoFicha, /aria-live="polite"/);
-  assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(fluxoProducao, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
   assert.match(fluxoProducao, /aria-live="polite"/);
 });
 
