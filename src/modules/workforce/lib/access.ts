@@ -1,7 +1,7 @@
 import type { WorkforceContext } from '../types/access';
 
 const validSectorKeys = new Set(['corte', 'montagem', 'acabamento', 'instalacao', 'estoque', 'financeiro']);
-const employeePanelModules = ['painel', 'ordens', 'tarefas', 'agenda', 'documentos', 'notificacoes', 'atividades', 'ocorrencias', 'perfil'];
+const employeePanelModules = ['painel', 'ordens', 'tarefas', 'agenda', 'documentos', 'notificacoes', 'atividades', 'ocorrencias', 'perfil', 'estoque', 'financeiro'];
 
 export function hasPermission(context: WorkforceContext | null, module: string, operation = 'visualizar'): boolean {
   return Boolean(context?.permissoes.some(grant => grant.modulo === module && grant.operacao === operation));
