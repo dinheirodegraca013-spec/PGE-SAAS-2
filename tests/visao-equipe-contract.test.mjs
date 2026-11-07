@@ -1338,6 +1338,10 @@ test("editar acesso abre o editor completo de setores e permissões", () => {
   assert.doesNotMatch(equipe, /onClick=\{\(\) => \{ setEditingId\(perfil\.id\)/);
 });
 
+test("gerenciamento de dispositivos de funcionários fica restrito ao proprietário", () => {
+  assert.match(equipe, /limits && limits\.owner_id === usuario\?\.usuarioId && <button type="button" className="btn-secondary" aria-label=\{`Gerenciar dispositivos/);
+});
+
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
   assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
