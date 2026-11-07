@@ -567,6 +567,11 @@ test("aceite não anuncia ausência de comprovante antes de carregar anexos", ()
   assert.match(anexos, /onLoadingChange\?\.\(false\)/);
 });
 
+test("gerenciador de dispositivos anuncia carga inicial e atualização", () => {
+  assert.match(gerenciadorDispositivos, /busy && <p role="status" aria-live="polite"/);
+  assert.match(gerenciadorDispositivos, /devices\.length \? 'Atualizando dispositivos…' : 'Carregando dispositivos…'/);
+});
+
 test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
   assert.match(equipe, /Tentar novamente/);
   assert.match(equipe, /aria-busy=\{carregando\}/);
