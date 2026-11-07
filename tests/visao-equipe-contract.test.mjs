@@ -931,18 +931,18 @@ test("ocorrências reiniciam página e atualizam ao retornar à aba", () => {
 });
 
 test("detalhe de tarefa oferece retry contextual e estado de carregamento acessível", () => {
-  assert.match(detalheTarefa, /aria-busy=\{loading\}/);
+  assert.match(detalheTarefa, /aria-busy=\{loading\|\|accessLoading\}/);
   assert.match(detalheTarefa, /aria-live="polite"/);
   assert.match(detalheTarefa, /Tentar novamente/);
   assert.match(detalheTarefa, /Recarregar tarefa/);
-  assert.match(detalheTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
+  assert.match(detalheTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\|\|accessLoading\}/);
   assert.match(detalheTarefa, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(detalheTarefa, /disabled=\{loading\} aria-label=\{loading\?'Atualizando tarefa':'Tentar carregar a tarefa novamente'\}/);
+  assert.match(detalheTarefa, /disabled=\{loading\|\|accessLoading\} aria-label=\{loading\|\|accessLoading\?'Atualizando tarefa':'Tentar carregar a tarefa novamente'\}/);
 });
 
 test("detalhe de tarefa informa recarregamento no botão", () => {
-  assert.match(detalheTarefa, /aria-label=\{loading\?\(task\?'Atualizando tarefa':'Carregando tarefa'\):'Recarregar tarefa'\}/);
-  assert.match(detalheTarefa, /\{loading\?\(task\?'Atualizando…':'Carregando…'\):'Recarregar tarefa'\}/);
+  assert.match(detalheTarefa, /aria-label=\{accessLoading\?'Aguardando validação do acesso':loading\?\(task\?'Atualizando tarefa':'Carregando tarefa'\):'Recarregar tarefa'\}/);
+  assert.match(detalheTarefa, /\{accessLoading\?'Validando acesso…':loading\?\(task\?'Atualizando…':'Carregando…'\):'Recarregar tarefa'\}/);
 });
 
 test("detalhe de tarefa preserva a ficha durante sincronização", () => {
@@ -1237,6 +1237,12 @@ test("estoque e financeiro aguardam autorização antes de consultar dados", () 
   assert.match(financeiroView, /const \{ context, loading: accessLoading, error: accessError \}=useWorkforceAccess\(\)/);
   assert.match(financeiroView, /if\(accessLoading\|\|accessError\|\|!allowed\)/);
   assert.match(financeiroView, /Você não tem permissão para acessar o financeiro/);
+});
+
+test("detalhe da tarefa aguarda contexto validado antes de consultar", () => {
+  assert.match(detalheTarefa, /const \{context,loading:accessLoading,error:accessError\}=useWorkforceAccess\(\)/);
+  assert.match(detalheTarefa, /if\(accessLoading\|\|accessError\|\|!context\)/);
+  assert.match(detalheTarefa, /Aguardando validação do acesso/);
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
@@ -1629,7 +1635,7 @@ test("ações de anexos não comprimem o nome do arquivo no mobile", () => {
 
 test("detalhe da tarefa organiza título, atualização e recarga no mobile", () => {
   assert.match(detalheTarefa, /<div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h3 id="task-details-title" className="break-words font-semibold">/);
-  assert.match(detalheTarefa, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{loading\}/);
+  assert.match(detalheTarefa, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{loading\|\|accessLoading\}/);
   assert.match(detalheTarefa, /<span className="text-xs text-slate-500" aria-live="polite">/);
 });
 
