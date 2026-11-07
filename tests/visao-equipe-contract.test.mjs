@@ -1277,12 +1277,12 @@ test("editores operacionais anunciam carregamento e bloqueiam estados concorrent
 
 test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /aria-label=\{busy\?'Salvando fluxo':flow\.configurado\?'Salvar sequência':'Configurar fluxo'\}/);
-  assert.match(fluxoProducao, /aria-label=\{loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
+  assert.match(fluxoProducao, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Carregando fluxo':'Recarregar fluxo'\}/);
   assert.match(fluxoProducao, /\{loading\?'Carregando…':'Recarregar fluxo'\}/);
   assert.match(fluxoProducao, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{disabled\}/);
   assert.match(fluxoProducao, /className="min-w-0 flex-1 break-words text-sm"/);
   assert.match(fluxoProducao, /className="btn-primary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{disabled\}/);
-  assert.match(fluxoProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{busy \|\| loading\}/);
+  assert.match(fluxoProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{busy \|\| loading \|\| accessLoading \|\| !!accessError\}/);
   assert.match(fluxoProducao, /className="flex min-w-0 items-start gap-2 text-sm"><input/);
   assert.match(fluxoProducao, /<span className="min-w-0 break-words">\{label\}<\/span>/);
 });
@@ -1697,8 +1697,8 @@ test("atalhos administrativos do funcionário preservam seus rótulos no mobile"
 
 test("erro de projetos preserva o botão de recuperação no mobile", () => {
   assert.match(meuSetor, /className="w-full shrink-0 whitespace-nowrap rounded-lg border border-rose-200 bg-white px-3 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-100 disabled:opacity-60 sm:w-auto"/);
-  assert.match(meuSetor, /disabled=\{carregando\} aria-label=\{carregando \? 'Atualizando projetos' : 'Tentar carregar os projetos novamente'\}/);
-  assert.match(meuSetor, /\{carregando \? 'Atualizando…' : 'Tentar novamente'\}/);
+  assert.match(meuSetor, /disabled=\{carregando \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading \? 'Validando acesso do funcionário' : carregando \? 'Atualizando projetos' : 'Tentar carregar os projetos novamente'\}/);
+  assert.match(meuSetor, /\{accessLoading \? 'Validando…' : carregando \? 'Atualizando…' : 'Tentar novamente'\}/);
 });
 
 test("cabeçalho e perfil do painel quebram dados longos no mobile", () => {
