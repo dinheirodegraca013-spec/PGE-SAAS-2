@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 25850)
-Total output lines: 1599
+Warning: truncated output (original token count: 25957)
+Total output lines: 1603
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -599,7 +599,9 @@ test("fichas de serviço nomeiam título, setor e atualização", () => {
 });
 
 test("fichas informam a quantidade visível e a existência de mais páginas", () => {
+  assert.match(fichasFuncionario, /list && <p role="status" aria-live="polite" className="text-xs text-slate-500">/);
   assert.match(fichasFuncionario, /list\.itens\.length === 1 \? 'ficha visível' : 'fichas visíveis'/);
+  assert.match(fichasFuncionario, /loading \? ' · atualizando' : list\.tem_mais/);
   assert.match(fichasFuncionario, /list\.tem_mais \? ' · Há mais fichas disponíveis\.' : ''/);
 });
 
@@ -654,6 +656,8 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
 test("agenda informa atualização no botão", () => {
   assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
   assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
+  assert.match(agendaFuncionario, /!error&&<p role="status" aria-live="polite" className="text-xs text-slate-500">/);
+  assert.match(agendaFuncionario, /loading\?' · atualizando':''/);
 });
 
 test("agenda destaca urgência das atividades", () => {
@@ -679,13 +683,7 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
   assert.match(historicoFuncionario, /aria-current="page"/);
   assert.match(historicoFuncionario, /aria-label=\{`\$\{labels\[item\.acao\]\|\|'Atividade registrada'\}/);
   assert.match(historicoFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Ir para a página anterior do histórico"/);
-  assert.match(historicoFuncionario, /className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
-});
-
-test("histórico informa atualização no botão", () => {
-  assert.match(historicoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
-  assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
-  a…5850 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
+  assert.match(historicoFuncionario, /cla…5957 tokens truncated…nRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);
@@ -979,7 +977,7 @@ test("agenda oferece atalhos de período", () => {
 
 test("agenda informa a quantidade de atividades do período", () => {
   assert.match(agendaFuncionario, /items\.length===1\?'atividade encontrada':'atividades encontradas'/);
-  assert.match(agendaFuncionario, /no período\.<\/p>/);
+  assert.match(agendaFuncionario, /no período\{loading\?' · atualizando':''\}\.<\/p>/);
 });
 
 test("agenda marca o atalho de período selecionado", () => {
