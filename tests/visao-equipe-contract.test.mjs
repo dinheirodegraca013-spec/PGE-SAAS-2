@@ -843,6 +843,12 @@ test("notificações e histórico quebram rótulos operacionais longos", () => {
   assert.match(historicoFuncionario, /className="break-words text-xs text-slate-500"/);
 });
 
+test("ocorrências bloqueiam criação durante validação de acesso", () => {
+  assert.match(ocorrenciasFuncionario, /canCreateAllowed=canCreate&&!accessLoading&&!accessError&&!!context/);
+  assert.match(ocorrenciasFuncionario, /setError\(accessError\|\|'Não foi possível validar o acesso às ocorrências\.'/);
+  assert.match(ocorrenciasFuncionario, /\{canCreateAllowed && <form/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
@@ -941,7 +947,7 @@ test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
 });
 
 test("anexos não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setLoading\(accessLoading\);onLoadingChange\?\.\(accessLoading\)/);
+  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setError\(accessError\|\|'Não foi possível validar o acesso aos anexos\.'\);setLoading\(accessLoading\);onLoadingChange\?\.\(accessLoading\)/);
   assert.match(anexos, /\[serviceId,sector,page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,onListed,onLoadingChange\]/);
 });
 
