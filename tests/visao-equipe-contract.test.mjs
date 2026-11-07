@@ -634,7 +634,7 @@ test("fichas de serviço expõem carregamento e paginação acessíveis", () => 
 
 test("fichas não consultam dados sem vínculo validado", () => {
   assert.match(fichasFuncionario, /if \(accessLoading\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); return/);
-  assert.match(fichasFuncionario, /if \(accessError \|\| !context\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); setLoading\(false\)/);
+  assert.match(fichasFuncionario, /if \(accessError \|\| !context\) \{ setList\(null\); setSelected\(null\); setUpdatedAt\(null\); setError\(accessError \|\| 'Não foi possível validar o acesso às fichas\.'\); setLoading\(false\)/);
   assert.match(fichasFuncionario, /\[page, query, refresh, accessLoading, accessError, context\?\.funcionario\.id, context\?\.funcionario\.versao\]/);
 });
 
