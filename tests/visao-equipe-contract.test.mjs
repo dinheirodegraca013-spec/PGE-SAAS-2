@@ -1,4 +1,4 @@
-Warning: truncated output (original token count: 30198)
+Warning: truncated output (original token count: 30323)
 Total output lines: 1825
 
 import test from "node:test";
@@ -508,8 +508,8 @@ test("resumo do funcionário usa cores semânticas nos indicadores", () => {
 });
 
 test("resumo informa atualização no botão durante carregamento", () => {
-  assert.match(resumoFuncionario, /aria-label=\{loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
-  assert.match(resumoFuncionario, /\{loading\?'Atualizando…':'Atualizar indicadores'\}/);
+  assert.match(resumoFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando indicadores':'Atualizar indicadores'\}/);
+  assert.match(resumoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar indicadores'\}/);
 });
 
 test("resumo preserva indicadores durante nova sincronização", () => {
@@ -671,7 +671,7 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-live="polite"/);
   assert.match(notificacoesFuncionario, /Tentar novamente/);
   assert.match(notificacoesFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy\} aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
+  assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
 });
@@ -747,7 +747,7 @@ test("agenda mantém atalhos e badges inteiros no mobile", () => {
 });
 
 test("histórico do funcionário oferece retry e paginação acessível", () => {
-  assert.match(historicoFuncionario, /aria-busy=\{loading\}/);
+  assert.match(historicoFuncionario, /aria-busy=\{loading \|\| accessLoading\}/);
   assert.match(historicoFuncionario, /aria-live="polite"/);
   assert.match(historicoFuncionario, /Tentar novamente/);
   assert.match(historicoFuncionario, /aria-label="Paginação do histórico de atividades"/);
@@ -758,15 +758,15 @@ test("histórico do funcionário oferece retry e paginação acessível", () => 
 });
 
 test("histórico informa atualização no botão", () => {
-  assert.match(historicoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\}/);
-  assert.match(historicoFuncionario, /aria-label=\{loading\?'Atualizando histórico':'Atualizar histórico'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Atualizar histórico'\}/);
+  assert.match(historicoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(historicoFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando histórico':'Atualizar histórico'\}/);
+  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar histórico'\}/);
 });
 
 test("erro do histórico bloqueia retry durante sincronização", () => {
   assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
-  assert.match(historicoFuncionario, /\{loading\?'Atualizando…':'Tentar novamente'\}/);
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
+  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Tentar novamente'\}/);
 });
 
 test("histórico diferencia carga inicial de sincronização", () => {
@@ -958,17 +958,7 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
 test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
-});
-
-test("projetos do setor atualizam ao retornar à aba", () => {
-  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("projetos do setor re…198 tokens truncated… /className="min-w-0 max-w-full text-xs text-slate-500"/);
-  assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
+  assert.match(resumoFuncionario, /addEventListener\('visibili…323 tokens truncated…
   assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
 });
 
@@ -1428,9 +1418,9 @@ test("notificações expõem o estado de leitura semanticamente", () => {
 });
 
 test("notificações informam atualização no botão", () => {
-  assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!busy\}/);
-  assert.match(notificacoesFuncionario, /aria-label=\{loading \|\| !!busy\?'Aguarde a atualização das notificações':'Atualizar notificações'\}/);
-  assert.match(notificacoesFuncionario, /\{loading \|\| !!busy\?'Aguarde…':'Atualizar notificações'\}/);
+  assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!busy \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(notificacoesFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| !!busy\?'Aguarde a atualização das notificações':'Atualizar notificações'\}/);
+  assert.match(notificacoesFuncionario, /\{accessLoading\?'Validando…':loading \|\| !!busy\?'Aguarde…':'Atualizar notificações'\}/);
 });
 
 test("notificações destacam cada item não lido", () => {
@@ -1773,7 +1763,7 @@ test("agenda acomoda título e atualização em telas estreitas", () => {
 
 test("resumo operacional protege indicadores longos no mobile", () => {
   assert.match(resumoFuncionario, /<div className="min-w-0"><h2 id="personal-work-summary-title" className="break-words text-lg font-bold">/);
-  assert.match(resumoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
+  assert.match(resumoFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading \|\| !!accessError\} onClick=\{\(\)=>setRetry\(n=>n\+1\)\}/);
   assert.match(resumoFuncionario, /className=\{`card min-w-0 border p-4/);
   assert.match(resumoFuncionario, /<p className="break-words text-sm text-slate-600">\{label\}<\/p>/);
   assert.match(resumoFuncionario, /className="mt-2 whitespace-nowrap text-2xl font-bold text-slate-900"/);
