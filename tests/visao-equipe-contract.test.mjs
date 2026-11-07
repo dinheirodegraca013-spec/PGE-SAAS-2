@@ -1303,6 +1303,11 @@ test("responsável limpa feedback ao recarregar candidatos", () => {
   assert.match(atribuicaoFicha, /\{loading \|\| busy\?'Aguarde…':'Atualizar lista'\}/);
 });
 
+test("atribuição de ficha aguarda autorização atual antes de carregar responsáveis", () => {
+  assert.match(atribuicaoFicha, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\?\\.proprietario\\)\\{setCandidates\\(\\[\\]\\);setLoading\\(accessLoading\\)/);
+  assert.match(atribuicaoFicha, /\\[serviceId,sector,retry,accessLoading,accessError,context\\?\\.proprietario\\]/);
+});
+
 test("responsável limpa feedback quando a ficha muda externamente", () => {
   assert.match(atribuicaoFicha, /setSelected\(current \|\| ''\);setMessage\(''\)/);
 });
