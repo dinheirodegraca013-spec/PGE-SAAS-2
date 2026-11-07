@@ -674,7 +674,7 @@ test("notificações permitem retry e paginação acessível", () => {
 });
 
 test("notificações não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(notificacoesFuncionario, /if\(accessLoading\|\|accessError\|\|!context\)\{setData\(null\);setSelected\(null\);setUpdatedAt\(null\);setLoading\(accessLoading\)/);
+  assert.match(notificacoesFuncionario, /if\(accessLoading\|\|accessError\|\|!context\)\{setData\(null\);setSelected\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso às notificações\.'\);setLoading\(accessLoading\)/);
   assert.match(notificacoesFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
