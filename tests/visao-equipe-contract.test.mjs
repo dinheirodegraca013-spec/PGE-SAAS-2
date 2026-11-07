@@ -158,6 +158,9 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /Tentar novamente/);
   assert.match(meuSetor, /aria-live="polite"/);
   assert.match(meuSetor, /atualizadoEm/);
+  assert.match(meuSetor, /const canViewSectorProjects = hasPermission\\(context, 'ordens'\\) \\|\\| hasPermission\\(context, 'painel'\\)/);
+  assert.match(meuSetor, /!context \\|\\| !canViewSectorProjects/);
+  assert.match(meuSetor, /context && canViewSectorProjects && <section/);
   assert.match(meuSetor, /Atualizado às/);
 });
 
@@ -238,7 +241,7 @@ test("ficha técnica acomoda título longo junto do recarregamento", () => {
 });
 
 test("painel não consulta projetos quando a validação de acesso falha", () => {
-  assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context\)/);
+  assert.match(meuSetor, /if \(accessLoading \|\| accessError \|\| !context \|\| !canViewSectorProjects\)/);
   assert.match(meuSetor, /\[accessLoading, accessError, context,/);
 });
 
