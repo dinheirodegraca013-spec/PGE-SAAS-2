@@ -670,6 +670,11 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-current="page"/);
 });
 
+test("notificações não consultam dados sem vínculo de funcionário validado", () => {
+  assert.match(notificacoesFuncionario, /if\\(accessLoading\\|\\|accessError\\|\\|!context\\)\\{setData\\(null\\);setSelected\\(null\\);setUpdatedAt\\(null\\);setLoading\\(accessLoading\\)/);
+  assert.match(notificacoesFuncionario, /\\[page,refresh,accessLoading,accessError,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao\\]/);
+});
+
 test("notificações ocultam paginação quando vazias", () => {
   assert.match(notificacoesFuncionario, /data && \(data\.itens\.length \|\| page>0 \|\| data\.tem_mais\) && <nav aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" aria-label="Ir para a página anterior"/);
