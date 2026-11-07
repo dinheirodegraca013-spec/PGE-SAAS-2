@@ -89,6 +89,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
             setError('Salve ou descarte as alterações da ficha antes de atualizar a execução.');return;
           }
           if(action==='concluir' && !window.confirm('Concluir esta ficha? Os dados e o checklist ficarão bloqueados para edição.'))return;
+          if(accessLoading||accessError||!context||!hasPermission(context,'ordens',action))return;
           mutation.current=true;setSaving(true);setError('');const request=generation.current;
           try{const result=await technicalSheets.execute(serviceId,sector,action,sheet.versao);if(request===generation.current)setSheet(current=>current?{...current,...result}:current);}
           catch(cause){if(request===generation.current)setError(cause instanceof Error?cause.message:'Não foi possível atualizar a execução.');}
@@ -113,7 +114,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       }finally{mutation.current=false;if(request===generation.current)setSaving(false);}
     }} />}
     <TechnicalSheetForm key={`${serviceId}:${sector}:${reload}`} fields={sheet.modelo.campos} value={values} allowedPrivacy={sheet.privacidade_autorizada} attachmentOptions={attachmentOptions} canLinkAttachments={sheet.pode_anexar}
-      disabled={loading || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
+      disabled={loading || accessLoading || !!accessError || !sheet.pode_editar || sheet.status==='concluida' || saving || checklistBusy || !hasPermission(context, 'ordens', 'editar')} onChange={setValues} onSave={async data => {
+        if(accessLoading||accessError||!context||!hasPermission(context,'ordens','editar'))throw new Error('A autorização da ficha mudou. Recarregue antes de salvar.');
         if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
         mutation.current = true; setSaving(true);
         const request = generation.current;
@@ -160,7 +162,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       <p className="text-sm text-slate-500">Cada marcação é salva individualmente.</p>
       {sheet.modelo.checklist.map(item => <label key={item.key} className="flex items-start gap-3 text-sm" htmlFor={`technical-checklist-${item.key}`}>
         <input id={`technical-checklist-${item.key}`} type="checkbox" className="mt-1 h-4 w-4" checked={sheet.checklist[item.key] === true} disabled={item.automatic} onChange={async event => {
-          if (mutation.current) return;
+          if (mutation.current || accessLoading || accessError || !context || !hasPermission(context,'ordens','editar')) return;
           mutation.current = true;
           const checked = event.target.checked;
           const request = generation.current;
