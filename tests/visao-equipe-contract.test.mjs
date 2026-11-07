@@ -65,7 +65,7 @@ test("menu lateral aponta para Visão 3D e Equipe", () => {
 });
 
 test("funcionário não recebe links administrativos de configurações", () => {
-  assert.match(appLayout, /const employeeProfilePath = work\.context && !work\.context\.proprietario \? '\/meu-setor#perfil' : '\/configuracoes'/);
+  assert.match(appLayout, /const employeeProfilePath = work\.context && !work\.context\.proprietario \? hasPermission\(work\.context, 'perfil'\) \? '\/meu-setor#perfil' : '\/meu-setor' : '\/configuracoes'/);
   assert.match(appLayout, /work\.context\?\.proprietario && <NavLink/);
   assert.match(appLayout, /to=\{employeeProfilePath\}/);
 });
