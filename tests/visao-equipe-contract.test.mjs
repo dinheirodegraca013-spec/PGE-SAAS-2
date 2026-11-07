@@ -555,6 +555,10 @@ test("equipe não recarrega automaticamente durante operações administrativas"
   assert.match(equipe, /\}, \[administrador, usuario\?\.tenantId, salvando, encaminhando\]\)/);
 });
 
+test("histórico de acessos não anuncia vazio durante carregamento", () => {
+  assert.match(equipe, /!carregando&&!audit\.length && <p role="status" aria-live="polite"/);
+});
+
 test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
   assert.match(equipe, /Tentar novamente/);
   assert.match(equipe, /aria-busy=\{carregando\}/);
