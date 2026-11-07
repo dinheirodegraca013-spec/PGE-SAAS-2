@@ -12,6 +12,7 @@ function setup(selected,{failure=false}={}){
   new Function('require','module','exports',code)(name=>{
     if(name==='react')return {__esModule:true,default:react,...react};
     if(name.includes('technical-sheet.service'))return {technicalSheets:{}};
+    if(name.includes('WorkforceAccessContext'))return {useWorkforceAccess:()=>({context:{proprietario:true},loading:false,error:''})};
     throw new Error(name);
   },module,module.exports);
   const form=module.exports.default({serviceId:'service',sector:'corte',current:null,disabled:false,onAssign:async id=>{calls.push(id);if(failure)throw new Error('Conflito de versão');}});
