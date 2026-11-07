@@ -1598,7 +1598,7 @@ test("agenda limpa atividades quando o período é inválido", () => {
 
 test("anexos bloqueiam geração simultânea de links temporários", () => {
   assert.match(anexos, /linkBusy/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
+  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError\}/);
   assert.match(anexos, /itemBusy\?'Gerando…'/);
 });
 
