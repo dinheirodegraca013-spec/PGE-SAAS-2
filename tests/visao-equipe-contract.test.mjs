@@ -1624,7 +1624,7 @@ test("anexos bloqueiam envio durante validação de acesso", () => {
 });
 
 test("anexos bloqueiam retry e paginação durante validação de acesso", () => {
-  assert.match(anexos, /aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar os anexos novamente'\}/);
+  assert.match(anexos, /aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':'Tentar carregar os anexos novamente'\}/);
   assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading\}/);
   assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError \|\| page===0\}/);
   assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'ordens','visualizar'\)\)return/);
