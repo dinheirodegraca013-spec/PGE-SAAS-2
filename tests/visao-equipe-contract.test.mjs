@@ -1262,7 +1262,7 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
 });
 
 test("criação de tarefa aguarda a validação atual do acesso", () => {
-  assert.match(criacaoTarefa, /if\(accessLoading\|\|accessError\)\{setCandidates\(\[\]\);setEmployee\(''\);setLoading\(accessLoading\)/);
+  assert.match(criacaoTarefa, /if\(accessLoading\|\|accessError\)\{setCandidates\(\[\]\);setEmployee\(''\);setLoading\(accessLoading\);setError\(accessError\|\|''\)/);
   assert.match(criacaoTarefa, /\[serviceId,sector,canCreate,accessLoading,accessError,context\?\.proprietario,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
 });
 
