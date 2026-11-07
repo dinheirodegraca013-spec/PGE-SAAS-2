@@ -44,6 +44,7 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     {limit !== null && <p className="text-sm text-slate-500">{active} de {limit} utilizados · {Math.max(0, limit - active)} disponíveis por login.</p>}
     <p className="text-sm text-slate-500">Revogar bloqueia as sessões vinculadas a este dispositivo.</p>
     <p className="text-xs text-slate-500">Cada navegador ou perfil conta como um dispositivo. Limpar os dados do navegador cria uma nova identificação.</p>
+    {busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700">{devices.length ? 'Atualizando dispositivos…' : 'Carregando dispositivos…'}</p>}
     {error && <p role="alert" className="text-sm text-rose-700">{error}</p>}
     {!busy && !error && !devices.length && <p className="text-sm text-slate-500">Nenhum dispositivo cadastrado.</p>}
     <ul className="divide-y divide-slate-100">{devices.map(d => <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div>
@@ -52,3 +53,4 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     </div>{!d.revoked_at && <button type="button" className="btn-secondary text-rose-700" aria-label={`Revogar dispositivo ${d.name}`} disabled={busy} onClick={() => { if (window.confirm(`Revogar o dispositivo "${d.name}"? As sessões vinculadas serão encerradas.`)) void revoke(d.id); }}>Revogar</button>}</li>)}</ul>
   </section>;
 }
+
