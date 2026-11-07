@@ -21,6 +21,7 @@ async function setup(financeiro) {
     if(name==='react-router-dom')return {Link:({children})=>children,useNavigate:()=>()=>{}};
     if(name==='@/lib/supabase')return {supabase};
     if(name==='@/services/api/client')return {getCurrentTenantId:()=> 'tenant-test'};
+    if(name.includes('WorkforceAccessContext'))return {useWorkforceAccess:()=>({context:{proprietario:true},loading:false,error:null})};
     if(name.includes('projetos.service'))return {projetosService:{listar:async()=>({succeeded:true,value:{items:[]}})}};
     if(name.includes('types/projeto'))return {StatusProjeto:{Entregue:6,Cancelado:8}};
     if(name==='./ThreeOperationalMap')return {__esModule:true,default:Map};
