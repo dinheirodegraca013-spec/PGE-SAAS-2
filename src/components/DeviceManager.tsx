@@ -45,13 +45,13 @@ export default function DeviceManager({ userId }: { userId?: string }) {
     finally { if (request === generation.current) setBusy(false); }
   }
   const active = devices.filter(d => !d.revoked_at && !d.suspended).length;
-  return <section className="card space-y-3 p-5" aria-busy={busy}>
-    <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-bold">Dispositivos autorizados</h2><button type="button" className="btn-secondary" disabled={busy} aria-label={busy?'Atualizando dispositivos':'Atualizar dispositivos'} onClick={() => void load()}>{busy?'Atualizando…':'Atualizar'}</button></div>
+  return <section className="card space-y-3 p-5" aria-labelledby="authorized-devices-title" aria-busy={busy}>
+    <div className="flex flex-wrap items-center justify-between gap-3"><h2 id="authorized-devices-title" className="text-lg font-bold">Dispositivos autorizados</h2><button type="button" className="btn-secondary" disabled={busy} aria-label={busy?'Atualizando dispositivos':'Atualizar dispositivos'} onClick={() => void load()}>{busy?'Atualizando…':'Atualizar'}</button></div>
     {limit !== null && <p className="text-sm text-slate-500">{active} de {limit} utilizados · {Math.max(0, limit - active)} disponíveis por login.</p>}
     <p className="text-sm text-slate-500">Revogar bloqueia as sessões vinculadas a este dispositivo.</p>
     <p className="text-xs text-slate-500">Cada navegador ou perfil conta como um dispositivo. Limpar os dados do navegador cria uma nova identificação.</p>
     {busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700">{devices.length ? 'Atualizando dispositivos…' : 'Carregando dispositivos…'}</p>}
-    {error && <p role="alert" className="text-sm text-rose-700">{error}</p>}
+    {error && <div role="alert" className="flex flex-col gap-2 text-sm text-rose-700 sm:flex-row sm:items-center sm:justify-between"><p className="min-w-0 break-words">{error}</p><button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy} aria-label="Tentar carregar os dispositivos novamente" onClick={() => void load()}>{busy?'Atualizando…':'Tentar novamente'}</button></div>}
     {!busy && !error && !devices.length && <p className="text-sm text-slate-500">Nenhum dispositivo cadastrado.</p>}
     <ul className="divide-y divide-slate-100">{devices.map(d => <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div>
       <b className="text-sm">{d.name}{d.current ? ' · Este dispositivo' : ''}</b>
