@@ -1208,6 +1208,11 @@ test("fluxo preserva a configuração durante sincronização", () => {
   assert.match(fluxoProducao, /useEffect\(\(\)=>\{setFlow\(null\);setSelected\(\[\]\);\},\[serviceId,context\?\.proprietario\]\)/);
 });
 
+test("fluxo aguarda autorização atual antes de carregar a sequência", () => {
+  assert.match(fluxoProducao, /if\\(accessLoading\\|\\|accessError\\)\\{setFlow\\(null\\);setSelected\\(\\[\\]\\);setLoading\\(accessLoading\\)/);
+  assert.match(fluxoProducao, /\\[serviceId,context\\?\\.proprietario,accessLoading,accessError,retry\\]/);
+});
+
 test("fluxo limpa feedback ao alterar a sequência", () => {
   assert.match(fluxoProducao, /setMessage\(''\);setError\(''\);setSelected/);
 });
