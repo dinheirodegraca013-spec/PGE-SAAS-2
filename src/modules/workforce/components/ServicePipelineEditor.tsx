@@ -4,7 +4,7 @@ import {useWorkforceAccess} from '../context/WorkforceAccessContext';
 import {servicePipeline,type ServiceFlow} from '../services/pipeline.service';
 
 export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
-  const {context}=useWorkforceAccess();
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();
   const id=useId();
   const [flow,setFlow]=useState<ServiceFlow|null>(null);
   const [selected,setSelected]=useState<string[]>([]);
@@ -17,12 +17,13 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   useEffect(()=>{setFlow(null);setSelected([]);},[serviceId,context?.proprietario]);
   useEffect(()=>{
     if(!context?.proprietario)return;
+    if(accessLoading||accessError){setFlow(null);setSelected([]);setLoading(accessLoading);setError('');setMessage('');return()=>{};}
     let active=true;setLoading(true);setError('');setMessage('');
     servicePipeline.load(serviceId).then(result=>{if(active){setFlow(result);setSelected(result.setores);}})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar o fluxo.');})
       .finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
-  },[serviceId,context?.proprietario,retry]);
+  },[serviceId,context?.proprietario,accessLoading,accessError,retry]);
   if(!context?.proprietario)return null;
   const disabled=busy || loading || !flow?.editavel;
   const move=(index:number,offset:number)=>{setMessage('');setError('');setSelected(current=>{
