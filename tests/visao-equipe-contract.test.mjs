@@ -493,7 +493,7 @@ test("tarefas atualizam ao retornar à aba", () => {
 
 test("tarefas não consultam dados sem vínculo validado", () => {
   assert.match(minhasTarefas, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
-  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso às tarefas\.'\);setLoading\(false\)/);
   assert.match(minhasTarefas, /\[page,filter,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
 });
 
@@ -848,6 +848,10 @@ test("histórico não consulta dados sem vínculo de funcionário validado", () 
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
   assert.match(historicoFuncionario, /\[page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao\]/);
+});
+
+test("tarefas exibem falha de validação de acesso", () => {
+  assert.match(minhasTarefas, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso às tarefas\.'\);setLoading\(false\)/);
 });
 
 test("histórico reinicia a paginação ao trocar de funcionário", () => {
