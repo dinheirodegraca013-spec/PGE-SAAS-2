@@ -862,6 +862,13 @@ test("ocorrências bloqueiam resolução quando a autorização fica indisponív
   assert.match(ocorrenciasFuncionario, /allowed=\{canView && !accessLoading && !accessError && !!context\}/);
 });
 
+test("criação de tarefas revalida autorização antes do envio", () => {
+  assert.match(criacaoTarefa, /const canCreateAllowed=canCreate&&!accessLoading&&!accessError&&!!context/);
+  assert.match(criacaoTarefa, /if\(lock\.current \|\| loading \|\| accessLoading \|\| accessError \|\| !canCreateAllowed\)return/);
+  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
+  assert.match(criacaoTarefa, /disabled=\{busy \|\| loading \|\| accessLoading \|\| !!accessError \|\| !candidates\.length\}/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
@@ -1228,7 +1235,7 @@ test("inbox não libera uma ação nova por resposta tardia", () => {
 });
 
 test("editores operacionais anunciam carregamento e bloqueiam estados concorrentes", () => {
-  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(criacaoTarefa, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
   assert.match(criacaoTarefa, /aria-live="polite"/);
   assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy\}/);
   assert.match(atribuicaoFicha, /aria-live="polite"/);
@@ -1269,15 +1276,15 @@ test("fluxo anuncia a nova posição e mantém alvos de toque no celular", () =>
 });
 
 test("criação de tarefa informa carregamento dos responsáveis", () => {
-  assert.match(criacaoTarefa, /aria-label=\{loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
-  assert.match(criacaoTarefa, /\{loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
+  assert.match(criacaoTarefa, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Carregando responsáveis':busy\?'Criando tarefa':'Criar tarefa'\}/);
+  assert.match(criacaoTarefa, /\{accessLoading\?'Validando…':loading\?'Carregando…':busy\?'Criando…':'Criar tarefa'\}/);
   assert.match(criacaoTarefa, /candidates\.length \? 'Atualizando responsáveis…' : 'Carregando responsáveis…'/);
   assert.match(criacaoTarefa, /!loading && !error && !candidates\.length && <p role="status" aria-live="polite"/);
   assert.match(criacaoTarefa, /type="datetime-local" autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\} value=\{deadline\}/);
   assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
   assert.match(criacaoTarefa, /O horário será salvo conforme o fuso local deste dispositivo/);
-  assert.match(criacaoTarefa, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| loading \|\| !candidates\.length\}/);
-  assert.match(criacaoTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=/);
+  assert.match(criacaoTarefa, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| loading \|\| accessLoading \|\| !!accessError \|\| !candidates\.length\}/);
+  assert.match(criacaoTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| accessLoading \|\| !!accessError\} onClick=/);
   assert.match(criacaoTarefa, /aria-label=\{busy\?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'\}/);
 });
 
