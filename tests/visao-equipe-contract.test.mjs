@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 30661)
-Total output lines: 1836
-
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -712,7 +709,7 @@ test("leitura de notificação sempre libera o bloqueio após uma resposta tardi
 });
 
 test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
-  assert.match(agendaFuncionario, /aria-busy=\{loading \\|\\| accessLoading\}/);
+  assert.match(agendaFuncionario, /aria-busy=\{loading \|\| accessLoading\}/);
   assert.match(agendaFuncionario, /aria-live="polite"/);
   assert.match(agendaFuncionario, /required disabled=\{controlsDisabled\}/);
   assert.match(agendaFuncionario, /Tentar novamente/);
@@ -732,8 +729,8 @@ test("agenda aguarda validação de acesso antes de consultar", () => {
 });
 
 test("agenda informa atualização no botão", () => {
-  assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
-  assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
+  assert.match(agendaFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando agenda':'Atualizar agenda'\}/);
+  assert.match(agendaFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar'\}/);
   assert.match(agendaFuncionario, /!error&&<p role="status" aria-live="polite" className="text-xs text-slate-500">/);
   assert.match(agendaFuncionario, /loading\?' · atualizando':''/);
 });
@@ -971,7 +968,53 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
 test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibili…661 tokens truncated…atch(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
+  assert.match(resumoFuncionario, /addEventListener\('visibilitychange',refreshOnReturn\)/);
+});
+
+test("projetos do setor atualizam ao retornar à aba", () => {
+  assert.match(meuSetor, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(meuSetor, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(meuSetor, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
+test("projetos do setor rejeitam duplicidades e ordenam prazos válidos", () => {
+  assert.match(meuSetor, /new Set\(projects\.map\(project => project\.id\)\)\.size !== projects\.length/);
+  assert.match(meuSetor, /!\/\^\\d\{4\}-\\d\{2\}-\\d\{2\}\$\/\.test\(prazo\)/);
+  assert.match(meuSetor, /return projects\.sort\(\(a, b\) =>/);
+});
+
+test("edição de acesso limpa erro ao alterar escopo de permissão", () => {
+  assert.match(editorAcesso, /setGrants\(current=>current\.map\(g=>g===grant\?\{\.\.\.g,escopo:e\.target\.value as RecordScope\}:g\)\);clearError\(\)/);
+});
+
+test("editor de acesso preserva controles no mobile", () => {
+  assert.match(editorAcesso, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\} onClick=\{onCancel\}/);
+  assert.match(editorAcesso, /className="min-w-0 max-w-full text-xs text-slate-500"/);
+  assert.match(editorAcesso, /className="input-field max-w-full py-1 text-xs"/);
+  assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
+});
+
+test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
+  assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
+});
+
+test("anexos não consultam dados sem vínculo de funcionário validado", () => {
+  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
+  assert.match(anexos, /\[serviceId,sector,page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,onListed,onLoadingChange\]/);
+});
+
+test("pesquisa de fichas limpa erro ao editar o termo", () => {
+  assert.match(fichasFuncionario, /setSearch\(event\.target\.value\); setError\('\'\)/);
+});
+
+test("fichas de serviço atualizam ao retornar à aba", () => {
+  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
+  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
+  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
+});
+
+test("contador de notificações anuncia mudanças", () => {
+  assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
   assert.match(notificacoesFuncionario, /Tudo lido/);
   assert.match(notificacoesFuncionario, /notificações não lidas/);
 });
@@ -1049,8 +1092,8 @@ test("ficha técnica preserva o conteúdo durante sincronização", () => {
 
 test("ficha técnica bloqueia edição e ações durante sincronização", () => {
   assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| !sheet\.pode_editar/);
-  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy \|\| sheet\.status\s*===\s*'concluida'\}/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| !sheet\.pode_editar/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| saving \|\| checklistBusy \|\| accessLoading \|\| !!accessError \|\| sheet\.status\s*===\s*'concluida'\}/);
 });
 
 test("ocorrências e anexos expõem retry e paginação acessível", () => {
@@ -1448,6 +1491,13 @@ test("fichas bloqueiam abertura e paginação durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !list\.tem_mais\}/);
 });
 
+test("atribuição de ficha bloqueia ações durante revalidação", () => {
+  assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
+  assert.match(atribuicaoFicha, /if\(disabled \|\| busy \|\| loading \|\| accessLoading \|\| accessError\)return/);
+  assert.match(atribuicaoFicha, /disabled=\{loading \|\| busy \|\| accessLoading\}/);
+  assert.match(atribuicaoFicha, /disabled=\{disabled \|\| busy \|\| loading \|\| accessLoading \|\| !!accessError/);
+});
+
 test("listas vazias não aparecem como definitivas durante sincronização", () => {
   assert.match(fichasFuncionario, /list && !loading && !list\.itens\.length/);
   assert.match(minhasTarefas, /data && !loading && !data\.itens\.length/);
@@ -1570,6 +1620,13 @@ test("anexos bloqueiam envio durante validação de acesso", () => {
   assert.match(anexos, /setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
 });
 
+test("anexos bloqueiam retry e paginação durante validação de acesso", () => {
+  assert.match(anexos, /aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar os anexos novamente'\}/);
+  assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading\}/);
+  assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError \|\| page===0\}/);
+  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'ordens','visualizar'\)\)return/);
+});
+
 test("inbox de estoque ignora respostas de filtros antigos", () => {
   assert.match(inboxMateriais, /const generation=useRef\(0\)/);
   assert.match(inboxMateriais, /if\(request===generation\.current\)setItems/);
@@ -1660,13 +1717,6 @@ test("painel bloqueia nova validação enquanto o acesso é revalidado", () => {
   assert.match(meuSetor, /\{accessLoading \? 'Validando…' : 'Validar acesso novamente'\}/);
 });
 
-test("anexos bloqueiam retry e paginação durante validação de acesso", () => {
-  assert.match(anexos, /aria-label=\{accessLoading\?'Validando acesso':'Tentar carregar os anexos novamente'\}/);
-  assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading\}/);
-  assert.match(anexos, /disabled=\{loading \|\| busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError \|\| page===0\}/);
-  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'ordens','visualizar'\)\)return/);
-});
-
 test("inbox de materiais preserva erro e retry em telas estreitas", () => {
   assert.match(inboxMateriais, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| !!actionBusy \|\| accessLoading \|\| !!accessError\} onClick=\{\(\)=>void load\(\)\}/);
   assert.match(inboxMateriais, /<span className="min-w-0 break-words">\{error\}<\/span>/);
@@ -1755,13 +1805,6 @@ test("erro de responsáveis organiza retry no mobile", () => {
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
   assert.match(assignment, /<div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:flex-row sm:items-start sm:justify-between"><p className="min-w-0 break-words">\{error\}<\/p>/);
   assert.match(assignment, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
-});
-
-test("atribuição de ficha bloqueia ações durante revalidação", () => {
-  assert.match(atribuicaoFicha, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
-  assert.match(atribuicaoFicha, /if\(disabled \|\| busy \|\| loading \|\| accessLoading \|\| accessError\)return/);
-  assert.match(atribuicaoFicha, /disabled=\{loading \|\| busy \|\| accessLoading\}/);
-  assert.match(atribuicaoFicha, /disabled=\{disabled \|\| busy \|\| loading \|\| accessLoading \|\| !!accessError/);
 });
 
 test("controle de secagem protege status e atualização no mobile", () => {
