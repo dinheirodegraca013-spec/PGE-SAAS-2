@@ -18,7 +18,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   useEffect(()=>{setCandidates([]);setEmployee('');setTitle('');setDescription('');setDeadline('');setPriority('normal');setMandatory(false);receipt.current=null;},[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{
     if(!canCreate || !context)return;
-    if(accessLoading||accessError){setCandidates([]);setEmployee('');setLoading(accessLoading);setError('');setMessage('');return()=>{};}
+    if(accessLoading||accessError){setCandidates([]);setEmployee('');setLoading(accessLoading);setError(accessError||'');setMessage('');return()=>{};}
     let active=true;setLoading(true);setError('');setMessage('');
     const load=context.proprietario?technicalSheets.candidates(serviceId,sector):Promise.resolve([{id:context.funcionario.id,nome:context.funcionario.nome}]);
     load.then(items=>{if(active)setCandidates(items);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');}).finally(()=>{if(active)setLoading(false);});
@@ -56,3 +56,4 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
+
