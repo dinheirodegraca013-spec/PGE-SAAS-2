@@ -23,6 +23,8 @@ test('qualquer módulo de trabalho autorizado libera o painel do funcionário',(
   assert.equal(workforcePathAllowed(tasksOnly,'/meu-setor'),true);
   assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'perfil',operacao:'visualizar',escopo:'atribuidos'}]},'/meu-setor'),true);
   assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'clientes',operacao:'visualizar',escopo:'empresa'}]},'/meu-setor'),false);
+  assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'estoque',operacao:'visualizar',escopo:'setor'}]},'/meu-setor'),true);
+  assert.equal(workforcePathAllowed({...base,permissoes:[{modulo:'financeiro',operacao:'visualizar',escopo:'atribuidos'}],funcionario:{...base.funcionario,setor:'financeiro',setores_adicionais:[]}},'/meu-setor'),true);
 });
 test('cargo administrativo não concede financeiro nem funções de proprietário',()=>{
   const office={...base,funcionario:{setor:'financeiro',setores_adicionais:[],cargo:'Gerente administrativo'},permissoes:[{modulo:'clientes',operacao:'visualizar',escopo:'empresa'}]};
