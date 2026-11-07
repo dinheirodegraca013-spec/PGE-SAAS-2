@@ -17,7 +17,7 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
   useEffect(()=>{
     let active=true;
     setLoading(true);setError('');setMessage('');
-    if(accessLoading||accessError||!context?.proprietario){setCandidates([]);setLoading(accessLoading);return()=>{active=false;};}
+    if(accessLoading||accessError||!context?.proprietario){setCandidates([]);setError(accessError||(!accessLoading&&!context?.proprietario?'Apenas o proprietário pode atribuir responsáveis.':''));setLoading(accessLoading);return()=>{active=false;};}
     technicalSheets.candidates(serviceId,sector).then(items=>{if(active)setCandidates(items);})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');})
       .finally(()=>{if(active)setLoading(false);});
@@ -44,3 +44,4 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
     <button type="submit" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy?'Salvando responsável':'Salvar responsável da ficha'} disabled={disabled || busy || loading || selected===(current || '')}>{busy?'Salvando…':'Salvar responsável'}</button>
   </form>;
 }
+
