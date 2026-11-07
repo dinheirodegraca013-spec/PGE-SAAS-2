@@ -5,7 +5,7 @@ export default function InstallationAcceptanceForm({attachments,attachmentsLoadi
   const id=useId();const [name,setName]=useState('');const [proof,setProof]=useState('');const [notes,setNotes]=useState('');const [confirmed,setConfirmed]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');
   const clearError=()=>setError('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy} onSubmit={async event=>{
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={busy || attachmentsLoading} onSubmit={async event=>{
     event.preventDefault();if(disabled || lock.current)return;
     if(name.trim().length<2 || !confirmed || !attachments.some(item=>item.id===proof)){setError('Informe o cliente, escolha um comprovante validado e confirme o aceite recebido.');return;}
     const data={clientName:name.trim(),proof,confirmed,notes};const payload=JSON.stringify(data);
