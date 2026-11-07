@@ -517,8 +517,7 @@ test("resumo preserva indicadores durante nova sincronização", () => {
 
 test("resumo não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(resumoFuncionario, /if\(accessLoading\)\{setSummary\(null\);setUpdatedAt\(null\);return/);
-  assert.match(resumoFuncionario, /if\(accessError\|\|!context\)\{setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
-  assert.match(resumoFuncionario, /setSummary\(null\);setUpdatedAt\(null\);setLoading\(false\)/);
+  assert.match(resumoFuncionario, /if\(accessError\|\|!context\)\{setSummary\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao resumo\.'\);setLoading\(false\)/);
   assert.match(resumoFuncionario, /\[accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,retry\]/);
 });
 
