@@ -164,6 +164,11 @@ test("painel do funcionário mantém ações rápidas e dados reais do setor", (
   assert.match(meuSetor, /Atualizado às/);
 });
 
+test("painel do funcionário informa quantos módulos estão liberados", () => {
+  assert.match(meuSetor, /authorizedModuleCount = context \\? new Set\\(context\\.permissoes\\.map\\(grant => grant\\.modulo\\)\\)\\.size : 0/);
+  assert.match(meuSetor, /Nenhum módulo liberado/);
+});
+
 test("painel não transforma carregamento ou erro de projetos em zero", () => {
   assert.match(meuSetor, /carregando \? projetos\.length \? `\$\{projetos\.length\} \$\{projetos\.length === 1 \? 'projeto' : 'projetos'\} · atualizando` : '…' : erro \? 'Indisponível'/);
 });
