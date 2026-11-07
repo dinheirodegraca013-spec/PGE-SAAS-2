@@ -1411,8 +1411,8 @@ test("responsável limpa feedback ao recarregar candidatos", () => {
   assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
   assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'/);
   assert.match(atribuicaoFicha, /useEffect\(\(\)=>\{setCandidates\(\[\]\);\},\[serviceId,sector\]\)/);
-  assert.match(atribuicaoFicha, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
-  assert.match(atribuicaoFicha, /\{accessLoading\?'Validando…':loading \|\| busy\?'Aguarde…':'Atualizar lista'\}/);
+  assert.match(atribuicaoFicha, /aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
+  assert.match(atribuicaoFicha, /\{accessLoading\?'Validando…':accessError\?'Revalidar acesso':loading \|\| busy\?'Aguarde…':'Atualizar lista'\}/);
 });
 
 test("atribuição de ficha aguarda autorização atual antes de carregar responsáveis", () => {
@@ -1807,7 +1807,7 @@ test("ficha técnica quebra a situação sem perder as ações", () => {
 test("erro de responsáveis organiza retry no mobile", () => {
   const assignment = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
   assert.match(assignment, /<div role="alert" className="flex flex-col gap-2 text-sm text-red-700 sm:flex-row sm:items-start sm:justify-between"><p className="min-w-0 break-words">\{error\}<\/p>/);
-  assert.match(assignment, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{accessLoading\?'Validando acesso':loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
+  assert.match(assignment, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading \|\| busy\?'Aguarde a atualização dos responsáveis':'Tentar carregar os responsáveis novamente'\}/);
 });
 
 test("controle de secagem protege status e atualização no mobile", () => {
