@@ -1245,6 +1245,12 @@ test("detalhe da tarefa aguarda contexto validado antes de consultar", () => {
   assert.match(detalheTarefa, /Aguardando validação do acesso/);
 });
 
+test("ficha técnica aguarda contexto validado antes de consultar", () => {
+  assert.match(fichaTecnica, /const \{ context, loading: accessLoading, error: accessError \} = useWorkforceAccess\(\)/);
+  assert.match(fichaTecnica, /if\(accessLoading\|\|accessError\|\|!context\)/);
+  assert.match(fichaTecnica, /Aguardando validação do acesso à ficha/);
+});
+
 test("responsável limpa feedback ao recarregar candidatos", () => {
   assert.match(atribuicaoFicha, /setLoading\(true\);setError\(''\);setMessage\(''\)/);
   assert.match(atribuicaoFicha, /candidates\.length \? 'Atualizando funcionários autorizados…' : 'Carregando funcionários autorizados…'/);
