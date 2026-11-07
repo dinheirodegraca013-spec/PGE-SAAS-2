@@ -705,9 +705,9 @@ test("leitura de notificação sempre libera o bloqueio após uma resposta tardi
 });
 
 test("agenda do funcionário informa carregamento, valida período e permite retry", () => {
-  assert.match(agendaFuncionario, /aria-busy=\{loading\}/);
+  assert.match(agendaFuncionario, /aria-busy=\{loading \\|\\| accessLoading\}/);
   assert.match(agendaFuncionario, /aria-live="polite"/);
-  assert.match(agendaFuncionario, /required disabled=\{loading\}/);
+  assert.match(agendaFuncionario, /required disabled=\{controlsDisabled\}/);
   assert.match(agendaFuncionario, /Tentar novamente/);
   assert.match(agendaFuncionario, /!start\|\|!end/);
   assert.match(agendaFuncionario, /max=\{end\|\|undefined\}/);
@@ -729,6 +729,12 @@ test("agenda informa atualização no botão", () => {
   assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
   assert.match(agendaFuncionario, /!error&&<p role="status" aria-live="polite" className="text-xs text-slate-500">/);
   assert.match(agendaFuncionario, /loading\?' · atualizando':''/);
+});
+
+test("agenda bloqueia controles durante revalidação de acesso", () => {
+  assert.match(agendaFuncionario, /const controlsDisabled=loading\|\|accessLoading\|\|!!accessError/);
+  assert.match(agendaFuncionario, /disabled=\{controlsDisabled\}/);
+  assert.match(agendaFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando agenda':'Tentar carregar a agenda novamente'\}/);
 });
 
 test("agenda destaca urgência das atividades", () => {
@@ -1745,7 +1751,7 @@ test("controle de secagem protege status e atualização no mobile", () => {
 test("agenda acomoda título e atualização em telas estreitas", () => {
   assert.match(agendaFuncionario, /<div className="min-w-0"><h2 id="work-agenda-title" className="break-words text-lg font-bold">/);
   assert.match(agendaFuncionario, /<p className="break-words text-sm text-slate-500">Prazos das tarefas atribuídas a você/);
-  assert.match(agendaFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>void load\(\)\}/);
+  assert.match(agendaFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{controlsDisabled\} onClick=\{\(\)=>void load\(\)\}/);
 });
 
 test("resumo operacional protege indicadores longos no mobile", () => {
