@@ -1598,8 +1598,8 @@ test("formulário de ocorrência sinaliza o envio em andamento", () => {
 });
 
 test("histórico bloqueia paginação durante carregamento", () => {
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| page===0\}/);
-  assert.match(historicoFuncionario, /disabled=\{loading \|\| !data\.tem_mais\}/);
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| page===0\}/);
+  assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| !data\.tem_mais\}/);
 });
 
 test("tarefas bloqueiam paginação durante carregamento", () => {
