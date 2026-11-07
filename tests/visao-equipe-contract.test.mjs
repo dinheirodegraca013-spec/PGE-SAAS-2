@@ -640,7 +640,7 @@ test("fichas não consultam dados sem vínculo validado", () => {
 
 test("retry das fichas revalida o acesso quando o vínculo falha", () => {
   assert.match(fichasFuncionario, /error: accessError, reload: reloadAccess/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
   assert.match(fichasFuncionario, /onClick=\{\(\) => accessError \? void reloadAccess\(\) : setRefresh/);
   assert.match(fichasFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando fichas':'Tentar carregar as fichas novamente'\}/);
 });
@@ -1059,7 +1059,7 @@ test("detalhe de tarefa oferece retry contextual e estado de carregamento acess�
 
 test("fichas de serviço bloqueiam pesquisa durante validação de acesso", () => {
   assert.match(fichasFuncionario, /aria-busy=\{loading \|\| accessLoading\}/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
   assert.match(fichasFuncionario, /if \(loading \|\| accessLoading\) return/);
   assert.match(fichasFuncionario, /accessLoading\?'Validando acesso…'/);
 });
@@ -1486,9 +1486,9 @@ test("equipe usa somente o editor versionado para alterar acessos", () => {
 });
 
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading\} onClick=\{\(\) =>/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| page === 0\}/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !list\.tem_mais\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\} onClick=\{\(\) =>/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| page === 0\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| !list\.tem_mais\}/);
 });
 
 test("atribuição de ficha bloqueia ações durante revalidação", () => {
@@ -1507,7 +1507,7 @@ test("listas vazias não aparecem como definitivas durante sincronização", () 
 
 test("pesquisa de fichas não cria nova carga durante sincronização", () => {
   assert.match(fichasFuncionario, /aria-busy=\{loading \|\| accessLoading\} onSubmit=\{event => \{ event\.preventDefault\(\); if \(loading \|\| accessLoading\) return;/);
-  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading\} value=\{search\}/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading \|\| !!accessError\} value=\{search\}/);
 });
 
 test("operações de produção e secagem sinalizam o formulário em andamento", () => {
@@ -1726,10 +1726,10 @@ test("inbox de materiais preserva erro e retry em telas estreitas", () => {
 
 test("fichas de serviço preservam busca e ação de abertura no mobile", () => {
   assert.match(fichasFuncionario, /<p className="min-w-0 break-words text-sm text-slate-500">\{query \?/);
-  assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading\} onClick=\{\(\) => setRefresh\(value => value \+ 1\)\}/);
-  assert.match(fichasFuncionario, /<button className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" type="submit" disabled=\{loading \|\| accessLoading\}/);
-  assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading\} onClick=\{\(\) => \{ setSearch/);
-  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading\} onClick=\{event =>/);
+  assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading \|\| !!accessError\} onClick=\{\(\) => setRefresh\(value => value \+ 1\)\}/);
+  assert.match(fichasFuncionario, /<button className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" type="submit" disabled=\{loading \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading \|\| !!accessError\} onClick=\{\(\) => \{ setSearch/);
+  assert.match(fichasFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading \|\| !!accessError\} onClick=\{event =>/);
   assert.match(fichasFuncionario, /setError\('\'\);\s*openerRef\.current = event\.currentTarget;/);
   assert.match(fichasFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar ficha aberta"/);
 });
