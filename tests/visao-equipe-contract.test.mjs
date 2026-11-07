@@ -708,6 +708,14 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
   assert.match(agendaFuncionario, /aria-label=\{`\$\{item\.titulo\|\|'Atividade sem título'\} · \$\{formatAgendaDate\(item\.inicio\)\} · \$\{formatAgendaStatus\(item\.status\)\}/);
 });
 
+test("agenda aguarda validação de acesso antes de consultar", () => {
+  assert.match(agendaFuncionario, /loading:accessLoading,error:accessError/);
+  assert.match(agendaFuncionario, /allowed=!accessLoading&&!accessError&&hasPermission\(context,'agenda','visualizar'\)/);
+  assert.match(agendaFuncionario, /if\(!allowed\|\|accessLoading\|\|accessError\)return/);
+  assert.match(agendaFuncionario, /if\(accessLoading\)return <p role="status" aria-live="polite">Validando acesso à agenda/);
+  assert.match(agendaFuncionario, /if\(accessError\)return <p role="alert"/);
+});
+
 test("agenda informa atualização no botão", () => {
   assert.match(agendaFuncionario, /aria-label=\{loading\?'Atualizando agenda':'Atualizar agenda'\}/);
   assert.match(agendaFuncionario, /\{loading\?'Atualizando…':'Atualizar'\}/);
@@ -1469,7 +1477,7 @@ test("agenda ignora respostas de requisições antigas", () => {
 });
 
 test("agenda limpa atividades anteriores antes de nova consulta", () => {
-  assert.match(agendaFuncionario, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);\},\[start,end,context\?\.funcionario\.id,context\?\.funcionario\.versao\]\)/);
+  assert.match(agendaFuncionario, /useEffect\(\(\)=>\{setItems\(\[\]\);setUpdatedAt\(null\);setError\(accessError\|\|''\);setLoading\(accessLoading\);\},\[start,end,accessLoading,accessError/);
   assert.match(agendaFuncionario, /setLoading\(true\);setError\(''\);try/);
 });
 
