@@ -20,7 +20,7 @@ function Resolution({incident,onSaved}:{incident:Incident;onSaved:()=>void}){
 }
 
 export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:string;sector:string;canCreate:boolean}){
-  const {context}=useWorkforceAccess();const id=useId();const canView=hasPermission(context,'ocorrencias');
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const id=useId();const canView=hasPermission(context,'ocorrencias');
   const [items,setItems]=useState<Incident[]>([]);const [page,setPage]=useState(0);const [more,setMore]=useState(false);const [refresh,setRefresh]=useState(0);const [loading,setLoading]=useState(true);const [error,setError]=useState('');
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');const [type,setType]=useState<IncidentType>('outro');const [severity,setSeverity]=useState<IncidentSeverity>('atencao');const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);const generation=useRef(0);const lastReturnRefresh=useRef(0);
@@ -30,10 +30,10 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
   useEffect(()=>{setPage(0);},[serviceId,sector,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{setItems([]);setMore(false);},[serviceId,sector,page,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{const refreshOnReturn=()=>{const now=Date.now();if(document.visibilityState==='visible'&&now-lastReturnRefresh.current>1000){lastReturnRefresh.current=now;setRefresh(value=>value+1);}};window.addEventListener('focus',refreshOnReturn);document.addEventListener('visibilitychange',refreshOnReturn);return()=>{window.removeEventListener('focus',refreshOnReturn);document.removeEventListener('visibilitychange',refreshOnReturn);};},[serviceId,sector]);
-  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}let active=true;setLoading(true);setError('');
+  useEffect(()=>{if(!canView){setLoading(false);setItems([]);return;}if(accessLoading||accessError||!context){setLoading(accessLoading);setItems([]);setMore(false);setError('');return;}let active=true;setLoading(true);setError('');
     incidents.list(serviceId,sector,page).then(result=>{if(active){setItems(result.itens);setMore(result.tem_mais);}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar ocorrências.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
-  },[serviceId,sector,page,refresh,canView,context?.funcionario.id,context?.funcionario.versao]);
+  },[serviceId,sector,page,refresh,canView,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
   if(!canView && !canCreate)return null;
   return <section className="space-y-4 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy}><h4 id={`${id}-title`} className="font-semibold">Ocorrências desta ficha</h4>
     {canCreate && <form className="grid gap-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event=>{
