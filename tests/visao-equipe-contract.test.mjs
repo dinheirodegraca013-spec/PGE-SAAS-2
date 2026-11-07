@@ -589,6 +589,11 @@ test("gerenciador de dispositivos anuncia carga inicial e atualização", () => 
   assert.match(gerenciadorDispositivos, /devices\.length \? 'Atualizando dispositivos…' : 'Carregando dispositivos…'/);
 });
 
+test("revogar o dispositivo atual encerra a sessão local", () => {
+  assert.match(gerenciadorDispositivos, /const revokedDevice = devices\.find\(device => device\.id === id\)/);
+  assert.match(gerenciadorDispositivos, /if \(revokedDevice\?\.current\) \{\s*await supabase\.auth\.signOut\(\);\s*window\.location\.assign\('\/login'\);/);
+});
+
 test("equipe oferece retry contextual e anuncia o carregamento da lista", () => {
   assert.match(equipe, /Tentar novamente/);
   assert.match(equipe, /aria-busy=\{carregando\}/);
