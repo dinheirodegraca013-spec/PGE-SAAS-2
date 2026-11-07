@@ -74,9 +74,10 @@ export default function TechnicalSheetForm({ fields, value, allowedPrivacy = [],
     try { await onSave(patch); setMessage('Ficha técnica salva.'); }
     catch (error) { setMessage(error instanceof Error ? error.message : 'Não foi possível salvar. Tente novamente.'); }
     finally { setBusy(false); }
-  }} className="space-y-4" aria-busy={busy}>
+  }} className="space-y-4" aria-busy={busy || disabled}>
     <div className="grid min-w-0 gap-4">{fields.map(field => renderField(field, value, onChange))}</div>
     {message && <p role={message.startsWith('Não foi') || message.startsWith('Revise') ? 'alert' : 'status'} aria-live="polite" className="text-sm">{message}</p>}
-    <button type="submit" disabled={busy || disabled} aria-label={busy ? 'Salvando ficha técnica' : 'Salvar ficha técnica'} className="inline-flex w-full shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50 sm:w-auto">{busy ? 'Salvando…' : 'Salvar ficha técnica'}</button>
+    <button type="submit" disabled={busy || disabled} aria-label={busy ? 'Salvando ficha técnica' : disabled ? 'Aguardando autorização para salvar a ficha técnica' : 'Salvar ficha técnica'} className="inline-flex w-full shrink-0 whitespace-nowrap rounded-lg bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3 text-white disabled:opacity-50 sm:w-auto">{busy ? 'Salvando…' : disabled ? 'Aguardando autorização…' : 'Salvar ficha técnica'}</button>
   </form>;
 }
+
