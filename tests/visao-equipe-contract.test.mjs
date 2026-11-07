@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 25690)
-Total output lines: 1591
+Warning: truncated output (original token count: 25742)
+Total output lines: 1595
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -258,6 +258,10 @@ test("painel informa conexão offline e retoma sincronização ao voltar", () =>
 
 test("contagem de projetos é anunciada durante a sincronização", () => {
   assert.match(meuSetor, /className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" aria-live="polite" aria-atomic="true"/);
+});
+
+test("projetos do setor anunciam carregamento na própria seção", () => {
+  assert.match(meuSetor, /<section className="card p-5" aria-labelledby="sector-projects-title" aria-busy=\{carregando\}>/);
 });
 
 test("gerenciador de dispositivos rejeita dados inconsistentes", () => {
@@ -683,8 +687,7 @@ test("histórico informa atualização no botão", () => {
 });
 
 test("erro do histórico bloqueia retry durante sincronização", () => {
-  assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(historicoFuncionario, /disabled=\{loading\} aria-label=\{loading\?'Atualizando histórico':'Tentar carregar o histórico nov…5690 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
+  assert.match(historicoFuncionario, /className="(?:w-f…5742 tokens truncated…rt.match(solicitacaoMaterial, /canRequest && !options\.length && <p id=\{`\$\{fieldPrefix\}-no-materials`\} role="status" aria-live="polite"/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-item`\}[^>]*required/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-quantity`\}[^>]*required min=/);
   assert.match(solicitacaoMaterial, /id=\{`\$\{fieldPrefix\}-reason`\}[^>]*required minLength=\{3\}/);

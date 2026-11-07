@@ -191,7 +191,7 @@ export default function MeuSetorView() {
         <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Setores autorizados</dt><dd className="mt-1 text-slate-900">{sectorList.length ? sectorList.filter(isSetor).map(item => setores[item]).join(', ') : 'Nenhum setor informado'}</dd></div>
       </dl>
     </section>}
-    {context && <section className="card p-5" aria-labelledby="sector-projects-title"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold">Projetos do setor</h2>
+    {context && <section className="card p-5" aria-labelledby="sector-projects-title" aria-busy={carregando}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><h2 id="sector-projects-title" className="break-words text-lg font-bold">Projetos do setor</h2>
       <p className="mt-1 break-words text-sm text-slate-500">Projetos encaminhados pelo administrador da empresa.</p></div><span className="shrink-0 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" aria-live="polite" aria-atomic="true">{carregando ? '…' : erro ? 'Indisponível' : `${projetos.length} ${projetos.length === 1 ? 'projeto' : 'projetos'}`}</span></div>
       {carregando && !projetos.length ? <p role="status" aria-live="polite" className="py-6">Carregando projetos…</p> : erro && !projetos.length ?
         <p className="py-6 text-sm text-slate-500">Os projetos não puderam ser exibidos agora. Use “Tentar novamente” para atualizar.</p> : !projetos.length ?
