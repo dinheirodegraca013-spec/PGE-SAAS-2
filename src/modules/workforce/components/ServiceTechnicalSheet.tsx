@@ -23,6 +23,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const [checklistBusy, setChecklistBusy] = useState(false);
   const [saving, setSaving] = useState(false);
   const [attachmentOptions,setAttachmentOptions] = useState<{id:string;nome:string}[]>([]);
+  const [attachmentsLoading,setAttachmentsLoading] = useState(true);
   const [drying, setDrying] = useState<FinishingDryingState | null>(null);
   const [dryingError, setDryingError] = useState('');
   const [production, setProduction] = useState<ProductionState | null>(null);
@@ -33,7 +34,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const mutation = useRef(false);
   const generation = useRef(0);
   useEffect(() => {
-    setSheet(null); setValues({}); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError('');
+    setSheet(null); setValues({}); setAttachmentOptions([]); setAttachmentsLoading(true); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError('');
   }, [serviceId, sector, context?.funcionario.versao]);
   useEffect(() => {
     const request = ++generation.current;
@@ -171,9 +172,9 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         <span>{item.label}{item.automatic && <span className="block text-xs text-slate-500">Atualizado após registro da evidência.</span>}</span>
       </label>)}
     </fieldset>
-    <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions}/>
+    <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions} onLoadingChange={setAttachmentsLoading}/>
     {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
-    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} disabled={loading || saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
+    {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} attachmentsLoading={attachmentsLoading} disabled={loading || saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);const request=generation.current;
       try{await installation.accept(serviceId,sheet.versao,input);if(request===generation.current)setReload(n=>n+1);}
