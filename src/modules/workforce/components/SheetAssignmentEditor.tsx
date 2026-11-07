@@ -1,8 +1,10 @@
 import React, { useEffect, useId, useState } from 'react';
 import { technicalSheets } from '../services/technical-sheet.service';
+import { useWorkforceAccess } from '../context/WorkforceAccessContext';
 
 export default function SheetAssignmentEditor({serviceId,sector,current,disabled,onAssign}:{serviceId:string;sector:string;current:string|null;disabled:boolean;onAssign:(employee:string|null)=>Promise<void>}) {
   const id = useId();
+  const { context, loading: accessLoading, error: accessError } = useWorkforceAccess();
   const [candidates,setCandidates] = useState<Awaited<ReturnType<typeof technicalSheets.candidates>>>([]);
   const [selected,setSelected] = useState(current || '');
   const [loading,setLoading] = useState(true);
@@ -15,11 +17,12 @@ export default function SheetAssignmentEditor({serviceId,sector,current,disabled
   useEffect(()=>{
     let active=true;
     setLoading(true);setError('');setMessage('');
+    if(accessLoading||accessError||!context?.proprietario){setCandidates([]);setLoading(accessLoading);return()=>{active=false;};}
     technicalSheets.candidates(serviceId,sector).then(items=>{if(active)setCandidates(items);})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');})
       .finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
-  },[serviceId,sector,retry]);
+  },[serviceId,sector,retry,accessLoading,accessError,context?.proprietario]);
   return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-label="Responsável pela ficha deste setor" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(disabled || busy || loading)return;
     if(selected && !candidates.some(item=>item.id===selected)){setError('Escolha um funcionário disponível.');return;}
