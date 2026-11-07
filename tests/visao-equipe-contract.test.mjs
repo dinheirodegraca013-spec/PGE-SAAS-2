@@ -947,7 +947,7 @@ test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
 });
 
 test("anexos não consultam dados sem vínculo de funcionário validado", () => {
-  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setError\(accessError\|\|'Não foi possível validar o acesso aos anexos\.'\);setLoading\(accessLoading\);onLoadingChange\?\.\(accessLoading\)/);
+  assert.match(anexos, /if\(accessLoading\|\|accessError\|\|!context\)\{setItems\(\[\]\);setLinks\(\{\}\);setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
   assert.match(anexos, /\[serviceId,sector,page,refresh,accessLoading,accessError,context\?\.funcionario\.id,context\?\.funcionario\.versao,onListed,onLoadingChange\]/);
 });
 
@@ -1535,6 +1535,12 @@ test("anexos bloqueiam envio enquanto o link temporário é gerado", () => {
 test("anexos orientam formatos e tamanho do arquivo", () => {
   assert.match(anexos, /aria-describedby=\{`\$\{id\}-help`\}/);
   assert.match(anexos, /Formatos aceitos: JPEG, PNG, WebP ou PDF\. Tamanho máximo: 10 MB\./);
+});
+
+test("anexos bloqueiam envio durante validação de acesso", () => {
+  assert.match(anexos, /canUploadAllowed=canUpload&&!accessLoading&&!accessError&&!!context/);
+  assert.match(anexos, /\{canUploadAllowed && <form/);
+  assert.match(anexos, /setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
 });
 
 test("inbox de estoque ignora respostas de filtros antigos", () => {
