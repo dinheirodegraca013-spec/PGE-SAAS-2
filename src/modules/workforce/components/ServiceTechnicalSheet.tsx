@@ -33,6 +33,11 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   const [materialError, setMaterialError] = useState('');
   const mutation = useRef(false);
   const generation = useRef(0);
+  const assertCurrentPermission = (module: string, operation = 'visualizar') => {
+    if (accessLoading || accessError || !context || !hasPermission(context, module, operation)) {
+      throw new Error('A autorização mudou. Recarregue a ficha antes de continuar.');
+    }
+  };
   useEffect(() => {
     setSheet(null); setValues({}); setAttachmentOptions([]); setAttachmentsLoading(true); setDrying(null); setDryingError(''); setProduction(null); setProductionError(''); setMaterialOptions([]); setMaterialRequests([]); setMaterialError(''); setError('');
   }, [serviceId, sector, context?.funcionario.versao]);
@@ -104,7 +109,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         setReload(n => n + 1);
       }}>Recarregar ficha</button>
     </div>
-    {context?.proprietario && <SheetAssignmentEditor serviceId={serviceId} sector={sector} current={sheet.responsavel_id} disabled={loading || saving || checklistBusy} onAssign={async employee=>{
+    {context?.proprietario && <SheetAssignmentEditor serviceId={serviceId} sector={sector} current={sheet.responsavel_id} disabled={loading || accessLoading || !!accessError || saving || checklistBusy} onAssign={async employee=>{
+      if (accessLoading || accessError || !context?.proprietario) throw new Error('A autorização mudou. Recarregue a ficha antes de continuar.');
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);
       const request=generation.current;
@@ -126,6 +132,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
         } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
       }} />
     {sector === 'acabamento' && <FinishingDryingControl state={drying} error={dryingError} canRegister={drying !== null && sheet.pode_editar && sheet.status === 'em_andamento' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async minutes => {
+      assertCurrentPermission('ordens', 'editar');
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setDryingError('');
       const request = generation.current;
@@ -138,6 +145,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
     {(sector === 'corte' || sector === 'montagem') && <ProductionLog state={production} error={productionError} canRegister={production !== null && sheet.pode_editar && sheet.status !== 'concluida' && hasPermission(context, 'ordens', 'editar')} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onRegister={async input => {
+      assertCurrentPermission('ordens', 'editar');
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setProductionError('');
       const request = generation.current;
@@ -147,11 +155,13 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       } finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} />}
     {['corte', 'montagem', 'acabamento', 'instalacao'].includes(sector) && hasPermission(context, 'estoque', 'criar') && <MaterialRequestPanel options={materialOptions} requests={materialRequests} error={materialError} canRequest={materialOptions.length > 0 && sheet.status !== 'concluida'} disabled={loading || saving || checklistBusy || sheet.status === 'concluida'} onRefresh={() => setReload(n => n + 1)} onCreate={async input => {
+      assertCurrentPermission('estoque', 'criar');
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
       try { await technicalSheets.materialRequestCreate(serviceId, sector, input); if (request === generation.current) setReload(n => n + 1); }
       finally { mutation.current = false; if (request === generation.current) setSaving(false); }
     }} onCancel={async requestItem => {
+      assertCurrentPermission('estoque', 'criar');
       if (mutation.current) throw new Error('Aguarde o salvamento em andamento.');
       mutation.current = true; setSaving(true); setMaterialError(''); const request = generation.current;
       try { const result = await technicalSheets.materialRequestUpdate(requestItem.id, 'cancelar', requestItem.versao); if (request === generation.current) setMaterialRequests(current => current.map(item => item.id === requestItem.id ? { ...item, status: result.status as MaterialRequest['status'], versao: result.versao } : item)); }
@@ -179,6 +189,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
     <SheetAttachments serviceId={serviceId} sector={sector} canUpload={sheet.pode_anexar && sheet.status!=='concluida'} onListed={setAttachmentOptions} onLoadingChange={setAttachmentsLoading}/>
     {sector==='instalacao' && sheet.checklist.aceite_cliente && <p role="status" aria-live="polite" className="text-sm text-emerald-800">Aceite da instalação registrado com comprovante.</p>}
     {sector==='instalacao' && !sheet.checklist.aceite_cliente && sheet.status==='em_andamento' && sheet.acoes_execucao.includes('concluir') && <InstallationAcceptanceForm attachments={attachmentOptions} attachmentsLoading={attachmentsLoading} disabled={loading || saving || checklistBusy || JSON.stringify(values)!==JSON.stringify(sheet.dados)} onRegister={async input=>{
+      assertCurrentPermission('ordens', 'editar');
       if(mutation.current)throw new Error('Aguarde o salvamento em andamento.');
       mutation.current=true;setSaving(true);const request=generation.current;
       try{await installation.accept(serviceId,sheet.versao,input);if(request===generation.current)setReload(n=>n+1);}
