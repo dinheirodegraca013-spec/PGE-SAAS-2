@@ -50,7 +50,7 @@ export default function AppLayout() {
   }, []);
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
-  const employeeProfilePath = work.context && !work.context.proprietario ? '/meu-setor#perfil' : '/configuracoes';
+  const employeeProfilePath = work.context && !work.context.proprietario ? hasPermission(work.context, 'perfil') ? '/meu-setor#perfil' : '/meu-setor' : '/configuracoes';
   const gruposVisiveis = !work.context
     ? []
     : !work.context.proprietario
