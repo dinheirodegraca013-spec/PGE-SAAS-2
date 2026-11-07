@@ -6,7 +6,7 @@ import {workTasks,type WorkTask} from '../services/tasks.service';
 const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
 
 export default function TaskCreationForm({serviceId,sector}:{serviceId:string;sector:string}){
-  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const id=useId();
+  const {context,loading:accessLoading,error:accessError,reload:reloadAccess}=useWorkforceAccess();const id=useId();
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');
   const [employee,setEmployee]=useState('');const [deadline,setDeadline]=useState('');
   const [priority,setPriority]=useState<WorkTask['prioridade']>('normal');const [mandatory,setMandatory]=useState(false);
@@ -52,7 +52,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-amber-700">Nenhum funcionário autorizado está disponível para receber esta tarefa.</p>}
-    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || accessLoading || !!accessError} onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label={busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{busy?'Aguarde…':'Atualizar responsáveis'}</button>}
+    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || accessLoading} onClick={()=>{setError('');setMessage('');if(accessError){void reloadAccess();}else setRetry(n=>n+1)}} aria-label={accessLoading?'Validando acesso':accessError?'Revalidar acesso':busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{accessLoading?'Validando…':accessError?'Revalidar acesso':busy?'Aguarde…':'Atualizar responsáveis'}</button>}
     <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || accessLoading || !!accessError || !candidates.length} aria-label={accessLoading?'Validando acesso':loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{accessLoading?'Validando…':loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
