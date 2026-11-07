@@ -13,7 +13,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   const [candidates,setCandidates]=useState<{id:string;nome:string}[]>([]);
   const [loading,setLoading]=useState(true);const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [message,setMessage]=useState('');const [retry,setRetry]=useState(0);
   const lock=useRef(false);const receipt=useRef<{payload:string;id:string}|null>(null);
-  const canCreate=hasPermission(context,'tarefas','criar');
+  const canCreate=hasPermission(context,'tarefas','criar');const canCreateAllowed=canCreate&&!accessLoading&&!accessError&&!!context;
   const clearFeedback=()=>{setError('');setMessage('');};
   useEffect(()=>{setCandidates([]);setEmployee('');setTitle('');setDescription('');setDeadline('');setPriority('normal');setMandatory(false);receipt.current=null;},[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{
@@ -25,8 +25,8 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     return()=>{active=false;};
   },[serviceId,sector,canCreate,accessLoading,accessError,context?.proprietario,context?.funcionario.id,context?.funcionario.versao,retry]);
   if(!canCreate)return null;
-  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
-    event.preventDefault();if(lock.current || loading)return;
+  return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy || accessLoading} onSubmit={async event=>{
+    event.preventDefault();if(lock.current || loading || accessLoading || accessError || !canCreateAllowed)return;
     if(!title.trim() || !candidates.some(item=>item.id===employee)){setError('Informe o título e escolha um responsável disponível.');return;}
     if(description.trim().length<2){setError('Informe uma descrição com pelo menos 2 caracteres.');return;}
     const parsed=deadline?new Date(deadline):null;
@@ -40,7 +40,7 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     finally{lock.current=false;setBusy(false);}
   }}>
     <h4 className="font-semibold">Criar tarefa nesta etapa</h4>
-    <fieldset disabled={busy || loading} className="grid gap-3 sm:grid-cols-2"><legend className="sr-only">Dados da nova tarefa</legend>
+    <fieldset disabled={busy || loading || accessLoading || !!accessError} className="grid gap-3 sm:grid-cols-2"><legend className="sr-only">Dados da nova tarefa</legend>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-title`}>Título<input id={`${id}-title`} className="input-field mt-1" required minLength={2} maxLength={200} value={title} onChange={event=>{setTitle(event.target.value);setError('');setMessage('');}}/></label>
       <label className="text-sm sm:col-span-2" htmlFor={`${id}-description`}>Descrição<textarea id={`${id}-description`} className="input-field mt-1" rows={3} minLength={2} maxLength={10000} required value={description} onChange={event=>{setDescription(event.target.value);clearFeedback();}}/></label>
       <label className="text-sm" htmlFor={`${id}-employee`}>Responsável<select id={`${id}-employee`} className="input-field mt-1" required value={employee} onChange={event=>{setEmployee(event.target.value);setError('');setMessage('');}}><option value="">Selecione um funcionário</option>{candidates.map(item=><option key={item.id} value={item.id}>{item.nome}</option>)}</select></label>
@@ -52,8 +52,8 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {!loading && !error && !candidates.length && <p role="status" aria-live="polite" className="text-sm text-amber-700">Nenhum funcionário autorizado está disponível para receber esta tarefa.</p>}
-    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy} onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label={busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{busy?'Aguarde…':'Atualizar responsáveis'}</button>}
-    <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || !candidates.length} aria-label={loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
+    {!loading && (error || !candidates.length) && <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || accessLoading || !!accessError} onClick={()=>{setError('');setMessage('');setRetry(n=>n+1)}} aria-label={busy?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'}>{busy?'Aguarde…':'Atualizar responsáveis'}</button>}
+    <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={busy || loading || accessLoading || !!accessError || !candidates.length} aria-label={accessLoading?'Validando acesso':loading?'Carregando responsáveis':busy?'Criando tarefa':'Criar tarefa'}>{accessLoading?'Validando…':loading?'Carregando…':busy?'Criando…':'Criar tarefa'}</button>
   </form>;
 }
 
