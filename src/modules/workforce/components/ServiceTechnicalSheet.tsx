@@ -14,7 +14,7 @@ import ProductionLog from './ProductionLog';
 import MaterialRequestPanel from './MaterialRequestPanel';
 
 export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId: string; sector: string }) {
-  const { context } = useWorkforceAccess();
+  const { context, loading: accessLoading, error: accessError } = useWorkforceAccess();
   const [sheet, setSheet] = useState<ServiceSheet | null>(null);
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
@@ -39,6 +39,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   useEffect(() => {
     const request = ++generation.current;
     setError(''); setDryingError(''); setProductionError(''); setMaterialError(''); setLoading(true);
+    if(accessLoading||accessError||!context){setSheet(null);setValues({});setAttachmentOptions([]);setAttachmentsLoading(true);setDrying(null);setProduction(null);setMaterialOptions([]);setMaterialRequests([]);if(accessError)setError(accessError);setLoading(Boolean(accessLoading));return()=>{generation.current++;};}
     (async () => {
       try {
         const result = await technicalSheets.load(serviceId, sector);
@@ -61,7 +62,8 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       } finally { if (request === generation.current) setLoading(false); }
     })();
     return () => { generation.current++; };
-  }, [serviceId, sector, reload, context?.funcionario.versao]);
+  }, [serviceId, sector, reload, accessLoading, accessError, context?.funcionario.id, context?.funcionario.versao]);
+  if(accessLoading)return <p role="status" aria-live="polite">Aguardando validação do acesso à ficha…</p>;
   if (loading && !sheet) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
