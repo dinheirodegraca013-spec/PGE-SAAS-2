@@ -1342,6 +1342,10 @@ test("gerenciamento de dispositivos de funcionários fica restrito ao proprietá
   assert.match(equipe, /limits && limits\.owner_id === usuario\?\.usuarioId && <button type="button" className="btn-secondary" aria-label=\{`Gerenciar dispositivos/);
 });
 
+test("equipe usa somente o editor versionado para alterar acessos", () => {
+  assert.doesNotMatch(equipe, /gerenciar_funcionario/);
+});
+
 test("fichas bloqueiam abertura e paginação durante sincronização", () => {
   assert.match(fichasFuncionario, /disabled=\{loading\} onClick=\{\(\) =>/);
   assert.match(fichasFuncionario, /disabled=\{loading \|\| page === 0\}/);
