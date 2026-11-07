@@ -18,3 +18,8 @@ test('resumo rejeita prazo com setor desconhecido',()=>{
   assert.match(source,/new Set\(validPrazos\.map\(item=>item\.id\)\)\.size!==validPrazos\.length/);
   assert.match(source,/validPrazos\.sort\(\(left,right\)=>new Date\(left\.prazo\)\.getTime\(\)-new Date\(right\.prazo\)\.getTime\(\)\)/);
 });
+
+test('resumo não anuncia ausência de prazos durante atualização',()=>{
+  assert.match(source,/!summary\.proximos_prazos\.length\?\(!loading&&<p role="status" aria-live="polite"/);
+});
+
