@@ -677,9 +677,15 @@ test("notificações permitem retry e paginação acessível", () => {
   assert.match(notificacoesFuncionario, /aria-live="polite"/);
   assert.match(notificacoesFuncionario, /Tentar novamente/);
   assert.match(notificacoesFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
-  assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
+  assert.match(notificacoesFuncionario, /disabled=\{loading \|\| !!busy \|\| accessLoading\} aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading \|\| !!busy\?'Aguarde a atualização das notificações':'Tentar carregar as notificações novamente'\}/);
   assert.match(notificacoesFuncionario, /aria-label="Paginação de notificações"/);
   assert.match(notificacoesFuncionario, /aria-current="page"/);
+});
+
+test("notificações permitem revalidar acesso após falha", () => {
+  assert.match(notificacoesFuncionario, /reload:reloadAccess/);
+  assert.match(notificacoesFuncionario, /if\(accessError\)\{void reloadAccess\(\);\}else setRefresh/);
+  assert.match(notificacoesFuncionario, /accessError\?'Revalidar acesso'/);
 });
 
 test("notificações bloqueiam marcar como lida durante revalidação de acesso", () => {
