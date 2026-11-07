@@ -1,4 +1,4 @@
-Warning: truncated output (original token count: 32869)
+Warning: truncated output (original token count: 32894)
 Total output lines: 1937
 
 import test from "node:test";
@@ -815,10 +815,7 @@ test("histórico diferencia carga inicial de sincronização", () => {
 });
 
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…7869 tokens truncated…ndo…':'Atualizar'\}/);
-});
-
-test("cartão de solicitação preserva o horário durante sincronização", () => {
+  assert.match(historicoFuncionario, /data&&<p role="…7894 tokens truncated…zação", () => {
   assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
   assert.match(solicitacaoMaterial, /busy\?'Atualizando solicitações…':updatedAt/);
 });
@@ -1030,7 +1027,7 @@ test("cartão de tarefa sinaliza atualização concorrente", () => {
 });
 
 test("cartão de tarefa informa o estado do salvamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem alterações'\}/);
+  assert.match(minhasTarefas, /aria-label=\{accessLoading\?'Aguardando autorização para atualizar tarefa':accessError\?'Acesso indisponível':busy\?'Salvando tarefa':dirty\?'Atualizar tarefa':'Sem alterações'\}/);
   assert.match(minhasTarefas, /\{busy && <p role="status" aria-live="polite" className="text-sm text-cyan-700 sm:col-span-2">Salvando tarefa…<\/p>\}/);
 });
 
