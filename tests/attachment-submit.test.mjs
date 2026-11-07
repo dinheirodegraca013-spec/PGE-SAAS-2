@@ -12,6 +12,7 @@ function setup({canUpload=true,invalid=false,failure=false}={}){
   new Function('require','module','exports',code)(name=>{
     if(name==='react')return {__esModule:true,default:react,...react};
     if(name.includes('WorkforceAccessContext'))return {useWorkforceAccess:()=>({context:{funcionario:{id:'worker',versao:1}}})};
+    if(name.includes('../lib/access'))return {hasPermission:()=>true};
     if(name.includes('attachments.service'))return {attachments:{prepare:async(...args)=>{calls.push(['prepare',...args]);return {id:'attachment-a',caminho:'company/file',bucket:'workforce-private'};},upload:async(...args)=>{calls.push(['upload',...args]);attempts++;if(failure&&attempts===1)throw new Error('Validação indisponível');}}};
     throw new Error(name);
   },module,module.exports);
@@ -30,3 +31,4 @@ test('formulário recusa tipo inválido antes de preparar envio e respeita leitu
   const invalid=setup({invalid:true});await invalid.submit();assert.equal(invalid.calls.length,0);
   const readonly=setup({canUpload:false});assert.equal(readonly.form,null);
 });
+
