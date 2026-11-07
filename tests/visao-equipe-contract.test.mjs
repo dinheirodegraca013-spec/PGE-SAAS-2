@@ -849,6 +849,13 @@ test("ocorrências bloqueiam criação durante validação de acesso", () => {
   assert.match(ocorrenciasFuncionario, /\{canCreateAllowed && <form/);
 });
 
+test("ocorrências bloqueiam resolução quando a autorização fica indisponível", () => {
+  assert.match(ocorrenciasFuncionario, /function Resolution\(\{incident,onSaved,allowed=true\}/);
+  assert.match(ocorrenciasFuncionario, /if\(lock\.current \|\| !allowed\)return/);
+  assert.match(ocorrenciasFuncionario, /aria-busy=\{busy \|\| !allowed\}/);
+  assert.match(ocorrenciasFuncionario, /allowed=\{canView && !accessLoading && !accessError && !!context\}/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
@@ -1361,7 +1368,7 @@ test("responsável limpa feedback quando a ficha muda externamente", () => {
 test("ficha técnica e resolução de ocorrência anunciam estados críticos", () => {
   assert.match(fichaTecnica, /\{error && <p role="alert"/);
   assert.match(fichaOperacional, /role="status" aria-live="polite"/);
-  assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy\}/);
+  assert.match(ocorrenciasFuncionario, /<form className="space-y-2" aria-busy=\{busy \|\| !allowed\}/);
   assert.match(ocorrenciasFuncionario, /rows=\{3\} required minLength=\{10\} maxLength=\{5000\}/);
 });
 
@@ -1574,7 +1581,7 @@ test("ficha técnica diferencia erro de sucesso na mensagem acessível", () => {
 });
 
 test("formulário de ocorrência sinaliza o envio em andamento", () => {
-  assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy\}/);
+  assert.match(ocorrenciasFuncionario, /<form className="grid gap-3 sm:grid-cols-2" aria-busy=\{busy \|\| accessLoading\}/);
 });
 
 test("histórico bloqueia paginação durante carregamento", () => {
