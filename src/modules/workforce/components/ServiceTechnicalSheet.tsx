@@ -81,7 +81,7 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
       finally { mutation.current = false; }
     }}>{loading ? 'Liberando…' : 'Liberar ficha deste setor'}</button>}
   </div>;
-  return <section className="space-y-4" aria-label="Ficha técnica do serviço" aria-busy={saving || checklistBusy || loading}>
+  return <section className="space-y-4" aria-label="Ficha técnica do serviço" aria-busy={saving || checklistBusy || loading || accessLoading}>
     {loading && <p role="status" aria-live="polite">Atualizando ficha técnica…</p>}
     {saving && <p role="status" aria-live="polite">Salvando alterações da ficha técnica…</p>}
     <div className="flex flex-wrap items-center gap-3 rounded-xl bg-slate-50 p-3">
