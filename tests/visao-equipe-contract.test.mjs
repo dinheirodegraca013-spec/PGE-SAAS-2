@@ -1,4 +1,4 @@
-Warning: truncated output (original token count: 30323)
+Warning: truncated output (original token count: 30386)
 Total output lines: 1825
 
 import test from "node:test";
@@ -958,12 +958,7 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
 test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibili…323 tokens truncated…
-  assert.match(editorAcesso, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy\}/);
-});
-
-test("anexos reiniciam paginação e arquivo ao trocar de contexto", () => {
-  assert.match(anexos, /useEffect\(\(\)=>\{setPage\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
+  assert.match(resumoFuncionario, /addEventListener\('visibili…386 tokens truncated…Page\(0\);setFile\(null\);setMessage\('\'\);receipt\.current=null/);
 });
 
 test("anexos não consultam dados sem vínculo de funcionário validado", () => {
@@ -1075,7 +1070,7 @@ test("ocorrências e anexos expõem retry e paginação acessível", () => {
   assert.match(anexos, /aria-label=\{`Anexo \$\{attachmentName\} · \$\{attachmentSize\}`\}/);
   assert.match(anexos, /Tentar novamente/);
   assert.match(anexos, /Nenhum anexo validado nesta página/);
-  assert.match(anexos, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{busy\?'Enviando e validando anexo'/);
+  assert.match(anexos, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label=\{accessLoading\?'Validando acesso':busy\?'Enviando e validando anexo'/);
   assert.match(anexos, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a página anterior de anexos"/);
   assert.match(anexos, /className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
 });
@@ -1554,9 +1549,9 @@ test("link de anexo libera o bloqueio após resposta tardia", () => {
 });
 
 test("anexos bloqueiam envio enquanto o link temporário é gerado", () => {
-  assert.match(anexos, /if\(lock\.current \|\| !!linkBusy \|\| !file\)return/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy\}/);
-  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| !file\}/);
+  assert.match(anexos, /if\(lock\.current \|\| !!linkBusy \|\| accessLoading \|\| accessError \|\| !context \|\| !hasPermission\(context,'ordens','anexar'\) \|\| !file\)return/);
+  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError\}/);
+  assert.match(anexos, /disabled=\{busy \|\| !!linkBusy \|\| accessLoading \|\| !!accessError \|\| !file\}/);
 });
 
 test("anexos orientam formatos e tamanho do arquivo", () => {
@@ -1565,7 +1560,7 @@ test("anexos orientam formatos e tamanho do arquivo", () => {
 });
 
 test("anexos bloqueiam envio durante validação de acesso", () => {
-  assert.match(anexos, /canUploadAllowed=canUpload&&!accessLoading&&!accessError&&!!context/);
+  assert.match(anexos, /canUploadAllowed=canUpload&&!accessLoading&&!accessError&&!!context&&hasPermission\(context,'ordens','anexar'\)/);
   assert.match(anexos, /\{canUploadAllowed && <form/);
   assert.match(anexos, /setError\(accessError\|\|\(!accessLoading\?'Não foi possível validar o acesso aos anexos\.'/);
 });
