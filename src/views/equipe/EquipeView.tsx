@@ -76,12 +76,6 @@ export default function EquipeView() {
     if (salvando || encaminhando) return;
     setSalvando(true); setErro(null); setSucesso('');
     try {
-      if (editingId) {
-        const { error } = await supabase.rpc('gerenciar_funcionario', { p_usuario_id: editingId, p_nome: nome.trim(), p_setor: setor, p_ativo: editActive });
-        if (error) throw new Error(error.message);
-        setSucesso('Acesso do funcionário atualizado.'); setNovo(false); setEditingId(null);
-        await carregar(); return;
-      }
       if (!limits || limits.sublogins_available <= 0) throw new Error('Limite de sublogins atingido ou indisponível. Atualize a tela ou veja as opções de upgrade.');
       const { data, error } = await supabase.functions.invoke('cadastrar-funcionario', {
         body: { nome: nome.trim(), email: email.trim(), setor, cargo: cargo.trim(), identificador_interno: identificadorInterno.trim() },
