@@ -1117,7 +1117,7 @@ test("ficha técnica bloqueia edição e ações durante sincronização", () =>
 });
 
 test("ocorrências e anexos expõem retry e paginação acessível", () => {
-  assert.match(ocorrencias, /aria-busy=\{loading \|\| busy\}/);
+  assert.match(ocorrencias, /aria-busy=\{loading \|\| busy \|\| accessLoading\}/);
   assert.match(ocorrencias, /aria-label="Paginação de ocorrências"/);
   assert.match(ocorrencias, /role="status" aria-live="polite" className="text-sm text-slate-500">Nenhuma ocorrência disponível nesta página/);
   assert.match(ocorrencias, /aria-label=\{`Ocorrência \$\{incidentTitle\} · \$\{formatIncidentSeverity\(item\.gravidade\)\} · \$\{incidentStatus\}`\}/);
