@@ -118,6 +118,14 @@ test("Visão 3D carrega o mapa pesado sob demanda", () => {
   assert.match(visao, /<Suspense/);
 });
 
+test("Visão 3D bloqueia acesso direto de funcionários antes das consultas", () => {
+  assert.match(visao, /useWorkforceAccess/);
+  assert.match(visao, /const acessoPermitido = Boolean\(context\?\.proprietario\)/);
+  assert.match(visao, /if \(accessLoading \|\| accessError \|\| !acessoPermitido\)/);
+  assert.match(visao, /Visão 3D está disponível apenas para o administrador/);
+  assert.match(visao, /Validando acesso à Visão 3D/);
+});
+
 test("Visão 3D mantém o painel lateral com alertas e equipe sem inventar presença", () => {
   assert.match(
     visao,
