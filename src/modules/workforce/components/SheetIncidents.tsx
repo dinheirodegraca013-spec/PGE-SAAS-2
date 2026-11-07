@@ -35,7 +35,7 @@ export default function SheetIncidents({serviceId,sector,canCreate}:{serviceId:s
     return()=>{active=false;};
   },[serviceId,sector,page,refresh,canView,accessLoading,accessError,context?.funcionario.id,context?.funcionario.versao]);
   if(!canView && !canCreateAllowed && !accessLoading && !accessError)return null;
-  return <section className="space-y-4 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy}><h4 id={`${id}-title`} className="font-semibold">Ocorrências desta ficha</h4>
+  return <section className="space-y-4 rounded-xl border border-slate-200 p-4" aria-labelledby={`${id}-title`} aria-busy={loading || busy || accessLoading}><h4 id={`${id}-title`} className="font-semibold">Ocorrências desta ficha</h4>
     {canCreateAllowed && <form className="grid gap-3 sm:grid-cols-2" aria-busy={busy || accessLoading} onSubmit={async event=>{
       event.preventDefault();if(lock.current || !canCreateAllowed)return;
       if(title.trim().length<3 || description.trim().length<10){setError('Informe um título e descreva o problema em pelo menos 10 caracteres.');return;}
