@@ -67,9 +67,9 @@ export default function ServiceTechnicalSheet({ serviceId, sector }: { serviceId
   if (loading && !sheet) return <p role="status" aria-live="polite">Carregando ficha técnica…</p>;
   if (!sheet) return <div className="space-y-3">
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
-    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} aria-label={loading ? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'} onClick={() => setReload(n => n + 1)}>{loading ? 'Carregando…' : 'Tentar novamente'}</button>
-    {context?.proprietario && <button type="button" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading} onClick={async () => {
-      if (mutation.current) return;
+    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading || accessLoading || !!accessError} aria-label={loading ? 'Carregando ficha técnica' : 'Tentar carregar a ficha técnica novamente'} onClick={() => setReload(n => n + 1)}>{loading ? 'Carregando…' : 'Tentar novamente'}</button>
+    {context?.proprietario && <button type="button" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled={loading || accessLoading || !!accessError} onClick={async () => {
+      if (mutation.current || accessLoading || accessError || !context?.proprietario) return;
       mutation.current = true; setLoading(true); setError('');
       try { await technicalSheets.save(serviceId, sector, {}, 0); setReload(n => n + 1); }
       catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível liberar a ficha.'); setLoading(false); }
