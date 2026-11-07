@@ -641,6 +641,13 @@ test("fichas não consultam dados sem vínculo validado", () => {
   assert.match(fichasFuncionario, /\[page, query, refresh, accessLoading, accessError, context\?\.funcionario\.id, context\?\.funcionario\.versao\]/);
 });
 
+test("retry das fichas revalida o acesso quando o vínculo falha", () => {
+  assert.match(fichasFuncionario, /error: accessError, reload: reloadAccess/);
+  assert.match(fichasFuncionario, /disabled=\{loading \|\| accessLoading\}/);
+  assert.match(fichasFuncionario, /onClick=\{\(\) => accessError \? void reloadAccess\(\) : setRefresh/);
+  assert.match(fichasFuncionario, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando fichas':'Tentar carregar as fichas novamente'\}/);
+});
+
 test("fichas exibem a última atualização recebida", () => {
   assert.match(fichasFuncionario, /formatSheetUpdate/);
   assert.match(fichasFuncionario, /dateTime=\{safeSheetDateTime\(item\.atualizado_em\)\}/);
