@@ -1230,6 +1230,11 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /aria-label=\{busy\?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'\}/);
 });
 
+test("criação de tarefa aguarda a validação atual do acesso", () => {
+  assert.match(criacaoTarefa, /if\\(accessLoading\\|\\|accessError\\)\\{setCandidates\\(\\[\\]\\);setEmployee\\(''\\);setLoading\\(accessLoading\\)/);
+  assert.match(criacaoTarefa, /\\[serviceId,sector,canCreate,accessLoading,accessError,context\\?\\.proprietario,context\\?\\.funcionario\\.id,context\\?\\.funcionario\\.versao,retry\\]/);
+});
+
 test("criação de tarefa limpa feedback ao trocar o contexto", () => {
   assert.match(criacaoTarefa, /setCandidates\(\[\]\);setEmployee\(''\);setTitle\(''\);setDescription\(''\);setDeadline\(''\);setPriority\('normal'\);setMandatory\(false\);receipt\.current=null/);
   assert.doesNotMatch(criacaoTarefa, /setLoading\(true\);setError\(''\);setMessage\(''\);setCandidates\(\[\]\)/);
