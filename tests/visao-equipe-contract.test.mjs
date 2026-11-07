@@ -1341,8 +1341,14 @@ test("criação de tarefa informa carregamento dos responsáveis", () => {
   assert.match(criacaoTarefa, /autoComplete="off" aria-describedby=\{`\$\{id\}-deadline-help`\}/);
   assert.match(criacaoTarefa, /O horário será salvo conforme o fuso local deste dispositivo/);
   assert.match(criacaoTarefa, /className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| loading \|\| accessLoading \|\| !!accessError \|\| !candidates\.length\}/);
-  assert.match(criacaoTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| accessLoading \|\| !!accessError\} onClick=/);
-  assert.match(criacaoTarefa, /aria-label=\{busy\?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'\}/);
+  assert.match(criacaoTarefa, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{busy \|\| accessLoading\} onClick=/);
+  assert.match(criacaoTarefa, /aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':busy\?'Aguarde a criação da tarefa':'Tentar carregar responsáveis novamente'\}/);
+});
+
+test("criação de tarefas permite revalidar acesso após falha", () => {
+  assert.match(criacaoTarefa, /reload:reloadAccess/);
+  assert.match(criacaoTarefa, /if\(accessError\)\{void reloadAccess\(\);\}else setRetry/);
+  assert.match(criacaoTarefa, /\{accessLoading\?'Validando…':accessError\?'Revalidar acesso':busy\?'Aguarde…':'Atualizar responsáveis'\}/);
 });
 
 test("criação de tarefa aguarda a validação atual do acesso", () => {
