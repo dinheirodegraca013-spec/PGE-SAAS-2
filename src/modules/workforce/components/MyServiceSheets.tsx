@@ -33,7 +33,7 @@ export default function MyServiceSheets() {
     let active = true;
     setLoading(true); setError('');
     if (accessLoading) { setList(null); setSelected(null); setUpdatedAt(null); return () => { active = false; }; }
-    if (accessError || !context) { setList(null); setSelected(null); setUpdatedAt(null); setLoading(false); return () => { active = false; }; }
+    if (accessError || !context) { setList(null); setSelected(null); setUpdatedAt(null); setError(accessError || 'Não foi possível validar o acesso às fichas.'); setLoading(false); return () => { active = false; }; }
     technicalSheets.list(page, query).then(result => { if (active) { setList(result); setUpdatedAt(new Date()); setSelected(current => current && result.itens.some(item => item.servico_id === current.servico_id && item.setor === current.setor) ? current : null); } })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Não foi possível carregar as fichas.'); })
       .finally(() => { if (active) setLoading(false); });
