@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 30574)
-Total output lines: 1831
+Warning: truncated output (original token count: 30661)
+Total output lines: 1836
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -958,14 +958,7 @@ test("produção e secagem usam estado explícito para mensagens acessíveis", (
 test("resumo do funcionário atualiza ao retornar à aba", () => {
   assert.match(resumoFuncionario, /lastReturnRefresh=useRef\(0\)/);
   assert.match(resumoFuncionario, /addEventListener\('focus',refreshOnReturn\)/);
-  assert.match(resumoFuncionario, /addEventListener\('visibili…574 tokens truncated… à aba", () => {
-  assert.match(fichasFuncionario, /lastReturnRefresh = useRef\(0\)/);
-  assert.match(fichasFuncionario, /addEventListener\('focus', refreshOnReturn\)/);
-  assert.match(fichasFuncionario, /addEventListener\('visibilitychange', refreshOnReturn\)/);
-});
-
-test("contador de notificações anuncia mudanças", () => {
-  assert.match(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
+  assert.match(resumoFuncionario, /addEventListener\('visibili…661 tokens truncated…atch(notificacoesFuncionario, /Notificações <span aria-live="polite">/);
   assert.match(notificacoesFuncionario, /Tudo lido/);
   assert.match(notificacoesFuncionario, /notificações não lidas/);
 });
@@ -1236,6 +1229,11 @@ test("fluxo informa as ações de salvar e recarregar", () => {
   assert.match(fluxoProducao, /className="btn-secondary (?:w-full )?shrink-0 whitespace-nowrap(?: sm:w-auto)?" disabled=\{busy \|\| loading\}/);
   assert.match(fluxoProducao, /className="flex min-w-0 items-start gap-2 text-sm"><input/);
   assert.match(fluxoProducao, /<span className="min-w-0 break-words">\{label\}<\/span>/);
+});
+
+test("fluxo bloqueia gravação quando a autorização muda", () => {
+  assert.match(fluxoProducao, /const disabled=busy \|\| loading \|\| accessLoading \|\| !!accessError \|\| !flow\?\.editavel/);
+  assert.match(fluxoProducao, /if\(disabled \|\| lock\.current \|\| accessLoading \|\| accessError \|\| !context\?\.proprietario\)return/);
 });
 
 test("fluxo preserva a configuração durante sincronização", () => {
