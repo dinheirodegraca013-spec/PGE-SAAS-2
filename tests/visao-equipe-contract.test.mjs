@@ -1407,7 +1407,7 @@ test("cartão de tarefa limpa erro ao editar", () => {
 
 test("notificações sinalizam leitura e bloqueiam abertura concorrente", () => {
   assert.match(notificacoesFuncionario, /aria-busy=\{loading \|\| !!busy \|\| accessLoading\}/);
-  assert.match(notificacoesFuncionario, /disabled=\{!!busy\}/);
+  assert.match(notificacoesFuncionario, /disabled=\{!!busy \|\| accessLoading \|\| !!accessError\}/);
   assert.match(notificacoesFuncionario, /\{busy && <p role="status" aria-live="polite">Salvando leitura da notificação…<\/p>\}/);
   assert.match(notificacoesFuncionario, /setMessage\('Notificação marcada como lida\.'\)/);
 });
@@ -1701,12 +1701,17 @@ test("tarefas preservam controles de filtro e paginação no mobile", () => {
 });
 
 test("notificações preservam ações e paginação no mobile", () => {
-  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy\} aria-label=\{item\.tarefa_id\?/);
+  assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':item\.tarefa_id\?/);
   assert.match(notificacoesFuncionario, /aria-label=\{`Marcar como lida: .*?`\} onClick=\{async/);
   assert.match(notificacoesFuncionario, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{!!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{`Marcar como lida/);
   assert.match(notificacoesFuncionario, /<span className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
-  assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy\}/);
+  assert.match(notificacoesFuncionario, /aria-label="Ir para a próxima página" disabled=\{!data\.tem_mais \|\| !!busy \|\| accessLoading \|\| !!accessError\}/);
   assert.match(notificacoesFuncionario, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Fechar detalhe da notificação"/);
+});
+
+test("notificações bloqueiam abertura relacionada durante revalidação", () => {
+  assert.match(notificacoesFuncionario, /disabled=\{!!busy \|\| accessLoading \|\| !!accessError\} aria-label=\{accessLoading\?'Validando acesso':item\.tarefa_id\?'Abrir tarefa relacionada':'Abrir ficha relacionada'\}/);
+  assert.match(notificacoesFuncionario, /disabled=\{page===0 \|\| !!busy \|\| accessLoading \|\| !!accessError\}/);
 });
 
 test("ocorrências preservam comunicação, resolução e paginação no mobile", () => {
