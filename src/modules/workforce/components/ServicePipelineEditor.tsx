@@ -25,7 +25,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     return()=>{active=false;};
   },[serviceId,context?.proprietario,accessLoading,accessError,retry]);
   if(!context?.proprietario)return null;
-  const disabled=busy || loading || !flow?.editavel;
+  const disabled=busy || loading || accessLoading || !!accessError || !flow?.editavel;
   const move=(index:number,offset:number)=>{setMessage('');setError('');setSelected(current=>{
     const next=[...current];const targetIndex=index+offset;[next[index],next[targetIndex]]=[next[targetIndex],next[index]];
     const moved=isSetor(next[targetIndex])?setores[next[targetIndex]]:next[targetIndex];
@@ -38,7 +38,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role="status" aria-live="polite" className="text-sm">{message}</p>}
     {flow && <form className="space-y-4" onSubmit={async event=>{
-      event.preventDefault();if(disabled || lock.current)return;
+      event.preventDefault();if(disabled || lock.current || accessLoading || accessError || !context?.proprietario)return;
       if(!selected.length){setError('Escolha pelo menos uma etapa.');return;}
       lock.current=true;setBusy(true);setError('');setMessage('');
       try{const result=await servicePipeline.save(serviceId,selected,flow.versao);setFlow({...flow,...result,configurado:true});setMessage('Fluxo salvo. As fichas dos setores foram liberadas.');}
