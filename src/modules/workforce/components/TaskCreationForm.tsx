@@ -6,7 +6,7 @@ import {workTasks,type WorkTask} from '../services/tasks.service';
 const priorityLabels={baixa:'Baixa',normal:'Normal',alta:'Alta',urgente:'Urgente'};
 
 export default function TaskCreationForm({serviceId,sector}:{serviceId:string;sector:string}){
-  const {context}=useWorkforceAccess();const id=useId();
+  const {context,loading:accessLoading,error:accessError}=useWorkforceAccess();const id=useId();
   const [title,setTitle]=useState('');const [description,setDescription]=useState('');
   const [employee,setEmployee]=useState('');const [deadline,setDeadline]=useState('');
   const [priority,setPriority]=useState<WorkTask['prioridade']>('normal');const [mandatory,setMandatory]=useState(false);
@@ -18,11 +18,12 @@ export default function TaskCreationForm({serviceId,sector}:{serviceId:string;se
   useEffect(()=>{setCandidates([]);setEmployee('');setTitle('');setDescription('');setDeadline('');setPriority('normal');setMandatory(false);receipt.current=null;},[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao]);
   useEffect(()=>{
     if(!canCreate || !context)return;
+    if(accessLoading||accessError){setCandidates([]);setEmployee('');setLoading(accessLoading);setError('');setMessage('');return()=>{};}
     let active=true;setLoading(true);setError('');setMessage('');
     const load=context.proprietario?technicalSheets.candidates(serviceId,sector):Promise.resolve([{id:context.funcionario.id,nome:context.funcionario.nome}]);
     load.then(items=>{if(active)setCandidates(items);}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar os responsáveis.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
-  },[serviceId,sector,canCreate,context?.proprietario,context?.funcionario.id,context?.funcionario.versao,retry]);
+  },[serviceId,sector,canCreate,accessLoading,accessError,context?.proprietario,context?.funcionario.id,context?.funcionario.versao,retry]);
   if(!canCreate)return null;
   return <form className="space-y-3 rounded-xl border border-slate-200 p-4" aria-busy={loading || busy} onSubmit={async event=>{
     event.preventDefault();if(lock.current || loading)return;
