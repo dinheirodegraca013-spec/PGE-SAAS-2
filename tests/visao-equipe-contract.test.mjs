@@ -371,6 +371,8 @@ test("tarefas do funcionário permitem recuperar falhas de carregamento", () => 
   assert.match(minhasTarefas, /Tentar novamente/);
   assert.match(minhasTarefas, /aria-live="polite"/);
   assert.match(minhasTarefas, /setRefresh\(n=>n\+1\)/);
+  assert.match(minhasTarefas, /onClick=\{\(\)=>accessError \? void reloadAccess\(\) : setRefresh\(n=>n\+1\)\}/);
+  assert.match(minhasTarefas, /aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso': 'Tentar carregar as tarefas novamente'\}/);
 });
 
 test("ações da tarefa permanecem legíveis no mobile", () => {
