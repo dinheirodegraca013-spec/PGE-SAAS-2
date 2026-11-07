@@ -41,7 +41,7 @@ export default function PersonalWorkSummary(){
   useEffect(()=>{setSummary(null);setError('');setUpdatedAt(null);},[context?.funcionario.id,context?.funcionario.versao,accessError]);
   useEffect(()=>{let active=true;setLoading(true);setError('');
     if(accessLoading){setSummary(null);setUpdatedAt(null);return()=>{active=false;};}
-    if(accessError||!context){setSummary(null);setUpdatedAt(null);setLoading(false);return()=>{active=false;};}
+    if(accessError||!context){setSummary(null);setUpdatedAt(null);setError(accessError||'Não foi possível validar o acesso ao resumo.');setLoading(false);return()=>{active=false;};}
     Promise.resolve().then(()=>supabase.rpc('meu_resumo_operacional')).then(({data,error})=>{if(!active)return;if(error || !data){setError(error?.message||'Não foi possível carregar os indicadores.');return;}const normalized=normalizeSummary(data);if(!normalized){setError('Os indicadores retornaram dados inválidos.');return;}setSummary(normalized);setUpdatedAt(new Date());})
       .catch(()=>{if(active)setError('Não foi possível carregar os indicadores.');}).finally(()=>{if(active)setLoading(false);});
     return()=>{active=false;};
