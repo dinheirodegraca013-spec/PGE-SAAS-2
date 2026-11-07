@@ -135,6 +135,7 @@ export default function MeuSetorView() {
   }, [accessLoading, accessError, context, setor, usuario?.usuarioId, usuario?.tenantId, context?.funcionario.versao, atualizacao, online, canViewSectorProjects]);
   const nome = (context?.funcionario.nome || usuario?.nomeCompleto || 'colaborador').trim() || 'colaborador';
   const additionalSectors = sectorList.filter(isSetor).filter(s => s !== setor);
+  const authorizedModuleCount = context ? new Set(context.permissoes.map(grant => grant.modulo)).size : 0;
   const quickActions = [
     hasPermission(context, 'tarefas') && { href: '#tarefas', label: 'Minhas tarefas', detail: 'Atualize andamento e impedimentos' },
     hasPermission(context, 'ordens') && { href: '#ordens', label: 'Ordens de serviço', detail: 'Consulte as ordens atribuídas' },
@@ -163,6 +164,7 @@ export default function MeuSetorView() {
         <span className="rounded-full bg-cyan-400/15 px-3 py-1.5 font-semibold text-cyan-200">{isSetor(setor) ? setores[setor] : 'Setor não atribuído'}</span>
         {context?.funcionario.cargo && <span className="min-w-0 break-words text-slate-300">{context.funcionario.cargo}</span>}
         {additionalSectors.length > 0 && <span className="min-w-0 break-words text-slate-400">Acesso adicional: {additionalSectors.map(s => setores[s]).join(', ')}</span>}
+        {context && <span className={`rounded-full px-3 py-1.5 font-semibold ${authorizedModuleCount ? 'bg-emerald-400/15 text-emerald-200' : 'bg-amber-400/15 text-amber-200'}`} aria-label={`${authorizedModuleCount} ${authorizedModuleCount === 1 ? 'módulo liberado' : 'módulos liberados'}`}>{authorizedModuleCount ? `${authorizedModuleCount} ${authorizedModuleCount === 1 ? 'módulo' : 'módulos'} liberado${authorizedModuleCount === 1 ? '' : 's'}` : 'Nenhum módulo liberado'}</span>}
       </div>
     </header>
     {!online && <p role="status" aria-live="assertive" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">Você está offline. As informações exibidas podem estar desatualizadas; a sincronização será retomada quando a conexão voltar.</p>}
