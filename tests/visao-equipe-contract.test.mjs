@@ -511,6 +511,13 @@ test("resumo informa atualização no botão durante carregamento", () => {
   assert.match(resumoFuncionario, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar indicadores'\}/);
 });
 
+test("resumo permite revalidar acesso após falha", () => {
+  assert.match(resumoFuncionario, /reload:reloadAccess/);
+  assert.match(resumoFuncionario, /disabled=\{loading \|\| accessLoading\}/);
+  assert.match(resumoFuncionario, /accessError\?'Revalidar acesso'/);
+  assert.match(resumoFuncionario, /onClick=\{\(\)=>accessError \? void reloadAccess\(\) : setRetry/);
+});
+
 test("resumo preserva indicadores durante nova sincronização", () => {
   assert.match(resumoFuncionario, /setLoading\(true\);setError\('\'\);/);
   assert.match(resumoFuncionario, /Promise\.resolve\(\)\.then\(\(\)=>supabase\.rpc\('meu_resumo_operacional'\)/);
