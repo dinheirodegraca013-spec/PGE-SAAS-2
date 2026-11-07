@@ -439,7 +439,7 @@ test("blocos operacionais quebram conteúdo longo no celular", () => {
 test("tarefas informam a última atualização da lista", () => {
   assert.match(minhasTarefas, /updatedAt/);
   assert.match(minhasTarefas, /Última atualização às/);
-  assert.match(minhasTarefas, /aria-busy=\{loading\}/);
+  assert.match(minhasTarefas, /aria-busy=\{loading \|\| accessLoading\}/);
 });
 
 test("tarefas limpam o horário anterior durante nova sincronização", () => {
@@ -453,7 +453,7 @@ test("tarefas preservam a lista durante nova sincronização", () => {
 });
 
 test("tarefas bloqueiam o filtro durante sincronização", () => {
-  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading\} value=\{filter\}/);
+  assert.match(minhasTarefas, /className=\"input-field mt-1\" disabled=\{loading \|\| accessLoading\} value=\{filter\}/);
 });
 
 test("tarefas permitem limpar o filtro sem depender da lista vazia", () => {
@@ -1596,13 +1596,13 @@ test("histórico bloqueia paginação durante carregamento", () => {
 });
 
 test("tarefas bloqueiam paginação durante carregamento", () => {
-  assert.match(minhasTarefas, /disabled=\{loading \|\| page===0\}/);
-  assert.match(minhasTarefas, /disabled=\{loading \|\| !data\.tem_mais\}/);
+  assert.match(minhasTarefas, /disabled=\{loading \|\| accessLoading \|\| page===0\}/);
+  assert.match(minhasTarefas, /disabled=\{loading \|\| accessLoading \|\| !data\.tem_mais\}/);
 });
 
 test("tarefas informam atualização no botão durante carregamento", () => {
-  assert.match(minhasTarefas, /aria-label=\{loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
-  assert.match(minhasTarefas, /\{loading\?'Atualizando…':'Atualizar tarefas'\}/);
+  assert.match(minhasTarefas, /aria-label=\{accessLoading\?'Validando acesso':loading\?'Atualizando tarefas':'Atualizar tarefas'\}/);
+  assert.match(minhasTarefas, /\{accessLoading\?'Validando…':loading\?'Atualizando…':'Atualizar tarefas'\}/);
 });
 
 test("tarefas exibem um único bloco de carregamento e erro", () => {
@@ -1679,11 +1679,11 @@ test("editor de acesso quebra setores e permissões longas no mobile", () => {
 });
 
 test("tarefas preservam controles de filtro e paginação no mobile", () => {
-  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>\{setFilter/);
-  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading\} onClick=\{\(\)=>setRefresh/);
+  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading\} onClick=\{\(\)=>\{setFilter/);
+  assert.match(minhasTarefas, /className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" disabled=\{loading \|\| accessLoading\} onClick=\{\(\)=>setRefresh/);
   assert.match(minhasTarefas, /<button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label="Ir para a página anterior de tarefas"/);
   assert.match(minhasTarefas, /<span className="shrink-0 text-center text-sm sm:text-left" aria-current="page"/);
-  assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| !data\.tem_mais\}/);
+  assert.match(minhasTarefas, /aria-label="Ir para a próxima página de tarefas" disabled=\{loading \|\| accessLoading \|\| !data\.tem_mais\}/);
 });
 
 test("notificações preservam ações e paginação no mobile", () => {
