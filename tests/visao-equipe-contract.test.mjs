@@ -736,11 +736,13 @@ test("agenda do funcionário informa carregamento, valida período e permite ret
 });
 
 test("agenda aguarda validação de acesso antes de consultar", () => {
-  assert.match(agendaFuncionario, /loading:accessLoading,error:accessError/);
+  assert.match(agendaFuncionario, /loading:accessLoading,error:accessError,reload:reloadAccess/);
   assert.match(agendaFuncionario, /allowed=!accessLoading&&!accessError&&hasPermission\(context,'agenda','visualizar'\)/);
   assert.match(agendaFuncionario, /if\(!allowed\|\|accessLoading\|\|accessError\)return/);
   assert.match(agendaFuncionario, /if\(accessLoading\)return <p role="status" aria-live="polite">Validando acesso à agenda/);
-  assert.match(agendaFuncionario, /if\(accessError\)return <p role="alert"/);
+  assert.match(agendaFuncionario, /if\(accessError\)return <div role="alert"/);
+  assert.match(agendaFuncionario, /onClick=\{\(\)=>void reloadAccess\(\)\}/);
+  assert.match(agendaFuncionario, /aria-label=\{accessLoading\?'Validando acesso':'Revalidar acesso'\}/);
 });
 
 test("agenda informa atualização no botão", () => {
