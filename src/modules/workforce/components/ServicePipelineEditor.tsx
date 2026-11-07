@@ -17,7 +17,7 @@ export default function ServicePipelineEditor({serviceId}:{serviceId:string}){
   useEffect(()=>{setFlow(null);setSelected([]);},[serviceId,context?.proprietario]);
   useEffect(()=>{
     if(!context?.proprietario)return;
-    if(accessLoading||accessError){setFlow(null);setSelected([]);setLoading(accessLoading);setError('');setMessage('');return()=>{};}
+    if(accessLoading||accessError){setFlow(null);setSelected([]);setLoading(accessLoading);setError(accessError||'');setMessage('');return()=>{};}
     let active=true;setLoading(true);setError('');setMessage('');
     servicePipeline.load(serviceId).then(result=>{if(active){setFlow(result);setSelected(result.setores);}})
       .catch(cause=>{if(active)setError(cause instanceof Error?cause.message:'Não foi possível carregar o fluxo.');})
