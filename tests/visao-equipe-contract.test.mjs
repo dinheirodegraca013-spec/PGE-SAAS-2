@@ -1235,7 +1235,7 @@ test("fluxo preserva a configuração durante sincronização", () => {
 });
 
 test("fluxo aguarda autorização atual antes de carregar a sequência", () => {
-  assert.match(fluxoProducao, /if\(accessLoading\|\|accessError\)\{setFlow\(null\);setSelected\(\[\]\);setLoading\(accessLoading\)/);
+  assert.match(fluxoProducao, /if\(accessLoading\|\|accessError\)\{setFlow\(null\);setSelected\(\[\]\);setLoading\(accessLoading\);setError\(accessError\|\|''\)/);
   assert.match(fluxoProducao, /\[serviceId,context\?\.proprietario,accessLoading,accessError,retry\]/);
 });
 
