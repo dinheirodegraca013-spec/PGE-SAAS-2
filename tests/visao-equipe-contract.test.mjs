@@ -48,6 +48,7 @@ const criacaoTarefa = readOptional("../src/modules/workforce/components/TaskCrea
 const atribuicaoFicha = readOptional("../src/modules/workforce/components/SheetAssignmentEditor.tsx");
 const fluxoProducao = readOptional("../src/modules/workforce/components/ServicePipelineEditor.tsx");
 const editorFuncionario = readOptional("../src/modules/workforce/components/EmployeeAccessEditor.tsx");
+const acessoService = readOptional("../src/modules/workforce/services/access.service.ts");
 const fichaOperacional = readOptional("../src/modules/workforce/components/ServiceTechnicalSheet.tsx");
 const ocorrenciasFuncionario = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 
@@ -1220,6 +1221,11 @@ test("editor de acesso anuncia carregamento e bloqueia salvamento", () => {
   assert.match(editorFuncionario, /setName\(e\.target\.value\);clearError\(\)/);
   assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-name`\}[^>]*autoComplete="name"/);
   assert.match(editorFuncionario, /id=\{`\$\{fieldId\}-job`\}[^>]*autoComplete="organization-title"/);
+});
+
+test("salvamento preserva acesso suspenso automaticamente pelo plano", () => {
+  assert.match(acessoService, /\['ativo','inativo','suspenso','suspenso_plano'\]\.includes\(input\.status\)/);
+  assert.match(acessoService, /p_status:input\.status==='suspenso_plano'\?'ativo':input\.status/);
 });
 
 test("responsável limpa feedback ao recarregar candidatos", () => {
