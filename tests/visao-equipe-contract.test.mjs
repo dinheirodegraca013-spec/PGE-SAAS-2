@@ -869,6 +869,13 @@ test("criação de tarefas revalida autorização antes do envio", () => {
   assert.match(criacaoTarefa, /disabled=\{busy \|\| loading \|\| accessLoading \|\| !!accessError \|\| !candidates\.length\}/);
 });
 
+test("ficha técnica bloqueia mutações quando a autorização muda", () => {
+  assert.match(fichaTecnica, /if\(accessLoading\|\|accessError\|\|!context\|\|!hasPermission\(context,'ordens',action\)\)return/);
+  assert.match(fichaTecnica, /A autorização da ficha mudou\. Recarregue antes de salvar\./);
+  assert.match(fichaTecnica, /if \(mutation\.current \|\| accessLoading \|\| accessError \|\| !context \|\| !hasPermission\(context,'ordens','editar'\)\) return/);
+  assert.match(fichaTecnica, /disabled=\{loading \|\| accessLoading \|\| !!accessError \|\| !sheet\.pode_editar/);
+});
+
 test("histórico não consulta dados sem vínculo de funcionário validado", () => {
   assert.match(historicoFuncionario, /if\(accessLoading\)\{setData\(null\);setUpdatedAt\(null\);return/);
   assert.match(historicoFuncionario, /if\(accessError\|\|!context\)\{setData\(null\);setUpdatedAt\(null\);setError\(accessError\|\|'Não foi possível validar o acesso ao histórico\.'\);setLoading\(false\)/);
