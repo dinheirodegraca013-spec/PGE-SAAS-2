@@ -33,7 +33,7 @@ export default function ProductionLog({
   const [messageKind, setMessageKind] = useState<'status' | 'error'>('status');
   const request = useRef<{ payload: string; id: string } | null>(null);
 
-  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy || disabled}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0"><h4 id={`${id}-title`} className="break-words font-semibold">Produção e perdas</h4><p className="break-words text-sm text-slate-500">Registre peças produzidas, defeitos e desperdícios por evento.</p></div>
       <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={() => { setMessage(''); onRefresh(); }} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização dos registros':'Atualizar registros'}>{busy?'Aguarde…':'Atualizar registros'}</button>
@@ -59,7 +59,7 @@ export default function ProductionLog({
       <label htmlFor={`${id}-quantity`} className="block text-sm">Quantidade<input id={`${id}-quantity`} className="input-field mt-1" type="number" inputMode="decimal" required min="0.001" max="99999999" step="any" value={quantity} onChange={event => { setQuantity(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <label htmlFor={`${id}-unit`} className="block text-sm">Unidade<input id={`${id}-unit`} className="input-field mt-1" required maxLength={40} value={unit} onChange={event => { setUnit(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
       <label htmlFor={`${id}-description`} className="block text-sm sm:col-span-2">Observação<textarea id={`${id}-description`} className="input-field mt-1" rows={2} minLength={3} maxLength={1000} required value={description} onChange={event => { setDescription(event.target.value); setMessage(''); }} disabled={disabled || busy}/></label>
-      <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto" aria-label={busy ? 'Salvando evento de produção' : 'Registrar evento de produção'} disabled={disabled || busy}>{busy ? 'Salvando…' : 'Registrar evento'}</button>
+      <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:col-span-2 sm:w-auto" aria-label={busy ? 'Salvando evento de produção' : disabled ? 'Aguardando autorização para registrar evento de produção' : 'Registrar evento de produção'} disabled={disabled || busy}>{busy ? 'Salvando…' : disabled ? 'Aguardando autorização…' : 'Registrar evento'}</button>
     </form>}
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
