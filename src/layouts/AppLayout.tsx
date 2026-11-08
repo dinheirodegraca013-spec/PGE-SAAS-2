@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   LogOut,
@@ -37,11 +37,17 @@ function getPapelVisivel(papel?: string | null) {
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const wasMobileMenuOpen = useRef(false);
   const [online, setOnline] = useState(() => typeof navigator === 'undefined' || navigator.onLine);
   const auth = useAuthStore();
   const work = useWorkforceAccess();
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    if (wasMobileMenuOpen.current && !mobileMenuOpen) mobileMenuButtonRef.current?.focus();
+    wasMobileMenuOpen.current = mobileMenuOpen;
+  }, [mobileMenuOpen]);
   useEffect(() => {
     const updateConnection = () => setOnline(navigator.onLine);
     window.addEventListener('online', updateConnection);
@@ -234,6 +240,7 @@ export default function AppLayout() {
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
+              ref={mobileMenuButtonRef}
               aria-label="Abrir menu"
               aria-expanded={mobileMenuOpen}
               aria-controls="gestio-mobile-sidebar"
