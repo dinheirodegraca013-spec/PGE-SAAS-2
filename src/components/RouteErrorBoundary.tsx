@@ -13,8 +13,9 @@ export default class RouteErrorBoundary extends Component<
     if (!isChunkFailure || typeof window === 'undefined') return;
     const key = `gestio:chunk-recovery:${window.location.pathname}`;
     try {
-      if (window.sessionStorage.getItem(key) === '1') return;
-      window.sessionStorage.setItem(key, '1');
+      const lastAttempt = Number(window.sessionStorage.getItem(key) || 0);
+      if (Number.isFinite(lastAttempt) && Date.now() - lastAttempt < 30_000) return;
+      window.sessionStorage.setItem(key, String(Date.now()));
       window.location.reload();
     } catch {
       // Preserve the manual retry UI when storage or reload is unavailable.
