@@ -6,6 +6,8 @@ const layout = readFileSync(new URL("../src/layouts/AppLayout.tsx", import.meta.
 
 test("menu móvel permite fechar com Escape e informa seu estado", () => {
   assert.match(layout, /event\.key === 'Escape'/);
+  assert.match(layout, /mobileMenuButtonRef\.current\?\.focus\(\)/);
+  assert.match(layout, /ref=\{mobileMenuButtonRef\}/);
   assert.match(layout, /document\.body\.style\.overflow = 'hidden'/);
   assert.match(layout, /aria-expanded=\{mobileMenuOpen\}/);
   assert.match(layout, /aria-controls="gestio-mobile-sidebar"/);
