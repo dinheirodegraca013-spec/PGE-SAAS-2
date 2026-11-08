@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 33011)
-Total output lines: 1944
+Warning: truncated output (original token count: 33115)
+Total output lines: 1950
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -815,9 +815,7 @@ test("histórico diferencia carga inicial de sincronização", () => {
 });
 
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…8011 tokens truncated…stItem\.item_nome\} · \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} · \$\{formatStatus\(requestItem\.status\)\}`\}/);
-  assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('Solicitação cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);
+  assert.match(historicoFuncionario, /data&&<p role="…8115 tokens truncated…nd\].*useState<'status' \| 'error'>\('status'\)/);
   assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('Solicitação cancelada\.'\)/);
   assert.match(solicitacaoMaterial, /role=\{messageKind === 'status' \? 'status' : 'alert'\}/);
 });
@@ -1102,6 +1100,12 @@ test("produção anuncia bloqueio durante revalidação de autorização", () =>
   assert.match(registroProducao, /aria-busy=\{busy \|\| disabled\}/);
   assert.match(registroProducao, /disabled \? 'Aguardando autorização para registrar evento de produção'/);
   assert.match(registroProducao, /disabled \? 'Aguardando autorização…'/);
+});
+
+test("secagem anuncia bloqueio durante revalidação de autorização", () => {
+  assert.match(controleSecagem, /aria-busy=\{busy \|\| disabled\}/);
+  assert.match(controleSecagem, /disabled \? 'Aguardando autorização para registrar secagem'/);
+  assert.match(controleSecagem, /disabled\?'Aguardando autorização para atualizar a secagem'/);
 });
 
 test("ficha limpa erros de consultas antes de uma nova sincronização", () => {
