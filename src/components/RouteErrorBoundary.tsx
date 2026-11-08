@@ -31,7 +31,7 @@ export default class RouteErrorBoundary extends Component<
       return (
         <section role="alert" aria-live="assertive" className="flex min-h-screen items-center justify-center bg-surface p-6">
           <div className="card w-full max-w-lg p-6">
-            <h1 className="text-lg font-bold text-slate-900">
+            <h1 autoFocus tabIndex={-1} className="text-lg font-bold text-slate-900">
               Não foi possível abrir esta tela
             </h1>
             <p className="mt-2 text-sm text-slate-600">
