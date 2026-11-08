@@ -41,7 +41,7 @@ export default function ProductionLog({
     <div className="grid gap-2 sm:grid-cols-3">
       {(['produzido', 'defeito', 'desperdicio'] as const).map(item => <div key={item} className="rounded-lg bg-slate-50 p-3"><span className="block text-xs text-slate-500">{labels[item]}</span><strong>{formatQuantity(state?.totais[item] ?? 0)}</strong></div>)}
     </div>
-    {canRegister && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy={busy} onSubmit={async event => {
+    {canRegister && <form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy={busy || disabled} onSubmit={async event => {
       event.preventDefault();
       const value = Number(quantity);
       const normalizedUnit = unit.trim();
