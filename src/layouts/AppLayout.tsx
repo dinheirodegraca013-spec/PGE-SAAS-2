@@ -297,6 +297,10 @@ export default function AppLayout() {
           </div>
         </header>
 
+        {!online && <div role="alert" aria-live="assertive" className="mx-4 mt-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 sm:mx-6 lg:mx-9">
+          Sem conexão no momento. As alterações serão retomadas quando a internet voltar.
+        </div>}
+
         <main className="gestio-content flex-1 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 lg:px-9 lg:pb-8">
           <Outlet />
           <footer className="mt-7 flex flex-wrap items-center justify-between gap-3 pb-1 text-[10px] text-slate-400">
