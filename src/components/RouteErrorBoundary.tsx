@@ -37,13 +37,22 @@ export default class RouteErrorBoundary extends Component<
             <p className="mt-2 text-sm text-slate-600">
               Verifique sua conexão e atualize a página para tentar novamente.
             </p>
-            <button
-              type="button"
-              className="btn-primary mt-4"
-              onClick={() => window.location.reload()}
-            >
-              Atualizar página
-            </button>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                className="btn-primary w-full sm:w-auto"
+                onClick={() => window.location.reload()}
+              >
+                Atualizar página
+              </button>
+              <button
+                type="button"
+                className="btn-secondary w-full sm:w-auto"
+                onClick={() => window.location.assign('/')}
+              >
+                Voltar ao painel
+              </button>
+            </div>
           </div>
         </section>
       );
@@ -51,4 +60,3 @@ export default class RouteErrorBoundary extends Component<
     return this.props.children;
   }
 }
-
