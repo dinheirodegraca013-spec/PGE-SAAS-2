@@ -10,4 +10,6 @@ test("menu móvel permite fechar com Escape e informa seu estado", () => {
   assert.match(layout, /aria-expanded=\{mobileMenuOpen\}/);
   assert.match(layout, /aria-controls="gestio-mobile-sidebar"/);
   assert.match(layout, /id="gestio-mobile-sidebar"/);
+  assert.match(layout, /role="alert" aria-live="assertive" className="mx-4 mt-3 rounded-xl border border-amber-200/);
+  assert.match(layout, /Sem conexão no momento/);
 });
