@@ -131,6 +131,9 @@ test("Visão 3D carrega o mapa pesado sob demanda", () => {
   assert.match(visao, /lazy\(\(\) => import\("\.\/ThreeOperationalMap"\)\)/);
   assert.match(visao, /Carregando visão 3D/);
   assert.match(visao, /<Suspense/);
+  assert.match(visao, /aria-label=\{carregando \? "Aguarde a atualização do mapa operacional" : "Atualizar mapa operacional"\}/);
+  assert.match(visao, /aria-label="Resetar câmera do mapa 3D"/);
+  assert.match(visao, /<section aria-busy=\{carregando\}/);
 });
 
 test("Visão 3D bloqueia acesso direto de funcionários antes das consultas", () => {
