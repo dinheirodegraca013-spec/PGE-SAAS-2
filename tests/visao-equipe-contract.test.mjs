@@ -61,6 +61,8 @@ test("falha de chunk tenta recuperar com janela anti-loop", () => {
   assert.match(routeErrorBoundary, /const lastAttempt = Number\(window\.sessionStorage\.getItem\(key\) \|\| 0\)/);
   assert.match(routeErrorBoundary, /Date\.now\(\) - lastAttempt < 30_000/);
   assert.match(routeErrorBoundary, /window\.location\.reload\(\)/);
+  assert.match(routeErrorBoundary, /min-h-screen items-center justify-center/);
+  assert.match(routeErrorBoundary, /w-full max-w-lg/);
 });
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
