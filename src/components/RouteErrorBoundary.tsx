@@ -29,20 +29,22 @@ export default class RouteErrorBoundary extends Component<
   render() {
     if (this.state.failed) {
       return (
-        <section role="alert" aria-live="assertive" className="card p-6">
-          <h1 className="text-lg font-bold text-slate-900">
-            Não foi possível abrir esta tela
-          </h1>
-          <p className="mt-2 text-sm text-slate-600">
-            Verifique sua conexão e atualize a página para tentar novamente.
-          </p>
-          <button
-            type="button"
-            className="btn-primary mt-4"
-            onClick={() => window.location.reload()}
-          >
-            Atualizar página
-          </button>
+        <section role="alert" aria-live="assertive" className="flex min-h-screen items-center justify-center bg-surface p-6">
+          <div className="card w-full max-w-lg p-6">
+            <h1 className="text-lg font-bold text-slate-900">
+              Não foi possível abrir esta tela
+            </h1>
+            <p className="mt-2 text-sm text-slate-600">
+              Verifique sua conexão e atualize a página para tentar novamente.
+            </p>
+            <button
+              type="button"
+              className="btn-primary mt-4"
+              onClick={() => window.location.reload()}
+            >
+              Atualizar página
+            </button>
+          </div>
         </section>
       );
     }
