@@ -3,9 +3,27 @@ import { Component, type ReactNode } from "react";
 /** Keeps a failed route download from replacing the application shell. */
 export default class RouteErrorBoundary extends Component<
   { children: ReactNode },
-  { failed: boolean }
+  { failed: boolean; offline: boolean }
 > {
-  state = { failed: false };
+  state = { failed: false, offline: false };
+  private readonly updateConnection = () => {
+    if (typeof window !== "undefined") {
+      this.setState({ offline: !window.navigator.onLine });
+    }
+  };
+
+  componentDidMount() {
+    if (typeof window === "undefined") return;
+    this.updateConnection();
+    window.addEventListener("online", this.updateConnection);
+    window.addEventListener("offline", this.updateConnection);
+  }
+
+  componentWillUnmount() {
+    if (typeof window === "undefined") return;
+    window.removeEventListener("online", this.updateConnection);
+    window.removeEventListener("offline", this.updateConnection);
+  }
 
   componentDidCatch(error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
@@ -35,7 +53,9 @@ export default class RouteErrorBoundary extends Component<
               Não foi possível abrir esta tela
             </h1>
             <p className="mt-2 text-sm text-slate-600">
-              Verifique sua conexão e atualize a página para tentar novamente.
+              {this.state.offline
+                ? "Sua conexão parece estar offline. Reconecte-se e atualize a página para tentar novamente."
+                : "Verifique sua conexão e atualize a página para tentar novamente."}
             </p>
             <div className="mt-4 flex flex-col gap-2 sm:flex-row">
               <button
@@ -60,3 +80,4 @@ export default class RouteErrorBoundary extends Component<
     return this.props.children;
   }
 }
+
