@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 32922)
-Total output lines: 1938
+Warning: truncated output (original token count: 33011)
+Total output lines: 1944
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -815,13 +815,7 @@ test("histórico diferencia carga inicial de sincronização", () => {
 });
 
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…7922 tokens truncated…zação", () => {
-  assert.doesNotMatch(solicitacaoMaterial, /setBusy\(true\); setMessage\(''\); setUpdatedAt\(null\)/);
-  assert.match(solicitacaoMaterial, /busy\?'Atualizando solicitações…':updatedAt/);
-});
-
-test("cancelamento de material confirma sucesso", () => {
-  assert.match(solicitacaoMaterial, /aria-label=\{`Solicitação de \$\{requestItem\.item_nome\} · \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} · \$\{formatStatus\(requestItem\.status\)\}`\}/);
+  assert.match(historicoFuncionario, /data&&<p role="…8011 tokens truncated…stItem\.item_nome\} · \$\{formatQuantity\(requestItem\.quantidade\)\} \$\{requestItem\.unidade\} · \$\{formatStatus\(requestItem\.status\)\}`\}/);
   assert.match(solicitacaoMaterial, /await onCancel\(requestItem\); setMessageKind\('status'\); setMessage\('Solicitação cancelada\.'\)/);
   assert.match(solicitacaoMaterial, /messageKind,\s*setMessageKind\].*useState<'status' \| 'error'>\('status'\)/);
   assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('Solicitação cancelada\.'\)/);
@@ -1102,6 +1096,12 @@ test("pesquisa de fichas não cria nova carga durante sincronização", () => {
 test("operações de produção e secagem sinalizam o formulário em andamento", () => {
   assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
   assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
+});
+
+test("produção anuncia bloqueio durante revalidação de autorização", () => {
+  assert.match(registroProducao, /aria-busy=\{busy \|\| disabled\}/);
+  assert.match(registroProducao, /disabled \? 'Aguardando autorização para registrar evento de produção'/);
+  assert.match(registroProducao, /disabled \? 'Aguardando autorização…'/);
 });
 
 test("ficha limpa erros de consultas antes de uma nova sincronização", () => {
