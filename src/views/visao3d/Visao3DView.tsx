@@ -255,6 +255,7 @@ export default function Visao3DView() {
           type="button"
           onClick={() => void carregar()}
           disabled={carregando}
+          aria-label={carregando ? "Aguarde a atualização do mapa operacional" : "Atualizar mapa operacional"}
           className="btn-secondary inline-flex items-center gap-2"
         >
           <RefreshCw
@@ -272,7 +273,7 @@ export default function Visao3DView() {
           {erro}
         </div>
       )}
-      <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_410px]">
+      <section aria-busy={carregando} className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_410px]">
         <div className="relative isolate h-[56vh] min-h-[460px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm xl:h-[calc(100vh-150px)] xl:max-h-[760px]">
           <div className="pointer-events-none absolute left-4 top-4 z-20">
             <h2 className="text-xl font-extrabold text-slate-900">
@@ -288,6 +289,7 @@ export default function Visao3DView() {
           <button
             type="button"
             onClick={() => setCameraReset((value) => value + 1)}
+            aria-label="Resetar câmera do mapa 3D"
             className="absolute right-4 top-16 z-20 rounded-lg border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-white"
           >
             Resetar câmera
