@@ -7,6 +7,20 @@ export default class RouteErrorBoundary extends Component<
 > {
   state = { failed: false };
 
+  componentDidCatch(error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    const isChunkFailure = /ChunkLoadError|Loading chunk|dynamically imported module|Failed to fetch/i.test(message);
+    if (!isChunkFailure || typeof window === 'undefined') return;
+    const key = `gestio:chunk-recovery:${window.location.pathname}`;
+    try {
+      if (window.sessionStorage.getItem(key) === '1') return;
+      window.sessionStorage.setItem(key, '1');
+      window.location.reload();
+    } catch {
+      // Preserve the manual retry UI when storage or reload is unavailable.
+    }
+  }
+
   static getDerivedStateFromError() {
     return { failed: true };
   }
