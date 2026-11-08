@@ -40,7 +40,7 @@ export default function FinishingDryingControl({
     finally { setBusy(false); }
   };
 
-  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy}>
+  return <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4" aria-labelledby={`${id}-title`} aria-busy={busy || disabled}>
     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
         <h4 id={`${id}-title`} className="font-semibold">Controle de secagem</h4>
@@ -66,10 +66,11 @@ export default function FinishingDryingControl({
       <label htmlFor={`${id}-minutes`} className="min-w-0 text-sm">Adicionar prazo (minutos)
         <input id={`${id}-minutes`} className="input-field mt-1 w-full max-w-full sm:w-44" type="number" inputMode="numeric" required min={1} max={10080} step={1} value={minutes} onChange={event => { setMinutes(event.target.value); setMessage(''); }} disabled={disabled || busy} />
       </label>
-      <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy ? 'Registrando secagem' : state?.em_secagem ? 'Estender prazo de secagem' : 'Iniciar secagem'} disabled={disabled || busy}>{busy ? 'Registrando…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
+      <button type="submit" className="btn-primary w-full shrink-0 whitespace-nowrap sm:w-auto" aria-label={busy ? 'Registrando secagem' : disabled ? 'Aguardando autorização para registrar secagem' : state?.em_secagem ? 'Estender prazo de secagem' : 'Iniciar secagem'} disabled={disabled || busy}>{busy ? 'Registrando…' : disabled ? 'Aguardando autorização…' : state?.em_secagem ? 'Estender secagem' : 'Iniciar secagem'}</button>
     </form>}
     {error && <p role="alert" className="break-words text-sm text-red-700">{error}</p>}
     {message && <p role={messageKind === 'status' ? 'status' : 'alert'} aria-live="polite" className="text-sm text-slate-700">{message}</p>}
-    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':'Atualizar horário do servidor'}</button>
+    <button type="button" className="btn-secondary w-full shrink-0 whitespace-nowrap sm:w-auto" onClick={refreshDrying} disabled={disabled || busy} aria-label={busy?'Aguarde a atualização da secagem':disabled?'Aguardando autorização para atualizar a secagem':'Atualizar horário do servidor'}>{busy?'Aguarde…':disabled?'Aguardando autorização…':'Atualizar horário do servidor'}</button>
   </section>;
 }
+
