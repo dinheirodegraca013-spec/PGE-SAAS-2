@@ -182,6 +182,8 @@ export default function EquipeView() {
   const ativos = perfis.filter((perfil) => perfil.ativo && !perfil.suspenso && !limits?.suspended_ids.includes(perfil.id)).length;
   const inativos = perfis.filter((perfil) => perfil.ativo === false).length;
   const suspensos = perfis.filter((perfil) => perfil.suspenso || limits?.suspended_ids.includes(perfil.id)).length;
+  const subloginsUsados = limits ? Math.min(limits.sublogins_active, limits.sublogin_limit) : 0;
+  const subloginPercentual = limits?.sublogin_limit ? Math.round((subloginsUsados / limits.sublogin_limit) * 100) : 0;
   const filtrados = useMemo(() => {
     const termo = normalizeSearch(busca.trim());
     if (!termo) return perfis;
@@ -207,7 +209,7 @@ export default function EquipeView() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={salvando || encaminhando ? 'Aguarde a operação em andamento' : !limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={salvando || encaminhando || !limits || limits.sublogins_available <= 0} onClick={() => { setEditingId(null); setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
+        {administrador && <button type="button" className="btn-primary w-full sm:w-auto" aria-label="Cadastrar novo funcionário" title={salvando || encaminhando ? 'Aguarde a operação em andamento' : !limits ? 'Carregando limite do plano' : limits.sublogins_available <= 0 ? 'Limite de sublogins atingido' : undefined} disabled={salvando || encaminhando || !limits || limits.sublogins_available <= 0} onClick={() => { setNome(''); setEmail(''); setCargo(''); setIdentificadorInterno(''); setSetor('corte'); setNovo(true); setSucesso(''); }}>Novo funcionário</button>}
         <button
           type="button"
           aria-label={carregando || salvando || encaminhando ? 'Aguarde a operação em andamento' : 'Atualizar equipe'}
@@ -241,9 +243,9 @@ export default function EquipeView() {
         <div className="grid gap-3 sm:grid-cols-3">
           <label className="text-sm" htmlFor={`${employeeFormId}-name`}>Nome completo<input id={`${employeeFormId}-name`} required minLength={2} maxLength={120} autoComplete="name" className="input-field mt-1" value={nome} onChange={e => setNome(e.target.value)} disabled={salvando} /></label>
           <label className="text-sm" htmlFor={`${employeeFormId}-email`}>E-mail<input id={`${employeeFormId}-email`} required type="email" maxLength={254} autoComplete="email" className="input-field mt-1" value={email} onChange={e => setEmail(e.target.value)} disabled={salvando} /></label>
-          <label className="text-sm" htmlFor={`${employeeFormId}-job`}>Cargo ou função<input id={`${employeeFormId}-job`} className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm" htmlFor={`${employeeFormId}-internal-id`}>Identificador interno<input id={`${employeeFormId}-internal-id`} className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label></label>
+          <label className="text-sm" htmlFor={`${employeeFormId}-job`}>Cargo ou função<input id={`${employeeFormId}-job`} className="input-field mt-1" maxLength={120} value={cargo} onChange={e => setCargo(e.target.value)} /></label><label className="text-sm" htmlFor={`${employeeFormId}-internal-id`}>Identificador interno<input id={`${employeeFormId}-internal-id`} className="input-field mt-1" maxLength={40} pattern="[A-Za-z0-9][A-Za-z0-9._/-]{0,39}" placeholder="Ex.: FUNC-001" value={identificadorInterno} onChange={e => setIdentificadorInterno(e.target.value)} /><span className="mt-1 block text-xs text-slate-500">Opcional e único na empresa.</span></label>
           <label className="text-sm" htmlFor={`${employeeFormId}-sector`}>Setor<select id={`${employeeFormId}-sector`} className="input-field mt-1" value={setor} onChange={e => setSetor(e.target.value)} disabled={salvando}>{Object.entries(setores).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-</div>
+        </div>
         <div className="flex flex-col gap-2 sm:flex-row"><button type="submit" className="btn-primary w-full sm:w-auto" aria-label={salvando ? 'Salvando funcionário' : 'Cadastrar funcionário e enviar acesso'} disabled={salvando}>{salvando ? 'Salvando…' : 'Cadastrar e enviar acesso'}</button><button type="button" className="btn-secondary w-full sm:w-auto" aria-label="Cancelar cadastro de funcionário" disabled={salvando} onClick={() => setNovo(false)}>Cancelar</button></div>
       </form>}
       {administrador && <form onSubmit={encaminhar} className="card space-y-3 p-5" aria-busy={encaminhando}><h2 className="text-lg font-bold">Encaminhar projeto para um setor</h2>
