@@ -76,6 +76,9 @@ const alternateScriptBodies = await Promise.all(alternateScriptAssets.map(async 
   return result.response ? await result.response.text() : '';
 }));
 const alternateBundleText = alternateScriptBodies.join('\n');
+const chunkRecoveryMarker = 'gestio:chunk-recovery';
+const chunkRecoveryOk = bundleText.includes(chunkRecoveryMarker);
+const alternateChunkRecoveryOk = alternateBundleText.includes(chunkRecoveryMarker);
 const exposedSecrets = [
   { name: 'service_role', pattern: /service[_-]?role/i },
   { name: 'secret_key', pattern: /(?:secret|private)[_-]?key\s*[:=]/i },
@@ -186,7 +189,8 @@ if (supabaseUrl && supabaseKey) {
     expectedStatus: 200, allowOrigin: foreignAllowOrigin,
     ok: foreignOrigin.response?.status === 200 && foreignAllowOrigin !== 'https://evil.example' });
 }
-const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, alternateExposedSecrets, localEndpointReferences, alternateLocalEndpointReferences, assets, alternateAssets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
+const report = { baseUrl, alternateBaseUrl, routes: results, alternateRoutes, headers, alternateHeaders, missingHeaders, alternateMissingHeaders, mismatchedHeaders, alternateMismatchedHeaders, contentType, contentTypeOk, alternateContentType, alternateContentTypeOk, exposedSecrets, alternateExposedSecrets, localEndpointReferences, alternateLocalEndpointReferences, chunkRecoveryOk, alternateChunkRecoveryOk, assets, alternateAssets, supabase: { discovered: Boolean(supabaseUrl && supabaseKey), endpointSmoke, methodChecks } };
 console.log(JSON.stringify(report, null, 2));
 
-if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || alternateExposedSecrets.length || localEndpointReferences || alternateLocalEndpointReferences || assets.some((item) => !item.ok) || alternateAssets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+if (results.some((item) => !item.ok) || alternateRoutes.some((item) => !item.ok) || missingHeaders.length || alternateMissingHeaders.length || mismatchedHeaders.length || alternateMismatchedHeaders.length || !contentTypeOk || !alternateContentTypeOk || exposedSecrets.length || alternateExposedSecrets.length || localEndpointReferences || alternateLocalEndpointReferences || !chunkRecoveryOk || !alternateChunkRecoveryOk || assets.some((item) => !item.ok) || alternateAssets.some((item) => !item.ok) || endpointSmoke.some((item) => !item.ok) || methodChecks.some((item) => !item.ok)) process.exitCode = 1;
+
