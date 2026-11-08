@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { getCurrentTenantId } from "@/services/api/client";
 import { projetosService } from "@/modules/furniture/services/projetos.service";
+import { useWorkforceAccess } from "@/modules/workforce/context/WorkforceAccessContext";
 const ThreeOperationalMap = lazy(() => import("./ThreeOperationalMap"));
 import {
   StatusProjeto,
@@ -50,6 +51,8 @@ const setorCores = [
 
 export default function Visao3DView() {
   const navigate = useNavigate();
+  const { context, loading: accessLoading, error: accessError } = useWorkforceAccess();
+  const acessoPermitido = Boolean(context?.proprietario);
   const [itens, setItens] = useState<EstoqueItem[]>([]);
   const [projetos, setProjetos] = useState<ProjetoMovelPlanejado[]>([]);
   const [trabalhadores, setTrabalhadores] = useState<Trabalhador[]>([]);
@@ -76,6 +79,14 @@ export default function Visao3DView() {
     setEquipeDisponivel(false);
     setFinanceiroDisponivel(false);
     setContasVencidas(0);
+    if (accessLoading || accessError || !acessoPermitido) {
+      setItens([]);
+      setProjetos([]);
+      setTrabalhadores([]);
+      setErro(accessError || "A Visão 3D está disponível apenas para o administrador da empresa.");
+      setCarregando(false);
+      return;
+    }
     try {
       const tenantId = getCurrentTenantId();
       if (!tenantId) {
@@ -144,7 +155,7 @@ export default function Visao3DView() {
 
   useEffect(() => {
     void carregar();
-  }, []);
+  }, [accessLoading, accessError, acessoPermitido]);
 
   const ativos = projetos.filter(
     (p) =>
@@ -220,6 +231,14 @@ export default function Visao3DView() {
     ],
     [ativos.length, estoqueCritico.length, itens.length, estoqueDisponivel, financeiroDisponivel, contasVencidas],
   );
+
+  if (accessLoading) {
+    return <main className="space-y-5 pb-5"><p role="status" aria-live="polite" className="rounded-xl bg-cyan-50 p-4 text-sm text-cyan-900">Validando acesso à Visão 3D…</p></main>;
+  }
+
+  if (accessError || !acessoPermitido) {
+    return <main className="space-y-5 pb-5"><div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">{accessError || "A Visão 3D está disponível apenas para o administrador da empresa."}</div></main>;
+  }
 
   return (
     <div className="space-y-5 pb-5">
