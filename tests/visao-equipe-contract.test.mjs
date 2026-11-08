@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 33115)
-Total output lines: 1950
+Warning: truncated output (original token count: 33243)
+Total output lines: 1956
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -815,13 +815,7 @@ test("histórico diferencia carga inicial de sincronização", () => {
 });
 
 test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…8115 tokens truncated…nd\].*useState<'status' \| 'error'>\('status'\)/);
-  assert.match(solicitacaoMaterial, /setMessageKind\('status'\);\s*setMessage\('Solicitação cancelada\.'\)/);
-  assert.match(solicitacaoMaterial, /role=\{messageKind === 'status' \? 'status' : 'alert'\}/);
-});
-
-test("inbox de estoque informa atualização no botão", () => {
-  assert.match(inboxMateriais, /aria-label=\{accessLoading\?'Validando acesso':loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
+  assert.match(historicoFuncionario, /data&&<p role="…8243 tokens truncated…el=\{accessLoading\?'Validando acesso':loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
   assert.match(inboxMateriais, /\{accessLoading\?'Validando…':loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
   assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy \|\| accessLoading\}/);
 });
@@ -1106,6 +1100,12 @@ test("secagem anuncia bloqueio durante revalidação de autorização", () => {
   assert.match(controleSecagem, /aria-busy=\{busy \|\| disabled\}/);
   assert.match(controleSecagem, /disabled \? 'Aguardando autorização para registrar secagem'/);
   assert.match(controleSecagem, /disabled\?'Aguardando autorização para atualizar a secagem'/);
+});
+
+test("solicitação de material anuncia bloqueio durante revalidação", () => {
+  assert.match(solicitacaoMaterial, /aria-busy=\{busy \|\| disabled\}/);
+  assert.match(solicitacaoMaterial, /disabled\?'Aguardando autorização para atualizar solicitações'/);
+  assert.match(solicitacaoMaterial, /disabled \? 'Aguardando autorização para solicitar material'/);
 });
 
 test("ficha limpa erros de consultas antes de uma nova sincronização", () => {
