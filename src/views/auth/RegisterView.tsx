@@ -298,6 +298,7 @@ export default function RegisterView() {
                 <input
                   id="senha"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Mínimo 6 caracteres"
                   className="input-field"
                   value={senha}
@@ -312,6 +313,7 @@ export default function RegisterView() {
                 <input
                   id="confirmarSenha"
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Repita sua senha"
                   className="input-field"
                   value={confirmarSenha}
@@ -394,3 +396,4 @@ export default function RegisterView() {
     </div>
   );
 }
+
