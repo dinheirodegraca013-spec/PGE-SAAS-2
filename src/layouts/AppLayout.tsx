@@ -48,6 +48,14 @@ export default function AppLayout() {
     window.addEventListener('offline', updateConnection);
     return () => { window.removeEventListener('online', updateConnection); window.removeEventListener('offline', updateConnection); };
   }, []);
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setMobileMenuOpen(false); };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', closeOnEscape);
+    return () => { document.body.style.overflow = previousOverflow; window.removeEventListener('keydown', closeOnEscape); };
+  }, [mobileMenuOpen]);
   const empresaNome = auth.usuario?.empresaNome || 'Empresa atual';
   const empresaIniciais = empresaNome.split(/\s+/).slice(0, 2).map(parte => parte[0]).join('').toUpperCase();
   const employeeProfilePath = work.context && !work.context.proprietario ? hasPermission(work.context, 'perfil') ? '/meu-setor#perfil' : '/meu-setor' : '/configuracoes';
@@ -92,6 +100,7 @@ export default function AppLayout() {
 
       <aside
         data-menu-open={mobileMenuOpen}
+        id="gestio-mobile-sidebar"
         className={`gestio-sidebar fixed inset-y-0 left-0 z-50 flex w-[254px] shrink-0 flex-col transition-transform duration-300 md:static md:translate-x-0 ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="gestio-brand flex h-[102px] shrink-0 items-center gap-3 border-b border-white/10 px-7">
@@ -226,6 +235,8 @@ export default function AppLayout() {
             <button
               type="button"
               aria-label="Abrir menu"
+              aria-expanded={mobileMenuOpen}
+              aria-controls="gestio-mobile-sidebar"
               className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm md:hidden"
               onClick={() => setMobileMenuOpen(true)}
             >
