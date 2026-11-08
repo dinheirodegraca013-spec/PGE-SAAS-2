@@ -102,7 +102,7 @@ export default function LoginView() {
                   <div className="space-y-3 rounded-2xl bg-emerald-50 p-5 text-center"><CheckCircle2 className="mx-auto h-10 w-10 text-emerald-600" /><p className="font-semibold text-emerald-900">E-mail de recuperação enviado!</p><p className="text-sm leading-6 text-emerald-800">Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p></div>
                 ) : (
                   <form onSubmit={handleRecuperarSenha} className="space-y-4">
-                    <div><label htmlFor="emailRecup" className="label-field">E-mail cadastrado</label><input id="emailRecup" type="email" placeholder="voce@empresa.com.br" className="input-field" value={emailRecuperacao} onChange={(e) => setEmailRecuperacao(e.target.value)} required /></div>
+                    <div><label htmlFor="emailRecup" className="label-field">E-mail cadastrado</label><input id="emailRecup" type="email" autoComplete="email" placeholder="voce@empresa.com.br" className="input-field" value={emailRecuperacao} onChange={(e) => setEmailRecuperacao(e.target.value)} required /></div>
                     {erroServidor && <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{erroServidor}</p>}
                     <button type="submit" className="btn-primary w-full py-3" disabled={enviandoRecuperacao}>{enviandoRecuperacao ? 'Enviando...' : 'Enviar instruções'} <ArrowRight className="ml-2 h-4 w-4" /></button>
                   </form>
@@ -126,3 +126,4 @@ export default function LoginView() {
     </main>
   );
 }
+
