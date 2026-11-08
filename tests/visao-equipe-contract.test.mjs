@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 33243)
-Total output lines: 1956
+Warning: truncated output (original token count: 33381)
+Total output lines: 1964
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -56,6 +56,14 @@ const fichaOperacional = readOptional("../src/modules/workforce/components/Servi
 const ocorrenciasFuncionario = readOptional("../src/modules/workforce/components/SheetIncidents.tsx");
 const estoqueView = readOptional("../src/views/estoque/EstoqueView.tsx");
 const financeiroView = readOptional("../src/views/financeiro/FinanceiroEmpresaView.tsx");
+const routeErrorBoundary = readOptional("../src/components/RouteErrorBoundary.tsx");
+
+test("falha de chunk tenta recuperar uma vez sem criar loop", () => {
+  assert.match(routeErrorBoundary, /isChunkFailure = \/ChunkLoadError\|Loading chunk\|dynamically imported module\|Failed to fetch\/i/);
+  assert.match(routeErrorBoundary, /gestio:chunk-recovery/);
+  assert.match(routeErrorBoundary, /sessionStorage\.getItem\(key\) === '1'/);
+  assert.match(routeErrorBoundary, /window\.location\.reload\(\)/);
+});
 
 test("rotas autenticadas incluem Visão 3D e Equipe", () => {
   assert.match(app, /path="visao-3d"/);
@@ -805,17 +813,7 @@ test("histórico informa atualização no botão", () => {
 test("erro do histórico bloqueia retry durante sincronização", () => {
   assert.match(historicoFuncionario, /className="(?:w-full )?shrink-0 whitespace-nowrap rounded-lg border border-rose-200/);
   assert.match(historicoFuncionario, /disabled=\{loading \|\| accessLoading\} aria-label=\{accessLoading\?'Validando acesso':accessError\?'Revalidar acesso':loading\?'Atualizando histórico':'Tentar carregar o histórico novamente'\}/);
-  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':accessError\?'Revalidar acesso':loading\?'Atualizando…':'Tentar novamente'\}/);
-  assert.match(historicoFuncionario, /reload:reloadAccess/);
-  assert.match(historicoFuncionario, /onClick=\{\(\)=>accessError \? void reloadAccess\(\) : setRefresh/);
-});
-
-test("histórico diferencia carga inicial de sincronização", () => {
-  assert.match(historicoFuncionario, /data \? 'Atualizando histórico…' : 'Carregando histórico…'/);
-});
-
-test("histórico informa a quantidade visível e a existência de mais páginas", () => {
-  assert.match(historicoFuncionario, /data&&<p role="…8243 tokens truncated…el=\{accessLoading\?'Validando acesso':loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
+  assert.match(historicoFuncionario, /\{accessLoading\?'Validando…':accessError\?'Revalidar acesso':loading\?'Atualizando…':'Tentar novamente'\}…8381 tokens truncated…do acesso':loading \|\| !!actionBusy\?'Aguarde a atualização das solicitações':'Atualizar solicitações'\}/);
   assert.match(inboxMateriais, /\{accessLoading\?'Validando…':loading \|\| !!actionBusy\?'Aguarde…':'Atualizar'\}/);
   assert.match(inboxMateriais, /aria-busy=\{loading \|\| !!actionBusy \|\| accessLoading\}/);
 });
@@ -1086,8 +1084,8 @@ test("pesquisa de fichas não cria nova carga durante sincronização", () => {
 });
 
 test("operações de produção e secagem sinalizam o formulário em andamento", () => {
-  assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy\}/);
-  assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy\}/);
+  assert.match(registroProducao, /<form className="grid gap-3 border-t border-slate-100 pt-3 sm:grid-cols-2" aria-busy=\{busy \|\| disabled\}/);
+  assert.match(controleSecagem, /<form className="flex flex-wrap items-end gap-3 border-t border-slate-100 pt-3" aria-busy=\{busy \|\| disabled\}/);
 });
 
 test("produção anuncia bloqueio durante revalidação de autorização", () => {
