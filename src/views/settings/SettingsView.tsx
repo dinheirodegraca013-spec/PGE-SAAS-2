@@ -146,6 +146,27 @@ interface FormState {
   cargo: string;
 }
 
+type CobrancaHistorico = {
+  id: string;
+  data_vencimento: string;
+  descricao?: string | null;
+  valor: number | string;
+  status: "pendente" | "paga" | "vencida" | "cancelada";
+};
+
+function isCobrancaHistorico(value: unknown): value is CobrancaHistorico {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const item = value as Record<string, unknown>;
+  return (
+    typeof item.id === "string" &&
+    item.id.trim().length > 0 &&
+    typeof item.data_vencimento === "string" &&
+    Number.isFinite(Number(item.valor)) &&
+    ["pendente", "paga", "vencida", "cancelada"].includes(String(item.status)) &&
+    (item.descricao === undefined || item.descricao === null || typeof item.descricao === "string")
+  );
+}
+
 const INITIAL_FORM: FormState = {
   razaoSocial: "",
   nomeFantasia: "",
@@ -269,7 +290,7 @@ export default function SettingsView() {
   });
 
   // Histórico de cobranças
-  const [cobrancas, setCobrancas] = useState<any[]>([]);
+  const [cobrancas, setCobrancas] = useState<CobrancaHistorico[]>([]);
 
   // Formulário de alteração de senha
   const [senhaAtual, setSenhaAtual] = useState("");
@@ -552,7 +573,7 @@ export default function SettingsView() {
               .limit(5);
 
             if (cobrancasData && mounted) {
-              setCobrancas(cobrancasData);
+              setCobrancas(cobrancasData.filter(isCobrancaHistorico));
             }
           }
 
