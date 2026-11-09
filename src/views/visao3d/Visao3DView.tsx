@@ -113,12 +113,12 @@ export default function Visao3DView() {
         .select("id", { count: "exact", head: true })
         .eq("tenant_id", tenantId).eq("tipo", "despesa")
         .not("status", "in", "(quitado,cancelado)").lt("vencimento", dataHoje);
-      const [estoque, projetosResult, financeiro] = await Promise.all([
+      const [estoque, projetosResult, financeiro, perfisResult] = await Promise.all([
         estoqueQuery,
         projetosService.listar(),
         financeiroQuery,
+        perfisQuery,
       ]);
-      const perfisResult = await perfisQuery;
       const mensagens: string[] = [];
       if (financeiro.error || typeof financeiro.count !== "number") {
         mensagens.push("Financeiro indisponível no momento.");
