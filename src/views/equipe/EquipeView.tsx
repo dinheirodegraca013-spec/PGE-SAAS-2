@@ -122,6 +122,9 @@ export default function EquipeView() {
       .select("id,nome_completo,email,papel,ativo,setor,cargo,identificador_interno,suspenso")
       .order("nome_completo");
     query = query.eq("tenant_id", tenantId);
+    const accessSummary = administrador
+      ? Promise.all([supabase.rpc('limites_acesso'), supabase.rpc('historico_acessos')])
+      : null;
     const result = await query;
     if (!current()) return;
     if (result.error) {
@@ -133,7 +136,7 @@ export default function EquipeView() {
     } else setPerfis(result.data);
     if (administrador) {
       try {
-        const [quota, history] = await Promise.all([supabase.rpc('limites_acesso'), supabase.rpc('historico_acessos')]);
+        const [quota, history] = await accessSummary!;
         if (!current()) return;
         if (quota.error) throw quota.error;
         if (!isLimits(quota.data)) throw new Error('Resposta de limites inválida.');
