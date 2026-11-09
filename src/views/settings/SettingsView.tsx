@@ -203,6 +203,11 @@ export default function SettingsView() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
   const [uploadingFoto, setUploadingFoto] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [fotoFeedbackSucesso, setFotoFeedbackSucesso] = useState<string | null>(
@@ -835,6 +840,7 @@ export default function SettingsView() {
       return;
     }
 
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
     setSelectedFile(file);
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
@@ -904,6 +910,7 @@ export default function SettingsView() {
       setUploadProgress(100);
       setAvatarUrl(urlFinal);
       setSelectedFile(null);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       auth.updateUsuario({ avatarUrl: urlFinal, logoUrl: urlFinal });
       setFotoFeedbackSucesso(
@@ -950,6 +957,7 @@ export default function SettingsView() {
         );
 
       setAvatarUrl(null);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
       setPreviewUrl(null);
       setSelectedFile(null);
       auth.updateUsuario({ avatarUrl: null, logoUrl: null });
@@ -2623,3 +2631,4 @@ export default function SettingsView() {
     </div>
   );
 }
+
