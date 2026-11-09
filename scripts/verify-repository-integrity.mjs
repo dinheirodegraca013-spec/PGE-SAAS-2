@@ -6,7 +6,7 @@ const checks = [
   ['src/components/RouteErrorBoundary.tsx', value => value.startsWith('import { Component') && value.includes('export default class RouteErrorBoundary')],
   ['package.json', value => { const parsed = JSON.parse(value); return parsed.engines?.node === '>=22 <25'; }],
   ['.github/workflows/quality.yml', value => /node-version:\s*22\b/.test(value)],
-  ['scripts/audit-production.mjs', value => value.startsWith('const baseUrl')],
+  ['scripts/audit-production.mjs', value => /const baseUrl =/.test(value)],
   ['supabase/migrations/20261104090000_restrict_internal_trigger_functions.sql', value => value.startsWith('-- Internal compatibility')],
   ['tests/sql-public-grants.test.mjs', value => value.startsWith("import test from 'node:test'")],
 ];
