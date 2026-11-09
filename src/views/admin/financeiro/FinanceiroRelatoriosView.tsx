@@ -15,6 +15,7 @@ import { adminService } from "@/services/admin/admin.service";
 import { SaaSPagamento, SaaSEmpresaItem } from "@/types/admin";
 
 export default function FinanceiroRelatoriosView() {
+  const periodos = ["30dias", "mesAtual", "anoAtual", "todos"] as const;
   const [pagamentos, setPagamentos] = useState<SaaSPagamento[]>([]);
   const [empresas, setEmpresas] = useState<SaaSEmpresaItem[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -212,7 +213,12 @@ export default function FinanceiroRelatoriosView() {
             </label>
             <select
               value={periodo}
-              onChange={(e) => setPeriodo(e.target.value as any)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if ((periodos as readonly string[]).includes(value)) {
+                  setPeriodo(value as (typeof periodos)[number]);
+                }
+              }}
               className="w-full rounded-lg border border-slate-200 bg-white p-2 text-slate-700 font-medium focus:border-brand-500 focus:outline-hidden"
             >
               <option value="mesAtual">Mês Atual</option>
@@ -412,4 +418,5 @@ export default function FinanceiroRelatoriosView() {
     </div>
   );
 }
+
 
