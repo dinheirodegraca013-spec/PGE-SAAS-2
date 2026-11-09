@@ -212,7 +212,7 @@ export default function ServicosListView() {
         <div className="card p-6 border-red-200 bg-red-50 text-red-700 text-sm">
           <p className="font-semibold">Erro ao carregar serviços:</p>
           <p className="mt-1">{erro}</p>
-          <button onClick={carregar} className="btn-secondary text-xs mt-3">
+          <button type="button" onClick={carregar} className="btn-secondary text-xs mt-3">
             Tentar novamente
           </button>
         </div>
@@ -283,3 +283,4 @@ export default function ServicosListView() {
     </div>
   );
 }
+
