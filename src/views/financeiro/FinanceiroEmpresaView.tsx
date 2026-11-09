@@ -393,6 +393,7 @@ export default function FinanceiroEmpresaView() {
               ))}
             </select>
             <button
+              type="submit"
               disabled={salvando}
               className="rounded bg-slate-900 p-2 text-white disabled:opacity-50"
             >
