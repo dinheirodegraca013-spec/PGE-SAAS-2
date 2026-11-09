@@ -268,6 +268,7 @@ export default function ProjetosListView() {
           <p className="font-semibold">Erro ao carregar projetos:</p>
           <p className="mt-1">{erro}</p>
           <button
+            type="button"
             onClick={carregarProjetos}
             className="btn-secondary text-xs mt-3"
           >
@@ -355,4 +356,5 @@ export default function ProjetosListView() {
     </div>
   );
 }
+
 
