@@ -98,6 +98,7 @@ export default function AppLayout() {
     <div className="gestio-app flex h-screen overflow-hidden">
       {mobileMenuOpen && (
         <button
+          type="button"
           aria-label="Fechar menu"
           className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm md:hidden"
           onClick={() => setMobileMenuOpen(false)}
@@ -319,3 +320,4 @@ export default function AppLayout() {
     </div>
   );
 }
+
