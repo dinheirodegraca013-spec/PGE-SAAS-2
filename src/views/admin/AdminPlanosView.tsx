@@ -14,6 +14,8 @@ import { adminService } from '@/services/admin/admin.service';
 import { SaaSPlano } from '@/types/admin';
 
 export default function AdminPlanosView() {
+  const periodicidades = ['mensal', 'trimestral', 'semestral', 'anual'] as const;
+  const statusPlanos = ['ativo', 'inativo'] as const;
   const [planos, setPlanos] = useState<SaaSPlano[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -329,9 +331,12 @@ export default function AdminPlanosView() {
                   </label>
                   <select
                     value={planoEmEdicao.periodicidade}
-                    onChange={(e) =>
-                      setPlanoEmEdicao({ ...planoEmEdicao, periodicidade: e.target.value as any })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((periodicidades as readonly string[]).includes(value)) {
+                        setPlanoEmEdicao({ ...planoEmEdicao, periodicidade: value as (typeof periodicidades)[number] });
+                      }
+                    }}
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="mensal">Mensal</option>
@@ -347,9 +352,12 @@ export default function AdminPlanosView() {
                   </label>
                   <select
                     value={planoEmEdicao.status}
-                    onChange={(e) =>
-                      setPlanoEmEdicao({ ...planoEmEdicao, status: e.target.value as any })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((statusPlanos as readonly string[]).includes(value)) {
+                        setPlanoEmEdicao({ ...planoEmEdicao, status: value as (typeof statusPlanos)[number] });
+                      }
+                    }}
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="ativo">Ativo</option>
