@@ -352,7 +352,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             succeeded: false,
             errors: [data.user?.app_metadata?.gestio_employee === true
               ? 'Seu convite foi recebido, mas o vínculo com a empresa ainda está sendo concluído. Aguarde alguns segundos e tente entrar novamente.'
-              : 'Sua conta está inativa. Entre em contato com o suporte ou administrador.'],
+              : 'Sua conta ou empresa ainda não está ativa. Peça ao administrador da empresa ou ao Super Admin para ativar o acesso antes de entrar.'],
           };
         }
         return { succeeded: true, errors: [] };
