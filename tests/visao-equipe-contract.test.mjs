@@ -155,6 +155,11 @@ test("Visão 3D mantém o painel lateral com alertas e equipe sem inventar prese
   assert.match(visao, /onSectorSelect={abrirSetor}/);
 });
 
+test("Visão 3D consulta equipe em paralelo com os demais indicadores", () => {
+  assert.match(visao, /const \[estoque, projetosResult, financeiro, perfisResult\] = await Promise\.all\(\[/);
+  assert.match(visao, /financeiroQuery,\s*perfisQuery,/s);
+});
+
 test("equipe consulta profiles do tenant e explicita presença não registrada", () => {
   assert.match(equipe, /from\(["']profiles["']\)/);
   assert.match(equipe, /Presença não registrada/);
