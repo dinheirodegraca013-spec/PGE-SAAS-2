@@ -434,6 +434,7 @@ export default function FinanceiroEmpresaView() {
                     </span>
                     {l.status !== "quitado" && l.status !== "cancelado" && hasPermission(context,'financeiro',l.tipo==='despesa'?'registrar_pagamento':'registrar_recebimento') && (
                       <button
+                        type="button"
                         className="rounded border px-3 py-1"
                         onClick={async () => {
                           const quantia = window.prompt("Valor da baixa (R$)");
