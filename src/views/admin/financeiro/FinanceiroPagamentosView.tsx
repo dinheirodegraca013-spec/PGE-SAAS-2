@@ -15,6 +15,14 @@ import { adminService } from "@/services/admin/admin.service";
 import { SaaSPagamento, SaaSEmpresaItem, SaaSCobranca } from "@/types/admin";
 
 export default function FinanceiroPagamentosView() {
+  const formasPagamento = [
+    "PIX",
+    "Boleto",
+    "Cartao",
+    "Transferencia",
+    "Dinheiro",
+    "Outro",
+  ] as const;
   const [pagamentos, setPagamentos] = useState<SaaSPagamento[]>([]);
   const [empresas, setEmpresas] = useState<SaaSEmpresaItem[]>([]);
   const [cobrancas, setCobrancas] = useState<SaaSCobranca[]>([]);
@@ -450,7 +458,12 @@ export default function FinanceiroPagamentosView() {
                   </label>
                   <select
                     value={formaPagamento}
-                    onChange={(e) => setFormaPagamento(e.target.value as any)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((formasPagamento as readonly string[]).includes(value)) {
+                        setFormaPagamento(value as (typeof formasPagamento)[number]);
+                      }
+                    }}
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="PIX">PIX (Banco / Chave)</option>
@@ -531,3 +544,4 @@ export default function FinanceiroPagamentosView() {
     </div>
   );
 }
+
