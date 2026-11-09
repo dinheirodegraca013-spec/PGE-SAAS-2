@@ -385,7 +385,7 @@ export default function EstoqueView() {
                       <h3 className="font-bold sm:col-span-2">Dados técnicos</h3>
                       {([['sku','SKU'],['categoria','Categoria'],['marca','Marca'],['fabricante','Fabricante'],['localizacao','Localização'],['prateleira','Prateleira'],['lote','Lote'],['validade','Validade'],['fornecedor','Fornecedor'],['estoque_maximo','Estoque máximo']] as const).map(([name,label]) => <input key={name} name={name} type={name==='validade'?'date':name==='estoque_maximo'?'number':'text'} step={name==='estoque_maximo'?'0.001':undefined} defaultValue={detalhe[name] == null ? '' : String(detalhe[name])} placeholder={label} className="input-field text-xs" />)}
                       <textarea name="observacoes" defaultValue={detalhe.observacoes || ''} placeholder="Observações" className="input-field sm:col-span-2" rows={2} />
-                      <button disabled={operando} className="btn-primary sm:col-span-2">Salvar dados técnicos</button>
+                      <button type="submit" disabled={operando} className="btn-primary sm:col-span-2">Salvar dados técnicos</button>
                     </form>}
                   </>
                 ) : (
@@ -545,7 +545,7 @@ export default function EstoqueView() {
             onChange={(e) => setNovoMinimo(e.target.value)}
             className="input-field"
           />
-          <button disabled={operando} className="btn-primary sm:col-span-4">
+          <button type="submit" disabled={operando} className="btn-primary sm:col-span-4">
             Cadastrar
           </button>
         </form>}
