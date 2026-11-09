@@ -15,6 +15,8 @@ import { adminService } from "@/services/admin/admin.service";
 import { SaaSPlanoLink, SaaSPlano } from "@/types/admin";
 
 export default function FinanceiroLinksView() {
+  const provedores = ['MercadoPago', 'InfinitePay', 'Manual', 'Outro'] as const;
+  const statusLinks = ['ativo', 'inativo'] as const;
   const [links, setLinks] = useState<SaaSPlanoLink[]>([]);
   const [planos, setPlanos] = useState<SaaSPlano[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -313,12 +315,15 @@ export default function FinanceiroLinksView() {
                 </label>
                 <select
                   value={linkEmEdicao.provedor}
-                  onChange={(e) =>
-                    setLinkEmEdicao({
-                      ...linkEmEdicao,
-                      provedor: e.target.value as any,
-                    })
-                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if ((provedores as readonly string[]).includes(value)) {
+                      setLinkEmEdicao({
+                        ...linkEmEdicao,
+                        provedor: value as (typeof provedores)[number],
+                      });
+                    }
+                  }}
                   className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                 >
                   <option value="MercadoPago">
@@ -379,12 +384,15 @@ export default function FinanceiroLinksView() {
                   </label>
                   <select
                     value={linkEmEdicao.status}
-                    onChange={(e) =>
-                      setLinkEmEdicao({
-                        ...linkEmEdicao,
-                        status: e.target.value as any,
-                      })
-                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if ((statusLinks as readonly string[]).includes(value)) {
+                        setLinkEmEdicao({
+                          ...linkEmEdicao,
+                          status: value as (typeof statusLinks)[number],
+                        });
+                      }
+                    }}
                     className="w-full rounded-lg border border-slate-300 p-2 text-xs text-slate-800 focus:border-brand-500 focus:outline-hidden"
                   >
                     <option value="ativo">Ativo</option>
