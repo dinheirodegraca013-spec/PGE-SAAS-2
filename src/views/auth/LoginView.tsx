@@ -103,7 +103,7 @@ export default function LoginView() {
                 ) : (
                   <form onSubmit={handleRecuperarSenha} className="space-y-4">
                     <div><label htmlFor="emailRecup" className="label-field">E-mail cadastrado</label><input id="emailRecup" type="email" inputMode="email" autoComplete="email" placeholder="voce@empresa.com.br" className="input-field" value={emailRecuperacao} onChange={(e) => setEmailRecuperacao(e.target.value)} required /></div>
-                    {erroServidor && <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{erroServidor}</p>}
+                    {erroServidor && <p role="alert" aria-live="assertive" aria-atomic="true" className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{erroServidor}</p>}
                     <button type="submit" className="btn-primary w-full py-3" disabled={enviandoRecuperacao}>{enviandoRecuperacao ? 'Enviando...' : 'Enviar instruções'} <ArrowRight className="ml-2 h-4 w-4" /></button>
                   </form>
                 )}
@@ -112,7 +112,7 @@ export default function LoginView() {
               <form className="space-y-5" onSubmit={handleSubmit} noValidate>
                 <div><label htmlFor="email" className="label-field">E-mail</label><input id="email" type="email" inputMode="email" autoComplete="email" placeholder="voce@empresa.com.br" className="input-field py-3" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
                 <div><div className="mb-1.5 flex items-center justify-between gap-3"><label htmlFor="senha" className="label-field mb-0">Senha</label><button type="button" className="text-xs font-semibold text-cyan-700 transition hover:text-violet-700" onClick={() => { setModoRecuperacao(true); setEmailRecuperacao(email); setErroServidor(null); }}>Esqueceu a senha?</button></div><input id="senha" type="password" autoComplete="current-password" placeholder="Digite sua senha" className="input-field py-3" value={senha} onChange={(e) => setSenha(e.target.value)} required /></div>
-                {erroServidor && <p role="alert" className="rounded-xl border border-red-100 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-700">{erroServidor}</p>}
+                {erroServidor && <p role="alert" aria-live="assertive" aria-atomic="true" className="rounded-xl border border-red-100 bg-red-50 px-3 py-2.5 text-sm font-medium text-red-700">{erroServidor}</p>}
                 {auth.deviceError && <Link to="/dispositivos" className="block text-sm font-semibold text-cyan-700">Gerenciar dispositivos e liberar acesso</Link>}
                 <button type="submit" className="flex w-full cursor-pointer items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-violet-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-cyan-900/15 transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60" disabled={estaEnviando}>{estaEnviando ? 'Entrando...' : 'Entrar no Gestio'} {!estaEnviando && <ArrowRight className="ml-2 h-4 w-4" />}</button>
                 <p className="text-center text-xs text-slate-500">Ao continuar, você acessará somente os recursos liberados para sua conta.</p>
