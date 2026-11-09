@@ -166,6 +166,12 @@ test("equipe consulta profiles do tenant e explicita presença não registrada",
   assert.match(equipe, /Setor/);
 });
 
+test("equipe inicia limites e histórico antes de aguardar os perfis", () => {
+  assert.match(equipe, /const accessSummary = administrador\s*\?\s*Promise\.all\(\[supabase\.rpc\('limites_acesso'\), supabase\.rpc\('historico_acessos'\)\]\)/);
+  assert.match(equipe, /const result = await query;/);
+  assert.match(equipe, /const \[quota, history\] = await accessSummary!/);
+});
+
 test("dashboard oferece resumo para Visão 3D e Equipe", () => {
   assert.match(dashboard, /to="\/visao-3d"/);
   assert.match(dashboard, /to="\/equipe"/);
